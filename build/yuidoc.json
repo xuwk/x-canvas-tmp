@@ -1,0 +1,13 @@
+{
+  "version": "0.1.0",
+  "name": "xc",
+  "description": "X-Canvas API.",
+  "url": "http://www.createjs.com/#!/EaselJS",
+  "logo": "http://createjs.com/resources/SuiteIcons/EaselJS/docs-icon-EaselJS.png",
+  "options": {
+    "outdir": "./docs",
+    "linkNatives": "true",
+    "paths": ["../src"],
+    "helpers": ["./path.js"]
+  }
+}

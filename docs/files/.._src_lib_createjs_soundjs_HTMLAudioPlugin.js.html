@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.8.0pr2&#x2F;build&#x2F;cssgrids&#x2F;cssgrids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="..&#x2F;assets/EaselJS_16x16.png">
+    <script src="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;combo?3.8.0pr2&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+	<title>xc v0.1.0 API Documentation : ..\src\lib\createjs\soundjs\HTMLAudioPlugin.js</title>  
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><a href="http:&#x2F;&#x2F;www.createjs.com&#x2F;#!&#x2F;EaselJS"><img src="http:&#x2F;&#x2F;createjs.com&#x2F;resources&#x2F;SuiteIcons&#x2F;EaselJS&#x2F;docs-icon-EaselJS.png" title="xc"></a></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Documentation for: 0.1.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="..&#x2F;classes/AlphaMapFilter.html">AlphaMapFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/AlphaMaskFilter.html">AlphaMaskFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/Bitmap.html">Bitmap</a></li>
+            
+                <li><a href="..&#x2F;classes/BitmapAnimation.html">BitmapAnimation</a></li>
+            
+                <li><a href="..&#x2F;classes/BoxBlurFilter.html">BoxBlurFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/ColorFilter.html">ColorFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/ColorMatrix.html">ColorMatrix</a></li>
+            
+                <li><a href="..&#x2F;classes/ColorMatrixFilter.html">ColorMatrixFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/Command.html">Command</a></li>
+            
+                <li><a href="..&#x2F;classes/Container.html">Container</a></li>
+            
+                <li><a href="..&#x2F;classes/CSSPlugin.html">CSSPlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/DisplayObject.html">DisplayObject</a></li>
+            
+                <li><a href="..&#x2F;classes/Ease.html">Ease</a></li>
+            
+                <li><a href="..&#x2F;classes/EventDispatcher.html">EventDispatcher</a></li>
+            
+                <li><a href="..&#x2F;classes/Filter.html">Filter</a></li>
+            
+                <li><a href="..&#x2F;classes/Graphics.html">Graphics</a></li>
+            
+                <li><a href="..&#x2F;classes/HTMLAudioLoader.html">HTMLAudioLoader</a></li>
+            
+                <li><a href="..&#x2F;classes/HTMLAudioPlugin.html">HTMLAudioPlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/Log.html">Log</a></li>
+            
+                <li><a href="..&#x2F;classes/Matrix2D.html">Matrix2D</a></li>
+            
+                <li><a href="..&#x2F;classes/MotionGuidePlugin.html">MotionGuidePlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/MouseEvent.html">MouseEvent</a></li>
+            
+                <li><a href="..&#x2F;classes/MovieClip.html">MovieClip</a></li>
+            
+                <li><a href="..&#x2F;classes/MovieClipPlugin.html">MovieClipPlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/Point.html">Point</a></li>
+            
+                <li><a href="..&#x2F;classes/Rectangle.html">Rectangle</a></li>
+            
+                <li><a href="..&#x2F;classes/Shadow.html">Shadow</a></li>
+            
+                <li><a href="..&#x2F;classes/Shape.html">Shape</a></li>
+            
+                <li><a href="..&#x2F;classes/Sound.html">Sound</a></li>
+            
+                <li><a href="..&#x2F;classes/SoundChannel.html">SoundChannel</a></li>
+            
+                <li><a href="..&#x2F;classes/SoundInstance.html">SoundInstance</a></li>
+            
+                <li><a href="..&#x2F;classes/SpriteSheet.html">SpriteSheet</a></li>
+            
+                <li><a href="..&#x2F;classes/SpriteSheetBuilder.html">SpriteSheetBuilder</a></li>
+            
+                <li><a href="..&#x2F;classes/SpriteSheetUtils.html">SpriteSheetUtils</a></li>
+            
+                <li><a href="..&#x2F;classes/Stage.html">Stage</a></li>
+            
+                <li><a href="..&#x2F;classes/TagPool.html">TagPool</a></li>
+            
+                <li><a href="..&#x2F;classes/Text.html">Text</a></li>
+            
+                <li><a href="..&#x2F;classes/Ticker.html">Ticker</a></li>
+            
+                <li><a href="..&#x2F;classes/Timeline.html">Timeline</a></li>
+            
+                <li><a href="..&#x2F;classes/Touch.html">Touch</a></li>
+            
+                <li><a href="..&#x2F;classes/Tween.html">Tween</a></li>
+            
+                <li><a href="..&#x2F;classes/UID.html">UID</a></li>
+            
+                <li><a href="..&#x2F;classes/WebAudioLoader.html">WebAudioLoader</a></li>
+            
+                <li><a href="..&#x2F;classes/WebAudioPlugin.html">WebAudioPlugin</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="..&#x2F;modules/xc.html">xc</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.core.html">xc.core</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.html">xc.createjs</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.easeljs.html">xc.createjs.easeljs</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.soundjs.html">xc.createjs.soundjs</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.tweenjs.html">xc.createjs.tweenjs</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <script>
+	var name = ..\src\lib\createjs\soundjs\HTMLAudioPlugin.js      
+</script>
+<h1 class="file-heading">File:..\src\lib\createjs\soundjs\HTMLAudioPlugin.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+&#x2F;**
+ * The SoundJS library manages the playback of audio on the web. It works via plugins which abstract the actual audio
+ * implementation, so playback is possible on any platform without specific knowledge of what mechanisms are necessary
+ * to play sounds.
+ *
+ * To use SoundJS, use the public API on the {{#crossLink &quot;Sound&quot;}}{{&#x2F;crossLink}} class. This API is for:
+ * &lt;ul&gt;
+ *  &lt;li&gt;Installing Plugins&lt;&#x2F;li&gt;
+ *  &lt;li&gt;Registering sounds&lt;&#x2F;li&gt;
+ *  &lt;li&gt;Playing sounds&lt;&#x2F;li&gt;
+ *  &lt;li&gt;Controlling all sounds volume, mute, and stopping everything&lt;&#x2F;li&gt;
+ * &lt;&#x2F;ul&gt;
+ *
+ * &lt;b&gt;Controlling Sounds&lt;&#x2F;b&gt;&lt;br&#x2F;&gt;
+ * Playing sounds creates {{#crossLink &quot;SoundInstance&quot;}}{{&#x2F;crossLink}} instances, which can be controlled individually.
+ * &lt;ul&gt;
+ *  &lt;li&gt;Pause, resume, and stop sounds&lt;&#x2F;li&gt;
+ *  &lt;li&gt;Control a sound&#x27;s volume, mute, and pan&lt;&#x2F;li&gt;
+ *  &lt;li&gt;Add events to sound instances to get notified when they finish, loop, or fail&lt;&#x2F;li&gt;
+ * &lt;&#x2F;ul&gt;
+ *
+ * &lt;h4&gt;Feature Set Example&lt;&#x2F;h4&gt;
+ *     Sound.addEventListener(&quot;loadComplete&quot;, Sound.proxy(this.loadHandler, this));
+ *     Sound.registerSound(&quot;path&#x2F;to&#x2F;mySound.mp3|path&#x2F;to&#x2F;mySound.ogg&quot;, &quot;sound&quot;);
+ *     function loadHandler(event) {
+ *         &#x2F;&#x2F; This is fired for each sound that is registered.
+ *         var instance = Sound.play(&quot;sound&quot;);  &#x2F;&#x2F; play using id. Could also use source.
+ *         instance.addEventListener(&quot;playComplete&quot;, Sound.proxy(this.handleComplete, this));
+ *         instance.setVolume(0.5);
+ *     }
+ *
+ * @module xc.createjs.soundjs
+ *&#x2F;
+xc.module.define(&quot;xc.createjs.HTMLAudioPlugin&quot;, function(exports) {
+
+  var Sound = xc.module.require(&quot;xc.createjs.Sound&quot;);
+  var SoundInstance = xc.module.require(&quot;xc.createjs.SoundInstance&quot;);
+
+  &#x2F;**
+   * The TagPool is an object pool for HTMLAudio tag instances. In Chrome, we have to pre-create the number of HTML
+   * audio tag instances that we are going to play before we load the data, otherwise the audio stalls.
+   * (Note: This seems to be a bug in Chrome)
+   *
+   * @class TagPool
+   * @param {String} src The source of the channel.
+   * @private
+   *&#x2F;
+  var TagPool = xc.class.create({
+    _init: function(src) {
+      this.src = src;
+      this.tags = [];
+    },
+
+    &#x2F;**
+     * The source of the tag pool.
+     *
+     * @property src
+     * @type {String}
+     * @private
+     *&#x2F;
+    src: null,
+
+    &#x2F;**
+     * The total number of HTMLAudio tags in this pool. This is the maximum number of instance of a certain sound
+     * that can play at one time.
+     *
+     * @property length
+     * @type {Number}
+     * @default 0
+     * @private
+     *&#x2F;
+    length: 0,
+
+    &#x2F;**
+     * The number of unused HTMLAudio tags.
+     *
+     * @property available
+     * @type {Number}
+     * @default 0
+     * @private
+     *&#x2F;
+    available: 0,
+
+    &#x2F;**
+     * A list of all available tags in the pool.
+     *
+     * @property tags
+     * @type {Array}
+     * @private
+     *&#x2F;
+    tags: null,
+
+    &#x2F;**
+     * Add an HTMLAudio tag into the pool.
+     *
+     * @method add
+     * @param {HTMLAudioElement} tag A tag to be used for playback.
+     *&#x2F;
+    add: function(tag) {
+      this.tags.push(tag);
+      this.length++;
+      this.available++;
+    },
+
+    &#x2F;**
+     * Get an HTMLAudioElement for immediate playback. This takes it out of the pool.
+     *
+     * @method get
+     * @return {HTMLAudioElement} An HTML audio tag.
+     *&#x2F;
+    get: function() {
+      if (this.tags.length == 0) {
+        return null;
+      }
+      this.available = this.tags.length;
+      var tag = this.tags.pop();
+      if (tag.parentNode == null) {
+        document.body.appendChild(tag);
+      }
+      return tag;
+    },
+
+    &#x2F;**
+     * Put an HTMLAudioElement back in the pool for use.
+     *
+     * @method set
+     * @param {HTMLAudioElement} tag HTML audio tag
+     *&#x2F;
+    set: function(tag) {
+      var index = this.tags.indexOf(tag);
+      if (index == -1) {
+        this.tags.push(tag);
+      }
+      this.available = this.tags.length;
+    },
+
+    toString: function() {
+      return &quot;[HTMLAudioPlugin TagPool]&quot;;
+    }
+  });
+
+  &#x2F;**
+   * A hash lookup of each sound channel, indexed by the audio source.
+   *
+   * @property tags
+   * @static
+   * @private
+   *&#x2F;
+  TagPool.tags = {};
+
+  &#x2F;**
+   * Get a tag pool. If the pool doesn&#x27;t exist, create it.
+   *
+   * @method get
+   * @param {String} src The source file used by the audio tag.
+   * @static
+   * @private
+   *&#x2F;
+  TagPool.get = function(src) {
+    var channel = TagPool.tags[src];
+    if (channel == null) {
+      channel = TagPool.tags[src] = new TagPool(src);
+    }
+    return channel;
+  }
+
+  &#x2F;**
+   * Get a tag instance. This is a shortcut method.
+   *
+   * @method getInstance
+   * @param {String} src The source file used by the audio tag.
+   * @static
+   * @private
+   *&#x2F;
+  TagPool.getInstance = function(src) {
+    var channel = TagPool.tags[src];
+    if (channel == null) {
+      return null;
+    }
+    return channel.get();
+  }
+
+  &#x2F;**
+   * Return a tag instance. This is a shortcut method.
+   *
+   * @method setInstance
+   * @param {String} src The source file used by the audio tag.
+   * @param {HTMLElement} tag Audio tag to set.
+   * @static
+   * @private
+   *&#x2F;
+  TagPool.setInstance = function(src, tag) {
+    var channel = TagPool.tags[src];
+    if (channel == null) {
+      return null;
+    }
+    return channel.set(tag);
+  }
+
+  &#x2F;**
+   * HTMLAudioPlugin&#x27;s SoundInstance implementation.
+   *&#x2F;
+  var HTMLAudioSoundInstance = SoundInstance.extend({
+    _init: function(src, owner) {
+      this.src = src;
+      this.owner = owner;
+      this.endedHandler = Sound.proxy(this.handleSoundComplete, this);
+      this.readyHandler = Sound.proxy(this.handleSoundReady, this);
+      this.stalledHandler = Sound.proxy(this.handleSoundStalled, this);
+    },
+
+    cleanUp: function() {
+      var tag = this.tag;
+      if (tag != null) {
+        tag.pause();
+        try {
+          tag.currentTime = 0;
+        } catch (e) {
+        } &#x2F;&#x2F; Reset Position
+        tag.removeEventListener(HTMLAudioPlugin.AUDIO_ENDED, this.endedHandler, false);
+        tag.removeEventListener(HTMLAudioPlugin.AUDIO_READY, this.readyHandler, false);
+        TagPool.setInstance(this.src, tag);
+        this.tag = null;
+      }
+      this._super();
+    },
+
+    beginPlaying: function(offset, loop, volume, pan) {
+      var tag = this.tag = TagPool.getInstance(this.src);
+      if (tag == null) {
+        this.playFailed();
+        return -1;
+      }
+      this.duration = this.tag.duration * 1000;
+      tag.addEventListener(HTMLAudioPlugin.AUDIO_ENDED, this.endedHandler, false);
+      &#x2F;&#x2F; Reset this instance.
+      this.offset = offset;
+      this.volume = volume;
+      this.updateVolume();  &#x2F;&#x2F; note this will set for mute and masterMute
+      this.remainingLoops = loop;
+      if (tag.readyState !== 4) {
+        tag.addEventListener(HTMLAudioPlugin.AUDIO_READY, this.readyHandler, false);
+        tag.addEventListener(HTMLAudioPlugin.AUDIO_STALLED, this.stalledHandler, false);
+        tag.load();
+      } else {
+        this.handleSoundReady(null);
+      }
+      this.sendEvent(&quot;succeeded&quot;);
+      return 1;
+    },
+
+    &#x2F;&#x2F; Note: Sounds stall when trying to begin playback of a new audio instance when the existing instances
+    &#x2F;&#x2F; has not loaded yet. This doesn&#x27;t mean the sound will not play.
+    handleSoundStalled: function(event) {
+      this.sendEvent(&quot;failed&quot;);
+    },
+
+    handleSoundReady: function(event) {
+      this.playState = Sound.PLAY_SUCCEEDED;
+      this.paused = false;
+      this.tag.removeEventListener(HTMLAudioPlugin.AUDIO_READY, this.readyHandler, false);
+      if (this.offset &gt;= this.getDuration()) {
+        this.playFailed();
+        return;
+      } else if (this.offset &gt; 0) {
+        this.tag.currentTime = this.offset * 0.001;
+      }
+      if (this.remainingLoops == -1) {
+        this.tag.loop = true;
+      }
+      this.tag.play();
+    },
+
+    handleSoundComplete: function(event) {
+      this.offset = 0;
+      if (this.remainingLoops != 0) {
+        this.remainingLoops--;
+        this.tag.play();
+        this.sendEvent(&quot;loop&quot;);
+        return;
+      }
+      this.playState = Sound.PLAY_FINISHED;
+      this.sendEvent(&quot;complete&quot;);
+      this.cleanUp();
+    },
+
+    pause: function() {
+      if (!this.paused &amp;&amp; this.playState == Sound.PLAY_SUCCEEDED &amp;&amp; this.tag != null) {
+        this.paused = true;
+        &#x2F;&#x2F; Note: when paused by user, we hold a reference to our tag. We do not release it until stopped.
+        this.tag.pause();
+        clearTimeout(this.delayTimeoutId);
+        return true;
+      }
+      return false;
+    },
+
+    resume: function() {
+      if (!this.paused || this.tag == null) {
+        return false;
+      }
+      this.paused = false;
+      this.tag.play();
+      return true;
+    },
+
+    stop: function() {
+      this.offset = 0;
+      this.pause();
+      this.playState = Sound.PLAY_FINISHED;
+      this.cleanUp();
+      return true;
+    },
+
+    setVolume: function(value) {
+      if (Number(value) == null) {
+        return false;
+      }
+      value = Math.max(0, Math.min(1, value));
+      this.volume = value;
+      this.updateVolume();
+      return true;
+    },
+
+    setMasterVolume: function(value) {
+      this.updateVolume();
+      return true;
+    },
+
+    setMasterMute: function(isMuted) {
+      this.updateVolume();
+      return true;
+    },
+
+    updateVolume: function() {
+      if (this.tag != null) {
+        var newVolume = (this.muted || Sound.masterMute) ? 0 : this.volume * Sound.masterVolume;
+        if (newVolume != this.tag.volume) {
+          this.tag.volume = newVolume;
+        }
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    setMute: function(isMuted) {
+      if (isMuted == null || isMuted == undefined) {
+        return false
+      }
+      this.muted = isMuted;
+      this.updateVolume();
+      return true;
+    },
+
+    setPan: function(value) {
+      return false; &#x2F;&#x2F; Can not set pan in HTML
+    },
+
+    getPosition: function() {
+      if (this.tag == null) {
+        return this.offset;
+      }
+      return this.tag.currentTime * 1000;
+    },
+
+    setPosition: function(value) {
+      if (this.tag == null) {
+        this.offset = value
+      } else {
+        try {
+          this.tag.currentTime = value * 0.001;
+        } catch (error) { &#x2F;&#x2F; Out of range
+          return false;
+        }
+      }
+      return true;
+    },
+
+    toString: function() {
+      return &quot;[HTMLAudioPlugin SoundInstance]&quot;;
+    }
+  });
+
+  &#x2F;**
+   * An internal helper class that preloads html audio via HTMLAudioElement tags.
+   * Note that this class and its methods are not documented properly to avoid generating HTML documentation.
+   *
+   * @class HTMLAudioLoader
+   * @param {String} src The source of the sound to load.
+   * @param {HTMLAudioElement} tag The audio tag of the sound to load.
+   * @constructor
+   * @private
+   *&#x2F;
+  var HTMLAudioLoader = xc.class.create({
+    _init: function(src, tag) {
+      this.src = src;
+      this.tag = tag;
+      this.preloadTimer = setInterval(Sound.proxy(this.preloadTick, this), 200);
+      &#x2F;&#x2F; This will tell us when audio is buffered enough to play through, but not when its loaded.
+      &#x2F;&#x2F; The tag doesn&#x27;t keep loading in Chrome once enough has buffered, and we have decided that behaviour is sufficient.
+      &#x2F;&#x2F; Note that canplaythrough callback doesn&#x27;t work in Chrome, we have to use the event.
+      this.loadedHandler = Sound.proxy(this.sendLoadedEvent, this);  &#x2F;&#x2F; we need this bind to be able to remove event listeners
+      this.tag.addEventListener &amp;&amp; this.tag.addEventListener(&quot;canplaythrough&quot;, this.loadedHandler);
+      this.tag.onreadystatechange = Sound.proxy(this.sendLoadedEvent, this);
+      this.tag.preload = &quot;auto&quot;;
+      this.tag.src = src;
+      this.tag.load();
+    },
+
+    &#x2F;**
+     * The source to be loaded.
+     *
+     * @property src
+     * @type {String}
+     * @default null
+     * @protected
+     *&#x2F;
+    src: null,
+
+    &#x2F;**
+     * The tag to load the source with &#x2F; into.
+     *
+     * @property tag
+     * @type {AudioTag}
+     * @default null
+     * @protected
+     *&#x2F;
+    tag: null,
+
+    &#x2F;**
+     * An intervale used to give us progress.
+     *
+     * @property preloadTimer
+     * @type {String}
+     * @default null
+     * @protected
+     *&#x2F;
+    preloadTimer: null,
+
+    &#x2F;&#x2F; Proxies, make removing listeners easier.
+    loadedHandler: null,
+
+    &#x2F;**
+     * Allows us to have preloading progress and tell when its done.
+     *
+     * @method preloadTick
+     * @protected
+     *&#x2F;
+    preloadTick: function() {
+      var buffered = this.tag.buffered;
+      var duration = this.tag.duration;
+      if (buffered.length &gt; 0) {
+        if (buffered.end(0) &gt;= duration - 1) {
+          this.handleTagLoaded();
+        }
+      }
+    },
+
+    &#x2F;**
+     * Internal handler for when a tag is loaded.
+     *
+     * @method handleTagLoaded
+     * @protected
+     *&#x2F;
+    handleTagLoaded: function() {
+      clearInterval(this.preloadTimer);
+    },
+
+    &#x2F;**
+     * Communicates back to Sound that a load is complete.
+     *
+     * @method sendLoadedEvent
+     * @param {Object} evt The load Event
+     *&#x2F;
+    sendLoadedEvent: function(evt) {
+      this.tag.removeEventListener &amp;&amp; this.tag.removeEventListener(&quot;canplaythrough&quot;, this.loadedHandler);  &#x2F;&#x2F; cleanup and so we don&#x27;t send the event more than once
+      this.tag.onreadystatechange = null;  &#x2F;&#x2F; cleanup and so we don&#x27;t send the event more than once
+      Sound.sendLoadComplete(this.src);  &#x2F;&#x2F; fire event or callback on Sound
+    },
+
+    toString: function() {
+      return &quot;[HTMLAudioPlugin HTMLAudioLoader]&quot;;
+    }
+  });
+
+  &#x2F;**
+   * Play sounds using HTML &amp;lt;audio&amp;gt; tags in the browser. This plugin is the second priority plugin installed
+   * by default, after the {{#crossLink &quot;WebAudioPlugin&quot;}}{{&#x2F;crossLink}}, which is supported on Chrome, Safari, and
+   * iOS. This handles audio in all other modern browsers.
+   *
+   * &lt;h4&gt;Known Browser and OS issues for HTML Audio&lt;&#x2F;h4&gt;
+   * &lt;b&gt;All browsers&lt;&#x2F;b&gt;&lt;br&#x2F;&gt;
+   * Testing has shown in all browsers there is a limit to how many audio tag instances you are allowed. If you exceed
+   * this limit, you can expect to see unpredictable results. This will be seen as soon as you register sounds, as
+   * tags are precreated to all Chrome to load them. Please use {{#crossLink &quot;Sound.MAX_INSTANCES&quot;}}{{&#x2F;crossLink}} as
+   * a guide to how many total audio tags you can safely use in all browsers.
+   *
+   * &lt;b&gt;IE 9 html audio quirk&lt;&#x2F;b&gt;&lt;br&#x2F;&gt;
+   * Note in IE 9 there is a delay in applying volume changes to tags that occurs once playback is started. So if you have
+   * muted all sounds, they will all play during this delay until the mute applies internally. This happens regardless of
+   * when or how you apply the volume change, as the tag seems to need to play to apply it.
+   *
+   * &lt;b&gt;iOS 6 limitations&lt;&#x2F;b&gt;&lt;br&#x2F;&gt;
+   * Note it is recommended to use {{#crossLink &quot;WebAudioPlugin&quot;}}{{&#x2F;crossLink}} for iOS (6+). HTML Audio can only
+   * have one &amp;lt;audio&amp;gt; tag, can not preload or autoplay the audio, can not cache the audio, and can not play the
+   * audio except inside a user initiated event.
+   *
+   * &lt;b&gt;Android limitations&lt;&#x2F;b&gt;&lt;br&#x2F;&gt;
+   * &lt;ul&gt;
+   *  &lt;li&gt;We have no control over audio volume. Only the user can set volume on their device.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;We can only play audio inside a user event (touch).  This currently means you cannot loop sound.&lt;&#x2F;li&gt;
+   * &lt;&#x2F;ul&gt;
+   *
+   * See {{#crossLink &quot;Sound&quot;}}{{&#x2F;crossLink}} for general notes on known issues.
+   *
+   * @class HTMLAudioPlugin
+   * @constructor
+   *&#x2F;
+  var HTMLAudioPlugin = xc.class.create({
+    _init: function() {
+      this.capabilities = HTMLAudioPlugin.capabilities;
+      this.audioSources = {};
+    },
+
+    &#x2F;**
+     * The capabilities of the plugin, created by the {{#crossLink &quot;HTMLAudioPlugin&#x2F;generateCapabilities&quot;}}{{&#x2F;crossLink}}
+     * method.
+     *
+     * @property capabilities
+     * @type Object
+     * @protected
+     *&#x2F;
+    capabilities: null,
+
+    &#x2F;**
+     * Object hash indexed by the source of each file to indicate if an audio source is loaded, or loading.
+     *
+     * @property audioSources
+     * @type {Object}
+     * @protected
+     *&#x2F;
+    audioSources: null,
+
+    &#x2F;**
+     * The default number of instances to allow. Passed back to {{#crossLink &quot;Sound&quot;}}{{&#x2F;crossLink}} when a source
+     * is registered using the {{#crossLink &quot;Sound&#x2F;register&quot;}}{{&#x2F;crossLink}} method. This is only used if
+     * a value is not provided.
+     *
+     * &lt;b&gt;NOTE this only exists as a limitation of HTML audio.&lt;&#x2F;b&gt;
+     *
+     * @property defaultNumChannels
+     * @type {Number}
+     * @default 2
+     *&#x2F;
+    defaultNumChannels: 2,
+
+    &#x2F;**
+     * Pre-register a sound instance when setup. This is called by {{#crossLink &quot;Sound&quot;}}{{&#x2F;crossLink}}.
+     *
+     * @method register
+     * @param {String} src The source of the audio
+     * @param {Number} instances The number of concurrently playing instances to allow for the channel at any time.
+     * @return {Object} A result object, containing a tag for preloading purposes and a numChannels value for internally
+     *  controlling how many instances of a source can be played by default.
+     *&#x2F;
+    register: function(src, instances) {
+      this.audioSources[src] = true;  &#x2F;&#x2F; Note this does not mean preloading has started
+      var channel = TagPool.get(src);
+      var tag = null;
+      var l = instances || this.defaultNumChannels;
+      for (var i = 0; i &lt; l; i++) {
+        tag = this.createTag(src);
+        channel.add(tag);
+      }
+      return {
+        tag: tag, &#x2F;&#x2F; Return one instance for preloading purposes
+        numChannels: l  &#x2F;&#x2F; The default number of channels to make for this Sound or the passed in value
+      };
+    },
+
+    &#x2F;**
+     * Create an HTML audio tag.
+     *
+     * @method createTag
+     * @param {String} src The source file to set for the audio tag.
+     * @return {HTMLElement} Returns an HTML audio tag.
+     * @protected
+     *&#x2F;
+    createTag: function(src) {
+      var tag = document.createElement(&quot;audio&quot;);
+      tag.autoplay = false;
+      tag.preload = &quot;none&quot;;
+      tag.src = src;
+      return tag;
+    },
+
+    &#x2F;**
+     * Create a sound instance. If the sound has not been preloaded, it is internally preloaded here.
+     *
+     * @method create
+     * @param {String} src The sound source to use.
+     * @return {SoundInstance} A sound instance for playback and control.
+     *&#x2F;
+    create: function(src) {
+      &#x2F;&#x2F; if this sound has not be registered, create a tag and preload it
+      if (!this.isPreloadStarted(src)) {
+        var channel = TagPool.get(src);
+        var tag = this.createTag(src);
+        channel.add(tag);
+        this.preload(src, {tag: tag});
+      }
+      return new HTMLAudioSoundInstance(src, this);
+    },
+
+    &#x2F;**
+     * Checks if preloading has started for a specific source.
+     *
+     * @method isPreloadStarted
+     * @param {String} src The sound URI to check.
+     * @return {Boolean} If the preload has started.
+     *&#x2F;
+    isPreloadStarted: function(src) {
+      return (this.audioSources[src] != null);
+    },
+
+    &#x2F;**
+     * Internally preload a sound.
+     * @method preload
+     * @param {String} src The sound URI to load.
+     * @param {Object} instance An object containing a tag property that is an HTML audio tag used to load src.
+     *&#x2F;
+    preload: function(src, instance) {
+      this.audioSources[src] = true;
+      new HTMLAudioLoader(src, instance.tag);
+    },
+
+    toString: function() {
+      return &quot;[HTMLAudioPlugin]&quot;;
+    }
+  });
+
+  &#x2F;**
+   * The maximum number of instances that can be played. This is a browser limitation. The actual number varies from
+   * browser to browser (and is largely hardware dependant), but this is a safe estimate.
+   *
+   * @property MAX_INSTANCES
+   * @type {Number}
+   * @default 30
+   * @static
+   *&#x2F;
+  HTMLAudioPlugin.MAX_INSTANCES = 30;
+
+  &#x2F;**
+   * The capabilities of the plugin. This is generated via the the SoundInstance {{#crossLink &quot;HTMLAudioPlugin&#x2F;generateCapabilities&quot;}}{{&#x2F;crossLink}}
+   * method. Please see the Sound {{#crossLink &quot;Sound&#x2F;getCapabilities&quot;}}{{&#x2F;crossLink}} method for an overview of all
+   * of the available properties.
+   *
+   * @property capabilities
+   * @type {Object}
+   * @static
+   *&#x2F;
+  HTMLAudioPlugin.capabilities = null;
+
+  &#x2F;**
+   * Event constant for the &quot;canPlayThrough&quot; event for cleaner code.
+   *
+   * @property AUDIO_READY
+   * @type {String}
+   * @default canplaythrough
+   * @static
+   *&#x2F;
+  HTMLAudioPlugin.AUDIO_READY = &quot;canplaythrough&quot;;
+
+  &#x2F;**
+   * Event constant for the &quot;ended&quot; event for cleaner code.
+   *
+   * @property AUDIO_ENDED
+   * @type {String}
+   * @default ended
+   * @static
+   *&#x2F;
+  HTMLAudioPlugin.AUDIO_ENDED = &quot;ended&quot;;
+
+  &#x2F;**
+   * Event constant for the &quot;error&quot; event for cleaner code.
+   *
+   * @property AUDIO_ERROR
+   * @type {String}
+   * @default error
+   * @static
+   *&#x2F;
+  HTMLAudioPlugin.AUDIO_ERROR = &quot;error&quot;; &#x2F;&#x2F;TODO: Handle error cases
+
+  &#x2F;**
+   * Event constant for the &quot;stalled&quot; event for cleaner code.
+   *
+   * @property AUDIO_STALLED
+   * @type {String}
+   * @default stalled
+   * @static
+   *&#x2F;
+  HTMLAudioPlugin.AUDIO_STALLED = &quot;stalled&quot;;
+
+  &#x2F;**
+   * Determine if the plugin can be used in the current browser&#x2F;OS. Note that HTML audio is available in most modern
+   * browsers except iOS, where it is limited.
+   *
+   * @method isSupported
+   * @return {Boolean} If the plugin can be initialized.
+   * @static
+   *&#x2F;
+  HTMLAudioPlugin.isSupported = function() {
+    &#x2F;&#x2F; You can enable this plugin on iOS by removing this line, but it is not recommended due to the limitations:
+    &#x2F;&#x2F; iOS can only have a single &lt;audio&gt; instance, cannot preload or autoplay, cannot cache sound, and can only be
+    &#x2F;&#x2F; played in response to a user event (click)
+    HTMLAudioPlugin.generateCapabilities();
+    if (HTMLAudioPlugin.capabilities == null) {
+      return false;
+    }
+    return true;
+  };
+
+  &#x2F;**
+   * Determine the capabilities of the plugin. Used internally. Please see the Sound API {{#crossLink &quot;Sound&#x2F;getCapabilities&quot;}}{{&#x2F;crossLink}}
+   * method for an overview of plugin capabilities.
+   *
+   * @method generateCapabiities
+   * @static
+   * @protected
+   *&#x2F;
+  HTMLAudioPlugin.generateCapabilities = function() {
+    if (HTMLAudioPlugin.capabilities != null) {
+      return;
+    }
+    var t = document.createElement(&quot;audio&quot;);
+    if (t.canPlayType == null) {
+      return;
+    }
+    HTMLAudioPlugin.capabilities = {
+      panning: true,
+      volume: true,
+      tracks: -1
+    };
+    &#x2F;&#x2F; determine which extensions our browser supports for this plugin by iterating through Sound.SUPPORTED_EXTENSIONS
+    var supportedExtensions = Sound.SUPPORTED_EXTENSIONS;
+    var extensionMap = Sound.EXTENSION_MAP;
+    for (var i = 0, l = supportedExtensions.length; i &lt; l; i++) {
+      var ext = supportedExtensions[i];
+      var playType = extensionMap[ext] || ext;
+      HTMLAudioPlugin.capabilities[ext] = (t.canPlayType(&quot;audio&#x2F;&quot; + ext) != &quot;no&quot; &amp;&amp; t.canPlayType(&quot;audio&#x2F;&quot; + ext) != &quot;&quot;) || (t.canPlayType(&quot;audio&#x2F;&quot; + playType) != &quot;no&quot; &amp;&amp; t.canPlayType(&quot;audio&#x2F;&quot; + playType) != &quot;&quot;);
+    }
+  }
+
+  return HTMLAudioPlugin;
+
+});
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="..&#x2F;assets/js/yui-prettify.js"></script>
+<script src="..&#x2F;assets/../api.js"></script>
+<script src="..&#x2F;assets/js/api-filter.js"></script>
+<script src="..&#x2F;assets/js/api-list.js"></script>
+<script src="..&#x2F;assets/js/api-search.js"></script>
+<script src="..&#x2F;assets/js/apidocs.js"></script>
+</body>
+</html>

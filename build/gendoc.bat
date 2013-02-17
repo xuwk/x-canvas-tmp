@@ -1,0 +1,1 @@
+yuidoc -q --themedir ./theme

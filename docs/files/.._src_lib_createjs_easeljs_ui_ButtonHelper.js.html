@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.8.0pr2&#x2F;build&#x2F;cssgrids&#x2F;cssgrids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="..&#x2F;assets/EaselJS_16x16.png">
+    <script src="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;combo?3.8.0pr2&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+	<title>xc v0.1.0 API Documentation : ..\src\lib\createjs\easeljs\ui\ButtonHelper.js</title>  
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><a href="http:&#x2F;&#x2F;www.createjs.com&#x2F;#!&#x2F;EaselJS"><img src="http:&#x2F;&#x2F;createjs.com&#x2F;resources&#x2F;SuiteIcons&#x2F;EaselJS&#x2F;docs-icon-EaselJS.png" title="xc"></a></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Documentation for: 0.1.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="..&#x2F;classes/AlphaMapFilter.html">AlphaMapFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/AlphaMaskFilter.html">AlphaMaskFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/Bitmap.html">Bitmap</a></li>
+            
+                <li><a href="..&#x2F;classes/BitmapAnimation.html">BitmapAnimation</a></li>
+            
+                <li><a href="..&#x2F;classes/BoxBlurFilter.html">BoxBlurFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/ColorFilter.html">ColorFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/ColorMatrix.html">ColorMatrix</a></li>
+            
+                <li><a href="..&#x2F;classes/ColorMatrixFilter.html">ColorMatrixFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/Command.html">Command</a></li>
+            
+                <li><a href="..&#x2F;classes/Container.html">Container</a></li>
+            
+                <li><a href="..&#x2F;classes/CSSPlugin.html">CSSPlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/DisplayObject.html">DisplayObject</a></li>
+            
+                <li><a href="..&#x2F;classes/Ease.html">Ease</a></li>
+            
+                <li><a href="..&#x2F;classes/EventDispatcher.html">EventDispatcher</a></li>
+            
+                <li><a href="..&#x2F;classes/Filter.html">Filter</a></li>
+            
+                <li><a href="..&#x2F;classes/Graphics.html">Graphics</a></li>
+            
+                <li><a href="..&#x2F;classes/HTMLAudioLoader.html">HTMLAudioLoader</a></li>
+            
+                <li><a href="..&#x2F;classes/HTMLAudioPlugin.html">HTMLAudioPlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/Log.html">Log</a></li>
+            
+                <li><a href="..&#x2F;classes/Matrix2D.html">Matrix2D</a></li>
+            
+                <li><a href="..&#x2F;classes/MotionGuidePlugin.html">MotionGuidePlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/MouseEvent.html">MouseEvent</a></li>
+            
+                <li><a href="..&#x2F;classes/MovieClip.html">MovieClip</a></li>
+            
+                <li><a href="..&#x2F;classes/MovieClipPlugin.html">MovieClipPlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/Point.html">Point</a></li>
+            
+                <li><a href="..&#x2F;classes/Rectangle.html">Rectangle</a></li>
+            
+                <li><a href="..&#x2F;classes/Shadow.html">Shadow</a></li>
+            
+                <li><a href="..&#x2F;classes/Shape.html">Shape</a></li>
+            
+                <li><a href="..&#x2F;classes/Sound.html">Sound</a></li>
+            
+                <li><a href="..&#x2F;classes/SoundChannel.html">SoundChannel</a></li>
+            
+                <li><a href="..&#x2F;classes/SoundInstance.html">SoundInstance</a></li>
+            
+                <li><a href="..&#x2F;classes/SpriteSheet.html">SpriteSheet</a></li>
+            
+                <li><a href="..&#x2F;classes/SpriteSheetBuilder.html">SpriteSheetBuilder</a></li>
+            
+                <li><a href="..&#x2F;classes/SpriteSheetUtils.html">SpriteSheetUtils</a></li>
+            
+                <li><a href="..&#x2F;classes/Stage.html">Stage</a></li>
+            
+                <li><a href="..&#x2F;classes/TagPool.html">TagPool</a></li>
+            
+                <li><a href="..&#x2F;classes/Text.html">Text</a></li>
+            
+                <li><a href="..&#x2F;classes/Ticker.html">Ticker</a></li>
+            
+                <li><a href="..&#x2F;classes/Timeline.html">Timeline</a></li>
+            
+                <li><a href="..&#x2F;classes/Touch.html">Touch</a></li>
+            
+                <li><a href="..&#x2F;classes/Tween.html">Tween</a></li>
+            
+                <li><a href="..&#x2F;classes/UID.html">UID</a></li>
+            
+                <li><a href="..&#x2F;classes/WebAudioLoader.html">WebAudioLoader</a></li>
+            
+                <li><a href="..&#x2F;classes/WebAudioPlugin.html">WebAudioPlugin</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="..&#x2F;modules/xc.html">xc</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.core.html">xc.core</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.html">xc.createjs</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.easeljs.html">xc.createjs.easeljs</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.soundjs.html">xc.createjs.soundjs</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.tweenjs.html">xc.createjs.tweenjs</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <script>
+	var name = ..\src\lib\createjs\easeljs\ui\ButtonHelper.js      
+</script>
+<h1 class="file-heading">File:..\src\lib\createjs\easeljs\ui\ButtonHelper.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+xc.module.define(&quot;xc.createjs.ButtonHelper&quot;, function(exports) {
+
+  &#x2F;**
+   * The ButtonHelper is a helper class to create interactive buttons from {{#crossLink &quot;MovieClip&quot;}}{{&#x2F;crossLink}} or
+   * {{#crossLink &quot;BitmapAnimation&quot;}}{{&#x2F;crossLink}} instances. This class will intercept mouse events from an object, and
+   * automatically call {{#crossLink &quot;BitmapAnimation&#x2F;gotoAndStop&quot;}}{{&#x2F;crossLink}} or {{#crossLink &quot;BitmapAnimation&#x2F;gotoAndPlay&quot;}}{{&#x2F;crossLink}},
+   * to the respective animation labels, add a pointer cursor, and allows the user to define a hit state frame.
+   *
+   * The ButtonHelper instance does not need to be added to the stage, but a reference should be maintained to prevent
+   * garbage collection.
+   *
+   * &lt;h4&gt;Example&lt;&#x2F;h4&gt;
+   *     var helper = new ButtonHelper(myInstance, &quot;out&quot;, &quot;over&quot;, &quot;down&quot;, false, myInstance, &quot;hit&quot;);
+   *
+   * @param {BitmapAnimation|MovieClip} target The instance to manage.
+   * @param {String} [outLabel=&quot;out&quot;] The label or animation to go to when the user rolls out of the button.
+   * @param {String} [overLabel=&quot;over&quot;] The label or animation to go to when the user rolls over the button.
+   * @param {String} [downLabel=&quot;down&quot;] The label or animation to go to when the user presses the button.
+   * @param {Boolean} [play=false] If the helper should call &quot;gotoAndPlay&quot; or &quot;gotoAndStop&quot; on the button when changing
+   *  states.
+   * @param {DisplayObject} [hitArea] An optional item to use as the hit state for the button. If this is not defined,
+   *  then the button&#x27;s visible states will be used instead. Note that the same instance as the &quot;target&quot; argument can be
+   *  used for the hitState.
+   * @param {String} [hitLabel] The label or animation on the hitArea instance that defines the hitArea bounds. If this is
+   *  null, then the default state of the hitArea will be used.
+   * @constructor
+   *&#x2F;
+  var ButtonHelper = xc.class.create({
+    _init: function(target, outLabel, overLabel, downLabel, play, hitArea, hitLabel) {
+      if (!target.addEventListener) { return; }
+      this.target = target;
+      target.cursor = &quot;pointer&quot;;
+      this.overLabel = overLabel == null ? &quot;over&quot; : overLabel;
+      this.outLabel = outLabel == null ? &quot;out&quot; : outLabel;
+      this.downLabel = downLabel == null ? &quot;down&quot; : downLabel;
+      this.play = play;
+      this.setEnabled(true);
+      this.handleEvent({});
+      if (hitArea) {
+        if (hitLabel) {
+          hitArea.actionsEnabled = false;
+          hitArea.gotoAndStop &amp;&amp; hitArea.gotoAndStop(hitLabel);
+        }
+        target.hitArea = hitArea;
+      }
+    },
+
+    &#x2F;**
+     * Read-only. The target for this button helper.
+     *
+     * @property target
+     * @type MovieClip | BitmapAnimation
+     *&#x2F;
+    target: null,
+
+    &#x2F;**
+     * The label name or frame number to display when the user mouses out of the target. Defaults to &quot;over&quot;.
+     *
+     * @property overLabel
+     * @type String | Number
+     *&#x2F;
+    overLabel: null,
+
+    &#x2F;**
+     * The label name or frame number to display when the user mouses over the target. Defaults to &quot;out&quot;.
+     *
+     * @property outLabel
+     * @type String | Number
+     *&#x2F;
+    outLabel: null,
+
+    &#x2F;**
+     * The label name or frame number to display when the user presses on the target. Defaults to &quot;down&quot;.
+     *
+     * @property downLabel
+     * @type String | Number
+     *&#x2F;
+    downLabel: null,
+
+    &#x2F;**
+     * If true, then ButtonHelper will call gotoAndPlay, if false, it will use gotoAndStop. Default is false.
+     *
+     * @property play
+     * @default false
+     * @type Boolean
+     *&#x2F;
+    play: false,
+
+    &#x2F;**
+     * @property _isPressed
+     * @type Boolean
+     * @protected
+     *&#x2F;
+    _isPressed: false,
+
+    &#x2F;**
+     * @property _isPressed
+     * @type Boolean
+     * @protected
+     *&#x2F;
+    _isOver: false,
+
+    &#x2F;**
+     * Enables or disables the button functionality on the target.
+     *
+     * @method setEnabled
+     * @param {Boolean} value
+     *&#x2F;
+    setEnabled: function(value) {
+      var o = this.target;
+      if (value) {
+        o.addEventListener(&quot;mouseover&quot;, this);
+        o.addEventListener(&quot;mouseout&quot;, this);
+        o.addEventListener(&quot;mousedown&quot;, this);
+      } else {
+        o.removeEventListener(&quot;mouseover&quot;, this);
+        o.removeEventListener(&quot;mouseout&quot;, this);
+        o.removeEventListener(&quot;mousedown&quot;, this);
+      }
+    },
+
+    &#x2F;**
+     * Returns a string representation of this object.
+     *
+     * @method toString
+     * @return {String} a string representation of the instance.
+     *&#x2F;
+    toString: function() {
+      return &quot;[ButtonHelper]&quot;;
+    },
+
+    &#x2F;**
+     * @method handleEvent
+     * @protected
+     *&#x2F;
+    handleEvent: function(evt) {
+      var label, t = this.target, type = evt.type;
+      if (type == &quot;mousedown&quot;) {
+        evt.addEventListener(&quot;mouseup&quot;, this);
+        this._isPressed = true;
+        label = this.downLabel;
+      } else if (type == &quot;mouseup&quot;) {
+        this._isPressed = false;
+        label = this._isOver ? this.overLabel : this.outLabel;
+      } else if (type == &quot;mouseover&quot;) {
+        this._isOver = true;
+        label = this._isPressed ? this.downLabel : this.overLabel;
+      } else { &#x2F;&#x2F; mouseout and default
+        this._isOver = false;
+        label = this._isPressed ? this.overLabel : this.outLabel;
+      }
+      if (this.play) {
+        t.gotoAndPlay &amp;&amp; t.gotoAndPlay(label);
+      } else {
+        t.gotoAndStop &amp;&amp; t.gotoAndStop(label);
+      }
+    }
+  });
+
+  return ButtonHelper;
+
+});
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="..&#x2F;assets/js/yui-prettify.js"></script>
+<script src="..&#x2F;assets/../api.js"></script>
+<script src="..&#x2F;assets/js/api-filter.js"></script>
+<script src="..&#x2F;assets/js/api-list.js"></script>
+<script src="..&#x2F;assets/js/api-search.js"></script>
+<script src="..&#x2F;assets/js/apidocs.js"></script>
+</body>
+</html>

@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.8.0pr2&#x2F;build&#x2F;cssgrids&#x2F;cssgrids-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="..&#x2F;assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="..&#x2F;assets/EaselJS_16x16.png">
+    <script src="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;combo?3.8.0pr2&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
+	<title>xc v0.1.0 API Documentation : ..\src\lib\createjs\soundjs\Sound.js</title>  
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><a href="http:&#x2F;&#x2F;www.createjs.com&#x2F;#!&#x2F;EaselJS"><img src="http:&#x2F;&#x2F;createjs.com&#x2F;resources&#x2F;SuiteIcons&#x2F;EaselJS&#x2F;docs-icon-EaselJS.png" title="xc"></a></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Documentation for: 0.1.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="..&#x2F;classes/AlphaMapFilter.html">AlphaMapFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/AlphaMaskFilter.html">AlphaMaskFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/Bitmap.html">Bitmap</a></li>
+            
+                <li><a href="..&#x2F;classes/BitmapAnimation.html">BitmapAnimation</a></li>
+            
+                <li><a href="..&#x2F;classes/BoxBlurFilter.html">BoxBlurFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/ColorFilter.html">ColorFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/ColorMatrix.html">ColorMatrix</a></li>
+            
+                <li><a href="..&#x2F;classes/ColorMatrixFilter.html">ColorMatrixFilter</a></li>
+            
+                <li><a href="..&#x2F;classes/Command.html">Command</a></li>
+            
+                <li><a href="..&#x2F;classes/Container.html">Container</a></li>
+            
+                <li><a href="..&#x2F;classes/CSSPlugin.html">CSSPlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/DisplayObject.html">DisplayObject</a></li>
+            
+                <li><a href="..&#x2F;classes/Ease.html">Ease</a></li>
+            
+                <li><a href="..&#x2F;classes/EventDispatcher.html">EventDispatcher</a></li>
+            
+                <li><a href="..&#x2F;classes/Filter.html">Filter</a></li>
+            
+                <li><a href="..&#x2F;classes/Graphics.html">Graphics</a></li>
+            
+                <li><a href="..&#x2F;classes/HTMLAudioLoader.html">HTMLAudioLoader</a></li>
+            
+                <li><a href="..&#x2F;classes/HTMLAudioPlugin.html">HTMLAudioPlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/Log.html">Log</a></li>
+            
+                <li><a href="..&#x2F;classes/Matrix2D.html">Matrix2D</a></li>
+            
+                <li><a href="..&#x2F;classes/MotionGuidePlugin.html">MotionGuidePlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/MouseEvent.html">MouseEvent</a></li>
+            
+                <li><a href="..&#x2F;classes/MovieClip.html">MovieClip</a></li>
+            
+                <li><a href="..&#x2F;classes/MovieClipPlugin.html">MovieClipPlugin</a></li>
+            
+                <li><a href="..&#x2F;classes/Point.html">Point</a></li>
+            
+                <li><a href="..&#x2F;classes/Rectangle.html">Rectangle</a></li>
+            
+                <li><a href="..&#x2F;classes/Shadow.html">Shadow</a></li>
+            
+                <li><a href="..&#x2F;classes/Shape.html">Shape</a></li>
+            
+                <li><a href="..&#x2F;classes/Sound.html">Sound</a></li>
+            
+                <li><a href="..&#x2F;classes/SoundChannel.html">SoundChannel</a></li>
+            
+                <li><a href="..&#x2F;classes/SoundInstance.html">SoundInstance</a></li>
+            
+                <li><a href="..&#x2F;classes/SpriteSheet.html">SpriteSheet</a></li>
+            
+                <li><a href="..&#x2F;classes/SpriteSheetBuilder.html">SpriteSheetBuilder</a></li>
+            
+                <li><a href="..&#x2F;classes/SpriteSheetUtils.html">SpriteSheetUtils</a></li>
+            
+                <li><a href="..&#x2F;classes/Stage.html">Stage</a></li>
+            
+                <li><a href="..&#x2F;classes/TagPool.html">TagPool</a></li>
+            
+                <li><a href="..&#x2F;classes/Text.html">Text</a></li>
+            
+                <li><a href="..&#x2F;classes/Ticker.html">Ticker</a></li>
+            
+                <li><a href="..&#x2F;classes/Timeline.html">Timeline</a></li>
+            
+                <li><a href="..&#x2F;classes/Touch.html">Touch</a></li>
+            
+                <li><a href="..&#x2F;classes/Tween.html">Tween</a></li>
+            
+                <li><a href="..&#x2F;classes/UID.html">UID</a></li>
+            
+                <li><a href="..&#x2F;classes/WebAudioLoader.html">WebAudioLoader</a></li>
+            
+                <li><a href="..&#x2F;classes/WebAudioPlugin.html">WebAudioPlugin</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="..&#x2F;modules/xc.html">xc</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.core.html">xc.core</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.html">xc.createjs</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.easeljs.html">xc.createjs.easeljs</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.soundjs.html">xc.createjs.soundjs</a></li>
+            
+                <li><a href="..&#x2F;modules/xc.createjs.tweenjs.html">xc.createjs.tweenjs</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+            <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <script>
+	var name = ..\src\lib\createjs\soundjs\Sound.js      
+</script>
+<h1 class="file-heading">File:..\src\lib\createjs\soundjs\Sound.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+xc.module.define(&quot;xc.createjs.Sound&quot;, function(exports) {
+
+  var EventDispatcher = xc.module.require(&quot;xc.createjs.EventDispatcher&quot;);
+
+  &#x2F;**
+   * The Sound class is the public API for creating sounds, controlling the overall sound levels, and managing plugins.
+   * All Sound APIs on this class are static.
+   *
+   * &lt;b&gt;Registering&lt;&#x2F;b&gt;&lt;br&#x2F;&gt;
+   * Before you can play a sound, it &lt;b&gt;must&lt;&#x2F;b&gt; be registered. You can do this with {{#crossLink &quot;Sound&#x2F;registerSound&quot;}}{{&#x2F;crossLink}},
+   * or register multiple sounds using {{#crossLink &quot;Sound&#x2F;registerManifest&quot;}}{{&#x2F;crossLink}}. If you don&#x27;t register
+   * them immediately, they will be automatically registered if you try and play a sound using {{#crossLink &quot;Sound&#x2F;play&quot;}}{{&#x2F;crossLink}},
+   * or if you create a stopped sound using {{#crossLink &quot;Sound&#x2F;createInstance&quot;}}{{&#x2F;crossLink}}.
+   *
+   * &lt;b&gt;Playback&lt;&#x2F;b&gt;&lt;br&#x2F;&gt;
+   * To play a sound once its been registered, use the {{#crossLink &quot;Sound&#x2F;play&quot;}}{{&#x2F;crossLink}} method.
+   * This method returns a {{#crossLink &quot;SoundInstance&quot;}}{{&#x2F;crossLink}} which can be paused, resumed, muted, etc.
+   * Please see the {{#crossLink &quot;SoundInstance&quot;}}{{&#x2F;crossLink}} documentation for more on the instance control APIs.
+   *
+   * &lt;b&gt;Plugins&lt;&#x2F;b&gt;&lt;br&#x2F;&gt;
+   * By default, the {{#crossLink &quot;WebAudioPlugin&quot;}}{{&#x2F;crossLink}} or the {{#crossLink &quot;HTMLAudioPlugin&quot;}}{{&#x2F;crossLink}}
+   * are used (when available), although developers can change plugin priority or add new plugins.
+   * Please see the {{#crossLink &quot;Sound&quot;}}{{&#x2F;crossLink}} API methods for more on the playback and plugin APIs.
+   * To install plugins, or specify a different plugin order, see {{#crossLink &quot;Sound&#x2F;installPlugins&quot;}}{{&#x2F;crossLink}}.
+   *
+   * &lt;h4&gt;Example&lt;&#x2F;h4&gt;
+   *     Sound.registerPlugins([WebAudioPlugin, HTMLAudioPlugin]);
+   *     Sound.addEventListener(&quot;loadComplete&quot;, Sound.proxy(this.loadHandler, (this)));
+   *     Sound.registerSound(&quot;path&#x2F;to&#x2F;mySound.mp3|path&#x2F;to&#x2F;mySound.ogg&quot;, &quot;sound&quot;);
+   *     function loadHandler(event) {
+   *         &#x2F;&#x2F; This is fired for each sound that is registered.
+   *         var instance = Sound.play(&quot;sound&quot;);  &#x2F;&#x2F; play using id. Could also use source.
+   *         instance.addEventListener(&quot;playComplete&quot;, Sound.proxy(this.handleComplete, this));
+   *         instance.setVolume(0.5);
+	 *     }
+   *
+   * The maximum number of concurrently playing instances of the same sound can be specified in the &quot;data&quot; argument
+   * of {{#crossLink &quot;Sound&#x2F;registerSound&quot;}}{{&#x2F;crossLink}}.
+   *
+   *      Sound.registerSound(&quot;sound.mp3&quot;, &quot;soundId&quot;, 4);
+   *
+   * &lt;h4&gt;Known Browser and OS issues&lt;&#x2F;h4&gt;
+   * &lt;b&gt;IE 9 html audio quirk&lt;&#x2F;b&gt;&lt;br&#x2F;&gt;
+   * Note in IE 9 there is a delay in applying volume changes to tags that occurs once playback is started. So if you have
+   * muted all sounds, they will all play during this delay until the mute applies internally. This happens regardless of
+   * when or how you apply the volume change, as the tag seems to need to play to apply it.
+   *
+   * &lt;b&gt;iOS 6 limitations&lt;&#x2F;b&gt;&lt;br&#x2F;&gt;
+   * &lt;ul&gt;
+   *  &lt;li&gt;Sound is initially muted and will only unmute through play being called inside a user initiated event (touch).&lt;&#x2F;li&gt;
+   *  &lt;li&gt;Despite suggestions to the opposite, we have control over audio volume through our gain nodes.&lt;&#x2F;li&gt;
+   * &lt;&#x2F;ul&gt;
+   * More details: http:&#x2F;&#x2F;stackoverflow.com&#x2F;questions&#x2F;12517000&#x2F;no-sound-on-ios-6-web-audio-api
+   *
+   * &lt;b&gt;Android limitations&lt;&#x2F;b&gt;&lt;br&#x2F;&gt;
+   * &lt;ul&gt;
+   *  &lt;li&gt;We have no control over audio volume. Only the user can set volume on their device.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;We can only play audio inside a user event (touch).  This currently means you cannot loop sound.&lt;&#x2F;li&gt;
+   * &lt;&#x2F;ul&gt;
+   *
+   * @class Sound
+   * @static
+   *&#x2F;
+  var Sound = function() {
+    throw &quot;Sound cannot be instantiated&quot;;
+  }
+
+  &#x2F;**
+   * The character (or characters) that are used to split multiple paths from an audio source.
+   *
+   * @property DELIMITER
+   * @type {String}
+   * @static
+   *&#x2F;
+  Sound.DELIMITER = &quot;|&quot;;
+
+  &#x2F;**
+   * The interrupt value to interrupt the earliest currently playing instance with the same source that progressed the
+   * least distance in the audio track, if the maximum number of instances of the sound are already playing.
+   *
+   * @property INTERRUPT_EARLY
+   * @type {String}
+   * @static
+   *&#x2F;
+  Sound.INTERRUPT_EARLY = &quot;early&quot;;
+
+  &#x2F;**
+   * The interrupt value to interrupt the currently playing instance with the same source that progressed the most
+   * distance in the audio track, if the maximum number of instances of the sound are already playing.
+   *
+   * @property INTERRUPT_LATE
+   * @type {String}
+   * @static
+   *&#x2F;
+  Sound.INTERRUPT_LATE = &quot;late&quot;;
+
+  &#x2F;**
+   * The interrupt value to interrupt no currently playing instances with the same source, if the maximum number of
+   * instances of the sound are already playing.
+   *
+   * @property INTERRUPT_NONE
+   * @type {String}
+   * @static
+   *&#x2F;
+  Sound.INTERRUPT_NONE = &quot;none&quot;;
+
+  &#x2F;**
+   * Defines the playState of an instance that is currently playing or paused.
+   *
+   * @property PLAY_SUCCEEDED
+   * @type {String}
+   * @static
+   *&#x2F;
+  Sound.PLAY_SUCCEEDED = &quot;playSucceeded&quot;;
+
+  &#x2F;**
+   * Defines the playState of an instance that was interrupted by another instance.
+   *
+   * @property PLAY_INTERRUPTED
+   * @type {String}
+   * @static
+   *&#x2F;
+  Sound.PLAY_INTERRUPTED = &quot;playInterrupted&quot;;
+
+  &#x2F;**
+   * Defines the playState of an instance that completed playback.
+   *
+   * @property PLAY_FINISHED
+   * @type {String}
+   * @static
+   *&#x2F;
+  Sound.PLAY_FINISHED = &quot;playFinished&quot;;
+
+  &#x2F;**
+   * Defines the playState of an instance that failed to play. This is usually caused by a lack of available channels
+   * when the interrupt mode was &quot;INTERRUPT_NONE&quot;, the playback stalled, or the sound could not be found.
+   *
+   * @property PLAY_FAILED
+   * @type {String}
+   * @static
+   *&#x2F;
+  Sound.PLAY_FAILED = &quot;playFailed&quot;;
+
+  &#x2F;**
+   * A list of the default supported extensions that Sound will &lt;i&gt;try&lt;&#x2F;i&gt; to play. Plugins will check if the browser
+   * can play these types, so modifying this list before a plugin is initialized will allow the plugins to try and
+   * support additional media types.
+   *
+   * More details on file formats can be found at http:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Audio_file_format. A very detailed
+   * list of file formats can be found &#x2F;&#x2F;http:&#x2F;&#x2F;www.fileinfo.com&#x2F;filetypes&#x2F;audio. A useful list of extensions for a
+   * format can be found at http:&#x2F;&#x2F;html5doctor.com&#x2F;html5-audio-the-state-of-play&#x2F;
+   *
+   * @property SUPPORTED_EXTENSIONS
+   * @type {Array[String]}
+   * @default [&quot;mp3&quot;, &quot;ogg&quot;, &quot;mpeg&quot;, &quot;wav&quot;, &quot;m4a&quot;, &quot;mp4&quot;, &quot;aiff&quot;, &quot;wma&quot;, &quot;mid&quot;]
+   * @static
+   *&#x2F;
+  Sound.SUPPORTED_EXTENSIONS = [&quot;mp3&quot;, &quot;ogg&quot;, &quot;mpeg&quot;, &quot;wav&quot;, &quot;m4a&quot;, &quot;mp4&quot;, &quot;aiff&quot;, &quot;wma&quot;, &quot;mid&quot;];
+
+  &#x2F;**
+   * Some extensions use another type of extension support to play (one of them is a codex).  This allows you to map
+   * that support so plugins can accurately determine if an extension is supported.  Adding to this list can help
+   * plugins determine more accurately if an extension is supported.
+   *
+   * @property EXTENSION_MAP
+   * @type {Object}
+   * @static
+   *&#x2F;
+  Sound.EXTENSION_MAP = {
+    m4a: &quot;mp4&quot;
+  };
+
+  &#x2F;**
+   * The RegExp pattern to use to parse file URIs. This supports simple file names, as well as full domain URIs with
+   * query strings. The resulting match is: protocol:$1 domain:$2 path:$3 file:$4 extension:$5 query string:$6.
+   *
+   * @property FILE_PATTERN
+   * @type {RegExp}
+   * @static
+   * @private
+   *&#x2F;
+  Sound.FILE_PATTERN = &#x2F;(\w+:\&#x2F;{2})?((?:\w+\.){2}\w+)?(\&#x2F;?[\S]+\&#x2F;|\&#x2F;)?([\w\-%\.]+)(?:\.)(\w+)?(\?\S+)?&#x2F;i;
+
+  &#x2F;**
+   * Determines the default behavior for interrupting other currently playing instances with the same source, if the
+   * maximum number of instances of the sound are already playing.  Currently the default is &lt;code&gt;Sound.INTERRUPT_NONE&lt;&#x2F;code&gt;
+   * but this can be set and will change playback behavior accordingly.  This is only used if {{#crossLink &quot;Sound&#x2F;play&quot;}}{{&#x2F;crossLink}}
+   * is called without passing a value for interrupt.
+   *
+   * @property defaultInterruptBehavior
+   * @type {String}
+   * @default none
+   * @static
+   *&#x2F;
+  Sound.defaultInterruptBehavior = Sound.INTERRUPT_NONE;
+
+  &#x2F;**
+   * Used internally to assign unique IDs to each SoundInstance
+   *
+   * @property lastID
+   * @type {Number}
+   * @static
+   * @private
+   *&#x2F;
+  Sound.lastId = 0,
+
+  &#x2F;**
+   * The currently active plugin. If this is null, then no plugin could be initialized. If no plugin was specified,
+   * Sound attempts to apply the default plugins: {{#crossLink &quot;WebAudioPlugin&quot;}}{{&#x2F;crossLink}}, followed by
+   * {{#crossLink &quot;HTMLAudioPlugin&quot;}}{{&#x2F;crossLink}}.
+   *
+   * @property activePlugin
+   * @type {Object}
+   * @static
+   *&#x2F;
+  Sound.activePlugin = null;
+
+  &#x2F;**
+   * Determines if the plugins have been registered. If false, the first call to play() will instantiate the default
+   * plugins ({{#crossLink &quot;WebAudioPlugin&quot;}}{{&#x2F;crossLink}}, followed by {{#crossLink &quot;HTMLAudioPlugin&quot;}}{{&#x2F;crossLink}}).
+   * If plugins have been registered, but none are applicable, then sound playback will fail.
+   *
+   * @property pluginsRegistered
+   * @type {Boolean}
+   * @default false
+   * @static
+   * @private
+   *&#x2F;
+  Sound.pluginsRegistered = false;
+
+  &#x2F;**
+   * The master volume value. Use {{#crossLink &quot;Sound&#x2F;getVolume&quot;}}{{&#x2F;crossLink}} and {{#crossLink &quot;Sound&#x2F;setVolume&quot;}}{{&#x2F;crossLink}}
+   * to modify the volume of all audio.
+   *
+   * @property masterVolume
+   * @type {Number}
+   * @default 1
+   * @private
+   *&#x2F;
+  Sound.masterVolume = 1;
+
+  &#x2F;**
+   * The master mute value for Sound.  This is applies to all sound instances.  This value can be set through
+   * {{#crossLink &quot;Sound&#x2F;setMute&quot;}}{{&#x2F;crossLink}} and accessed via {{#crossLink &quot;Sound&#x2F;getMute&quot;}}{{&#x2F;crossLink}}.
+   *
+   * @property masterMute
+   * @type {Boolean}
+   * @default false
+   * @private
+   * @static
+   *&#x2F;
+  Sound.masterMute = false;
+
+  &#x2F;**
+   * An array containing all currently playing instances. This helps Sound control the volume, mute, and playback of
+   * all instances when using static APIs like {{#crossLink &quot;Sound&#x2F;stop&quot;}}{{&#x2F;crossLink}} and {{#crossLink &quot;Sound&#x2F;setVolume&quot;}}{{&#x2F;crossLink}}.
+   * When an instance has finished playback, it gets removed via the {{#crossLink &quot;Sound&#x2F;finishedPlaying&quot;}}{{&#x2F;crossLink}}
+   * method. If the user replays an instance, it gets added back in via the {{#crossLink &quot;Sound&#x2F;beginPlaying&quot;}}{{&#x2F;crossLink}} method.
+   *
+   * @property instances
+   * @type {Array}
+   * @private
+   * @static
+   *&#x2F;
+  Sound.instances = [];
+
+  &#x2F;**
+   * A hash lookup of sound sources via the corresponding ID.
+   *
+   * @property idHash
+   * @type {Object}
+   * @private
+   * @static
+   *&#x2F;
+  Sound.idHash = {};
+
+  &#x2F;**
+   * A hash lookup of preloading sound sources via the parsed source that is passed to the plugin.  Contains the
+   * source, id, and data that was passed in by the user.  Parsed sources can contain multiple instances of source, id,
+   * and data.
+   *
+   * @property preloadHash
+   * @type {Object}
+   * @private
+   * @static
+   *&#x2F;
+  Sound.preloadHash = {};
+
+  &#x2F;**
+   * An object that stands in for audio that fails to play. This allows developers to continue to call methods
+   * on the failed instance without having to check if it is valid first. The instance is instantiated once, and
+   * shared to keep the memory footprint down.
+   *
+   * @property defaultSoundInstance
+   * @type {Object}
+   * @protected
+   * @static
+   *&#x2F;
+  Sound.defaultSoundInstance = null;
+
+  &#x2F;**
+   * This event that is fired when a file finishes loading internally. This event is fired for each loaded sound,
+   * so any handler methods should look up the &lt;code&gt;event.src&lt;&#x2F;code&gt; to handle a particular sound.
+   *
+   * @event loadComplete
+   * @param {Object} target The object that dispatched the event.
+   * @param {String} type The event type.
+   * @param {String} src The source of the sound that was loaded. Note this will only return the loaded part of a
+   *  delimiter-separated source.
+   * @param {String} [id] The id passed in when the sound was registered. If one was not provided, it will be null.
+   * @param {Number|Object} [data] Any additional data associated with the item. If not provided, it will be undefined.
+   *&#x2F;
+
+  &#x2F;**
+   * @method sendLoadComplete
+   * @param {String} src A sound file has completed loading, and should be dispatched.
+   * @private
+   * @static
+   *&#x2F;
+  Sound.sendLoadComplete = function(src) {
+    if (!Sound.preloadHash[src]) {
+      return;
+    }
+    for (var i = 0, l = Sound.preloadHash[src].length; i &lt; l; i++) {
+      var item = Sound.preloadHash[src][i];
+      var event = {
+        target: this,
+        type: &quot;loadComplete&quot;,
+        src: item.src,
+        id: item.id,
+        data: item.data
+      };
+      Sound.preloadHash[src][i] = true;
+      Sound.dispatchEvent(event);
+    }
+  }
+
+  &#x2F;**
+   * Register a Sound plugin. Plugins handle the actual playback of audio. The default plugins are
+   * ({{#crossLink &quot;WebAudioPlugin&quot;}}{{&#x2F;crossLink}} followed by the {{#crossLink &quot;HTMLAudioPlugin&quot;}}{{&#x2F;crossLink}}),
+   * and are installed if no other plugins are present when the user starts playback.
+   *
+   * &lt;h4&gt;Example&lt;&#x2F;h4&gt;
+   *     Sound.registerPlugin(HTMLAudioPlugin);
+   *
+   * To register multiple plugins, use {{#crossLink &quot;Sound&#x2F;registerPlugins&quot;}}{{&#x2F;crossLink}}.
+   *
+   * @method registerPlugin
+   * @param {Object} plugin The plugin class to install.
+   * @return {Boolean} Whether the plugin was successfully initialized.
+   * @static
+   *&#x2F;
+  Sound.registerPlugin = function(plugin) {
+    Sound.pluginsRegistered = true;
+    if (plugin == null) {
+      return false;
+    }
+    &#x2F;&#x2F; Note: Each plugin is passed in as a class reference, but we store the activePlugin as an instance
+    if (plugin.isSupported()) {
+      Sound.activePlugin = new plugin();
+      &#x2F;&#x2F;TODO: Check error on initialization
+      return true;
+    }
+    return false;
+  }
+
+  &#x2F;**
+   * Register a list of Sound plugins, in order of precedence. To register a single plugin, use
+   * {{#crossLink &quot;Sound&#x2F;registerPlugin&quot;}}{{&#x2F;crossLink}}.
+   *
+   * &lt;h4&gt;Example&lt;&#x2F;h4&gt;
+   *     Sound.registerPlugins([WebAudioPlugin, HTMLAudioPlugin]);
+   *
+   * @method registerPlugins
+   * @param {Array} plugins An array of plugins classes to install.
+   * @return {Boolean} Whether a plugin was successfully initialized.
+   * @static
+   *&#x2F;
+  Sound.registerPlugins = function(plugins) {
+    for (var i = 0, l = plugins.length; i &lt; l; i++) {
+      var plugin = plugins[i];
+      if (Sound.registerPlugin(plugin)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  &#x2F;**
+   * Initialize the default plugins. This method is called when any audio is played before the user has registered
+   * any plugins, and enables Sound to work without manual plugin setup. Currently, the default plugins are
+   * {{#crossLink &quot;WebAudioPlugin&quot;}}{{&#x2F;crossLink}} followed by {{#crossLink &quot;HTMLAudioPlugin&quot;}}{{&#x2F;crossLink}}.
+   *
+   * @method initializeDefaultPlugins
+   * @returns {Boolean} If a plugin is initialized (true) or not (false). If the browser does not have the
+   *  capabilities to initialize any available plugins, this will return false.
+   * @private
+   *&#x2F;
+  Sound.initializeDefaultPlugins = function() {
+    if (Sound.activePlugin != null) {
+      return true;
+    }
+    if (Sound.pluginsRegistered) {
+      return false;
+    }
+    var WebAudioPlugin = xc.module.require(&quot;xc.createjs.WebAudioPlugin&quot;);
+    var HTMLAudioPlugin = xc.module.require(&quot;xc.createjs.HTMLAudioPlugin&quot;);
+    if (Sound.registerPlugins([WebAudioPlugin, HTMLAudioPlugin])) {
+      return true;
+    }
+    return false;
+  }
+
+  &#x2F;**
+   * Determines if Sound has been initialized, and a plugin has been activated.
+   *
+   * @method isReady
+   * @return {Boolean} If Sound has initialized a plugin.
+   * @static
+   *&#x2F;
+  Sound.isReady = function() {
+    return (Sound.activePlugin != null);
+  }
+
+  &#x2F;**
+   * Get the active plugins capabilities, which help determine if a plugin can be used in the current environment,
+   * or if the plugin supports a specific feature. Capabilities include:
+   * &lt;ul&gt;
+   *  &lt;li&gt;&lt;b&gt;panning:&lt;&#x2F;b&gt; If the plugin can pan audio from left to right&lt;&#x2F;li&gt;
+   *  &lt;li&gt;&lt;b&gt;volume;&lt;&#x2F;b&gt; If the plugin can control audio volume.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;&lt;b&gt;mp3:&lt;&#x2F;b&gt; If MP3 audio is supported.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;&lt;b&gt;ogg:&lt;&#x2F;b&gt; If OGG audio is supported.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;&lt;b&gt;wav:&lt;&#x2F;b&gt; If WAV audio is supported.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;&lt;b&gt;mpeg:&lt;&#x2F;b&gt; If MPEG audio is supported.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;&lt;b&gt;m4a:&lt;&#x2F;b&gt; If M4A audio is supported.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;&lt;b&gt;mp4:&lt;&#x2F;b&gt; If MP4 audio is supported.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;&lt;b&gt;aiff:&lt;&#x2F;b&gt; If aiff audio is supported.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;&lt;b&gt;wma:&lt;&#x2F;b&gt; If wma audio is supported.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;&lt;b&gt;mid:&lt;&#x2F;b&gt; If mid audio is supported.&lt;&#x2F;li&gt;
+   *  &lt;li&gt;&lt;b&gt;tracks:&lt;&#x2F;b&gt; The maximum number of audio tracks that can be played back at a time. This will be -1 if there is no known limit.&lt;&#x2F;li&gt;
+   * &lt;&#x2F;ul&gt;
+   *
+   * @method getCapabilities
+   * @return {Object} An object containing the capabilities of the active plugin.
+   * @static
+   *&#x2F;
+  Sound.getCapabilities = function() {
+    if (Sound.activePlugin == null) {
+      return null;
+    }
+    return Sound.activePlugin.capabilities;
+  }
+
+  &#x2F;**
+   * Get a specific capability of the active plugin. See {{#crossLink &quot;Sound&#x2F;getCapabilities&quot;}}{{&#x2F;crossLink}} for a
+   * full list of capabilities.
+   *
+   * @method getCapability
+   * @param {String} key The capability to retrieve
+   * @return {Number|Boolean} The value of the capability.
+   * @static
+   * @see getCapabilities
+   *&#x2F;
+  Sound.getCapability = function(key) {
+    if (Sound.activePlugin == null) {
+      return null;
+    }
+    return Sound.activePlugin.capabilities[key];
+  }
+
+  &#x2F;**
+   * Register a sound to playback in Sound. It is recommended to register all sounds that need to be played back in order
+   * to properly prepare and preload them. Sound does internal preloading when required.
+   *
+   * &lt;h4&gt;Example&lt;&#x2F;h4&gt;
+   *     Sound.registerSound(&quot;myAudioPath&#x2F;mySound.mp3|myAudioPath&#x2F;mySound.ogg&quot;, &quot;myID&quot;, 3);
+   *
+   * @method registerSound
+   * @param {String | Object} src The source or an Objects with a &quot;src&quot; property
+   * @param {String} [id] An id specified by the user to play the sound later.
+   * @param {Number | Object} [data] Data associated with the item. Sound uses the data parameter as the number of
+   *  channels for an audio instance, however a &quot;channels&quot; property can be appended to the data object if it is used
+   *  for other information. The audio channels will set a default based on plugin if no value is found.
+   * @return {Object} An object with the modified values that were passed in, which defines the sound. Returns false
+   *  if the source cannot be parsed.
+   * @static
+   *&#x2F;
+  Sound.registerSound = function(src, id, data) {
+    if (!Sound.initializeDefaultPlugins()) {
+      return false;
+    }
+    if (src instanceof Object) {
+      src = src.src;
+      id = src.id;
+      data = src.data;
+    }
+    var details = Sound.parsePath(src, &quot;sound&quot;, id, data);
+    if (details == null) {
+      return false;
+    }
+    if (id != null) {
+      Sound.idHash[id] = details.src;
+    }
+    var numChannels = null; &#x2F;&#x2F; null will set all SoundChannel to set this to it&#x27;s internal maxDefault
+    if (data != null) {
+      if (!isNaN(data.channels)) {
+        numChannels = parseInt(data.channels);
+      }
+      else if (!isNaN(data)) {
+        numChannels = parseInt(data);
+      }
+    }
+    var loader = Sound.activePlugin.register(details.src, numChannels);  &#x2F;&#x2F; Note only HTML audio uses numChannels
+    if (loader != null) {
+      if (loader.numChannels != null) {
+        numChannels = loader.numChannels;
+      } &#x2F;&#x2F; currently only HTMLAudio returns this
+      SoundChannel.create(details.src, numChannels);
+      &#x2F;&#x2F; return the number of instances to the user.  This will also be returned in the load event.
+      if (data == null || !isNaN(data)) {
+        data = details.data = numChannels || SoundChannel.maxPerChannel();
+      } else {
+        data.channels = details.data.channels = numChannels || SoundChannel.maxPerChannel();
+      }
+      &#x2F;&#x2F; If the loader returns a tag, return it instead for preloading.
+      if (loader.tag != null) {
+        details.tag = loader.tag;
+      }
+      else if (loader.src) {
+        details.src = loader.src;
+      }
+      &#x2F;&#x2F; If the loader returns a complete handler, pass it on to the prelaoder.
+      if (loader.completeHandler != null) {
+        details.completeHandler = loader.completeHandler;
+      }
+      details.type = loader.type;
+    }
+    if (!Sound.preloadHash[details.src]) {
+      Sound.preloadHash[details.src] = [];
+    }  &#x2F;&#x2F; we do this so we can store multiple id&#x27;s and data if needed
+    Sound.preloadHash[details.src].push({src: src, id: id, data: data});  &#x2F;&#x2F; keep this data so we can return it onLoadComplete
+    if (Sound.preloadHash[details.src].length == 1) {
+      Sound.activePlugin.preload(details.src, loader)
+    }
+    return details;
+  }
+
+  &#x2F;**
+   * Register a manifest of sounds to playback in Sound. It is recommended to register all sounds that need to be
+   * played back in order to properly prepare and preload them. Sound does internal preloading when required.
+   *
+   * &lt;h4&gt;Example&lt;&#x2F;h4&gt;
+   *     var manifest = [
+   *         {src:&quot;assetPath&#x2F;asset0.mp3|assetPath&#x2F;asset0.ogg&quot;, id:&quot;example&quot;}, &#x2F;&#x2F; Note the Sound.DELIMITER
+   *         {src:&quot;assetPath&#x2F;asset1.mp3|assetPath&#x2F;asset1.ogg&quot;, id:&quot;1&quot;, data:6},
+   *         {src:&quot;assetPath&#x2F;asset2.mp3&quot;, id:&quot;works&quot;}
+   *     ];
+   *     Sound.addEventListener(&quot;loadComplete&quot;, doneLoading); &#x2F;&#x2F; call doneLoading when each sound loads
+   *     Sound.registerManifest(manifest);
+   *
+   *
+   * @method registerManifest
+   * @param {Array} manifest An array of objects to load. Objects are expected to be in the format needed for
+   *  {{#crossLink &quot;Sound&#x2F;registerSound&quot;}}{{&#x2F;crossLink}}: &lt;code&gt;{src:srcURI, id:ID, data:Data, preload:UseInternalPreloader}&lt;&#x2F;code&gt;
+   *  with &quot;id&quot; and &quot;data&quot; being optional.
+   * @return {Object} An array of objects with the modified values that were passed in, which defines each sound. It
+   *  will return false for any values that the source cannot be parsed.
+   * @static
+   *&#x2F;
+  Sound.registerManifest = function(manifest) {
+    var returnValues = [];
+    for (var i = 0, l = manifest.length; i &lt; l; i++) {
+      returnValues[i] = Sound.registerSound(manifest[i].src, manifest[i].id, manifest[i].data);
+    }
+    return returnValues;
+  }
+
+  &#x2F;**
+   * Check if a source has been loaded by internal preloaders. This is necessary to ensure that sounds that are
+   * not completed preloading will not kick off a new internal preload if they are played.
+   *
+   * @method loadComplete
+   * @param {String} src The src or id that is being loaded.
+   * @return {Boolean} If the src is already loaded.
+   *&#x2F;
+  Sound.loadComplete = function(src) {
+    var details = Sound.parsePath(src, &quot;sound&quot;);
+    if (details) {
+      src = Sound.getSrcById(details.src);
+    } else {
+      src = Sound.getSrcById(src);
+    }
+    return (Sound.preloadHash[src][0] == true);  &#x2F;&#x2F; src only loads once, so if it&#x27;s true for the first it&#x27;s true for all
+  }
+
+  &#x2F;**
+   * Parse the path of a sound, usually from a manifest item. Manifest items support single file paths, as well as
+   * composite paths using &lt;code&gt;Sound.DELIMITER&lt;&#x2F;code&gt;, which defaults to &quot;|&quot;. The first path supported by the
+   * current browser&#x2F;plugin will be used.
+   *
+   * @method parsePath
+   * @param {String} value The path to an audio source.
+   * @param {String} [type] The type of path. This will typically be &quot;sound&quot; or null.
+   * @param {String} [id] The user-specified sound ID. This may be null, in which case the src will be used instead.
+   * @param {Number | String | Boolean | Object} [data] Arbitrary data appended to the sound, usually denoting the
+   *  number of channels for the sound. This method doesn&#x27;t currently do anything with the data property.
+   * @return {Object} A formatted object that can be registered with the &lt;code&gt;Sound.activePlugin&lt;&#x2F;code&gt; and returned
+   *  to a preloader like &lt;a href=&quot;http:&#x2F;&#x2F;preloadjs.com&quot; target=&quot;_blank&quot;&gt;PreloadJS&lt;&#x2F;a&gt;.
+   * @protected
+   *&#x2F;
+  Sound.parsePath = function(value, type, id, data) {
+    if (typeof(value) != &quot;string&quot;) {value = value.toString();}
+    var sounds = value.split(Sound.DELIMITER);
+    var ret = {type: type || &quot;sound&quot;, id: id, data: data};
+    var c = Sound.getCapabilities();
+    for (var i = 0, l = sounds.length; i &lt; l; i++) {
+      var sound = sounds[i];
+      var match = sound.match(Sound.FILE_PATTERN);
+      if (match == null) {
+        return false;
+      }
+      var name = match[4];
+      var ext = match[5];
+      if (c[ext] &amp;&amp; Sound.SUPPORTED_EXTENSIONS.indexOf(ext) &gt; -1) {
+        ret.name = name;
+        ret.src = sound;
+        ret.extension = ext;
+        return ret;
+      }
+    }
+    return null;
+  }
+
+  &#x2F;**
+   * Play a sound and get a {{#crossLink &quot;SoundInstance&quot;}}{{&#x2F;crossLink}} to control. If the sound fails to play, a
+   * SoundInstance will still be returned, and have a playState of &lt;code&gt;Sound.PLAY_FAILED&lt;&#x2F;code&gt;. Note that even on
+   * sounds with failed playback, you may still be able to call SoundInstance {{#crossLink &quot;SoundInstance&#x2F;play&quot;}}{{&#x2F;crossLink}},
+   * since the failure could be due to lack of available channels. If there is no available plugin,
+   * &lt;code&gt;Sound.defaultSoundInstance&lt;&#x2F;code&gt; will be returned, which will not play any audio, but will not generate
+   * errors.
+   *
+   * &lt;h4&gt;Example&lt;&#x2F;h4&gt;
+   *     Sound.registerSound(&quot;myAudioPath&#x2F;mySound.mp3&quot;, &quot;myID&quot;, 3);
+   *     &#x2F;&#x2F; wait until load is complete
+   *     Sound.play(&quot;myID&quot;);
+   *     &#x2F;&#x2F; alternately we could call the following
+   *     var myInstance = Sound.play(&quot;myAudioPath&#x2F;mySound.mp3&quot;, Sound.INTERRUPT_NONE, 0, 0, -1, 1, 0);
+   *
+   * @method play
+   * @param {String} src The src or ID of the audio.
+   * @param {String} [interrupt=&quot;none&quot;] How to interrupt other instances of audio. Values are defined as &lt;code&gt;INTERRUPT_TYPE&lt;&#x2F;code&gt;
+   *  constants on the Sound class.
+   * @param {Number} [delay=0] The amount of time to delay the start of the audio in milliseconds.
+   * @param {Number} [offset=0] The point to start the audio in milliseconds.
+   * @param {Number} [loop=0] How many times the audio loops when it reaches the end of playback. The efault is 0 (no
+   *  loops), and -1 can be used for infinite playback.
+   * @param {Number} [volume=1] The volume of the sound, between 0 and 1. Note that the master volume is applied
+   *  against the individual volume.
+   * @param {Number} [pan=0] The left-right pan of the sound (if supported), between -1 (left) and 1 (right).
+   * @return {SoundInstance} A {{#crossLink &quot;SoundInstance&quot;}}{{&#x2F;crossLink}} that can be controlled after it is created.
+   * @static
+   *&#x2F;
+  Sound.play = function(src, interrupt, delay, offset, loop, volume, pan) {
+    var instance = Sound.createInstance(src);
+    var ok = Sound.playInstance(instance, interrupt, delay, offset, loop, volume, pan);
+    if (!ok) {
+      instance.playFailed();
+    }
+    return instance;
+  }
+
+  &#x2F;**
+   * Creates a {{#crossLink &quot;SoundInstance&quot;}}{{&#x2F;crossLink}} using the passed in src. If the src does not have a
+   * supported extension, a default SoundInstance will be returned that can be called safely but does nothing.
+   *
+   * @method createInstance
+   * @param {String} src The src of the audio.
+   * @return {SoundInstance} A {{#crossLink &quot;SoundInstance&quot;}}{{&#x2F;crossLink}} that can be controlled after it is created.
+   *  Unsupported extensions will return the default SoundInstance.
+   *&#x2F;
+  Sound.createInstance = function(src) {
+    &#x2F;&#x2F; TODO this function appears to be causing a memory leak, and needs spike tested.
+    &#x2F;&#x2F; in new SoundInstance
+    if (!Sound.initializeDefaultPlugins()) {
+      return Sound.defaultSoundInstance;
+    }
+    var details = Sound.parsePath(src, &quot;sound&quot;);
+    if (details) {
+      src = Sound.getSrcById(details.src);
+    } else {
+      src = Sound.getSrcById(src);
+    }
+    var dot = src.lastIndexOf(&quot;.&quot;);
+    var ext = src.slice(dot + 1);  &#x2F;&#x2F; sound have format of &quot;path+name . ext&quot;
+    if (dot != -1 &amp;&amp; Sound.SUPPORTED_EXTENSIONS.indexOf(ext) &gt; -1) {  &#x2F;&#x2F; we have an ext and it is one of our supported,Note this does not mean the plugin supports it.
+      &#x2F;&#x2F; make sure that we have a sound channel (sound is registered or previously played)
+      SoundChannel.create(src);
+      var instance = Sound.activePlugin.create(src);
+    } else {
+      var instance = Sound.defaultSoundInstance; &#x2F;&#x2F; the src is not supported, so give back a dummy instance.
+    }
+    instance.uniqueId = Sound.lastId++;
+    return instance;
+  }
+
+  &#x2F;**
+   * Set the master volume of Sound. The master volume is multiplied against each sound&#x27;s individual volume.
+   * To set individual sound volume, use SoundInstance {{#crossLink &quot;SoundInstance&#x2F;setVolume&quot;}}{{&#x2F;crossLink}} instead.
+   *
+   * @method setVolume
+   * @param {Number} value The master volume value. The acceptable range is 0-1.
+   * @static
+   *&#x2F;
+  Sound.setVolume = function(value) {
+    if (Number(value) == null) {
+      return false;
+    }
+    value = Math.max(0, Math.min(1, value));
+    Sound.masterVolume = value;
+    if (!this.activePlugin || !this.activePlugin.setVolume || !this.activePlugin.setVolume(value)) {
+      var instances = this.instances;
+      for (var i = 0, l = instances.length; i &lt; l; i++) {
+        instances[i].setMasterVolume(value);
+      }
+    }
+  }
+
+  &#x2F;**
+   * Get the master volume of Sound. The master volume is multiplied against each sound&#x27;s individual volume.
+   * To get individual sound volume, use SoundInstance {{#crossLink &quot;SoundInstance&#x2F;getVolume&quot;}}{{&#x2F;crossLink}} instead.
+   *
+   * @method getVolume
+   * @return {Number} The master volume, in a range of 0-1.
+   * @static
+   *&#x2F;
+  Sound.getVolume = function(value) {
+    return Sound.masterVolume;
+  }
+
+  &#x2F;**
+   * Mute&#x2F;Unmute all audio. Note that muted audio still plays at 0 volume. This global mute value is maintained
+   * separately and will override, but not change the mute property of individual instances. To mute an individual
+   * instance, use SoundInstance {{#crossLink &quot;SoundInstance&#x2F;setMute&quot;}}{{&#x2F;crossLink}} instead.
+   *
+   * @method setMute
+   * @param {Boolean} value Whether the audio should be muted or not.
+   * @return {Boolean} If the mute was set.
+   * @static
+   *&#x2F;
+  Sound.setMute = function(value) {
+    if (value == null || value == undefined) {
+      return false
+    }
+    this.masterMute = value;
+    if (!this.activePlugin || !this.activePlugin.setMute || !this.activePlugin.setMute(value)) {
+      var instances = this.instances;
+      for (var i = 0, l = instances.length; i &lt; l; i++) {
+        instances[i].setMasterMute(value);
+      }
+    }
+    return true;
+  }
+
+  &#x2F;**
+   * Returns the global mute value. To get the mute value of an individual instance, use SoundInstance
+   * {{#crossLink &quot;SoundInstance&#x2F;getMute&quot;}}{{&#x2F;crossLink}} instead.
+   *
+   * @method getMute
+   * @return {Boolean} The mute value of Sound.
+   * @static
+   *&#x2F;
+  Sound.getMute = function() {
+    return this.masterMute;
+  }
+
+  &#x2F;**
+   * Stop all audio (global stop). Stopped audio is reset, and not paused. To play back audio that has been stopped,
+   * call {{#crossLink &quot;SoundInstance.play&quot;}}{{&#x2F;crossLink}}.
+   *
+   * @method stop
+   * @static
+   *&#x2F;
+  Sound.stop = function() {
+    var instances = this.instances;
+    for (var i = instances.length; i &gt; 0; i--) {
+      instances[i - 1].stop();  &#x2F;&#x2F; NOTE stop removes instance from this.instances
+    }
+  }
+
+  &#x2F;**
+   * Play an instance. This is called by the static API, as well as from plugins. This allows the core class to
+   * control delays.
+   *
+   * @method playInstance
+   * @param {SoundInstance} instance The {{#crossLink &quot;SoundInstance&quot;}}{{&#x2F;crossLink}} to start playing.
+   * @param {String} [interrupt=none] How this sound interrupts other instances with the same source.  Defaults to
+   *  &lt;code&gt;Sound.INTERRUPT_NONE&lt;&#x2F;code&gt;. All interrupt values are defined as &lt;code&gt;INTERRUPT_TYPE&lt;&#x2F;code&gt;constants on Sound.
+   * @param {Number} [delay=0] Time in milliseconds before playback begins.
+   * @param {Number} [offset=instance.offset] Time into the sound to begin playback in milliseconds.  Defaults to the
+   *  current value on the instance.
+   * @param {Number} [loop=0] The number of times to loop the audio. Use 0 for no loops, and -1 for an infinite loop.
+   * @param {Number} [volume] The volume of the sound between 0 and 1. Defaults to current instance value.
+   * @param {Number} [pan] The pan of the sound between -1 and 1. Defaults to current instance value.
+   * @return {Boolean} If the sound can start playing. Sounds that fail immediately will return false. Sounds that
+   *  have a delay will return true, but may still fail to play.
+   * @protected
+   * @static
+   *&#x2F;
+  Sound.playInstance = function(instance, interrupt, delay, offset, loop, volume, pan) {
+    interrupt = interrupt || Sound.defaultInterruptBehavior;
+    if (delay == null) {
+      delay = 0;
+    }
+    if (offset == null) {
+      offset = instance.getPosition();
+    }
+    if (loop == null) {
+      loop = 0;
+    }
+    if (volume == null) {
+      volume = instance.getVolume();
+    }
+    if (pan == null) {
+      pan = instance.getPan();
+    }
+    if (delay == 0) {
+      var ok = Sound.beginPlaying(instance, interrupt, offset, loop, volume, pan);
+      if (!ok) {
+        return false;
+      }
+    } else {
+      &#x2F;&#x2F;Note that we can&#x27;t pass arguments to proxy OR setTimeout (IE only), so just wrap the function call.
+      var delayTimeoutId = setTimeout(function() {
+        Sound.beginPlaying(instance, interrupt, offset, loop, volume, pan);
+      }, delay);
+      instance.delayTimeoutId = delayTimeoutId;
+    }
+    this.instances.push(instance);
+    return true;
+  }
+
+  &#x2F;**
+   * Begin playback. This is called immediately or after delay by {{#crossLink &quot;Sound&#x2F;playInstance&quot;}}{{&#x2F;crossLink}}.
+   *
+   * @method beginPlaying
+   * @param {SoundInstance} instance A {{#crossLink &quot;SoundInstance&quot;}}{{&#x2F;crossLink}} to begin playback.
+   * @param {String} [interrupt=none] How this sound interrupts other instances with the same source. Defaults to
+   *  &lt;code&gt;Sound.INTERRUPT_NONE&lt;&#x2F;code&gt;. Interrupts are defined as &lt;code&gt;INTERRUPT_TYPE&lt;&#x2F;code&gt; constants on Sound.
+   * @param {Number} [offset] Time in milliseconds into the sound to begin playback.  Defaults to the current value on
+   *  the instance.
+   * @param {Number} [loop=0] The number of times to loop the audio. Use 0 for no loops, and -1 for an infinite loop.
+   * @param {Number} [volume] The volume of the sound between 0 and 1. Defaults to the current value on the instance.
+   * @param {Number} [pan=instance.pan] The pan of the sound between -1 and 1. Defaults to current instance value.
+   * @return {Boolean} If the sound can start playing. If there are no available channels, or the instance fails to
+   *  start, this will return false.
+   * @protected
+   * @static
+   *&#x2F;
+  Sound.beginPlaying = function(instance, interrupt, offset, loop, volume, pan) {
+    if (!SoundChannel.add(instance, interrupt)) {
+      return false;
+    }
+    var result = instance.beginPlaying(offset, loop, volume, pan);
+    if (!result) {
+      &#x2F;&#x2F;LM: Should we remove this from the SoundChannel (see finishedPlaying)
+      var index = this.instances.indexOf(instance);
+      if (index &gt; -1) {
+        this.instances.splice(index, 1);
+      }
+      return false;
+    }
+    return true;
+  }
+
+  &#x2F;**
+   * Get the source of a sound via the ID passed in with a register call. If no ID is found the value is returned
+   * instead.
+   *
+   * @method getSrcById
+   * @param {String} value The ID the sound was registered with.
+   * @return {String} The source of the sound.  Returns null if src has been registered with this id.
+   * @protected
+   * @static
+   *&#x2F;
+  Sound.getSrcById = function(value) {
+    if (Sound.idHash == null || Sound.idHash[value] == null) {
+      return value;
+    }
+    return Sound.idHash[value];
+  }
+
+  &#x2F;**
+   * A sound has completed playback, been interrupted, failed, or been stopped. This method removes the instance from
+   * Sound management. It will be added again, if the sound re-plays. Note that this method is called from the
+   * instances themselves.
+   *
+   * @method playFinished
+   * @param {SoundInstance} instance The instance that finished playback.
+   * @protected
+   * @static
+   *&#x2F;
+  Sound.playFinished = function(instance) {
+    SoundChannel.remove(instance);
+    var index = this.instances.indexOf(instance);
+    if (index &gt; -1) {
+      this.instances.splice(index, 1);
+    }
+  }
+
+  &#x2F;**
+   * A function proxy for Sound methods. By default, JavaScript methods do not maintain scope, so passing a
+   * method as a callback will result in the method getting called in the scope of the caller. Using a proxy
+   * ensures that the method gets called in the correct scope.
+   * Note arguments can be passed that will be applied to the function when it is called.
+   *
+   * &lt;h4&gt;Example&lt;h4&gt;
+   *     myObject.myCallback = Sound.proxy(myHandler, this, arg1, arg2);
+   *
+   * #method proxy
+   * @param {Function} method The function to call
+   * @param {Object} scope The scope to call the method name on
+   * @param {mixed} [arg]* Arguments that are appended to the callback for additional params.
+   * @protected
+   * @static
+   *&#x2F;
+  Sound.proxy = function(method, scope) {
+    var aArgs = Array.prototype.slice.call(arguments, 2);
+    return function() {
+      return method.apply(scope, Array.prototype.slice.call(arguments, 0).concat(aArgs));
+    };
+  }
+
+  &#x2F;**
+   * An internal class that manages the number of active {{#crossLink &quot;SoundInstance&quot;}}{{&#x2F;crossLink}} instances for
+   * each sound type. This method is only used internally by the {{#crossLink &quot;Sound&quot;}}{{&#x2F;crossLink}} class.
+   *
+   * The number of sounds is artificially limited by Sound in order to prevent over-saturation of a
+   * single sound, as well as to stay within hardware limitations, although the latter may disappear with better
+   * browser support.
+   *
+   * When a sound is played, this class ensures that there is an available instance, or interrupts an appropriate
+   * sound that is already playing.
+   *
+   * @class SoundChannel
+   * @param {String} src The source of the instances
+   * @param {Number} [max=1] The number of instances allowed
+   * @constructor
+   * @protected
+   *&#x2F;
+  var SoundChannel = xc.class.create({
+    _init: function(src, max) {
+      this.src = src;
+      this.max = max || this.maxDefault;
+      if (this.max == -1) {
+        this.max == this.maxDefault;
+      }
+      this.instances = [];
+    },
+
+    &#x2F;**
+     * The source of the channel.
+     *
+     * @property src
+     * @type {String}
+     *&#x2F;
+    src: null,
+
+    &#x2F;**
+     * The maximum number of instances in this channel. -1 indicates no limit
+     *
+     * @property max
+     * @type {Number}
+     *&#x2F;
+    max: null,
+
+    &#x2F;**
+     * The default value to set for max, if it isn&#x27;t passed in.  Also used if -1 is passed.
+     *
+     * @property maxDefault
+     * @type {Number}
+     * @default 100
+     *&#x2F;
+    maxDefault: 100,
+
+    &#x2F;**
+     * The current number of active instances.
+     *
+     * @property length
+     * @type {Number}
+     *&#x2F;
+    length: 0,
+
+    &#x2F;**
+     * Initialize the channel.
+     *
+     * @method init
+     * @param {String} src The source of the channel
+     * @param {Number} max The maximum number of instances in the channel
+     * @protected
+     *&#x2F;
+
+    &#x2F;**
+     * Get an instance by index.
+     *
+     * @method get
+     * @param {Number} index The index to return.
+     * @return {SoundInstance} The SoundInstance at a specific instance.
+     *&#x2F;
+    get: function(index) {
+      return this.instances[index];
+    },
+
+    &#x2F;**
+     * Add a new instance to the channel.
+     *
+     * @method add
+     * @param {SoundInstance} instance The instance to add.
+     * @param {String} interrupt The interrupt value to use.
+     * @return {Boolean} The success of the method call. If the channel is full, it will return false.
+     *&#x2F;
+    add: function(instance, interrupt) {
+      if (!this.getSlot(interrupt, instance)) {
+        return false;
+      }
+      this.instances.push(instance);
+      this.length++;
+      return true;
+    },
+
+    &#x2F;**
+     * Remove an instance from the channel, either when it has finished playing, or it has been interrupted.
+     *
+     * @method remove
+     * @param {SoundInstance} instance The instance to remove
+     * @return {Boolean} The success of the remove call. If the instance is not found in this channel, it will
+     *  return false.
+     *&#x2F;
+    remove: function(instance) {
+      var index = this.instances.indexOf(instance);
+      if (index == -1) {
+        return false;
+      }
+      this.instances.splice(index, 1);
+      this.length--;
+      return true;
+    },
+
+    &#x2F;**
+     * Get an available slot depending on interrupt value and if slots are available.
+     *
+     * @method getSlot
+     * @param {String} interrupt The interrupt value to use.
+     * @param {SoundInstance} instance The sound instance that will go in the channel if successful.
+     * @return {Boolean} Determines if there is an available slot. Depending on the interrupt mode, if there are no slots,
+     *  an existing SoundInstance may be interrupted. If there are no slots, this method returns false.
+     *&#x2F;
+    getSlot: function(interrupt, instance) {
+      var target, replacement;
+      for (var i = 0, l = this.max; i &lt; l; i++) {
+        target = this.get(i);
+        &#x2F;&#x2F; Available Space
+        if (target == null) {
+          return true;
+        } else if (interrupt == Sound.INTERRUPT_NONE &amp;&amp; target.playState != Sound.PLAY_FINISHED) {
+          continue;
+        }
+        &#x2F;&#x2F; First replacement candidate
+        if (i == 0) {
+          replacement = target;
+          continue;
+        }
+        &#x2F;&#x2F; Audio is complete or not playing
+        if (target.playState == Sound.PLAY_FINISHED ||
+            target == Sound.PLAY_INTERRUPTED ||
+            target == Sound.PLAY_FAILED) {
+          replacement = target;
+          &#x2F;&#x2F; Audio is a better candidate than the current target, according to playhead
+        } else if (
+            (interrupt == Sound.INTERRUPT_EARLY &amp;&amp; target.getPosition() &lt; replacement.getPosition()) ||
+                (interrupt == Sound.INTERRUPT_LATE &amp;&amp; target.getPosition() &gt; replacement.getPosition())) {
+          replacement = target;
+        }
+      }
+      if (replacement != null) {
+        replacement.interrupt();
+        this.remove(replacement);
+        return true;
+      }
+      return false;
+    },
+
+    toString: function() {
+      return &quot;[Sound SoundChannel]&quot;;
+    }
+  });
+
+  &#x2F;**
+   * A hash of channel instances indexed by source.
+   *
+   * @property channels
+   * @type {Object}
+   * @static
+   *&#x2F;
+  SoundChannel.channels = {};
+
+  &#x2F;**
+   * Create a sound channel. Note that if the sound channel already exists, this will fail.
+   *
+   * @method create
+   * @param {String} src The source for the channel
+   * @param {Number} max The maximum amount this channel holds. The default is {{#crossLink &quot;SoundChannel.maxDefault&quot;}}{{&#x2F;crossLink}}.
+   * @return {Boolean} If the channels were created.
+   * @static
+   *&#x2F;
+  SoundChannel.create = function(src, max) {
+    var channel = SoundChannel.get(src);
+    if (channel == null) {
+      SoundChannel.channels[src] = new SoundChannel(src, max);
+      return true;
+    }
+    return false;
+  }
+
+  &#x2F;**
+   * Add an instance to a sound channel.
+   *
+   * @method add
+   * @param {SoundInstance} instance The instance to add to the channel
+   * @param {String} interrupt The interrupt value to use. Please see the {{#crossLink &quot;Sound&#x2F;play&quot;}}{{&#x2F;crossLink}}
+   *  for details on interrupt modes.
+   * @return {Boolean} The success of the method call. If the channel is full, it will return false.
+   * @static
+   *&#x2F;
+  SoundChannel.add = function(instance, interrupt) {
+    var channel = SoundChannel.get(instance.src);
+    if (channel == null) {
+      return false;
+    }
+    return channel.add(instance, interrupt);
+  }
+
+  &#x2F;**
+   * Remove an instance from the channel.
+   *
+   * @method remove
+   * @param {SoundInstance} instance The instance to remove from the channel
+   * @return The success of the method call. If there is no channel, it will return false.
+   * @static
+   *&#x2F;
+  SoundChannel.remove = function(instance) {
+    var channel = SoundChannel.get(instance.src);
+    if (channel == null) {
+      return false;
+    }
+    channel.remove(instance);
+    return true;
+  }
+
+  &#x2F;**
+   * Get the maximum number of sounds you can have in a channel.
+   *
+   * @method maxPerChannel
+   * @return {Number} The maximum number of sounds you can have in a channel.
+   * @static
+   *&#x2F;
+  SoundChannel.maxPerChannel = function() {
+    return p.maxDefault;
+  }
+
+  &#x2F;**
+   * Get a channel instance by its src.
+   *
+   * @method get
+   * @param {String} src The src to use to look up the channel
+   * @static
+   *&#x2F;
+  SoundChannel.get = function(src) {
+    return SoundChannel.channels[src];
+  }
+
+  EventDispatcher.initialize(Sound);
+
+  return Sound;
+
+});
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="..&#x2F;assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="..&#x2F;assets/js/yui-prettify.js"></script>
+<script src="..&#x2F;assets/../api.js"></script>
+<script src="..&#x2F;assets/js/api-filter.js"></script>
+<script src="..&#x2F;assets/js/api-list.js"></script>
+<script src="..&#x2F;assets/js/api-search.js"></script>
+<script src="..&#x2F;assets/js/apidocs.js"></script>
+</body>
+</html>
