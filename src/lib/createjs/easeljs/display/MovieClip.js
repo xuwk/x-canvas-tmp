@@ -171,7 +171,8 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
      */
     draw: function(ctx, ignoreCache) {
       // draw to cache first:
-      if (this._base._base.draw.apply(this, ctx, ignoreCache)) { return true; } // DisplayObject's draw()
+      var DisplayObject_draw = DisplayObject.prototype.draw;
+      if (this.DisplayObject_draw.apply(this, ctx, ignoreCache)) { return true; }
       this._updateTimeline();
       this._super(ctx, ignoreCache);  // Container's draw()
     },

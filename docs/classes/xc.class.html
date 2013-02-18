@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="..&#x2F;assets/css/main.css" id="site_styles">
     <link rel="shortcut icon" type="image/png" href="..&#x2F;assets/EaselJS_16x16.png">
     <script src="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;combo?3.8.0pr2&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
-	<title>xc v0.1.0 API Documentation : MovieClipPlugin</title>  
+	<title>xc v0.1.0 API Documentation : xc.class</title>  
 </head>
 <body class="yui3-skin-sam">
 
@@ -181,7 +181,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>MovieClipPlugin Class</h1>
+                        <h1>xc.class Class</h1>
 <div class="box meta">
     
 
@@ -189,13 +189,13 @@
 
     
         <div class="foundat">
-            Defined in: <a href="..&#x2F;files&#x2F;.._src_lib_createjs_easeljs_display_MovieClip.js.html#l381"><code>MovieClipPlugin:381</code></a>
+            Defined in: <a href="..&#x2F;files&#x2F;.._src_core_class.js.html#l1"><code>xc.class:1</code></a>
         </div>
     
 
     
         
-            Module: <a href="../modules/xc.createjs.easeljs.html">xc.createjs.easeljs</a>
+            Module: <a href="../modules/xc.core.html">xc.core</a>
         
     
 
@@ -205,69 +205,82 @@
 
 
 <div class="box intro">
-    <p>This plugin works with <a href="http://tweenjs.com" target="_blank">TweenJS</a> to prevent the startPosition
-property from tweening.</p>
+    <p>参考：http://ejohn.org/blog/simple-javascript-inheritance/</p>
+
+<p>xc.class 提供一个简单、直观的 JavaScript 继承写法。</p>
+
+<p>JavaScript 中没有类的概念，继承是通过 prototype 来实现的，标准的写法是这样：</p>
+
+<pre class="code prettyprint"><code>var Person = function(name) {
+    this.name = name;
+}
+
+// 在 prototype 中定义的属性和方法，每个 Person 实例都能访问
+Persion.prototype = {
+    getName: function() {
+        return this.name;
+    },
+    setName: function(name) {
+        this.name = name;
+    }
+}
+var zhansan = new Person("张三");
+console.log(zhansan.getName()); // 输出：张三
+
+var Employee(name, employeeId) {
+    this.name = name;
+    this.employeeId = employeeId;
+}
+
+// Employee 继承 Person
+Employee.prototype = new Person();
+Employee.prototype.getEmployeeId = function() {
+    return this.employeeId;
+}
+
+var lisi = new Employee("李四", 1);
+console.log(lisi.getName());       // 输出：李四
+console.log(lisi.getEmployeeId()); // 输出：1
+</code></pre>
+
+<p>标准的写法其实没什么不好，只是写起来有点繁琐。如果采用 xc.class，可以这样写：</p>
+
+<pre class="code prettyprint"><code>// 定义 Person 类
+var Person = xc.class.create({
+    _init: function(name) {
+        this.name = name;
+    },
+    getName: function() {
+        return this.name;
+    },
+    setName: function(name) {
+        this.name = name;
+    }
+});
+
+// 定义 Employee 类，继承 Person
+var Employee = Person.extend({
+    _init: function(name, employeeId) {
+        this._super(name);
+        this.employeeId = employeeId;
+    },
+    getEmployeeId: function() {
+        return this.getEmployeeId;
+    }
+});
+</code></pre>
+
+<p>采用这种写法有 3 个好处：</p>
+
+<ul>
+ <li>单个类的属性和方法在一个 {} 中完成定义，类的继承方式更加直观。</li>
+ <li>提供一个 _init 方法，更易于理解为“构造函数”。</li>
+ <li>提供一个 _super 方法，用于访问基类的同名方法。重载父类方法时经常需要用到此方法。</li>
+</ul>
+
+<p>注意：xc.class 并没有改变 JavaScript 的继承原理，只是提供一个更方便，更直观的继承写法。</p>
 </div>
 
-
-    <div class="constructor">
-        <h2>Constructor</h2>
-        <div id="method_MovieClipPlugin" class="method item private">
-    <h3 class="name"><code>MovieClipPlugin</code></h3>
-
-    
-        <span class="paren">()</span>
-    
-
-    
-
-    
-
-    
-        <span class="flag private">private</span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="..&#x2F;files&#x2F;.._src_lib_createjs_easeljs_display_MovieClip.js.html#l381"><code>MovieClipPlugin:381</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        
-    </div>
-
-    
-
-    
-
-    
-</div>
-
-    </div>
 
 
 <div id="classdocs" class="tabview">
@@ -292,37 +305,11 @@ property from tweening.</p>
 
                     <ul class="index-list methods">
                         
-                            <li class="index-item method private">
-                                <a href="#method_init">init</a>
+                            <li class="index-item method">
+                                <a href="#method_create">create</a>
 
                                 
-                                
-                            </li>
-                        
-                            <li class="index-item method private">
-                                <a href="#method_install">install</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item method private">
-                                <a href="#method_priority">priority</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item method private">
-                                <a href="#method_step">step</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item method private">
-                                <a href="#method_tween">tween</a>
-
+                                    <span class="flag static">static</span>
                                 
                                 
                             </li>
@@ -343,11 +330,27 @@ property from tweening.</p>
                 <h2 class="off-left">Methods</h2>
 
                 
-                    <div id="method_init" class="method item private">
-    <h3 class="name"><code>init</code></h3>
+                    <div id="method_create" class="method item">
+    <h3 class="name"><code>create</code></h3>
 
     
-        <span class="paren">()</span>
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>prop</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+        </span>
     
 
     
@@ -355,11 +358,9 @@ property from tweening.</p>
     
 
     
-        <span class="flag private">private</span>
-    
 
     
-
+        <span class="flag static">static</span>
     
 
     
@@ -377,7 +378,7 @@ property from tweening.</p>
             
         
         
-        <a href="..&#x2F;files&#x2F;.._src_lib_createjs_easeljs_display_MovieClip.js.html#l407"><code>init:407</code></a>
+        <a href="..&#x2F;files&#x2F;.._src_core_class.js.html#l79"><code>create:79</code></a>
         
         </p>
 
@@ -388,235 +389,46 @@ property from tweening.</p>
     </div>
 
     <div class="description">
-        
+        <p>创建一个类。</p>
     </div>
 
     
+        <div class="params">
+            <h4>Parameters:</h4>
 
-    
-
-    
-</div>
-
-                
-                    <div id="method_install" class="method item private">
-    <h3 class="name"><code>install</code></h3>
-
-    
-        <span class="paren">()</span>
-    
-
-    
-
-    
-
-    
-        <span class="flag private">private</span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
+            <ul class="params-list">
             
-                
-                <p>
-                
-                Defined in
-                
+                <li class="param">
+                    
+                        <code class="param-name">prop</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>复制到 prototype 中的属性和方法</p>
+                    </div>
+
+                    
+                </li>
             
-        
-        
-        <a href="..&#x2F;files&#x2F;.._src_lib_createjs_easeljs_display_MovieClip.js.html#l399"><code>install:399</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        
-    </div>
-
+            </ul>
+        </div>
     
 
     
+        <div class="returns">
+            <h4>Returns:</h4>
 
-    
-</div>
-
+            <div class="returns-description">
                 
-                    <div id="method_priority" class="method item private">
-    <h3 class="name"><code>priority</code></h3>
-
-    
-        <span class="paren">()</span>
-    
-
-    
-
-    
-
-    
-        <span class="flag private">private</span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
+                    
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>:
+                    
                 
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="..&#x2F;files&#x2F;.._src_lib_createjs_easeljs_display_MovieClip.js.html#l393"><code>priority:393</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        
-    </div>
-
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="method_step" class="method item private">
-    <h3 class="name"><code>step</code></h3>
-
-    
-        <span class="paren">()</span>
-    
-
-    
-
-    
-
-    
-        <span class="flag private">private</span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="..&#x2F;files&#x2F;.._src_lib_createjs_easeljs_display_MovieClip.js.html#l415"><code>step:415</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        
-    </div>
-
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="method_tween" class="method item private">
-    <h3 class="name"><code>tween</code></h3>
-
-    
-        <span class="paren">()</span>
-    
-
-    
-
-    
-
-    
-        <span class="flag private">private</span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="..&#x2F;files&#x2F;.._src_lib_createjs_easeljs_display_MovieClip.js.html#l423"><code>tween:423</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        
-    </div>
-
-    
-
+            </div>
+        </div>
     
 
     

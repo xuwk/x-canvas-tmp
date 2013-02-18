@@ -7,6 +7,24 @@
         "logo": "http://createjs.com/resources/SuiteIcons/EaselJS/docs-icon-EaselJS.png"
     },
     "files": {
+        "..\\src\\core\\class.js": {
+            "name": "..\\src\\core\\class.js",
+            "modules": {},
+            "classes": {
+                "xc.class": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "..\\src\\core\\module.js": {
+            "name": "..\\src\\core\\module.js",
+            "modules": {},
+            "classes": {
+                "xc.module": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "..\\src\\core\\package.js": {
             "name": "..\\src\\core\\package.js",
             "modules": {
@@ -400,11 +418,14 @@
         "xc.core": {
             "name": "xc.core",
             "submodules": {},
-            "classes": {},
+            "classes": {
+                "xc.class": 1,
+                "xc.module": 1
+            },
             "fors": {},
             "namespaces": {},
             "tag": "module",
-            "file": "..\\src\\core\\package.js",
+            "file": "..\\src\\core\\module.js",
             "line": 1
         },
         "xc.createjs.easeljs": {
@@ -509,6 +530,32 @@
         }
     },
     "classes": {
+        "xc.class": {
+            "name": "xc.class",
+            "shortname": "xc.class",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "xc.core",
+            "file": "..\\src\\core\\class.js",
+            "line": 1,
+            "description": "参考：http://ejohn.org/blog/simple-javascript-inheritance/\n\nxc.class 提供一个简单、直观的 JavaScript 继承写法。\n\nJavaScript 中没有类的概念，继承是通过 prototype 来实现的，标准的写法是这样：\n\n    var Person = function(name) {\n        this.name = name;\n    }\n\n    // 在 prototype 中定义的属性和方法，每个 Person 实例都能访问\n    Persion.prototype = {\n        getName: function() {\n            return this.name;\n        },\n        setName: function(name) {\n            this.name = name;\n        }\n    }\n    var zhansan = new Person(\"张三\");\n    console.log(zhansan.getName()); // 输出：张三\n\n    var Employee(name, employeeId) {\n        this.name = name;\n        this.employeeId = employeeId;\n    }\n\n    // Employee 继承 Person\n    Employee.prototype = new Person();\n    Employee.prototype.getEmployeeId = function() {\n        return this.employeeId;\n    }\n\n    var lisi = new Employee(\"李四\", 1);\n    console.log(lisi.getName());       // 输出：李四\n    console.log(lisi.getEmployeeId()); // 输出：1\n\n标准的写法其实没什么不好，只是写起来有点繁琐。如果采用 xc.class，可以这样写：\n\n    // 定义 Person 类\n    var Person = xc.class.create({\n        _init: function(name) {\n            this.name = name;\n        },\n        getName: function() {\n            return this.name;\n        },\n        setName: function(name) {\n            this.name = name;\n        }\n    });\n\n    // 定义 Employee 类，继承 Person\n    var Employee = Person.extend({\n        _init: function(name, employeeId) {\n            this._super(name);\n            this.employeeId = employeeId;\n        },\n        getEmployeeId: function() {\n            return this.getEmployeeId;\n        }\n    });\n\n采用这种写法有 3 个好处：\n<ul>\n <li>单个类的属性和方法在一个 {} 中完成定义，类的继承方式更加直观。</li>\n <li>提供一个 _init 方法，更易于理解为“构造函数”。</li>\n <li>提供一个 _super 方法，用于访问基类的同名方法。重载父类方法时经常需要用到此方法。</li>\n</ul>\n\n注意：xc.class 并没有改变 JavaScript 的继承原理，只是提供一个更方便，更直观的继承写法。"
+        },
+        "xc.module": {
+            "name": "xc.module",
+            "shortname": "xc.module",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "xc.core",
+            "file": "..\\src\\core\\module.js",
+            "line": 1,
+            "description": "xc.module 提供一个简单的模块定义方法。\n\n写法如下：\n\n    xc.module.define(\"core.AbstractClass\", function(exports) {\n        var AbstractClass = xc.class.create({ ... });\n        return AbstractClass;\n    }\n\n    xc.module.define(\"all.types\", function(exports) {\n        var AbstractClass = xc.module.require(\"core.AbstractClass\");\n        exports.NewClass = AbstractClass.extend({ ... });\n        exports.NewClass2 = AbstractClass.extend({ ... });\n    }\n\n采用这种写法有 2 个好处：\n<ul>\n <li>模块代码在一个函数闭包中定义，可减少全局变量污染。</li>\n <li>模块代码在被 require 时才真正执行，可提升页面加载速度。</li>\n</ul>"
+        },
         "Bitmap": {
             "name": "Bitmap",
             "shortname": "Bitmap",
@@ -668,7 +715,7 @@
             "module": "xc.createjs.easeljs",
             "namespace": "",
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 380,
+            "line": 381,
             "description": "This plugin works with <a href=\"http://tweenjs.com\" target=\"_blank\">TweenJS</a> to prevent the startPosition\nproperty from tweening.",
             "access": "private",
             "tagname": "",
@@ -1619,6 +1666,67 @@
         }
     },
     "classitems": [
+        {
+            "file": "..\\src\\core\\class.js",
+            "line": 79,
+            "description": "创建一个类。",
+            "itemtype": "method",
+            "name": "create",
+            "static": 1,
+            "params": [
+                {
+                    "name": "prop",
+                    "description": "复制到 prototype 中的属性和方法",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "Function"
+            },
+            "class": "xc.class"
+        },
+        {
+            "file": "..\\src\\core\\module.js",
+            "line": 28,
+            "description": "定义一个模块。",
+            "itemtype": "method",
+            "name": "define",
+            "static": 1,
+            "params": [
+                {
+                    "name": "id",
+                    "description": "模块标识。建议采用 a.b.c 这种有层次的模块标识写法。",
+                    "type": "String"
+                },
+                {
+                    "name": "factory",
+                    "description": "模块对象生成函数。factory 写法为：<code>function(exports) {}</code>，其中 exports 是模块对象。\n 如果 factory 有返回值，则把返回值作为模块对象。",
+                    "type": "Function"
+                }
+            ],
+            "class": "xc.module"
+        },
+        {
+            "file": "..\\src\\core\\module.js",
+            "line": 40,
+            "description": "获取模块对象。",
+            "itemtype": "method",
+            "name": "require",
+            "static": 1,
+            "params": [
+                {
+                    "name": "id",
+                    "description": "模块标识。",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "返回模块对象。如果模块不存在，会抛出一个异常。factory 在首次 require 时执行，生成模块对象。",
+                "type": "*"
+            },
+            "class": "xc.module"
+        },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\Bitmap.js",
             "line": 106,
@@ -5208,7 +5316,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 179,
+            "line": 180,
             "description": "Sets paused to false.",
             "itemtype": "method",
             "name": "play",
@@ -5217,7 +5325,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 188,
+            "line": 189,
             "description": "Sets paused to true.",
             "itemtype": "method",
             "name": "stop",
@@ -5226,7 +5334,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 197,
+            "line": 198,
             "description": "Advances this movie clip to the specified position or label and sets paused to false.",
             "itemtype": "method",
             "name": "gotoAndPlay",
@@ -5242,7 +5350,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 208,
+            "line": 209,
             "description": "Advances this movie clip to the specified position or label and sets paused to true.",
             "itemtype": "method",
             "name": "gotoAndStop",
@@ -5258,7 +5366,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 219,
+            "line": 220,
             "description": "MovieClip instances cannot be cloned.",
             "itemtype": "method",
             "name": "clone",
@@ -5267,7 +5375,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 229,
+            "line": 230,
             "description": "Returns a string representation of this object.",
             "itemtype": "method",
             "name": "toString",
@@ -5280,7 +5388,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 239,
+            "line": 240,
             "itemtype": "method",
             "name": "_tick",
             "access": "private",
@@ -5290,7 +5398,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 250,
+            "line": 251,
             "itemtype": "method",
             "name": "_goto",
             "access": "private",
@@ -5300,7 +5408,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 263,
+            "line": 264,
             "itemtype": "method",
             "name": "_reset",
             "access": "private",
@@ -5310,7 +5418,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 272,
+            "line": 273,
             "itemtype": "method",
             "name": "_updateTimeline",
             "access": "private",
@@ -5320,7 +5428,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 315,
+            "line": 316,
             "itemtype": "method",
             "name": "_setState",
             "access": "private",
@@ -5330,7 +5438,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 330,
+            "line": 331,
             "description": "Adds a child to the timeline, and sets it up as a managed child.",
             "itemtype": "method",
             "name": "_addManagedChild",
@@ -5341,7 +5449,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 348,
+            "line": 349,
             "description": "Read-only. The MovieClip will advance independently of its parent, even if its parent is paused.\nThis is the default mode.",
             "itemtype": "property",
             "name": "INDEPENDENT",
@@ -5353,7 +5461,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 359,
+            "line": 360,
             "description": "Read-only. The MovieClip will only display a single frame (as determined by the startPosition property).",
             "itemtype": "property",
             "name": "SINGLE_FRAME",
@@ -5365,7 +5473,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 369,
+            "line": 370,
             "description": "Read-only. The MovieClip will be advanced only when it's parent advances and will be synched to the position of\nthe parent MovieClip.",
             "itemtype": "property",
             "name": "SYNCHED",
@@ -5377,7 +5485,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 392,
+            "line": 393,
             "itemtype": "method",
             "name": "priority",
             "access": "private",
@@ -5387,7 +5495,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 398,
+            "line": 399,
             "itemtype": "method",
             "name": "install",
             "access": "private",
@@ -5397,7 +5505,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 406,
+            "line": 407,
             "itemtype": "method",
             "name": "init",
             "access": "private",
@@ -5407,7 +5515,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 414,
+            "line": 415,
             "itemtype": "method",
             "name": "step",
             "access": "private",
@@ -5417,7 +5525,7 @@
         },
         {
             "file": "..\\src\\lib\\createjs\\easeljs\\display\\MovieClip.js",
-            "line": 422,
+            "line": 423,
             "itemtype": "method",
             "name": "tween",
             "access": "private",

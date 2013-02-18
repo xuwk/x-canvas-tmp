@@ -44,7 +44,9 @@ YUI.add("yuidoc-meta", function(Y) {
         "Tween",
         "UID",
         "WebAudioLoader",
-        "WebAudioPlugin"
+        "WebAudioPlugin",
+        "xc.class",
+        "xc.module"
     ],
     "modules": [
         "xc",

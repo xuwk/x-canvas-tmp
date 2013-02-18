@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="..&#x2F;assets/css/main.css" id="site_styles">
     <link rel="shortcut icon" type="image/png" href="..&#x2F;assets/EaselJS_16x16.png">
     <script src="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;combo?3.8.0pr2&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
-	<title>xc v0.1.0 API Documentation : ..\src\lib\createjs\easeljs\display\Shadow.js</title>  
+	<title>xc v0.1.0 API Documentation : ..\src\core\class.js</title>  
 </head>
 <body class="yui3-skin-sam">
 
@@ -182,106 +182,128 @@
                 <div id="docs-main">
                     <div class="content">
                         <script>
-	var name = ..\src\lib\createjs\easeljs\display\Shadow.js      
+	var name = ..\src\core\class.js      
 </script>
-<h1 class="file-heading">File:..\src\lib\createjs\easeljs\display\Shadow.js</h1>
+<h1 class="file-heading">File:..\src\core\class.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
-xc.module.define(&quot;xc.createjs.Shadow&quot;, function(exports) {
-
+&#x2F;**
+ * 参考：http:&#x2F;&#x2F;ejohn.org&#x2F;blog&#x2F;simple-javascript-inheritance&#x2F;
+ *
+ * xc.class 提供一个简单、直观的 JavaScript 继承写法。
+ *
+ * JavaScript 中没有类的概念，继承是通过 prototype 来实现的，标准的写法是这样：
+ *
+ *     var Person = function(name) {
+ *         this.name = name;
+ *     }
+ *
+ *     &#x2F;&#x2F; 在 prototype 中定义的属性和方法，每个 Person 实例都能访问
+ *     Persion.prototype = {
+ *         getName: function() {
+ *             return this.name;
+ *         },
+ *         setName: function(name) {
+ *             this.name = name;
+ *         }
+ *     }
+ *     var zhansan = new Person(&quot;张三&quot;);
+ *     console.log(zhansan.getName()); &#x2F;&#x2F; 输出：张三
+ *
+ *     var Employee(name, employeeId) {
+ *         this.name = name;
+ *         this.employeeId = employeeId;
+ *     }
+ *
+ *     &#x2F;&#x2F; Employee 继承 Person
+ *     Employee.prototype = new Person();
+ *     Employee.prototype.getEmployeeId = function() {
+ *         return this.employeeId;
+ *     }
+ *
+ *     var lisi = new Employee(&quot;李四&quot;, 1);
+ *     console.log(lisi.getName());       &#x2F;&#x2F; 输出：李四
+ *     console.log(lisi.getEmployeeId()); &#x2F;&#x2F; 输出：1
+ *
+ * 标准的写法其实没什么不好，只是写起来有点繁琐。如果采用 xc.class，可以这样写：
+ *
+ *     &#x2F;&#x2F; 定义 Person 类
+ *     var Person = xc.class.create({
+ *         _init: function(name) {
+ *             this.name = name;
+ *         },
+ *         getName: function() {
+ *             return this.name;
+ *         },
+ *         setName: function(name) {
+ *             this.name = name;
+ *         }
+ *     });
+ *
+ *     &#x2F;&#x2F; 定义 Employee 类，继承 Person
+ *     var Employee = Person.extend({
+ *         _init: function(name, employeeId) {
+ *             this._super(name);
+ *             this.employeeId = employeeId;
+ *         },
+ *         getEmployeeId: function() {
+ *             return this.getEmployeeId;
+ *         }
+ *     });
+ *
+ * 采用这种写法有 3 个好处：
+ * &lt;ul&gt;
+ *  &lt;li&gt;单个类的属性和方法在一个 {} 中完成定义，类的继承方式更加直观。&lt;&#x2F;li&gt;
+ *  &lt;li&gt;提供一个 _init 方法，更易于理解为“构造函数”。&lt;&#x2F;li&gt;
+ *  &lt;li&gt;提供一个 _super 方法，用于访问基类的同名方法。重载父类方法时经常需要用到此方法。&lt;&#x2F;li&gt;
+ * &lt;&#x2F;ul&gt;
+ *
+ * 注意：xc.class 并没有改变 JavaScript 的继承原理，只是提供一个更方便，更直观的继承写法。
+ *
+ * @class xc.class
+ *&#x2F;
+(function() {
+  var initializing = false, fnTest = &#x2F;xyz&#x2F;.test(function() {xyz;}) ? &#x2F;\b_super\b&#x2F; : &#x2F;.*&#x2F;;
+  xc.class = function() {};
   &#x2F;**
-   * This class encapsulates the properties required to define a shadow to apply to a
-   * {{#crossLink &quot;DisplayObject&quot;}}{{&#x2F;crossLink}} via it&#x27;s &lt;code&gt;shadow&lt;&#x2F;code&gt; property.
+   * 创建一个类。
    *
-   * &lt;h4&gt;Example&lt;&#x2F;h4&gt;
-   *     myImage.shadow = new Shadow(&quot;#000000&quot;, 5, 5, 10);
-   *
-   * @class Shadow
-   * @constructor
-   * @param {String} color The color of the shadow.
-   * @param {Number} offsetX The x offset of the shadow in pixels.
-   * @param {Number} offsetY The y offset of the shadow in pixels.
-   * @param {Number} blur The size of the blurring effect.
-   *&#x2F;
-  var Shadow = xc.class.create({
-    _init: function(color, offsetX, offsetY, blur) {
-      this.color = color;
-      this.offsetX = offsetX;
-      this.offsetY = offsetY;
-      this.blur = blur;
-    },
-
-    &#x2F;**
-     * The color of the shadow.
-     *
-     * @property color
-     * @type String
-     * @default null
-     *&#x2F;
-    color: null,
-
-    &#x2F;**
-     * The x offset of the shadow.
-     *
-     * @property offsetX
-     * @type Number
-     * @default 0
-     *&#x2F;
-    offsetX: 0,
-
-    &#x2F;**
-     * The y offset of the shadow.
-     *
-     * @property offsetY
-     * @type Number
-     * @default 0
-     *&#x2F;
-    offsetY: 0,
-
-    &#x2F;**
-     * The blur of the shadow.
-     *
-     * @property blur
-     * @type Number
-     * @default 0
-     *&#x2F;
-    blur: 0,
-
-    &#x2F;**
-     * Returns a string representation of this object.
-     *
-     * @method toString
-     * @return {String} a string representation of the instance.
-     *&#x2F;
-    toString: function() {
-      return &quot;[Shadow]&quot;;
-    },
-
-    &#x2F;**
-     * Returns a clone of this Shadow instance.
-     *
-     * @method clone
-     * @return {Shadow} A clone of the current Shadow instance.
-     *&#x2F;
-    clone: function() {
-      return new Shadow(this.color, this.offsetX, this.offsetY, this.blur);
-    }
-  });
-
-  &#x2F;**
-   * An identity shadow object (all properties are set to 0). Read-only.
-   *
-   * @property identity
-   * @type Shadow
+   * @method create
    * @static
-   * @final
+   * @param {Object} prop 复制到 prototype 中的属性和方法
+   * @return {Function}
    *&#x2F;
-  Shadow.identity = new Shadow(&quot;transparent&quot;, 0, 0, 0);
+  xc.class.create = function(prop) {
+    var base = this.prototype;
+    initializing = true;
+    var prototype = new this();
+    initializing = false;
+    for (var name in prop) {
+      prototype[name] =
+          typeof prop[name] == &quot;function&quot; &amp;&amp; typeof base[name] == &quot;function&quot; &amp;&amp; fnTest.test(prop[name]) ?
+              (function(name, fn) {
+                return function() {
+                  var tmp = this._super;
+                  this._super = base[name];
+                  var ret = fn.apply(this, arguments);
+                  this._super = tmp;
+                  return ret;
+                };
+              })(name, prop[name]) : prop[name];
+    }
+    var Class = function() {
+      if (!initializing &amp;&amp; this._init) {
+        this._init.apply(this, arguments);
+      }
+    };
+    Class.prototype = prototype;
+    Class.prototype.constructor = Class;
+    Class.extend = arguments.callee;
+    return Class;
+  };
+})();
 
-  return Shadow;
-
-});
     </pre>
 </div>
 

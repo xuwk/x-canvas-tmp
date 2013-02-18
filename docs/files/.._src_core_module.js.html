@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="..&#x2F;assets/css/main.css" id="site_styles">
     <link rel="shortcut icon" type="image/png" href="..&#x2F;assets/EaselJS_16x16.png">
     <script src="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;combo?3.8.0pr2&#x2F;build&#x2F;yui&#x2F;yui-min.js"></script>
-	<title>xc v0.1.0 API Documentation : ..\src\lib\createjs\easeljs\display\Shadow.js</title>  
+	<title>xc v0.1.0 API Documentation : ..\src\core\module.js</title>  
 </head>
 <body class="yui3-skin-sam">
 
@@ -182,106 +182,77 @@
                 <div id="docs-main">
                     <div class="content">
                         <script>
-	var name = ..\src\lib\createjs\easeljs\display\Shadow.js      
+	var name = ..\src\core\module.js      
 </script>
-<h1 class="file-heading">File:..\src\lib\createjs\easeljs\display\Shadow.js</h1>
+<h1 class="file-heading">File:..\src\core\module.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
-xc.module.define(&quot;xc.createjs.Shadow&quot;, function(exports) {
-
+&#x2F;**
+ * xc.module 提供一个简单的模块定义方法。
+ *
+ * 写法如下：
+ *
+ *     xc.module.define(&quot;core.AbstractClass&quot;, function(exports) {
+ *         var AbstractClass = xc.class.create({ ... });
+ *         return AbstractClass;
+ *     }
+ *
+ *     xc.module.define(&quot;all.types&quot;, function(exports) {
+ *         var AbstractClass = xc.module.require(&quot;core.AbstractClass&quot;);
+ *         exports.NewClass = AbstractClass.extend({ ... });
+ *         exports.NewClass2 = AbstractClass.extend({ ... });
+ *     }
+ *
+ * 采用这种写法有 2 个好处：
+ * &lt;ul&gt;
+ *  &lt;li&gt;模块代码在一个函数闭包中定义，可减少全局变量污染。&lt;&#x2F;li&gt;
+ *  &lt;li&gt;模块代码在被 require 时才真正执行，可提升页面加载速度。&lt;&#x2F;li&gt;
+ * &lt;&#x2F;ul&gt;
+ *
+ * @class xc.module
+ *&#x2F;
+(function() {
+  xc.module = {};
+  var mapping = {}, cache = {};
   &#x2F;**
-   * This class encapsulates the properties required to define a shadow to apply to a
-   * {{#crossLink &quot;DisplayObject&quot;}}{{&#x2F;crossLink}} via it&#x27;s &lt;code&gt;shadow&lt;&#x2F;code&gt; property.
+   * 定义一个模块。
    *
-   * &lt;h4&gt;Example&lt;&#x2F;h4&gt;
-   *     myImage.shadow = new Shadow(&quot;#000000&quot;, 5, 5, 10);
-   *
-   * @class Shadow
-   * @constructor
-   * @param {String} color The color of the shadow.
-   * @param {Number} offsetX The x offset of the shadow in pixels.
-   * @param {Number} offsetY The y offset of the shadow in pixels.
-   * @param {Number} blur The size of the blurring effect.
-   *&#x2F;
-  var Shadow = xc.class.create({
-    _init: function(color, offsetX, offsetY, blur) {
-      this.color = color;
-      this.offsetX = offsetX;
-      this.offsetY = offsetY;
-      this.blur = blur;
-    },
-
-    &#x2F;**
-     * The color of the shadow.
-     *
-     * @property color
-     * @type String
-     * @default null
-     *&#x2F;
-    color: null,
-
-    &#x2F;**
-     * The x offset of the shadow.
-     *
-     * @property offsetX
-     * @type Number
-     * @default 0
-     *&#x2F;
-    offsetX: 0,
-
-    &#x2F;**
-     * The y offset of the shadow.
-     *
-     * @property offsetY
-     * @type Number
-     * @default 0
-     *&#x2F;
-    offsetY: 0,
-
-    &#x2F;**
-     * The blur of the shadow.
-     *
-     * @property blur
-     * @type Number
-     * @default 0
-     *&#x2F;
-    blur: 0,
-
-    &#x2F;**
-     * Returns a string representation of this object.
-     *
-     * @method toString
-     * @return {String} a string representation of the instance.
-     *&#x2F;
-    toString: function() {
-      return &quot;[Shadow]&quot;;
-    },
-
-    &#x2F;**
-     * Returns a clone of this Shadow instance.
-     *
-     * @method clone
-     * @return {Shadow} A clone of the current Shadow instance.
-     *&#x2F;
-    clone: function() {
-      return new Shadow(this.color, this.offsetX, this.offsetY, this.blur);
-    }
-  });
-
-  &#x2F;**
-   * An identity shadow object (all properties are set to 0). Read-only.
-   *
-   * @property identity
-   * @type Shadow
+   * @method define
    * @static
-   * @final
+   * @param {String} id 模块标识。建议采用 a.b.c 这种有层次的模块标识写法。
+   * @param {Function} factory 模块对象生成函数。factory 写法为：&lt;code&gt;function(exports) {}&lt;&#x2F;code&gt;，其中 exports 是模块对象。
+   *  如果 factory 有返回值，则把返回值作为模块对象。
    *&#x2F;
-  Shadow.identity = new Shadow(&quot;transparent&quot;, 0, 0, 0);
+  xc.module.define = function(id, factory) {
+    mapping[id] = factory;
+  };
+  &#x2F;**
+   * 获取模块对象。
+   *
+   * @method require
+   * @static
+   * @param {String} id 模块标识。
+   * @return {*} 返回模块对象。如果模块不存在，会抛出一个异常。factory 在首次 require 时执行，生成模块对象。
+   *&#x2F;
+  xc.module.require = function(id) {
+    if (cache[id]) {
+      return cache[id];
+    } else if (mapping[id]) {
+      var factory = mapping[id];
+      if (Object.prototype.toString.call(factory) == &quot;[object Function]&quot;) {
+        var exports = {};
+        var result = factory(exports);
+        cache[id] = result === undefined ? exports : result;
+      } else {
+        cache[id] = factory;
+      }
+      return cache[id];
+    }
+    throw &quot;module [&quot; + id + &quot;] not found&quot;;
+  };
+})();
 
-  return Shadow;
-
-});
     </pre>
 </div>
 
