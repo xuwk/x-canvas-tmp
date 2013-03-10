@@ -69,21 +69,172 @@ function foo(x, y, z) {
 ```
 
 
-空行
-====
-
-
 折行
 ====
+
+规则：
+* 单行长度不超过 120 个字符，超过就需要折行，折行比上一行缩进 8 个空格
+* 函数定义、if/for/while/do/switch/try 的左大括号放在同一行的行末
+* else/else if 和上个代码块的右大括号放在同一行
+
+举例：
+```JavaScript
+function buzz() {
+    return 0;
+}
+
+var foo = {
+    numbers: ['one', 'two', 'three', 'four', 'five', 'six'],
+
+    fOne: function(argA, argB, argC, argD, argE, argF, argG, argH) {
+        var x = argA + argB + argC + argD + argE + argF + argG + argH;
+        this.fTwo(argA, argB, argC, this.fThree(argD, argE, argF, argG, argH));
+        var z = argA == 'Some string' ? 'yes' : 'no';
+        var colors = ['red', 'green', 'blue', 'black', 'white', 'gray'];
+        for (var colorIndex = 0; colorIndex < colors.length; colorIndex++) {
+            var colorString = this.numbers[colorIndex];
+        }
+    },
+
+    fTwo: function(strA, strB, strC, strD) {
+        if (true) {
+            return strC;
+        }
+        if (strA == 'one' && (strB == 'two' || strC == 'three')) {
+            return strA + strB + strC;
+        } else {
+            return D;
+        }
+        if (strA == 'one') {
+            return 1;
+        } else if (strA == 'two') {
+            return 2;
+        }
+        var number = -10;
+        while(number < 0) {
+            number = number + 1;
+        }
+        do {
+            number = number + 1;
+        } while (number < 10);
+        return strD;
+    },
+
+    fThree: function(strA, strB, strC, strD, strE) {
+        var number = prompt("Enter a number:", 0);
+        switch (number) {
+        case 0:
+            alert("Zero");
+            break;
+        case 1:
+            alert("One");
+            break;
+        }
+        try {
+            a[2] = 10;
+
+        } catch (e) {
+            alert("Failure: " + e.message);
+        }
+        return strA + strB + strC + strD + strE;
+    }
+};
+```
 
 
 注释
 ====
+使用 YUIDoc 来添加注释文档。
+
+class 例子：
+```JavaScript
+/**
+ * This is the description for my class.
+ *
+ * @class MyClass
+ * @constructor
+ */
+```
+
+method 例子：
+```JavaScript
+/**
+ * My method description.  Like other pieces of your comment blocks,
+ * this can span multiple lines.
+ *
+ * @method methodName
+ * @param {String} foo Argument 1
+ * @param {Object} config A config object
+ * @param {String} config.name The name on the config object
+ * @param {Function} config.callback A callback function on the config object
+ * @param {Boolean} [extra=false] Do extra, optional work
+ * @return {Boolean} Returns true on success
+ */
+```
+
+property 例子：
+```JavaScript
+/**
+ * My property description.  Like other pieces of your comment blocks,
+ * this can span multiple lines.
+ *
+ * @property propertyName
+ * @type {Object}
+ * @default "foo"
+ */
+```
+
+以上例子要注意几点：
+* 每行的 * 要和第一行的 * 左边对齐
+* 每行的内容要和开头的 * 隔 1 空格
+* 注释块结尾用单一行的 */
 
 
-包
+模块
 ==
+module.js 中规范了模块的定义方法。
+
+举例：
+```JavaScript
+xc.module.define("core.AbstractClass", function(exports) {
+    var AbstractClass = xc.class.create({ ... });
+    return AbstractClass;
+}
+
+xc.module.define("all.types", function(exports) {
+    var AbstractClass = xc.module.require("core.AbstractClass");
+    exports.NewClass = AbstractClass.extend({ ... });
+    exports.NewClass2 = AbstractClass.extend({ ... });
+}
+```
 
 
 类
 ==
+class.js 中规范了类的定义方法。
+
+```JavaScript
+// 定义 Person 类
+var Person = xc.class.create({
+    _init: function(name) {
+        this.name = name;
+    },
+    getName: function() {
+        return this.name;
+    },
+    setName: function(name) {
+        this.name = name;
+    }
+});
+
+// 定义 Employee 类，继承 Person
+var Employee = Person.extend({
+    _init: function(name, employeeId) {
+        this._super(name);
+        this.employeeId = employeeId;
+    },
+    getEmployeeId: function() {
+        return this.getEmployeeId;
+    }
+});
+```
