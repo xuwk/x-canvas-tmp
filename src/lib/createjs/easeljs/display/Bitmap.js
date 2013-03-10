@@ -73,123 +73,123 @@
 
 xc.module.define("xc.createjs.Bitmap", function(exports) {
 
-  var DisplayObject = xc.module.require("xc.createjs.DisplayObject");
-
-  /**
-   * A Bitmap represents an Image, Canvas, or Video in the display list.
-   * A Bitmap can be instantiated using an existing HTML element, or a string.
-   *
-   * <h4>Example</h4>
-   *     var bitmap = new Bitmap("imagePath.jpg");
-   *
-   * Note: When a string path or image tag that is not yet loaded is used, the stage may need to be redrawn before it
-   * will be displayed.
-   *
-   * @class Bitmap
-   * @extends DisplayObject
-   * @constructor
-   * @param {Image | HTMLCanvasElement | HTMLVideoElement | String} imageOrUri The source object or URI to an image to
-   *  display. This can be either an Image, Canvas, or Video object, or a string URI to an image file to load and use.
-   *  If it is a URI, a new Image object will be constructed and assigned to the .image property.
-   */
-  var Bitmap = DisplayObject.extend({
-    _init: function(imageOrUri) {
-      this._super();
-      if (typeof imageOrUri == "string") {
-        this.image = new Image();
-        this.image.src = imageOrUri;
-      } else {
-        this.image = imageOrUri;
-      }
-    },
+    var DisplayObject = xc.module.require("xc.createjs.DisplayObject");
 
     /**
-     * The image to render. This can be an Image, a Canvas, or a Video.
+     * A Bitmap represents an Image, Canvas, or Video in the display list.
+     * A Bitmap can be instantiated using an existing HTML element, or a string.
      *
-     * @property image
-     * @type Image | HTMLCanvasElement | HTMLVideoElement
+     * <h4>Example</h4>
+     *     var bitmap = new Bitmap("imagePath.jpg");
+     *
+     * Note: When a string path or image tag that is not yet loaded is used, the stage may need to be redrawn before it
+     * will be displayed.
+     *
+     * @class Bitmap
+     * @extends DisplayObject
+     * @constructor
+     * @param {Image | HTMLCanvasElement | HTMLVideoElement | String} imageOrUri The source object or URI to an image to
+     *  display. This can be either an Image, Canvas, or Video object, or a string URI to an image file to load and use.
+     *  If it is a URI, a new Image object will be constructed and assigned to the .image property.
      */
-    image: null,
+    var Bitmap = DisplayObject.extend({
+        _init: function(imageOrUri) {
+            this._super();
+            if (typeof imageOrUri == "string") {
+                this.image = new Image();
+                this.image.src = imageOrUri;
+            } else {
+                this.image = imageOrUri;
+            }
+        },
 
-    /**
-     * Whether or not the Bitmap should be draw to the canvas at whole pixel coordinates.
-     *
-     * @property snapToPixel
-     * @type Boolean
-     * @default true
-     */
-    snapToPixel: true,
+        /**
+         * The image to render. This can be an Image, a Canvas, or a Video.
+         *
+         * @property image
+         * @type Image | HTMLCanvasElement | HTMLVideoElement
+         */
+        image: null,
 
-    /**
-     * Specifies an area of the source image to draw. If omitted, the whole image will be drawn.
-     *
-     * @property sourceRect
-     * @type Rectangle
-     * @default null
-     */
-    sourceRect: null,
+        /**
+         * Whether or not the Bitmap should be draw to the canvas at whole pixel coordinates.
+         *
+         * @property snapToPixel
+         * @type Boolean
+         * @default true
+         */
+        snapToPixel: true,
 
-    /**
-     * Returns true or false indicating whether the display object would be visible if drawn to a canvas.
-     * This does not account for whether it would be visible within the boundaries of the stage.
-     *
-     * Note: This method is mainly for internal use, though it may be useful for advanced uses.
-     *
-     * @method isVisible
-     * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas.
-     */
-    isVisible: function() {
-      var hasContent = this.cacheCanvas ||
-          (this.image && (this.image.complete || this.image.getContext || this.image.readyState >= 2));
-      return !!(this.visible && this.alpha > 0 && this.scaleX != 0 && this.scaleY != 0 && hasContent);
-    },
+        /**
+         * Specifies an area of the source image to draw. If omitted, the whole image will be drawn.
+         *
+         * @property sourceRect
+         * @type Rectangle
+         * @default null
+         */
+        sourceRect: null,
 
-    /**
-     * Draws the display object into the specified context ignoring it's visible, alpha, shadow, and transform.
-     * Returns true if the draw was handled (useful for overriding functionality).
-     *
-     * Note: This method is mainly for internal use, though it may be useful for advanced uses.
-     *
-     * @method draw
-     * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
-     * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache.
-     *  For example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
-     */
-    draw: function(ctx, ignoreCache) {
-      if (this._super(ctx, ignoreCache)) { return true; }
-      var rect = this.sourceRect;
-      if (rect) {
-        ctx.drawImage(this.image, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
-      } else {
-        ctx.drawImage(this.image, 0, 0);
-      }
-      return true;
-    },
+        /**
+         * Returns true or false indicating whether the display object would be visible if drawn to a canvas.
+         * This does not account for whether it would be visible within the boundaries of the stage.
+         *
+         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
+         *
+         * @method isVisible
+         * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas.
+         */
+        isVisible: function() {
+            var hasContent = this.cacheCanvas ||
+                    (this.image && (this.image.complete || this.image.getContext || this.image.readyState >= 2));
+            return !!(this.visible && this.alpha > 0 && this.scaleX != 0 && this.scaleY != 0 && hasContent);
+        },
 
-    /**
-     * Returns a clone of the Bitmap instance.
-     *
-     * @method clone
-     * @return {Bitmap} a clone of the Bitmap instance.
-     */
-    clone: function() {
-      var o = new Bitmap(this.image);
-      if (this.sourceRect) { o.sourceRect = this.sourceRect.clone(); }
-      this.cloneProps(o);
-      return o;
-    },
+        /**
+         * Draws the display object into the specified context ignoring it's visible, alpha, shadow, and transform.
+         * Returns true if the draw was handled (useful for overriding functionality).
+         *
+         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
+         *
+         * @method draw
+         * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
+         * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache.
+         *  For example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
+         */
+        draw: function(ctx, ignoreCache) {
+            if (this._super(ctx, ignoreCache)) { return true; }
+            var rect = this.sourceRect;
+            if (rect) {
+                ctx.drawImage(this.image, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
+            } else {
+                ctx.drawImage(this.image, 0, 0);
+            }
+            return true;
+        },
 
-    /**
-     * Returns a string representation of this object.
-     *
-     * @method toString
-     * @return {String} a string representation of the instance.
-     */
-    toString: function() {
-      return "[Bitmap (name=" + this.name + ")]";
-    }
-  });
+        /**
+         * Returns a clone of the Bitmap instance.
+         *
+         * @method clone
+         * @return {Bitmap} a clone of the Bitmap instance.
+         */
+        clone: function() {
+            var o = new Bitmap(this.image);
+            if (this.sourceRect) { o.sourceRect = this.sourceRect.clone(); }
+            this.cloneProps(o);
+            return o;
+        },
 
-  return Bitmap;
+        /**
+         * Returns a string representation of this object.
+         *
+         * @method toString
+         * @return {String} a string representation of the instance.
+         */
+        toString: function() {
+            return "[Bitmap (name=" + this.name + ")]";
+        }
+    });
+
+    return Bitmap;
 
 });

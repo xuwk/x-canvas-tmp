@@ -1,3 +1,3 @@
 xc.depends([
-  "createjs"
+    "createjs"
 ]);

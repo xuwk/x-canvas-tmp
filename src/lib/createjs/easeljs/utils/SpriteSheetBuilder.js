@@ -1,474 +1,474 @@
 xc.module.define("xc.createjs.SpriteSheetBuilder", function(exports) {
 
-  var EventDispatcher = xc.module.require("xc.createjs.EventDispatcher");
-  var Rectangle = xc.module.require("xc.createjs.Rectangle");
-  var SpriteSheet = xc.module.require("xc.createjs.SpriteSheet");
-
-  /**
-   * The SpriteSheetBuilder allows you to generate sprite sheets at run time from any display object. This can allow
-   * you to maintain your assets as vector graphics (for low file size), and render them at run time as sprite sheets
-   * for better performance.
-   *
-   * Sprite sheets can be built either synchronously, or asynchronously, so that large sprite sheets can be generated
-   * without locking the UI.
-   *
-   * Note that the "images" used in the generated sprite sheet are actually canvas elements, and that they will be sized
-   * to the nearest power of 2 up to the value of <code>maxWidth</code> or <code>maxHeight</code>.
-   *
-   * @class SpriteSheetBuilder
-   * @extends EventDispatcher
-   * @constructor
-   */
-  var SpriteSheetBuilder = EventDispatcher.extend({
-    _init: function() {
-      this._frames = [];
-      this._animations = {};
-    },
+    var EventDispatcher = xc.module.require("xc.createjs.EventDispatcher");
+    var Rectangle = xc.module.require("xc.createjs.Rectangle");
+    var SpriteSheet = xc.module.require("xc.createjs.SpriteSheet");
 
     /**
-     * Dispatched when a build completes.
+     * The SpriteSheetBuilder allows you to generate sprite sheets at run time from any display object. This can allow
+     * you to maintain your assets as vector graphics (for low file size), and render them at run time as sprite sheets
+     * for better performance.
      *
-     * @event complete
-     * @param {Object} target The object that dispatched the event.
-     * @param {String} type The event type.
-     */
-
-    /**
-     * Dispatched when an asynchronous build has progress.
+     * Sprite sheets can be built either synchronously, or asynchronously, so that large sprite sheets can be generated
+     * without locking the UI.
      *
-     * @event complete
-     * @param {Object} target The object that dispatched the event.
-     * @param {String} type The event type.
-     * @param {Number} progress The current progress value (0-1).
-     */
-
-    /**
-     * The maximum width for the images (not individual frames) in the generated sprite sheet. It is recommended to use
-     * a power of 2 for this value (ex. 1024, 2048, 4096). If the frames cannot all fit within the max dimensions, then
-     * additional images will be created as needed.
+     * Note that the "images" used in the generated sprite sheet are actually canvas elements, and that they will be sized
+     * to the nearest power of 2 up to the value of <code>maxWidth</code> or <code>maxHeight</code>.
      *
-     * @property maxWidth
-     * @type Number
-     * @default 2048
+     * @class SpriteSheetBuilder
+     * @extends EventDispatcher
+     * @constructor
      */
-    maxWidth: 2048,
+    var SpriteSheetBuilder = EventDispatcher.extend({
+        _init: function() {
+            this._frames = [];
+            this._animations = {};
+        },
 
-    /**
-     * The maximum height for the images (not individual frames) in the generated sprite sheet. It is recommended to use
-     * a power of 2 for this value (ex. 1024, 2048, 4096). If the frames cannot all fit within the max dimensions, then
-     * additional images will be created as needed.
-     *
-     * @property maxHeight
-     * @type Number
-     * @default 2048
-     */
-    maxHeight: 2048,
+        /**
+         * Dispatched when a build completes.
+         *
+         * @event complete
+         * @param {Object} target The object that dispatched the event.
+         * @param {String} type The event type.
+         */
 
-    /**
-     * The sprite sheet that was generated. This will be null before a build is completed successfully.
-     *
-     * @property spriteSheet
-     * @type SpriteSheet
-     */
-    spriteSheet: null,
+        /**
+         * Dispatched when an asynchronous build has progress.
+         *
+         * @event complete
+         * @param {Object} target The object that dispatched the event.
+         * @param {String} type The event type.
+         * @param {Number} progress The current progress value (0-1).
+         */
 
-    /**
-     * The scale to apply when drawing all frames to the sprite sheet. This is multiplied against any scale specified
-     * in the addFrame call. This can be used, for example, to generate a sprite sheet at run time that is tailored to
-     * the a specific device resolution (ex. tablet vs mobile).
-     *
-     * @property defaultScale
-     * @type Number
-     * @default 1
-     */
-    scale: 1,
+        /**
+         * The maximum width for the images (not individual frames) in the generated sprite sheet. It is recommended to use
+         * a power of 2 for this value (ex. 1024, 2048, 4096). If the frames cannot all fit within the max dimensions, then
+         * additional images will be created as needed.
+         *
+         * @property maxWidth
+         * @type Number
+         * @default 2048
+         */
+        maxWidth: 2048,
 
-    /**
-     * The padding to use between frames. This is helpful to preserve antialiasing on drawn vector content.
-     *
-     * @property padding
-     * @type Number
-     * @default 1
-     */
-    padding: 1,
+        /**
+         * The maximum height for the images (not individual frames) in the generated sprite sheet. It is recommended to use
+         * a power of 2 for this value (ex. 1024, 2048, 4096). If the frames cannot all fit within the max dimensions, then
+         * additional images will be created as needed.
+         *
+         * @property maxHeight
+         * @type Number
+         * @default 2048
+         */
+        maxHeight: 2048,
 
-    /**
-     * A number from 0.01 to 0.99 that indicates what percentage of time the builder can use. This can be
-     * thought of as the number of seconds per second the builder will use. For example, with a timeSlice value of 0.3,
-     * the builder will run 20 times per second, using approximately 15ms per build (30% of available time, or 0.3s per second).
-     * Defaults to 0.3.
-     *
-     * @property timeSlice
-     * @type Number
-     * @default 0.3
-     */
-    timeSlice: 0.3,
+        /**
+         * The sprite sheet that was generated. This will be null before a build is completed successfully.
+         *
+         * @property spriteSheet
+         * @type SpriteSheet
+         */
+        spriteSheet: null,
 
-    /**
-     * Read-only. A value between 0 and 1 that indicates the progress of a build, or -1 if a build has not
-     * been initiated.
-     *
-     * @property progress
-     * @type Number
-     * @default -1
-     */
-    progress: -1,
+        /**
+         * The scale to apply when drawing all frames to the sprite sheet. This is multiplied against any scale specified
+         * in the addFrame call. This can be used, for example, to generate a sprite sheet at run time that is tailored to
+         * the a specific device resolution (ex. tablet vs mobile).
+         *
+         * @property defaultScale
+         * @type Number
+         * @default 1
+         */
+        scale: 1,
 
-    /**
-     * @property _frames
-     * @protected
-     * @type Array
-     */
-    _frames: null,
+        /**
+         * The padding to use between frames. This is helpful to preserve antialiasing on drawn vector content.
+         *
+         * @property padding
+         * @type Number
+         * @default 1
+         */
+        padding: 1,
 
-    /**
-     * @property _animations
-     * @protected
-     * @type Array
-     */
-    _animations: null,
+        /**
+         * A number from 0.01 to 0.99 that indicates what percentage of time the builder can use. This can be
+         * thought of as the number of seconds per second the builder will use. For example, with a timeSlice value of 0.3,
+         * the builder will run 20 times per second, using approximately 15ms per build (30% of available time, or 0.3s per second).
+         * Defaults to 0.3.
+         *
+         * @property timeSlice
+         * @type Number
+         * @default 0.3
+         */
+        timeSlice: 0.3,
 
-    /**
-     * @property _data
-     * @protected
-     * @type Array
-     */
-    _data: null,
+        /**
+         * Read-only. A value between 0 and 1 that indicates the progress of a build, or -1 if a build has not
+         * been initiated.
+         *
+         * @property progress
+         * @type Number
+         * @default -1
+         */
+        progress: -1,
 
-    /**
-     * @property _nextFrameIndex
-     * @protected
-     * @type Number
-     */
-    _nextFrameIndex: 0,
+        /**
+         * @property _frames
+         * @protected
+         * @type Array
+         */
+        _frames: null,
 
-    /**
-     * @property _index
-     * @protected
-     * @type Number
-     */
-    _index: 0,
+        /**
+         * @property _animations
+         * @protected
+         * @type Array
+         */
+        _animations: null,
 
-    /**
-     * @property _timerID
-     * @protected
-     * @type Number
-     */
-    _timerID: null,
+        /**
+         * @property _data
+         * @protected
+         * @type Array
+         */
+        _data: null,
 
-    /**
-     * @property _scale
-     * @protected
-     * @type Number
-     */
-    _scale: 1,
+        /**
+         * @property _nextFrameIndex
+         * @protected
+         * @type Number
+         */
+        _nextFrameIndex: 0,
 
-    /**
-     * Adds a frame to the {{#crossLink "SpriteSheet"}}{{/crossLink}}. Note that the frame will not be drawn until you
-     * call {{#crossLink "SpriteSheetBuilder/build"}}{{/crossLink}} method. The optional setup params allow you to have
-     * a function run immediately before the draw occurs. For example, this allows you to add a single source multiple
-     * times, but manipulate it or it's children to change it to generate different frames.
-     *
-     * Note that the source's transformations (x, y, scale, rotate, alpha) will be ignored, except for regX/Y. To apply
-     * transforms to a source object and have them captured in the sprite sheet, simply place it into a {{#crossLink "Container"}}{{/crossLink}}
-     * and pass in the Container as the source.
-     *
-     * @method addFrame
-     * @param {DisplayObject} source The source {{#crossLink "DisplayObject"}}{{/crossLink}}  to draw as the frame.
-     * @param {Rectangle} [sourceRect] A {{#crossLink "Rectangle"}}{{/crossLink}} defining the portion of the
-     *  source to draw to the frame. If not specified, it will look for a <code>getBounds</code> method, bounds property,
-     *  or <code>nominalBounds</code> property on the source to use. If one is not found, the frame will be skipped.
-     * @param {Number} [scale=1] Optional. The scale to draw this frame at. Default is 1.
-     * @param {Function} [setupFunction] Optional. A function to call immediately before drawing this frame.
-     * @param {Array} [setupParams] Parameters to pass to the setup function.
-     * @param {Object} [setupScope] The scope to call the setupFunction in.
-     * @return {Number} The index of the frame that was just added, or null if a sourceRect could not be determined.
-     */
-    addFrame: function(source, sourceRect, scale, setupFunction, setupParams, setupScope) {
-      if (this._data) { throw SpriteSheetBuilder.ERR_RUNNING; }
-      var rect = sourceRect || source.bounds || source.nominalBounds;
-      if (!rect && source.getBounds) { rect = source.getBounds(); }
-      if (!rect) { return null; }
-      scale = scale || 1;
-      return this._frames.push({source: source, sourceRect: rect, scale: scale, funct: setupFunction, params: setupParams, scope: setupScope, index: this._frames.length, height: rect.height *
-          scale}) - 1;
-    },
+        /**
+         * @property _index
+         * @protected
+         * @type Number
+         */
+        _index: 0,
 
-    /**
-     * Adds an animation that will be included in the created sprite sheet.
-     *
-     * @method addAnimation
-     * @param {String} name The name for the animation.
-     * @param {Array} frames An array of frame indexes that comprise the animation. Ex. [3,6,5] would describe an animation
-     *  that played frame indexes 3, 6, and 5 in that order.
-     * @param {String} [next] Specifies the name of the animation to continue to after this animation ends. You can
-     *  also pass false to have the animation stop when it ends. By default it will loop to the start of the same animation.
-     * @param {Number} [frequency] Specifies a frame advance frequency for this animation. For example, a value
-     *  of 2 would cause the animation to advance every second tick.
-     */
-    addAnimation: function(name, frames, next, frequency) {
-      if (this._data) { throw SpriteSheetBuilder.ERR_RUNNING; }
-      this._animations[name] = {frames: frames, next: next, frequency: frequency};
-    },
+        /**
+         * @property _timerID
+         * @protected
+         * @type Number
+         */
+        _timerID: null,
 
-    /**
-     * This will take a MovieClip, and add its frames and labels to this builder. Labels will be added as an animation
-     * running from the label index to the next label. For example, if there is a label named "foo" at frame 0 and a label
-     * named "bar" at frame 10, in a MovieClip with 15 frames, it will add an animation named "foo" that runs from frame
-     * index 0 to 9, and an animation named "bar" that runs from frame index 10 to 14.
-     *
-     * Note that this will iterate through the full MovieClip with actionsEnabled set to false, ending on the last frame.
-     *
-     * @method addMovieClip
-     * @param {MovieClip} source The source MovieClip to add to the sprite sheet.
-     * @param {Rectangle} [sourceRect] A {{#crossLink "Rectangle"}}{{/crossLink}} defining the portion of the source to
-     *  draw to the frame. If not specified, it will look for a <code>getBounds</code> method, <code>frameBounds</code>
-     *  Array, <code>bounds</code> property, or <code>nominalBounds</code> property on the source to use. If one is not
-     *  found, the MovieClip will be skipped.
-     * @param {Number} [scale=1] The scale to draw the movie clip at.
-     */
-    addMovieClip: function(source, sourceRect, scale) {
-      if (this._data) { throw SpriteSheetBuilder.ERR_RUNNING; }
-      var rects = source.frameBounds;
-      var rect = sourceRect || source.bounds || source.nominalBounds;
-      if (!rect && source.getBounds) { rect = source.getBounds(); }
-      if (!rect && !rects) { return null; }
-      var baseFrameIndex = this._frames.length;
-      var duration = source.timeline.duration;
-      for (var i = 0; i < duration; i++) {
-        var r = (rects && rects[i]) ? rects[i] : rect;
-        this.addFrame(source, r, scale, function(frame) {
-          var ae = this.actionsEnabled;
-          this.actionsEnabled = false;
-          this.gotoAndStop(frame);
-          this.actionsEnabled = ae;
-        }, [i], source);
-      }
-      var labels = source.timeline._labels;
-      var lbls = [];
-      for (var n in labels) {
-        lbls.push({index: labels[n], label: n});
-      }
-      if (lbls.length) {
-        lbls.sort(function(a, b) { return a.index - b.index; });
-        for (var i = 0, l = lbls.length; i < l; i++) {
-          var label = lbls[i].label;
-          var start = baseFrameIndex + lbls[i].index;
-          var end = baseFrameIndex + ((i == l - 1) ? duration : lbls[i + 1].index);
-          var frames = [];
-          for (var j = start; j < end; j++) { frames.push(j); }
-          this.addAnimation(label, frames, true); // for now, this loops all animations.
+        /**
+         * @property _scale
+         * @protected
+         * @type Number
+         */
+        _scale: 1,
+
+        /**
+         * Adds a frame to the {{#crossLink "SpriteSheet"}}{{/crossLink}}. Note that the frame will not be drawn until you
+         * call {{#crossLink "SpriteSheetBuilder/build"}}{{/crossLink}} method. The optional setup params allow you to have
+         * a function run immediately before the draw occurs. For example, this allows you to add a single source multiple
+         * times, but manipulate it or it's children to change it to generate different frames.
+         *
+         * Note that the source's transformations (x, y, scale, rotate, alpha) will be ignored, except for regX/Y. To apply
+         * transforms to a source object and have them captured in the sprite sheet, simply place it into a {{#crossLink "Container"}}{{/crossLink}}
+         * and pass in the Container as the source.
+         *
+         * @method addFrame
+         * @param {DisplayObject} source The source {{#crossLink "DisplayObject"}}{{/crossLink}}  to draw as the frame.
+         * @param {Rectangle} [sourceRect] A {{#crossLink "Rectangle"}}{{/crossLink}} defining the portion of the
+         *  source to draw to the frame. If not specified, it will look for a <code>getBounds</code> method, bounds property,
+         *  or <code>nominalBounds</code> property on the source to use. If one is not found, the frame will be skipped.
+         * @param {Number} [scale=1] Optional. The scale to draw this frame at. Default is 1.
+         * @param {Function} [setupFunction] Optional. A function to call immediately before drawing this frame.
+         * @param {Array} [setupParams] Parameters to pass to the setup function.
+         * @param {Object} [setupScope] The scope to call the setupFunction in.
+         * @return {Number} The index of the frame that was just added, or null if a sourceRect could not be determined.
+         */
+        addFrame: function(source, sourceRect, scale, setupFunction, setupParams, setupScope) {
+            if (this._data) { throw SpriteSheetBuilder.ERR_RUNNING; }
+            var rect = sourceRect || source.bounds || source.nominalBounds;
+            if (!rect && source.getBounds) { rect = source.getBounds(); }
+            if (!rect) { return null; }
+            scale = scale || 1;
+            return this._frames.push({source: source, sourceRect: rect, scale: scale, funct: setupFunction, params: setupParams, scope: setupScope, index: this._frames.length, height: rect.height *
+                    scale}) - 1;
+        },
+
+        /**
+         * Adds an animation that will be included in the created sprite sheet.
+         *
+         * @method addAnimation
+         * @param {String} name The name for the animation.
+         * @param {Array} frames An array of frame indexes that comprise the animation. Ex. [3,6,5] would describe an animation
+         *  that played frame indexes 3, 6, and 5 in that order.
+         * @param {String} [next] Specifies the name of the animation to continue to after this animation ends. You can
+         *  also pass false to have the animation stop when it ends. By default it will loop to the start of the same animation.
+         * @param {Number} [frequency] Specifies a frame advance frequency for this animation. For example, a value
+         *  of 2 would cause the animation to advance every second tick.
+         */
+        addAnimation: function(name, frames, next, frequency) {
+            if (this._data) { throw SpriteSheetBuilder.ERR_RUNNING; }
+            this._animations[name] = {frames: frames, next: next, frequency: frequency};
+        },
+
+        /**
+         * This will take a MovieClip, and add its frames and labels to this builder. Labels will be added as an animation
+         * running from the label index to the next label. For example, if there is a label named "foo" at frame 0 and a label
+         * named "bar" at frame 10, in a MovieClip with 15 frames, it will add an animation named "foo" that runs from frame
+         * index 0 to 9, and an animation named "bar" that runs from frame index 10 to 14.
+         *
+         * Note that this will iterate through the full MovieClip with actionsEnabled set to false, ending on the last frame.
+         *
+         * @method addMovieClip
+         * @param {MovieClip} source The source MovieClip to add to the sprite sheet.
+         * @param {Rectangle} [sourceRect] A {{#crossLink "Rectangle"}}{{/crossLink}} defining the portion of the source to
+         *  draw to the frame. If not specified, it will look for a <code>getBounds</code> method, <code>frameBounds</code>
+         *  Array, <code>bounds</code> property, or <code>nominalBounds</code> property on the source to use. If one is not
+         *  found, the MovieClip will be skipped.
+         * @param {Number} [scale=1] The scale to draw the movie clip at.
+         */
+        addMovieClip: function(source, sourceRect, scale) {
+            if (this._data) { throw SpriteSheetBuilder.ERR_RUNNING; }
+            var rects = source.frameBounds;
+            var rect = sourceRect || source.bounds || source.nominalBounds;
+            if (!rect && source.getBounds) { rect = source.getBounds(); }
+            if (!rect && !rects) { return null; }
+            var baseFrameIndex = this._frames.length;
+            var duration = source.timeline.duration;
+            for (var i = 0; i < duration; i++) {
+                var r = (rects && rects[i]) ? rects[i] : rect;
+                this.addFrame(source, r, scale, function(frame) {
+                    var ae = this.actionsEnabled;
+                    this.actionsEnabled = false;
+                    this.gotoAndStop(frame);
+                    this.actionsEnabled = ae;
+                }, [i], source);
+            }
+            var labels = source.timeline._labels;
+            var lbls = [];
+            for (var n in labels) {
+                lbls.push({index: labels[n], label: n});
+            }
+            if (lbls.length) {
+                lbls.sort(function(a, b) { return a.index - b.index; });
+                for (var i = 0, l = lbls.length; i < l; i++) {
+                    var label = lbls[i].label;
+                    var start = baseFrameIndex + lbls[i].index;
+                    var end = baseFrameIndex + ((i == l - 1) ? duration : lbls[i + 1].index);
+                    var frames = [];
+                    for (var j = start; j < end; j++) { frames.push(j); }
+                    this.addAnimation(label, frames, true); // for now, this loops all animations.
+                }
+            }
+        },
+
+        /**
+         * Builds a SpriteSheet instance based on the current frames.
+         *
+         * @method build
+         * @return SpriteSheet The created SpriteSheet instance, or null if a build is already running or an error occurred.
+         */
+        build: function() {
+            if (this._data) { throw SpriteSheetBuilder.ERR_RUNNING; }
+            this._startBuild();
+            while (this._drawNext()) {}
+            this._endBuild();
+            return this.spriteSheet;
+        },
+
+        /**
+         * Asynchronously builds a {{#crossLink "SpriteSheet"}}{{/crossLink}} instance based on the current frames. It will
+         * run 20 times per second, using an amount of time defined by <code>timeSlice</code>. When it is complete it will
+         * call the specified callback.
+         *
+         * @method buildAsync
+         * @param {Number} [timeSlice] Sets the timeSlice property on this instance.
+         */
+        buildAsync: function(timeSlice) {
+            if (this._data) { throw SpriteSheetBuilder.ERR_RUNNING; }
+            this.timeSlice = timeSlice;
+            this._startBuild();
+            var _this = this;
+            this._timerID = setTimeout(function() { _this._run(); },
+                    50 - Math.max(0.01, Math.min(0.99, this.timeSlice || 0.3)) * 50);
+        },
+
+        /**
+         * Stops the current asynchronous build.
+         *
+         * @method stopAsync
+         */
+        stopAsync: function() {
+            clearTimeout(this._timerID);
+            this._data = null;
+        },
+
+        /**
+         * SpriteSheetBuilder instances cannot be cloned.
+         *
+         * @method clone
+         */
+        clone: function() {
+            throw("SpriteSheetBuilder cannot be cloned.");
+        },
+
+        /**
+         * Returns a string representation of this object.
+         *
+         * @method toString
+         * @return {String} a string representation of the instance.
+         */
+        toString: function() {
+            return "[SpriteSheetBuilder]";
+        },
+
+        /**
+         * @method _startBuild
+         * @protected
+         */
+        _startBuild: function() {
+            var pad = this.padding || 0;
+            this.progress = 0;
+            this.spriteSheet = null;
+            this._index = 0;
+            this._scale = this.scale;
+            var dataFrames = [];
+            this._data = {
+                images: [],
+                frames: dataFrames,
+                animations: this._animations // TODO: should we "clone" _animations in case someone adds more animations after a build?
+            };
+            var frames = this._frames.slice();
+            frames.sort(function(a, b) { return (a.height <= b.height) ? -1 : 1; });
+            if (frames[frames.length - 1].height + pad * 2 > this.maxHeight) { throw SpriteSheetBuilder.ERR_DIMENSIONS; }
+            var y = 0, x = 0;
+            var img = 0;
+            while (frames.length) {
+                var o = this._fillRow(frames, y, img, dataFrames, pad);
+                if (o.w > x) { x = o.w; }
+                y += o.h;
+                if (!o.h || !frames.length) {
+                    var canvas = document.createElement("canvas");
+                    canvas.width = this._getSize(x, this.maxWidth);
+                    canvas.height = this._getSize(y, this.maxHeight);
+                    this._data.images[img] = canvas;
+                    if (!o.h) {
+                        x = y = 0;
+                        img++;
+                    }
+                }
+            }
+        },
+
+        /**
+         * @method _fillRow
+         * @protected
+         * @return {Number} The width & height of the row.
+         */
+        _getSize: function(size, max) {
+            var pow = 4;
+            while (Math.pow(2, ++pow) < size) {}
+            return Math.min(max, Math.pow(2, pow));
+        },
+
+        /**
+         * @method _fillRow
+         * @protected
+         * @return {Number} The width & height of the row.
+         */
+        _fillRow: function(frames, y, img, dataFrames, pad) {
+            var w = this.maxWidth;
+            var maxH = this.maxHeight;
+            y += pad;
+            var h = maxH - y;
+            var x = pad;
+            var height = 0;
+            for (var i = frames.length - 1; i >= 0; i--) {
+                var frame = frames[i];
+                var sc = this._scale * frame.scale;
+                var rect = frame.sourceRect;
+                var source = frame.source;
+                var rx = Math.floor(sc * rect.x - pad);
+                var ry = Math.floor(sc * rect.y - pad);
+                var rh = Math.ceil(sc * rect.height + pad * 2);
+                var rw = Math.ceil(sc * rect.width + pad * 2);
+                if (rw > w) { throw SpriteSheetBuilder.ERR_DIMENSIONS; }
+                if (rh > h || x + rw > w) { continue; }
+                frame.img = img;
+                frame.rect = new Rectangle(x, y, rw, rh);
+                height = height || rh;
+                frames.splice(i, 1);
+                dataFrames[frame.index] = [
+                    x, y, rw, rh, img, Math.round(-rx + sc * source.regX - pad), Math.round(-ry + sc * source.regY - pad)
+                ];
+                x += rw;
+            }
+            return {w: x, h: height};
+        },
+
+        /**
+         * @method _endBuild
+         * @protected
+         */
+        _endBuild: function() {
+            this.spriteSheet = new SpriteSheet(this._data);
+            this._data = null;
+            this.progress = 1;
+            this.dispatchEvent("complete");
+        },
+
+        /**
+         * @method _run
+         * @protected
+         */
+        _run: function() {
+            var ts = Math.max(0.01, Math.min(0.99, this.timeSlice || 0.3)) * 50;
+            var t = (new Date()).getTime() + ts;
+            var complete = false;
+            while (t > (new Date()).getTime()) {
+                if (!this._drawNext()) {
+                    complete = true;
+                    break;
+                }
+            }
+            if (complete) {
+                this._endBuild();
+            } else {
+                var _this = this;
+                this._timerID = setTimeout(function() { _this._run(); }, 50 - ts);
+            }
+            var p = this.progress = this._index / this._frames.length;
+            this.dispatchEvent({type: "progress", progress: p});
+        },
+
+        /**
+         * @method _drawNext
+         * @protected
+         * @return Boolean Returns false if this is the last draw.
+         */
+        _drawNext: function() {
+            var frame = this._frames[this._index];
+            var sc = frame.scale * this._scale;
+            var rect = frame.rect;
+            var sourceRect = frame.sourceRect;
+            var canvas = this._data.images[frame.img];
+            var ctx = canvas.getContext("2d");
+            frame.funct && frame.funct.apply(frame.scope, frame.params);
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(rect.x, rect.y, rect.width, rect.height);
+            ctx.clip();
+            ctx.translate(Math.ceil(rect.x - sourceRect.x * sc), Math.ceil(rect.y - sourceRect.y * sc));
+            ctx.scale(sc, sc);
+            frame.source.draw(ctx); // display object will draw itself.
+            ctx.restore();
+            return (++this._index) < this._frames.length;
         }
-      }
-    },
+    });
 
-    /**
-     * Builds a SpriteSheet instance based on the current frames.
-     *
-     * @method build
-     * @return SpriteSheet The created SpriteSheet instance, or null if a build is already running or an error occurred.
-     */
-    build: function() {
-      if (this._data) { throw SpriteSheetBuilder.ERR_RUNNING; }
-      this._startBuild();
-      while (this._drawNext()) {}
-      this._endBuild();
-      return this.spriteSheet;
-    },
+    SpriteSheetBuilder.ERR_DIMENSIONS = "frame dimensions exceed max spritesheet dimensions";
+    SpriteSheetBuilder.ERR_RUNNING = "a build is already running";
 
-    /**
-     * Asynchronously builds a {{#crossLink "SpriteSheet"}}{{/crossLink}} instance based on the current frames. It will
-     * run 20 times per second, using an amount of time defined by <code>timeSlice</code>. When it is complete it will
-     * call the specified callback.
-     *
-     * @method buildAsync
-     * @param {Number} [timeSlice] Sets the timeSlice property on this instance.
-     */
-    buildAsync: function(timeSlice) {
-      if (this._data) { throw SpriteSheetBuilder.ERR_RUNNING; }
-      this.timeSlice = timeSlice;
-      this._startBuild();
-      var _this = this;
-      this._timerID = setTimeout(function() { _this._run(); },
-          50 - Math.max(0.01, Math.min(0.99, this.timeSlice || 0.3)) * 50);
-    },
-
-    /**
-     * Stops the current asynchronous build.
-     *
-     * @method stopAsync
-     */
-    stopAsync: function() {
-      clearTimeout(this._timerID);
-      this._data = null;
-    },
-
-    /**
-     * SpriteSheetBuilder instances cannot be cloned.
-     *
-     * @method clone
-     */
-    clone: function() {
-      throw("SpriteSheetBuilder cannot be cloned.");
-    },
-
-    /**
-     * Returns a string representation of this object.
-     *
-     * @method toString
-     * @return {String} a string representation of the instance.
-     */
-    toString: function() {
-      return "[SpriteSheetBuilder]";
-    },
-
-    /**
-     * @method _startBuild
-     * @protected
-     */
-    _startBuild: function() {
-      var pad = this.padding || 0;
-      this.progress = 0;
-      this.spriteSheet = null;
-      this._index = 0;
-      this._scale = this.scale;
-      var dataFrames = [];
-      this._data = {
-        images: [],
-        frames: dataFrames,
-        animations: this._animations // TODO: should we "clone" _animations in case someone adds more animations after a build?
-      };
-      var frames = this._frames.slice();
-      frames.sort(function(a, b) { return (a.height <= b.height) ? -1 : 1; });
-      if (frames[frames.length - 1].height + pad * 2 > this.maxHeight) { throw SpriteSheetBuilder.ERR_DIMENSIONS; }
-      var y = 0, x = 0;
-      var img = 0;
-      while (frames.length) {
-        var o = this._fillRow(frames, y, img, dataFrames, pad);
-        if (o.w > x) { x = o.w; }
-        y += o.h;
-        if (!o.h || !frames.length) {
-          var canvas = document.createElement("canvas");
-          canvas.width = this._getSize(x, this.maxWidth);
-          canvas.height = this._getSize(y, this.maxHeight);
-          this._data.images[img] = canvas;
-          if (!o.h) {
-            x = y = 0;
-            img++;
-          }
-        }
-      }
-    },
-
-    /**
-     * @method _fillRow
-     * @protected
-     * @return {Number} The width & height of the row.
-     */
-    _getSize: function(size, max) {
-      var pow = 4;
-      while (Math.pow(2, ++pow) < size) {}
-      return Math.min(max, Math.pow(2, pow));
-    },
-
-    /**
-     * @method _fillRow
-     * @protected
-     * @return {Number} The width & height of the row.
-     */
-    _fillRow: function(frames, y, img, dataFrames, pad) {
-      var w = this.maxWidth;
-      var maxH = this.maxHeight;
-      y += pad;
-      var h = maxH - y;
-      var x = pad;
-      var height = 0;
-      for (var i = frames.length - 1; i >= 0; i--) {
-        var frame = frames[i];
-        var sc = this._scale * frame.scale;
-        var rect = frame.sourceRect;
-        var source = frame.source;
-        var rx = Math.floor(sc * rect.x - pad);
-        var ry = Math.floor(sc * rect.y - pad);
-        var rh = Math.ceil(sc * rect.height + pad * 2);
-        var rw = Math.ceil(sc * rect.width + pad * 2);
-        if (rw > w) { throw SpriteSheetBuilder.ERR_DIMENSIONS; }
-        if (rh > h || x + rw > w) { continue; }
-        frame.img = img;
-        frame.rect = new Rectangle(x, y, rw, rh);
-        height = height || rh;
-        frames.splice(i, 1);
-        dataFrames[frame.index] = [
-          x, y, rw, rh, img, Math.round(-rx + sc * source.regX - pad), Math.round(-ry + sc * source.regY - pad)
-        ];
-        x += rw;
-      }
-      return {w: x, h: height};
-    },
-
-    /**
-     * @method _endBuild
-     * @protected
-     */
-    _endBuild: function() {
-      this.spriteSheet = new SpriteSheet(this._data);
-      this._data = null;
-      this.progress = 1;
-      this.dispatchEvent("complete");
-    },
-
-    /**
-     * @method _run
-     * @protected
-     */
-    _run: function() {
-      var ts = Math.max(0.01, Math.min(0.99, this.timeSlice || 0.3)) * 50;
-      var t = (new Date()).getTime() + ts;
-      var complete = false;
-      while (t > (new Date()).getTime()) {
-        if (!this._drawNext()) {
-          complete = true;
-          break;
-        }
-      }
-      if (complete) {
-        this._endBuild();
-      } else {
-        var _this = this;
-        this._timerID = setTimeout(function() { _this._run(); }, 50 - ts);
-      }
-      var p = this.progress = this._index / this._frames.length;
-      this.dispatchEvent({type: "progress", progress: p});
-    },
-
-    /**
-     * @method _drawNext
-     * @protected
-     * @return Boolean Returns false if this is the last draw.
-     */
-    _drawNext: function() {
-      var frame = this._frames[this._index];
-      var sc = frame.scale * this._scale;
-      var rect = frame.rect;
-      var sourceRect = frame.sourceRect;
-      var canvas = this._data.images[frame.img];
-      var ctx = canvas.getContext("2d");
-      frame.funct && frame.funct.apply(frame.scope, frame.params);
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(rect.x, rect.y, rect.width, rect.height);
-      ctx.clip();
-      ctx.translate(Math.ceil(rect.x - sourceRect.x * sc), Math.ceil(rect.y - sourceRect.y * sc));
-      ctx.scale(sc, sc);
-      frame.source.draw(ctx); // display object will draw itself.
-      ctx.restore();
-      return (++this._index) < this._frames.length;
-    }
-  });
-
-  SpriteSheetBuilder.ERR_DIMENSIONS = "frame dimensions exceed max spritesheet dimensions";
-  SpriteSheetBuilder.ERR_RUNNING = "a build is already running";
-
-  return SpriteSheetBuilder;
+    return SpriteSheetBuilder;
 
 });

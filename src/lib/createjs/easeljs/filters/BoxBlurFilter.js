@@ -1,226 +1,226 @@
 xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
 
-  var Rectangle = xc.module.require("xc.createjs.Rectangle");
-  var Filter = xc.module.require("xc.createjs.Filter");
-
-  /**
-   * BoxBlurFilter applies a box blur to DisplayObjects
-   *
-   * See {{#crossLink "Filter"}}{{/crossLink}} for an example of how to apply filters.
-   *
-   * @class BoxBlurFilter
-   * @extends Filter
-   * @constructor
-   * @param {Number} blurX
-   * @param {Number} blurY
-   * @param {Number} quality
-   */
-  var BoxBlurFilter = Filter.extend({
-    _initialize: function(blurX, blurY, quality) {
-      if (isNaN(blurX) || blurX < 0) {
-        blurX = 0;
-      }
-      this.blurX = blurX | 0;
-      if (isNaN(blurY) || blurY < 0) {
-        blurY = 0;
-      }
-      this.blurY = blurY | 0;
-      if (isNaN(quality) || quality < 1) {
-        quality = 1;
-      }
-      this.quality = quality | 0;
-    },
+    var Rectangle = xc.module.require("xc.createjs.Rectangle");
+    var Filter = xc.module.require("xc.createjs.Filter");
 
     /**
-     * Horizontal blur radius
+     * BoxBlurFilter applies a box blur to DisplayObjects
      *
-     * @property blurX
-     * @type Number
-     */
-    blurX: 0,
-
-    /**
-     * Vertical blur radius
+     * See {{#crossLink "Filter"}}{{/crossLink}} for an example of how to apply filters.
      *
-     * @property blurY
-     * @type Number
+     * @class BoxBlurFilter
+     * @extends Filter
+     * @constructor
+     * @param {Number} blurX
+     * @param {Number} blurY
+     * @param {Number} quality
      */
-    blurY: 0,
-
-    /**
-     * Number of blur iterations. For example, a value of 1 will produce a rough blur.
-     * A value of 2 will produce a smoother blur, but take twice as long to run.
-     *
-     * @property quality
-     * @type Number
-     */
-    quality: 1,
-
-    /**
-     * Returns a rectangle with values indicating the margins required to draw the filter.
-     * For example, a filter that will extend the drawing area 4 pixels to the left, and 7 pixels to the right
-     * (but no pixels up or down) would return a rectangle with (x=-4, y=0, width=11, height=0).
-     *
-     * @method getBounds
-     * @return {Rectangle} a rectangle object indicating the margins required to draw the filter.
-     */
-    getBounds: function() {
-      // TODO: this doesn't properly account for blur quality.
-      return new Rectangle(-this.blurX, -this.blurY, 2 * this.blurX, 2 * this.blurY);
-    },
-
-    /**
-     * Applies the filter to the specified context.
-     *
-     * @method applyFilter
-     * @param {CanvasRenderingContext2D} ctx The 2D context to use as the source.
-     * @param {Number} x The x position to use for the source rect.
-     * @param {Number} y The y position to use for the source rect.
-     * @param {Number} width The width to use for the source rect.
-     * @param {Number} height The height to use for the source rect.
-     * @param {CanvasRenderingContext2D} targetCtx Optional. The 2D context to draw the result to. Defaults to the context passed to ctx.
-     * @param {Number} targetX Optional. The x position to draw the result to. Defaults to the value passed to x.
-     * @param {Number} targetY Optional. The y position to draw the result to. Defaults to the value passed to y.
-     * @return {Boolean}
-     */
-    applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
-      targetCtx = targetCtx || ctx;
-      if (targetX == null) { targetX = x; }
-      if (targetY == null) { targetY = y; }
-      try {
-        var imageData = ctx.getImageData(x, y, width, height);
-      } catch (e) {
-        //if (!this.suppressCrossDomainErrors) throw new Error("unable to access local image data: " + e);
-        return false;
-      }
-      var radiusX = this.blurX;
-      if (isNaN(radiusX) || radiusX < 0) {
-        return false;
-      }
-      radiusX |= 0;
-      var radiusY = this.blurY;
-      if (isNaN(radiusY) || radiusY < 0) {
-        return false;
-      }
-      radiusY |= 0;
-      if (radiusX == 0 && radiusY == 0) {
-        return false;
-      }
-      var iterations = this.quality;
-      if (isNaN(iterations) || iterations < 1) {
-        iterations = 1;
-      }
-      iterations |= 0;
-      if (iterations > 3) {
-        iterations = 3;
-      }
-      if (iterations < 1) {
-        iterations = 1;
-      }
-      var pixels = imageData.data;
-      var rsum, gsum, bsum, asum, x, y, i, p, p1, p2, yp, yi, yw;
-      var wm = width - 1;
-      var hm = height - 1;
-      var rad1x = radiusX + 1;
-      var divx = radiusX + rad1x;
-      var rad1y = radiusY + 1;
-      var divy = radiusY + rad1y;
-      var div2 = 1 / (divx * divy);
-      var r = [];
-      var g = [];
-      var b = [];
-      var a = [];
-      var vmin = [];
-      var vmax = [];
-      while (iterations-- > 0) {
-        yw = yi = 0;
-        for (y = 0; y < height; y++) {
-          rsum = pixels[yw] * rad1x;
-          gsum = pixels[yw + 1] * rad1x;
-          bsum = pixels[yw + 2] * rad1x;
-          asum = pixels[yw + 3] * rad1x;
-          for (i = 1; i <= radiusX; i++) {
-            p = yw + (((i > wm ? wm : i )) << 2 );
-            rsum += pixels[p++];
-            gsum += pixels[p++];
-            bsum += pixels[p++];
-            asum += pixels[p]
-          }
-          for (x = 0; x < width; x++) {
-            r[yi] = rsum;
-            g[yi] = gsum;
-            b[yi] = bsum;
-            a[yi] = asum;
-            if (y == 0) {
-              vmin[x] = Math.min(x + rad1x, wm) << 2;
-              vmax[x] = Math.max(x - radiusX, 0) << 2;
+    var BoxBlurFilter = Filter.extend({
+        _initialize: function(blurX, blurY, quality) {
+            if (isNaN(blurX) || blurX < 0) {
+                blurX = 0;
             }
-            p1 = yw + vmin[x];
-            p2 = yw + vmax[x];
-            rsum += pixels[p1++] - pixels[p2++];
-            gsum += pixels[p1++] - pixels[p2++];
-            bsum += pixels[p1++] - pixels[p2++];
-            asum += pixels[p1] - pixels[p2];
-            yi++;
-          }
-          yw += ( width << 2 );
-        }
-        for (x = 0; x < width; x++) {
-          yp = x;
-          rsum = r[yp] * rad1y;
-          gsum = g[yp] * rad1y;
-          bsum = b[yp] * rad1y;
-          asum = a[yp] * rad1y;
-          for (i = 1; i <= radiusY; i++) {
-            yp += ( i > hm ? 0 : width );
-            rsum += r[yp];
-            gsum += g[yp];
-            bsum += b[yp];
-            asum += a[yp];
-          }
-          yi = x << 2;
-          for (y = 0; y < height; y++) {
-            pixels[yi] = (rsum * div2 + 0.5) | 0;
-            pixels[yi + 1] = (gsum * div2 + 0.5) | 0;
-            pixels[yi + 2] = (bsum * div2 + 0.5) | 0;
-            pixels[yi + 3] = (asum * div2 + 0.5) | 0;
-            if (x == 0) {
-              vmin[y] = Math.min(y + rad1y, hm) * width;
-              vmax[y] = Math.max(y - radiusY, 0) * width;
+            this.blurX = blurX | 0;
+            if (isNaN(blurY) || blurY < 0) {
+                blurY = 0;
             }
-            p1 = x + vmin[y];
-            p2 = x + vmax[y];
-            rsum += r[p1] - r[p2];
-            gsum += g[p1] - g[p2];
-            bsum += b[p1] - b[p2];
-            asum += a[p1] - a[p2];
-            yi += width << 2;
-          }
+            this.blurY = blurY | 0;
+            if (isNaN(quality) || quality < 1) {
+                quality = 1;
+            }
+            this.quality = quality | 0;
+        },
+
+        /**
+         * Horizontal blur radius
+         *
+         * @property blurX
+         * @type Number
+         */
+        blurX: 0,
+
+        /**
+         * Vertical blur radius
+         *
+         * @property blurY
+         * @type Number
+         */
+        blurY: 0,
+
+        /**
+         * Number of blur iterations. For example, a value of 1 will produce a rough blur.
+         * A value of 2 will produce a smoother blur, but take twice as long to run.
+         *
+         * @property quality
+         * @type Number
+         */
+        quality: 1,
+
+        /**
+         * Returns a rectangle with values indicating the margins required to draw the filter.
+         * For example, a filter that will extend the drawing area 4 pixels to the left, and 7 pixels to the right
+         * (but no pixels up or down) would return a rectangle with (x=-4, y=0, width=11, height=0).
+         *
+         * @method getBounds
+         * @return {Rectangle} a rectangle object indicating the margins required to draw the filter.
+         */
+        getBounds: function() {
+            // TODO: this doesn't properly account for blur quality.
+            return new Rectangle(-this.blurX, -this.blurY, 2 * this.blurX, 2 * this.blurY);
+        },
+
+        /**
+         * Applies the filter to the specified context.
+         *
+         * @method applyFilter
+         * @param {CanvasRenderingContext2D} ctx The 2D context to use as the source.
+         * @param {Number} x The x position to use for the source rect.
+         * @param {Number} y The y position to use for the source rect.
+         * @param {Number} width The width to use for the source rect.
+         * @param {Number} height The height to use for the source rect.
+         * @param {CanvasRenderingContext2D} targetCtx Optional. The 2D context to draw the result to. Defaults to the context passed to ctx.
+         * @param {Number} targetX Optional. The x position to draw the result to. Defaults to the value passed to x.
+         * @param {Number} targetY Optional. The y position to draw the result to. Defaults to the value passed to y.
+         * @return {Boolean}
+         */
+        applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
+            targetCtx = targetCtx || ctx;
+            if (targetX == null) { targetX = x; }
+            if (targetY == null) { targetY = y; }
+            try {
+                var imageData = ctx.getImageData(x, y, width, height);
+            } catch (e) {
+                //if (!this.suppressCrossDomainErrors) throw new Error("unable to access local image data: " + e);
+                return false;
+            }
+            var radiusX = this.blurX;
+            if (isNaN(radiusX) || radiusX < 0) {
+                return false;
+            }
+            radiusX |= 0;
+            var radiusY = this.blurY;
+            if (isNaN(radiusY) || radiusY < 0) {
+                return false;
+            }
+            radiusY |= 0;
+            if (radiusX == 0 && radiusY == 0) {
+                return false;
+            }
+            var iterations = this.quality;
+            if (isNaN(iterations) || iterations < 1) {
+                iterations = 1;
+            }
+            iterations |= 0;
+            if (iterations > 3) {
+                iterations = 3;
+            }
+            if (iterations < 1) {
+                iterations = 1;
+            }
+            var pixels = imageData.data;
+            var rsum, gsum, bsum, asum, x, y, i, p, p1, p2, yp, yi, yw;
+            var wm = width - 1;
+            var hm = height - 1;
+            var rad1x = radiusX + 1;
+            var divx = radiusX + rad1x;
+            var rad1y = radiusY + 1;
+            var divy = radiusY + rad1y;
+            var div2 = 1 / (divx * divy);
+            var r = [];
+            var g = [];
+            var b = [];
+            var a = [];
+            var vmin = [];
+            var vmax = [];
+            while (iterations-- > 0) {
+                yw = yi = 0;
+                for (y = 0; y < height; y++) {
+                    rsum = pixels[yw] * rad1x;
+                    gsum = pixels[yw + 1] * rad1x;
+                    bsum = pixels[yw + 2] * rad1x;
+                    asum = pixels[yw + 3] * rad1x;
+                    for (i = 1; i <= radiusX; i++) {
+                        p = yw + (((i > wm ? wm : i )) << 2 );
+                        rsum += pixels[p++];
+                        gsum += pixels[p++];
+                        bsum += pixels[p++];
+                        asum += pixels[p]
+                    }
+                    for (x = 0; x < width; x++) {
+                        r[yi] = rsum;
+                        g[yi] = gsum;
+                        b[yi] = bsum;
+                        a[yi] = asum;
+                        if (y == 0) {
+                            vmin[x] = Math.min(x + rad1x, wm) << 2;
+                            vmax[x] = Math.max(x - radiusX, 0) << 2;
+                        }
+                        p1 = yw + vmin[x];
+                        p2 = yw + vmax[x];
+                        rsum += pixels[p1++] - pixels[p2++];
+                        gsum += pixels[p1++] - pixels[p2++];
+                        bsum += pixels[p1++] - pixels[p2++];
+                        asum += pixels[p1] - pixels[p2];
+                        yi++;
+                    }
+                    yw += ( width << 2 );
+                }
+                for (x = 0; x < width; x++) {
+                    yp = x;
+                    rsum = r[yp] * rad1y;
+                    gsum = g[yp] * rad1y;
+                    bsum = b[yp] * rad1y;
+                    asum = a[yp] * rad1y;
+                    for (i = 1; i <= radiusY; i++) {
+                        yp += ( i > hm ? 0 : width );
+                        rsum += r[yp];
+                        gsum += g[yp];
+                        bsum += b[yp];
+                        asum += a[yp];
+                    }
+                    yi = x << 2;
+                    for (y = 0; y < height; y++) {
+                        pixels[yi] = (rsum * div2 + 0.5) | 0;
+                        pixels[yi + 1] = (gsum * div2 + 0.5) | 0;
+                        pixels[yi + 2] = (bsum * div2 + 0.5) | 0;
+                        pixels[yi + 3] = (asum * div2 + 0.5) | 0;
+                        if (x == 0) {
+                            vmin[y] = Math.min(y + rad1y, hm) * width;
+                            vmax[y] = Math.max(y - radiusY, 0) * width;
+                        }
+                        p1 = x + vmin[y];
+                        p2 = x + vmax[y];
+                        rsum += r[p1] - r[p2];
+                        gsum += g[p1] - g[p2];
+                        bsum += b[p1] - b[p2];
+                        asum += a[p1] - a[p2];
+                        yi += width << 2;
+                    }
+                }
+            }
+            targetCtx.putImageData(imageData, targetX, targetY);
+            return true;
+        },
+
+        /**
+         * Returns a clone of this object.
+         *
+         * @return {BoxBlurFilter}
+         */
+        clone: function() {
+            return new BoxBlurFilter(this.blurX, this.blurY, this.quality);
+        },
+
+        /**
+         * Returns a string representation of this object.
+         *
+         * @return {String}
+         */
+        toString: function() {
+            return "[BoxBlurFilter]";
         }
-      }
-      targetCtx.putImageData(imageData, targetX, targetY);
-      return true;
-    },
+    });
 
-    /**
-     * Returns a clone of this object.
-     *
-     * @return {BoxBlurFilter}
-     */
-    clone: function() {
-      return new BoxBlurFilter(this.blurX, this.blurY, this.quality);
-    },
-
-    /**
-     * Returns a string representation of this object.
-     *
-     * @return {String}
-     */
-    toString: function() {
-      return "[BoxBlurFilter]";
-    }
-  });
-
-  return BoxBlurFilter;
+    return BoxBlurFilter;
 
 });

@@ -1,158 +1,158 @@
 xc.module.define("xc.createjs.MouseEvent", function(exports) {
 
-  var EventDispatcher = xc.module.require("xc.createjs.EventDispatcher");
-
-  /**
-   * This is passed as the parameter to mousedown, mouseup, mousemove, stagemouseup, stagemousedown, mouseover, mouseout
-   * and click events on {{#crossLink "DisplayObject"}}{{/crossLink}} instances.
-   *
-   * @class MouseEvent
-   * @extends EventDispatcher
-   * @constructor
-   * @param {String} type The event type.
-   * @param {Number} stageX The normalized x position relative to the stage.
-   * @param {Number} stageY The normalized y position relative to the stage.
-   * @param {DisplayObject} target The display object this event relates to. Note that this will be overwritten when the event is dispatched via EventDispatcher.
-   * @param {MouseEvent} nativeEvent The native DOM event related to this mouse event.
-   * @param {Number} pointerID The unique id for the pointer.
-   * @param {Boolean} primary Indicates whether this is the primary pointer in a multitouch environment.
-   * @param {Number} rawX The raw x position relative to the stage.
-   * @param {Number} rawY The raw y position relative to the stage.
-   */
-  var MouseEvent = EventDispatcher.extend({
-    _init: function(type, stageX, stageY, target, nativeEvent, pointerID, primary, rawX, rawY) {
-      this.type = type;
-      this.stageX = stageX;
-      this.stageY = stageY;
-      this.target = target;
-      this.nativeEvent = nativeEvent;
-      this.pointerID = pointerID;
-      this.primary = primary;
-      this.rawX = (rawX == null) ? stageX : rawX;
-      this.rawY = (rawY == null) ? stageY : rawY;
-    },
+    var EventDispatcher = xc.module.require("xc.createjs.EventDispatcher");
 
     /**
-     * For MouseEvent objects of type "mousedown", mousemove events will be dispatched from the event object until the
-     * user releases the mouse anywhere. This enables you to listen to mouse move interactions for the duration of a
-     * press, which can be very useful for operations such as drag and drop.
-     * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
+     * This is passed as the parameter to mousedown, mouseup, mousemove, stagemouseup, stagemousedown, mouseover, mouseout
+     * and click events on {{#crossLink "DisplayObject"}}{{/crossLink}} instances.
      *
-     * @event mousemove
+     * @class MouseEvent
+     * @extends EventDispatcher
+     * @constructor
+     * @param {String} type The event type.
+     * @param {Number} stageX The normalized x position relative to the stage.
+     * @param {Number} stageY The normalized y position relative to the stage.
+     * @param {DisplayObject} target The display object this event relates to. Note that this will be overwritten when the event is dispatched via EventDispatcher.
+     * @param {MouseEvent} nativeEvent The native DOM event related to this mouse event.
+     * @param {Number} pointerID The unique id for the pointer.
+     * @param {Boolean} primary Indicates whether this is the primary pointer in a multitouch environment.
+     * @param {Number} rawX The raw x position relative to the stage.
+     * @param {Number} rawY The raw y position relative to the stage.
      */
+    var MouseEvent = EventDispatcher.extend({
+        _init: function(type, stageX, stageY, target, nativeEvent, pointerID, primary, rawX, rawY) {
+            this.type = type;
+            this.stageX = stageX;
+            this.stageY = stageY;
+            this.target = target;
+            this.nativeEvent = nativeEvent;
+            this.pointerID = pointerID;
+            this.primary = primary;
+            this.rawX = (rawX == null) ? stageX : rawX;
+            this.rawY = (rawY == null) ? stageY : rawY;
+        },
 
-    /**
-     * For MouseEvent objects of type "mousedown", a mouseup event will be dispatched from the event object when the
-     * user releases the mouse anywhere. This enables you to listen for a corresponding mouse up from a specific press,
-     * which can be very useful for operations such as drag and drop.
-     * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-     *
-     * @event mouseup
-     */
+        /**
+         * For MouseEvent objects of type "mousedown", mousemove events will be dispatched from the event object until the
+         * user releases the mouse anywhere. This enables you to listen to mouse move interactions for the duration of a
+         * press, which can be very useful for operations such as drag and drop.
+         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
+         *
+         * @event mousemove
+         */
 
-    /**
-     * The normalized x position on the stage. This will always be within the range 0 to stage width.
-     *
-     * @property stageX
-     * @type Number
-     */
-    stageX: 0,
+        /**
+         * For MouseEvent objects of type "mousedown", a mouseup event will be dispatched from the event object when the
+         * user releases the mouse anywhere. This enables you to listen for a corresponding mouse up from a specific press,
+         * which can be very useful for operations such as drag and drop.
+         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
+         *
+         * @event mouseup
+         */
 
-    /**
-     * The normalized y position on the stage. This will always be within the range 0 to stage height.
-     *
-     * @property stageY
-     * @type Number
-     */
-    stageY: 0,
+        /**
+         * The normalized x position on the stage. This will always be within the range 0 to stage width.
+         *
+         * @property stageX
+         * @type Number
+         */
+        stageX: 0,
 
-    /**
-     * The raw x position relative to the stage. Normally this will be the same as the stageX value, unless
-     * stage.mouseMoveOutside is true and the pointer is outside of the stage bounds.
-     *
-     * @property rawX
-     * @type Number
-     */
-    rawX: 0,
+        /**
+         * The normalized y position on the stage. This will always be within the range 0 to stage height.
+         *
+         * @property stageY
+         * @type Number
+         */
+        stageY: 0,
 
-    /**
-     * The raw y position relative to the stage. Normally this will be the same as the stageY value, unless
-     * stage.mouseMoveOutside is true and the pointer is outside of the stage bounds.
-     *
-     * @property rawY
-     * @type Number
-     */
-    rawY: 0,
+        /**
+         * The raw x position relative to the stage. Normally this will be the same as the stageX value, unless
+         * stage.mouseMoveOutside is true and the pointer is outside of the stage bounds.
+         *
+         * @property rawX
+         * @type Number
+         */
+        rawX: 0,
 
-    /**
-     * The type of mouse event. This will be the same as the handler it maps to (onPress,
-     * onMouseDown, onMouseUp, onMouseMove, or onClick).
-     *
-     * @property type
-     * @type String
-     */
-    type: null,
+        /**
+         * The raw y position relative to the stage. Normally this will be the same as the stageY value, unless
+         * stage.mouseMoveOutside is true and the pointer is outside of the stage bounds.
+         *
+         * @property rawY
+         * @type Number
+         */
+        rawY: 0,
 
-    /**
-     * The native MouseEvent generated by the browser. The properties and API for this
-     * event may differ between browsers. This property will be null if the
-     * EaselJS property was not directly generated from a native MouseEvent.
-     *
-     * @property nativeEvent
-     * @type MouseEvent
-     * @default null
-     */
-    nativeEvent: null,
+        /**
+         * The type of mouse event. This will be the same as the handler it maps to (onPress,
+         * onMouseDown, onMouseUp, onMouseMove, or onClick).
+         *
+         * @property type
+         * @type String
+         */
+        type: null,
 
-    /**
-     * The display object this event relates to.
-     *
-     * @property target
-     * @type DisplayObject
-     * @default null
-     */
-    target: null,
+        /**
+         * The native MouseEvent generated by the browser. The properties and API for this
+         * event may differ between browsers. This property will be null if the
+         * EaselJS property was not directly generated from a native MouseEvent.
+         *
+         * @property nativeEvent
+         * @type MouseEvent
+         * @default null
+         */
+        nativeEvent: null,
 
-    /**
-     * The unique id for the pointer (touch point or cursor). This will be either -1 for the mouse, or the system
-     * supplied id value.
-     *
-     * @property pointerID
-     * @type {Number}
-     */
-    pointerID: 0,
+        /**
+         * The display object this event relates to.
+         *
+         * @property target
+         * @type DisplayObject
+         * @default null
+         */
+        target: null,
 
-    /**
-     * Indicates whether this is the primary pointer in a multitouch environment. This will always be true for the mouse.
-     * For touch pointers, the first pointer in the current stack will be considered the primary pointer.
-     *
-     * @property primary
-     * @type {Boolean}
-     */
-    primary: false,
+        /**
+         * The unique id for the pointer (touch point or cursor). This will be either -1 for the mouse, or the system
+         * supplied id value.
+         *
+         * @property pointerID
+         * @type {Number}
+         */
+        pointerID: 0,
 
-    /**
-     * Returns a clone of the MouseEvent instance.
-     *
-     * @method clone
-     * @return {MouseEvent} a clone of the MouseEvent instance.
-     */
-    clone: function() {
-      return new MouseEvent(this.type, this.stageX, this.stageY, this.target,
-          this.nativeEvent, this.pointerID, this.primary, this.rawX, this.rawY);
-    },
+        /**
+         * Indicates whether this is the primary pointer in a multitouch environment. This will always be true for the mouse.
+         * For touch pointers, the first pointer in the current stack will be considered the primary pointer.
+         *
+         * @property primary
+         * @type {Boolean}
+         */
+        primary: false,
 
-    /**
-     * Returns a string representation of this object.
-     *
-     * @method toString
-     * @return {String} a string representation of the instance.
-     */
-    toString: function() {
-      return "[MouseEvent (type=" + this.type + " stageX=" + this.stageX + " stageY=" + this.stageY + ")]";
-    }
-  });
+        /**
+         * Returns a clone of the MouseEvent instance.
+         *
+         * @method clone
+         * @return {MouseEvent} a clone of the MouseEvent instance.
+         */
+        clone: function() {
+            return new MouseEvent(this.type, this.stageX, this.stageY, this.target,
+                    this.nativeEvent, this.pointerID, this.primary, this.rawX, this.rawY);
+        },
 
-  return MouseEvent;
+        /**
+         * Returns a string representation of this object.
+         *
+         * @method toString
+         * @return {String} a string representation of the instance.
+         */
+        toString: function() {
+            return "[MouseEvent (type=" + this.type + " stageX=" + this.stageX + " stageY=" + this.stageY + ")]";
+        }
+    });
+
+    return MouseEvent;
 
 });

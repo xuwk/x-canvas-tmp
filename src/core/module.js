@@ -23,42 +23,42 @@
  * @class xc.module
  */
 (function() {
-  xc.module = {};
-  var mapping = {}, cache = {};
-  /**
-   * 定义一个模块。
-   *
-   * @method define
-   * @static
-   * @param {String} id 模块标识。建议采用 a.b.c 这种有层次的模块标识写法。
-   * @param {Function} factory 模块对象生成函数。factory 写法为：<code>function(exports) {}</code>，其中 exports 是模块对象。
-   *  如果 factory 有返回值，则把返回值作为模块对象。
-   */
-  xc.module.define = function(id, factory) {
-    mapping[id] = factory;
-  };
-  /**
-   * 获取模块对象。
-   *
-   * @method require
-   * @static
-   * @param {String} id 模块标识。
-   * @return {*} 返回模块对象。如果模块不存在，会抛出一个异常。factory 在首次 require 时执行，生成模块对象。
-   */
-  xc.module.require = function(id) {
-    if (cache[id]) {
-      return cache[id];
-    } else if (mapping[id]) {
-      var factory = mapping[id];
-      if (Object.prototype.toString.call(factory) == "[object Function]") {
-        var exports = {};
-        var result = factory(exports);
-        cache[id] = result === undefined ? exports : result;
-      } else {
-        cache[id] = factory;
-      }
-      return cache[id];
-    }
-    throw "module [" + id + "] not found";
-  };
+    xc.module = {};
+    var mapping = {}, cache = {};
+    /**
+     * 定义一个模块。
+     *
+     * @method define
+     * @static
+     * @param {String} id 模块标识。建议采用 a.b.c 这种有层次的模块标识写法。
+     * @param {Function} factory 模块对象生成函数。factory 写法为：<code>function(exports) {}</code>，其中 exports 是模块对象。
+     *  如果 factory 有返回值，则把返回值作为模块对象。
+     */
+    xc.module.define = function(id, factory) {
+        mapping[id] = factory;
+    };
+    /**
+     * 获取模块对象。
+     *
+     * @method require
+     * @static
+     * @param {String} id 模块标识。
+     * @return {*} 返回模块对象。如果模块不存在，会抛出一个异常。factory 在首次 require 时执行，生成模块对象。
+     */
+    xc.module.require = function(id) {
+        if (cache[id]) {
+            return cache[id];
+        } else if (mapping[id]) {
+            var factory = mapping[id];
+            if (Object.prototype.toString.call(factory) == "[object Function]") {
+                var exports = {};
+                var result = factory(exports);
+                cache[id] = result === undefined ? exports : result;
+            } else {
+                cache[id] = factory;
+            }
+            return cache[id];
+        }
+        throw "module [" + id + "] not found";
+    };
 })();
