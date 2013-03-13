@@ -1,5 +1,4 @@
 xc.module.define("xc.createjs.DisplayObject", function(exports) {
-
     var UID = xc.module.require("xc.createjs.UID");
     var Matrix2D = xc.module.require("xc.createjs.Matrix2D");
     var Point = xc.module.require("xc.createjs.Point");
@@ -7,75 +6,66 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
     /**
      * DisplayObject is an abstract class that should not be constructed directly. Instead construct subclasses such as
-     * {{#crossLink "Container"}}{{/crossLink}}, {{#crossLink "Bitmap"}}{{/crossLink}}, and {{#crossLink "Shape"}}{{/crossLink}}.
-     * DisplayObject is the base class for all display classes in the EaselJS library. It defines the core properties and
-     * methods that are shared between all display objects, such as transformation properties (x, y, scaleX, scaleY, etc),
-     * caching, and mouse handlers.
-     *
+     * {{#crossLink "Container"}}{{/crossLink}}, {{#crossLink "Bitmap"}}{{/crossLink}}, and {{#crossLink
+     * "Shape"}}{{/crossLink}}. DisplayObject is the base class for all display classes in the EaselJS library. It
+     * defines the core properties and methods that are shared between all display objects, such as transformation
+     * properties (x, y, scaleX, scaleY, etc), caching, and mouse handlers.
      * @class DisplayObject
      * @extends EventDispatcher
      * @constructor
      */
     var DisplayObject = EventDispatcher.extend({
-        _init: function() {
+        initialize: function() {
             this.id = UID.get();
             this._matrix = new Matrix2D();
         },
 
         /**
-         * Dispatched when the user presses their left mouse button over the display object.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
+         * Dispatched when the user presses their left mouse button over the display object. See the {{#crossLink
+         * "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
          * @event mousedown
          */
 
         /**
          * Dispatched when the user presses their left mouse button and then releases it while over the display object.
          * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
          * @event click
          */
 
         /**
-         * Dispatched when the user double clicks their left mouse button over this display object.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
+         * Dispatched when the user double clicks their left mouse button over this display object. See the {{#crossLink
+         * "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
          * @event dblclick
          */
 
         /**
          * Dispatched when the user's mouse rolls over this display object. This event must be enabled using
-         * {{#crossLink "Stage.enableMouseOver"}}{{/crossLink}}.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
+         * {{#crossLink "Stage.enableMouseOver"}}{{/crossLink}}. See the {{#crossLink "MouseEvent"}}{{/crossLink}} class
+         * for a listing of event properties.
          * @event mouseover
          */
 
         /**
-         * Dispatched when the user's mouse rolls out of this display object.
-         * This event must be enabled using {{#crossLink "Stage/enableMouseOver"}}{{/crossLink}}.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
+         * Dispatched when the user's mouse rolls out of this display object. This event must be enabled using
+         * {{#crossLink "Stage/enableMouseOver"}}{{/crossLink}}. See the {{#crossLink "MouseEvent"}}{{/crossLink}} class
+         * for a listing of event properties.
          * @event mouseout
          */
 
         /**
-         * Dispatched on each display object on a stage whenever the stage updates.
-         * This occurs immediately before the rendering (draw) pass. When {{#crossLink "Stage/update"}}{{/crossLink}} is
-         * called, first all display objects on the stage dispatch the tick event, then all of the display objects are drawn
-         * to stage. Children will have their tick event dispatched in order of their depth prior to the event being
-         * dispatched on their parent.
-         *
+         * Dispatched on each display object on a stage whenever the stage updates. This occurs immediately before the
+         * rendering (draw) pass. When {{#crossLink "Stage/update"}}{{/crossLink}} is called, first all display objects
+         * on the stage dispatch the tick event, then all of the display objects are drawn to stage. Children will have
+         * their tick event dispatched in order of their depth prior to the event being dispatched on their parent.
          * @event tick
          * @param {Object} target The object that dispatched the event.
          * @param {String} type The event type.
-         * @param {Array} params An array containing any arguments that were passed to the Stage.update() method.
-         *  For example if you called stage.update("hello"), then the params would be ["hello"].
+         * @param {Array} params An array containing any arguments that were passed to the Stage.update() method. For
+         * example if you called stage.update("hello"), then the params would be ["hello"].
          */
 
         /**
          * The alpha (transparency) for this display object. 0 is fully transparent, 1 is fully opaque.
-         *
          * @property alpha
          * @type {Number}
          * @default 1
@@ -83,9 +73,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         alpha: 1,
 
         /**
-         * If a cache is active, this returns the canvas that holds the cached version of this display object. See cache()
-         * for more information. READ-ONLY.
-         *
+         * If a cache is active, this returns the canvas that holds the cached version of this display object. See
+         * cache() for more information. READ-ONLY.
          * @property cacheCanvas
          * @type {HTMLCanvasElement | Object}
          * @default null
@@ -94,7 +83,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * Unique ID for this display object. Makes display objects easier for some uses.
-         *
          * @property id
          * @type {Number}
          * @default -1
@@ -105,7 +93,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          * Indicates whether to include this object when running Stage.getObjectsUnderPoint(), and thus for mouse
          * interactions. Setting this to true for Containers will cause the Container to be returned (not its children)
          * regardless of whether it's mouseChildren property is true.
-         *
          * @property mouseEnabled
          * @type {Boolean}
          * @default true
@@ -114,7 +101,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * An optional name for this display object. Included in toString(). Useful for debugging.
-         *
          * @property name
          * @type {String}
          * @default null
@@ -122,9 +108,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         name: null,
 
         /**
-         * A reference to the Container or Stage object that contains this display object, or null if it has not been added
-         * to one. READ-ONLY.
-         *
+         * A reference to the Container or Stage object that contains this display object, or null if it has not been
+         * added to one. READ-ONLY.
          * @property parent
          * @final
          * @type {Container}
@@ -133,9 +118,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         parent: null,
 
         /**
-         * The x offset for this display object's registration point. For example, to make a 100x100px Bitmap rotate around
-         * it's center, you would set regX and regY to 50.
-         *
+         * The x offset for this display object's registration point. For example, to make a 100x100px Bitmap rotate
+         * around it's center, you would set regX and regY to 50.
          * @property regX
          * @type {Number}
          * @default 0
@@ -143,9 +127,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         regX: 0,
 
         /**
-         * The y offset for this display object's registration point. For example, to make a 100x100px Bitmap rotate around
-         * it's center, you would set regX and regY to 50.
-         *
+         * The y offset for this display object's registration point. For example, to make a 100x100px Bitmap rotate
+         * around it's center, you would set regX and regY to 50.
          * @property regY
          * @type {Number}
          * @default 0
@@ -154,7 +137,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * The rotation in degrees for this display object.
-         *
          * @property rotation
          * @type {Number}
          * @default 0
@@ -162,9 +144,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         rotation: 0,
 
         /**
-         * The factor to stretch this display object horizontally. For example, setting scaleX to 2 will stretch the display
-         * object to twice it's nominal width.
-         *
+         * The factor to stretch this display object horizontally. For example, setting scaleX to 2 will stretch the
+         * display object to twice it's nominal width.
          * @property scaleX
          * @type {Number}
          * @default 1
@@ -172,9 +153,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         scaleX: 1,
 
         /**
-         * The factor to stretch this display object vertically. For example, setting scaleY to 0.5 will stretch the display
-         * object to half it's nominal height.
-         *
+         * The factor to stretch this display object vertically. For example, setting scaleY to 0.5 will stretch the
+         * display object to half it's nominal height.
          * @property scaleY
          * @type {Number}
          * @default 1
@@ -183,7 +163,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * The factor to skew this display object horizontally.
-         *
          * @property skewX
          * @type {Number}
          * @default 0
@@ -192,7 +171,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * The factor to skew this display object vertically.
-         *
          * @property skewY
          * @type {Number}
          * @default 0
@@ -202,7 +180,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         /**
          * A shadow object that defines the shadow to render on this display object. Set to null to remove a shadow. If
          * null, this property is inherited from the parent container.
-         *
          * @property shadow
          * @type {Shadow}
          * @default null
@@ -212,7 +189,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         /**
          * Indicates whether this display object should be rendered to the canvas and included when running
          * Stage.getObjectsUnderPoint().
-         *
          * @property visible
          * @type {Boolean}
          * @default true
@@ -221,14 +197,14 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * The x (horizontal) position of the display object, relative to its parent.
-         *
          * @property x
          * @type {Number}
          * @default 0
          */
         x: 0,
 
-        /** The y (vertical) position of the display object, relative to its parent.
+        /**
+         * The y (vertical) position of the display object, relative to its parent.
          * @property y
          * @type {Number}
          * @default 0
@@ -237,9 +213,9 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * The composite operation indicates how the pixels of this display object will be composited with the elements
-         * behind it. If null, this property is inherited from the parent container. For more information, read the
-         * <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#compositing">whatwg spec on compositing</a>.
-         *
+         * behind it. If null, this property is inherited from the parent container. For more information, read the <a
+         * href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#compositing">whatwg
+         * spec on compositing</a>.
          * @property compositeOperation
          * @type {String}
          * @default null
@@ -247,9 +223,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         compositeOperation: null,
 
         /**
-         * An array of Filter objects to apply to this display object. Filters are only applied / updated when cache() or
-         * updateCache() is called on the display object, and only apply to the area that is cached.
-         *
+         * An array of Filter objects to apply to this display object. Filters are only applied / updated when cache()
+         * or updateCache() is called on the display object, and only apply to the area that is cached.
          * @property filters
          * @type {Array}
          * @default null
@@ -257,9 +232,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         filters: null,
 
         /**
-         * Returns an ID number that uniquely identifies the current cache for this display object.
-         * This can be used to determine if the cache has changed since a previous check.
-         *
+         * Returns an ID number that uniquely identifies the current cache for this display object. This can be used to
+         * determine if the cache has changed since a previous check.
          * @property cacheID
          * @type {Number}
          * @default 0
@@ -267,9 +241,9 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         cacheID: 0,
 
         /**
-         * A Shape instance that defines a vector mask (clipping path) for this display object. The shape's transformation
-         * will be applied relative to the display object's parent coordinates (as if it were a child of the parent).
-         *
+         * A Shape instance that defines a vector mask (clipping path) for this display object. The shape's
+         * transformation will be applied relative to the display object's parent coordinates (as if it were a child of
+         * the parent).
          * @property mask
          * @type {Shape}
          * @default null
@@ -277,14 +251,12 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         mask: null,
 
         /**
-         * A display object that will be tested when checking mouse interactions or testing getObjectsUnderPoint. The hit
-         * area will have its transformation applied relative to this display object's coordinate space (as though the hit
-         * test object were a child of this display object and relative to its regX/Y). The hitArea will be tested using
-         * only its own alpha value regardless of the alpha value on the target display object, or the target's ancestors
-         * (parents). hitArea is NOT currently used by the hitTest() method.
-         *
-         * Note: hitArea is not supported for Stage.
-         *
+         * A display object that will be tested when checking mouse interactions or testing getObjectsUnderPoint. The
+         * hit area will have its transformation applied relative to this display object's coordinate space (as though
+         * the hit test object were a child of this display object and relative to its regX/Y). The hitArea will be
+         * tested using only its own alpha value regardless of the alpha value on the target display object, or the
+         * target's ancestors (parents). hitArea is NOT currently used by the hitTest() method. Note: hitArea is not
+         * supported for Stage.
          * @property hitArea
          * @type {DisplayObject}
          * @default null
@@ -292,10 +264,9 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         hitArea: null,
 
         /**
-         * A CSS cursor (ex. "pointer", "help", "text", etc) that will be displayed when the user hovers over this display
-         * object. You must enable mouseover events using the stage.enableMouseOver() method to use this property.
-         * If null it will use the default cursor.
-         *
+         * A CSS cursor (ex. "pointer", "help", "text", etc) that will be displayed when the user hovers over this
+         * display object. You must enable mouseover events using the stage.enableMouseOver() method to use this
+         * property. If null it will use the default cursor.
          * @property cursor
          * @type {String}
          * @default null
@@ -351,11 +322,9 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         _matrix: null,
 
         /**
-         * Returns true or false indicating whether the display object would be visible if drawn to a canvas.
-         * This does not account for whether it would be visible within the boundaries of the stage.
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
-         *
+         * Returns true or false indicating whether the display object would be visible if drawn to a canvas. This does
+         * not account for whether it would be visible within the boundaries of the stage. Note: This method is mainly
+         * for internal use, though it may be useful for advanced uses.
          * @method isVisible
          * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas.
          */
@@ -365,28 +334,27 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * Draws the display object into the specified context ignoring it's visible, alpha, shadow, and transform.
-         * Returns true if the draw was handled (useful for overriding functionality).
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
-         *
+         * Returns true if the draw was handled (useful for overriding functionality). Note: This method is mainly for
+         * internal use, though it may be useful for advanced uses.
          * @method draw
          * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
-         * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache.
-         *  For example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
+         * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache. For
+         * example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
          */
         draw: function(ctx, ignoreCache) {
             var cacheCanvas = this.cacheCanvas;
-            if (ignoreCache || !cacheCanvas) { return false; }
+            if (ignoreCache || !cacheCanvas) {
+                return false;
+            }
             var scale = this._cacheScale;
-            ctx.drawImage(cacheCanvas, this._cacheOffsetX, this._cacheOffsetY,
-                    cacheCanvas.width / scale, cacheCanvas.height / scale);
+            ctx.drawImage(cacheCanvas, this._cacheOffsetX, this._cacheOffsetY
+                            , cacheCanvas.width / scale, cacheCanvas.height / scale);
             return true;
         },
 
         /**
-         * Applies this display object's transformation, alpha, globalCompositeOperation, clipping path (mask), and shadow
-         * to the specified context. This is typically called prior to draw.
-         *
+         * Applies this display object's transformation, alpha, globalCompositeOperation, clipping path (mask), and
+         * shadow to the specified context. This is typically called prior to draw.
          * @method setupContext
          * @param {CanvasRenderingContext2D} ctx The canvas 2D to update.
          */
@@ -400,7 +368,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
                 mtx.invert();
                 ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
             }
-            mtx = o._matrix.identity().appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation, o.skewX, o.skewY, o.regX, o.regY);
+            mtx = o._matrix.identity()
+                    .appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation, o.skewX, o.skewY, o.regX, o.regY);
             // TODO: should be a better way to manage this setting. For now, using dynamic access to avoid circular dependencies:
             if (o.snapToPixel) {
                 ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx + 0.5 | 0, mtx.ty + 0.5 | 0);
@@ -408,33 +377,38 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
                 ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
             }
             ctx.globalAlpha *= o.alpha;
-            if (o.compositeOperation) { ctx.globalCompositeOperation = o.compositeOperation; }
-            if (o.shadow) { this._applyShadow(ctx, o.shadow); }
+            if (o.compositeOperation) {
+                ctx.globalCompositeOperation = o.compositeOperation;
+            }
+            if (o.shadow) {
+                this._applyShadow(ctx, o.shadow);
+            }
         },
 
         /**
-         * Draws the display object into a new canvas, which is then used for subsequent draws. For complex content
-         * that does not change frequently (ex. a Container with many children that do not move, or a complex vector Shape),
+         * Draws the display object into a new canvas, which is then used for subsequent draws. For complex content that
+         * does not change frequently (ex. a Container with many children that do not move, or a complex vector Shape),
          * this can provide for much faster rendering because the content does not need to be re-rendered each tick. The
          * cached display object can be moved, rotated, faded, etc freely, however if it's content changes, you must
-         * manually update the cache by calling updateCache() or cache() again. You must specify the cache area via the x,
-         * y, w, and h parameters. This defines the rectangle that will be rendered and cached using this display object's
-         * coordinates. For example if you defined a Shape that drew a circle at 0, 0 with a radius of 25, you could call
-         * myShape.cache(-25, -25, 50, 50) to cache the full shape.
-         *
+         * manually update the cache by calling updateCache() or cache() again. You must specify the cache area via the
+         * x, y, w, and h parameters. This defines the rectangle that will be rendered and cached using this display
+         * object's coordinates. For example if you defined a Shape that drew a circle at 0, 0 with a radius of 25, you
+         * could call myShape.cache(-25, -25, 50, 50) to cache the full shape.
          * @method cache
          * @param {Number} x The x coordinate origin for the cache region.
          * @param {Number} y The y coordinate origin for the cache region.
          * @param {Number} width The width of the cache region.
          * @param {Number} height The height of the cache region.
-         * @param {Number} scale Optional. The scale at which the cache will be created. For example, if you cache a vector
-         *  shape using myShape.cache(0, 0, 100, 100, 2) then the resulting cacheCanvas will be 200x200 px. This lets you
-         *  scale and rotate cached elements with greater fidelity. Default is 1.
+         * @param {Number} scale Optional. The scale at which the cache will be created. For example, if you cache a
+         * vector shape using myShape.cache(0, 0, 100, 100, 2) then the resulting cacheCanvas will be 200x200 px. This
+         * lets you scale and rotate cached elements with greater fidelity. Default is 1.
          */
         cache: function(x, y, width, height, scale) {
             // draw to canvas.
             scale = scale || 1;
-            if (!this.cacheCanvas) { this.cacheCanvas = document.createElement("canvas"); }
+            if (!this.cacheCanvas) {
+                this.cacheCanvas = document.createElement("canvas");
+            }
             this.cacheCanvas.width = Math.ceil(width * scale);
             this.cacheCanvas.height = Math.ceil(height * scale);
             this._cacheOffsetX = x;
@@ -444,21 +418,26 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         },
 
         /**
-         * Redraws the display object to its cache. Calling updateCache without an active cache will throw an error.
-         * If compositeOperation is null the current cache will be cleared prior to drawing. Otherwise the display object
+         * Redraws the display object to its cache. Calling updateCache without an active cache will throw an error. If
+         * compositeOperation is null the current cache will be cleared prior to drawing. Otherwise the display object
          * will be drawn over the existing cache using the specified compositeOperation.
-         *
          * @method updateCache
          * @param {String} compositeOperation The compositeOperation to use, or null to clear the cache and redraw it.
-         *  <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#compositing">whatwg spec on compositing</a>.
+         * <a
+         * href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#compositing">whatwg
+         * spec on compositing</a>.
          */
         updateCache: function(compositeOperation) {
-            var cacheCanvas = this.cacheCanvas, scale = this._cacheScale,
-                    offX = this._cacheOffsetX * scale, offY = this._cacheOffsetY * scale;
-            if (!cacheCanvas) { throw "cache() must be called before updateCache()"; }
+            var cacheCanvas = this.cacheCanvas, scale = this._cacheScale, offX = this._cacheOffsetX * scale, 
+                offY = this._cacheOffsetY * scale;
+            if (!cacheCanvas) {
+                throw "cache() must be called before updateCache()";
+            }
             var ctx = cacheCanvas.getContext("2d");
             ctx.save();
-            if (!compositeOperation) { ctx.clearRect(0, 0, cacheCanvas.width, cacheCanvas.height); }
+            if (!compositeOperation) {
+                ctx.clearRect(0, 0, cacheCanvas.width, cacheCanvas.height);
+            }
             ctx.globalCompositeOperation = compositeOperation;
             ctx.setTransform(scale, 0, 0, scale, -offX, -offY);
             this.draw(ctx, true);
@@ -469,7 +448,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * Clears the current cache. See cache() for more information.
-         *
          * @method uncache
          */
         uncache: function() {
@@ -479,23 +457,25 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         },
 
         /**
-         * Returns a data URL for the cache, or null if this display object is not cached.
-         * Uses cacheID to ensure a new data URL is not generated if the cache has not changed.
-         *
+         * Returns a data URL for the cache, or null if this display object is not cached. Uses cacheID to ensure a new
+         * data URL is not generated if the cache has not changed.
          * @method getCacheDataURL.
          */
         getCacheDataURL: function() {
-            if (!this.cacheCanvas) { return null; }
-            if (this.cacheID != this._cacheDataURLID) { this._cacheDataURL = this.cacheCanvas.toDataURL(); }
+            if (!this.cacheCanvas) {
+                return null;
+            }
+            if (this.cacheID != this._cacheDataURLID) {
+                this._cacheDataURL = this.cacheCanvas.toDataURL();
+            }
             return this._cacheDataURL;
         },
 
         /**
          * Returns the stage that this display object will be rendered on, or null if it has not been added to one.
-         *
          * @method getStage
-         * @return {Stage} The Stage instance that the display object is a descendent of. null if the DisplayObject has not
-         *  been added to a Stage.
+         * @return {Stage} The Stage instance that the display object is a descendent of. null if the DisplayObject has
+         * not been added to a Stage.
          */
         getStage: function() {
             var o = this;
@@ -504,60 +484,64 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
             }
             // using dynamic access to avoid circular dependencies;
             var Stage = xc.module.require("xc.createjs.Stage");
-            if (o instanceof Stage) { return o; }
+            if (o instanceof Stage) {
+                return o;
+            }
             return null;
         },
 
         /**
-         * Transforms the specified x and y position from the coordinate space of the display object to the global (stage)
-         * coordinate space. For example, this could be used to position an HTML label over a specific point on a nested
-         * display object. Returns a Point instance with x and y properties correlating to the transformed coordinates on
-         * the stage.
-         *
+         * Transforms the specified x and y position from the coordinate space of the display object to the global
+         * (stage) coordinate space. For example, this could be used to position an HTML label over a specific point on
+         * a nested display object. Returns a Point instance with x and y properties correlating to the transformed
+         * coordinates on the stage.
          * @method localToGlobal
          * @param {Number} x The x position in the source display object to transform.
          * @param {Number} y The y position in the source display object to transform.
-         * @return {Point} A Point instance with x and y properties correlating to the transformed coordinates on the stage.
+         * @return {Point} A Point instance with x and y properties correlating to the transformed coordinates on the
+         * stage.
          */
         localToGlobal: function(x, y) {
             var mtx = this.getConcatenatedMatrix(this._matrix);
-            if (mtx == null) { return null; }
+            if (mtx == null) {
+                return null;
+            }
             mtx.append(1, 0, 0, 1, x, y);
             return new Point(mtx.tx, mtx.ty);
         },
 
         /**
-         * Transforms the specified x and y position from the global (stage) coordinate space to the
-         * coordinate space of the display object. For example, this could be used to determine
-         * the current mouse position within the display object. Returns a Point instance with x and y properties
-         * correlating to the transformed position in the display object's coordinate space.
-         *
+         * Transforms the specified x and y position from the global (stage) coordinate space to the coordinate space of
+         * the display object. For example, this could be used to determine the current mouse position within the
+         * display object. Returns a Point instance with x and y properties correlating to the transformed position in
+         * the display object's coordinate space.
          * @method globalToLocal
          * @param {Number} x The x position on the stage to transform.
          * @param {Number} y The y position on the stage to transform.
-         * @return {Point} A Point instance with x and y properties correlating to the transformed position in the display
-         *  object's coordinate space.
+         * @return {Point} A Point instance with x and y properties correlating to the transformed position in the
+         * display object's coordinate space.
          */
         globalToLocal: function(x, y) {
             var mtx = this.getConcatenatedMatrix(this._matrix);
-            if (mtx == null) { return null; }
+            if (mtx == null) {
+                return null;
+            }
             mtx.invert();
             mtx.append(1, 0, 0, 1, x, y);
             return new Point(mtx.tx, mtx.ty);
         },
 
         /**
-         * Transforms the specified x and y position from the coordinate space of this display object to the
-         * coordinate space of the target display object. Returns a Point instance with x and y properties
-         * correlating to the transformed position in the target's coordinate space. Effectively the same as calling
-         * var pt = this.localToGlobal(x, y); pt = target.globalToLocal(pt.x, pt.y);
-         *
+         * Transforms the specified x and y position from the coordinate space of this display object to the coordinate
+         * space of the target display object. Returns a Point instance with x and y properties correlating to the
+         * transformed position in the target's coordinate space. Effectively the same as calling var pt =
+         * this.localToGlobal(x, y); pt = target.globalToLocal(pt.x, pt.y);
          * @method localToLocal
          * @param {Number} x The x position in the source display object to transform.
          * @param {Number} y The y position on the stage to transform.
          * @param {DisplayObject} target The target display object to which the coordinates will be transformed.
-         * @return {Point} Returns a Point instance with x and y properties correlating to the transformed position in the
-         *  target's coordinate space.
+         * @return {Point} Returns a Point instance with x and y properties correlating to the transformed position in
+         * the target's coordinate space.
          */
         localToLocal: function(x, y, target) {
             var pt = this.localToGlobal(x, y);
@@ -567,7 +551,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         /**
          * Shortcut method to quickly set the transform properties on the display object. All parameters are optional.
          * Omitted parameters will have the default value set (ex. 0 for x/y, 1 for scaleX/Y).
-         *
          * @method setTransform
          * @param {Number} x
          * @param {Number} y
@@ -595,49 +578,52 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * Returns a matrix based on this object's transform.
-         *
          * @method getMatrix
          * @param {Matrix2D} matrix Optional. A Matrix2D object to populate with the calculated values. If null, a new
-         *  Matrix object is returned.
+         * Matrix object is returned.
          * @return {Matrix2D} A matrix representing this display object's transform.
          */
         getMatrix: function(matrix) {
             var o = this;
-            return (matrix ? matrix.identity() : new Matrix2D()).appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation,
-                    o.skewX, o.skewY, o.regX, o.regY).appendProperties(o.alpha, o.shadow, o.compositeOperation);
+            return (matrix ? matrix.identity() : new Matrix2D()).
+                    appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation, o.skewX, o.skewY, o.regX, o.regY).
+                    appendProperties(o.alpha, o.shadow, o.compositeOperation);
         },
 
         /**
-         * Generates a concatenated Matrix2D object representing the combined transform of the display object and all of its
-         * parent Containers up to the highest level ancestor (usually the stage). This can be used to transform positions
-         * between coordinate spaces, such as with localToGlobal and globalToLocal.
-         *
+         * Generates a concatenated Matrix2D object representing the combined transform of the display object and all of
+         * its parent Containers up to the highest level ancestor (usually the stage). This can be used to transform
+         * positions between coordinate spaces, such as with localToGlobal and globalToLocal.
          * @method getConcatenatedMatrix
          * @param {Matrix2D} matrix Optional. A Matrix2D object to populate with the calculated values. If null, a new
-         *  Matrix object is returned.
-         * @return {Matrix2D} a concatenated Matrix2D object representing the combined transform of the display object and
-         *  all of its parent Containers up to the highest level ancestor (usually the stage).
+         * Matrix object is returned.
+         * @return {Matrix2D} a concatenated Matrix2D object representing the combined transform of the display object
+         * and all of its parent Containers up to the highest level ancestor (usually the stage).
          */
         getConcatenatedMatrix: function(matrix) {
-            if (matrix) { matrix.identity(); } else { matrix = new Matrix2D(); }
+            if (matrix) {
+                matrix.identity();
+            } else {
+                matrix = new Matrix2D();
+            }
             var o = this;
             while (o != null) {
-                matrix.prependTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation,
-                        o.skewX, o.skewY, o.regX, o.regY).prependProperties(o.alpha, o.shadow, o.compositeOperation);
+                matrix.prependTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation, o.skewX, o.skewY, o.regX, o.regY)
+                .prependProperties(o.alpha, o.shadow, o.compositeOperation);
                 o = o.parent;
             }
             return matrix;
         },
 
         /**
-         * Tests whether the display object intersects the specified local point (ie. draws a pixel with alpha > 0 at the
-         * specified position). This ignores the alpha, shadow and compositeOperation of the display object, and all
+         * Tests whether the display object intersects the specified local point (ie. draws a pixel with alpha > 0 at
+         * the specified position). This ignores the alpha, shadow and compositeOperation of the display object, and all
          * transform properties including regX/Y.
-         *
          * @method hitTest
          * @param {Number} x The x position to check in the display object's local coordinates.
          * @param {Number} y The y position to check in the display object's local coordinates.
-         * @return {Boolean} A Boolean indicting whether a visible portion of the DisplayObject intersect the specified local Point.
+         * @return {Boolean} A Boolean indicting whether a visible portion of the DisplayObject intersect the specified
+         * local Point.
          */
         hitTest: function(x, y) {
             var ctx = DisplayObject._hitTestContext;
@@ -652,23 +638,23 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * Provides a chainable shortcut method for setting a number of properties on a DisplayObject instance.
-         *
          * <h4>Example</h4>
-         *     var shape = stage.addChild(new Shape()).set({graphics:myGraphics, x:100, y:100, alpha:0.5});
-         *
+         * var shape = stage.addChild(new Shape()).set({graphics:myGraphics, x:100, y:100, alpha:0.5});
          * @method set
          * @param {Object} props A generic object containing properties to copy to the DisplayObject instance.
-         * @return {DisplayObject} Returns The DisplayObject instance the method is called on (useful for chaining calls).
+         * @return {DisplayObject} Returns The DisplayObject instance the method is called on (useful for chaining
+         * calls).
          */
         set: function(props) {
-            for (var n in props) { this[n] = props[n]; }
+            for ( var n in props) {
+                this[n] = props[n];
+            }
             return this;
         },
 
         /**
-         * Returns a clone of this DisplayObject. Some properties that are specific to this instance's current context are
-         * reverted to their defaults (for example .parent).
-         *
+         * Returns a clone of this DisplayObject. Some properties that are specific to this instance's current context
+         * are reverted to their defaults (for example .parent).
          * @method clone
          * @return {DisplayObject} A clone of the current DisplayObject instance.
          */
@@ -680,7 +666,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * Returns a string representation of this object.
-         *
          * @method toString
          * @return {String} a string representation of the instance.
          */
@@ -692,7 +677,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          * @method cloneProps
          * @protected
          * @param {DisplayObject} o The DisplayObject instance which will have properties from the current DisplayObject
-         *  instance copied into.
+         * instance copied into.
          */
         cloneProps: function(o) {
             o.alpha = this.alpha;
@@ -712,8 +697,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
             o.compositeOperation = this.compositeOperation;
             if (this.cacheCanvas) {
                 o.cacheCanvas = this.cacheCanvas.cloneNode(true);
-                o.cacheCanvas.getContext("2d").putImageData(this.cacheCanvas.getContext("2d").getImageData(0, 0,
-                        this.cacheCanvas.width, this.cacheCanvas.height), 0, 0);
+                o.cacheCanvas.getContext("2d").putImageData(this.cacheCanvas.getContext("2d")
+                .getImageData(0, 0, this.cacheCanvas.width, this.cacheCanvas.height), 0, 0);
             }
         },
 
@@ -739,7 +724,12 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
             // because onTick can be really performance sensitive, we'll inline some of the dispatchEvent work.
             // this can probably go away at some point. It only has a noticeable impact with thousands of objects in modern browsers.
             var ls = this._listeners;
-            if (ls && ls["tick"]) { this.dispatchEvent({type: "tick", params: params}); }
+            if (ls && ls["tick"]) {
+                this.dispatchEvent({
+                    type: "tick",
+                    params: params
+                });
+            }
         },
 
         /**
@@ -764,35 +754,38 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          * @protected
          */
         _applyFilters: function() {
-            if (!this.filters || this.filters.length == 0 || !this.cacheCanvas) { return; }
+            if (!this.filters || this.filters.length == 0 || !this.cacheCanvas) {
+                return;
+            }
             var l = this.filters.length;
             var ctx = this.cacheCanvas.getContext("2d");
             var w = this.cacheCanvas.width;
             var h = this.cacheCanvas.height;
-            for (var i = 0; i < l; i++) {
+            for ( var i = 0; i < l; i++) {
                 this.filters[i].applyFilter(ctx, 0, 0, w, h);
             }
         },
 
         /**
          * Indicates whether the display object has a listener of the corresponding event types.
-         *
          * @method _hasMouseHandler
          * @param {Number} typeMask A bitmask indicating which event types to look for. Bit 1 specifies press & click &
-         *  double click, bit 2 specifies it should look for mouse over and mouse out. This implementation may change.
+         * double click, bit 2 specifies it should look for mouse over and mouse out. This implementation may change.
          * @return {Boolean}
          * @protected
          */
         _hasMouseHandler: function(typeMask) {
             var ls = this._listeners;
-            return !!((typeMask & 1 && (ls && (this.hasEventListener("mousedown") || this.hasEventListener("click") || this.hasEventListener("dblclick")))) ||
-                    (typeMask & 2 && (ls && (this.hasEventListener("mouseover") || this.hasEventListener("mouseout")))));
+            return !!((typeMask & 1 && (ls && (this.hasEventListener("mousedown") 
+                        || this.hasEventListener("click") || this.hasEventListener("dblclick")))) 
+                        || (typeMask & 2 && (ls && (this.hasEventListener("mouseover") 
+                        || this.hasEventListener("mouseout")))));
         }
     });
 
     /**
-     * Suppresses errors generated when using features like hitTest, mouse events, and getObjectsUnderPoint with cross domain content
-     *
+     * Suppresses errors generated when using features like hitTest, mouse events, and getObjectsUnderPoint with cross
+     * domain content
      * @property suppressCrossDomainErrors
      * @static
      * @type {Boolean}

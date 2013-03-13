@@ -32,7 +32,7 @@ xc.module.define("xc.createjs.MotionGuidePlugin", function(exports) {
      * @constructor
      */
     var MotionGuidePlugin = function() {
-        throw("MotionGuidePlugin cannot be instantiated.")
+        throw ("MotionGuidePlugin cannot be instantiated.")
     };
 
     /**
@@ -60,9 +60,15 @@ xc.module.define("xc.createjs.MotionGuidePlugin", function(exports) {
      */
     MotionGuidePlugin.init = function(tween, prop, value) {
         var target = tween.target;
-        if (!target.hasOwnProperty("x")) { target.x = 0; }
-        if (!target.hasOwnProperty("y")) { target.y = 0; }
-        if (!target.hasOwnProperty("rotation")) { target.rotation = 0; }
+        if (!target.hasOwnProperty("x")) {
+            target.x = 0;
+        }
+        if (!target.hasOwnProperty("y")) {
+            target.y = 0;
+        }
+        if (!target.hasOwnProperty("rotation")) {
+            target.rotation = 0;
+        }
         return prop == "guide" ? null : value;
     };
 
@@ -72,28 +78,36 @@ xc.module.define("xc.createjs.MotionGuidePlugin", function(exports) {
      * @static
      */
     MotionGuidePlugin.step = function(tween, prop, startValue, endValue, injectProps) {
-        if (prop != "guide") { return endValue; }
+        if (prop != "guide") {
+            return endValue;
+        }
         var temp, data = endValue;
-        if (!data.hasOwnProperty("path")) { data.path = []; }
+        if (!data.hasOwnProperty("path")) {
+            data.path = [];
+        }
         var path = data.path;
-        if (!data.hasOwnProperty("end")) { data.end = 1; }
+        if (!data.hasOwnProperty("end")) {
+            data.end = 1;
+        }
         if (!data.hasOwnProperty("start")) {
             data.start = (startValue && startValue.hasOwnProperty("end") && startValue.path === path) ? startValue.end : 0;
         }
-        if (data.hasOwnProperty("_segments") && data._length) { return endValue; }
+        if (data.hasOwnProperty("_segments") && data._length) {
+            return endValue;
+        }
         var l = path.length;
-        var accuracy = 10;		// Adjust to improve line following precision but sacrifice performance (# of seg)
-        if (l >= 6 && (l - 2) % 4 == 0) {  // Enough points && contains correct number per entry ignoring start
+        var accuracy = 10; // Adjust to improve line following precision but sacrifice performance (# of seg)
+        if (l >= 6 && (l - 2) % 4 == 0) { // Enough points && contains correct number per entry ignoring start
             data._segments = [];
             data._length = 0;
-            for (var i = 2; i < l; i += 4) {
+            for ( var i = 2; i < l; i += 4) {
                 var sx = path[i - 2], sy = path[i - 1];
                 var cx = path[i + 0], cy = path[i + 1];
                 var ex = path[i + 2], ey = path[i + 3];
                 var oldX = sx, oldY = sy;
                 var tempX, tempY, total = 0;
                 var sublines = [];
-                for (var j = 1; j <= accuracy; j++) {
+                for ( var j = 1; j <= accuracy; j++) {
                     var t = j / accuracy;
                     var inv = 1 - t;
                     tempX = inv * inv * sx + 2 * inv * t * cx + t * t * ex;
@@ -107,7 +121,7 @@ xc.module.define("xc.createjs.MotionGuidePlugin", function(exports) {
                 data._length += total;
             }
         } else {
-            throw("invalid 'path' data, please see documentation for valid paths");
+            throw ("invalid 'path' data, please see documentation for valid paths");
         }
         temp = data.orient;
         data.orient = false;
@@ -123,15 +137,21 @@ xc.module.define("xc.createjs.MotionGuidePlugin", function(exports) {
      */
     MotionGuidePlugin.tween = function(tween, prop, value, startValues, endValues, ratio, wait, end) {
         var data = endValues.guide;
-        if (data == undefined || data === startValues.guide) { return value; }
+        if (data == undefined || data === startValues.guide) {
+            return value;
+        }
         if (data.lastRatio != ratio) {
             // first time through so calculate what I need to
             var t = ((data.end - data.start) * (wait ? data.end : ratio) + data.start);
             MotionGuidePlugin.calc(data, t, tween.target);
-            if (data.orient) { tween.target.rotation += startValues.rotation || 0; }
+            if (data.orient) {
+                tween.target.rotation += startValues.rotation || 0;
+            }
             data.lastRatio = ratio;
         }
-        if (!data.orient && prop == "rotation") { return value; }
+        if (!data.orient && prop == "rotation") {
+            return value;
+        }
         return tween.target[prop];
     };
 
@@ -146,8 +166,16 @@ xc.module.define("xc.createjs.MotionGuidePlugin", function(exports) {
      * @static
      */
     MotionGuidePlugin.calc = function(data, ratio, target) {
-        if (data._segments == undefined) { MotionGuidePlugin.validate(data); }
-        if (target == undefined) { target = {x: 0, y: 0, rotation: 0}; }
+        if (data._segments == undefined) {
+            MotionGuidePlugin.validate(data);
+        }
+        if (target == undefined) {
+            target = {
+                x: 0,
+                y: 0,
+                rotation: 0
+            };
+        }
         var seg = data._segments;
         var path = data.path;
         // find segment
@@ -174,13 +202,11 @@ xc.module.define("xc.createjs.MotionGuidePlugin", function(exports) {
         target.y = inv * inv * path[n - 1] + 2 * inv * t * path[n + 1] + t * t * path[n + 3];
         // orientation
         if (data.orient) {
-            target.rotation = 57.2957795 * Math.atan2(
-                    (path[n + 1] - path[n - 1]) * inv + (path[n + 3] - path[n + 1]) * t,
-                    (path[n + 0] - path[n - 2]) * inv + (path[n + 2] - path[n + 0]) * t);
+            target.rotation = 57.2957795 * Math.atan2((path[n + 1] - path[n - 1]) * inv + (path[n + 3] - path[n + 1]) * t, (path[n + 0] - path[n - 2]) * inv + (path[n + 2] - path[n + 0]) * t);
         }
         return target;
     };
 
-    return  MotionGuidePlugin;
+    return MotionGuidePlugin;
 
 });

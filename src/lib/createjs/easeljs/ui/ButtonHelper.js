@@ -26,8 +26,10 @@ xc.module.define("xc.createjs.ButtonHelper", function(exports) {
      * @constructor
      */
     var ButtonHelper = xc.class.create({
-        _init: function(target, outLabel, overLabel, downLabel, play, hitArea, hitLabel) {
-            if (!target.addEventListener) { return; }
+        initialize: function(target, outLabel, overLabel, downLabel, play, hitArea, hitLabel) {
+            if (!target.addEventListener) {
+                return;
+            }
             this.target = target;
             target.cursor = "pointer";
             this.overLabel = overLabel == null ? "over" : overLabel;

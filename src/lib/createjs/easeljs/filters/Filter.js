@@ -56,7 +56,8 @@ xc.module.define("xc.createjs.Filter", function(exports) {
          * @param {Number} targetY Optional. The y position to draw the result to. Defaults to the value passed to y.
          * @return {Boolean}
          */
-        applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {},
+        applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
+        },
 
         /**
          * Returns a string representation of this object.

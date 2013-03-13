@@ -13,8 +13,8 @@ xc.module.define("xc.createjs.Ticker", function(exports) {
      * <h4>Example</h4>
      *     Ticker.addEventListener("tick", handleTick);
      *     function handleTick(event) {
-   *         // Actions carried out each frame
-   *     }
+     *         // Actions carried out each frame
+     *     }
      *
      * @class Ticker
      * @static
@@ -165,10 +165,14 @@ xc.module.define("xc.createjs.Ticker", function(exports) {
      * @deprecated In favour of the "tick" event. Will be removed in a future version.
      */
     Ticker.addListener = function(o, pauseable) {
-        if (o == null) { return; }
+        if (o == null) {
+            return;
+        }
         Ticker.removeListener(o);
         Ticker._pauseable[Ticker._listeners.length] = (pauseable == null) ? true : pauseable;
         Ticker._listeners.push(o);
+        console.log(Ticker._listeners);
+        console.log(o ? true : false, o instanceof Function);
     };
 
     /**
@@ -198,7 +202,9 @@ xc.module.define("xc.createjs.Ticker", function(exports) {
      */
     Ticker.removeListener = function(o) {
         var listeners = Ticker._listeners;
-        if (!listeners) { return; }
+        if (!listeners) {
+            return;
+        }
         var index = listeners.indexOf(o);
         if (index != -1) {
             listeners.splice(index, 1);
@@ -228,7 +234,9 @@ xc.module.define("xc.createjs.Ticker", function(exports) {
      */
     Ticker.setInterval = function(interval) {
         Ticker._interval = interval;
-        if (!Ticker._inited) { return; }
+        if (!Ticker._inited) {
+            return;
+        }
         Ticker._setupTick();
     };
 
@@ -278,9 +286,13 @@ xc.module.define("xc.createjs.Ticker", function(exports) {
      *  from the target frames per second.
      */
     Ticker.getMeasuredFPS = function(ticks) {
-        if (Ticker._times.length < 2) { return -1; }
+        if (Ticker._times.length < 2) {
+            return -1;
+        }
         // by default, calculate fps for the past 1 second:
-        if (ticks == null) { ticks = Ticker.getFPS() | 0; }
+        if (ticks == null) {
+            ticks = Ticker.getFPS() | 0;
+        }
         ticks = Math.min(Ticker._times.length - 1, ticks);
         return 1000 / ((Ticker._times[0] - Ticker._times[ticks]) / ticks);
     };
@@ -335,7 +347,7 @@ xc.module.define("xc.createjs.Ticker", function(exports) {
      * @return {Number} of ticks that have been broadcast.
      */
     Ticker.getTicks = function(pauseable) {
-        return  Ticker._ticks - (pauseable ? Ticker._pausedTicks : 0);
+        return Ticker._ticks - (pauseable ? Ticker._pausedTicks : 0);
     };
 
     /**
@@ -366,10 +378,11 @@ xc.module.define("xc.createjs.Ticker", function(exports) {
      * @protected
      */
     Ticker._setupTick = function() {
-        if (Ticker._rafActive || Ticker.timeoutID != null) { return; } // avoid duplicates
+        if (Ticker._rafActive || Ticker.timeoutID != null) {
+            return;
+        } // avoid duplicates
         if (Ticker.useRAF) {
-            var f = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame ||
-                    window.oRequestAnimationFrame || window.msRequestAnimationFrame;
+            var f = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame;
             if (f) {
                 f(Ticker._handleAF);
                 Ticker._rafActive = true;
@@ -396,17 +409,32 @@ xc.module.define("xc.createjs.Ticker", function(exports) {
         var pauseable = Ticker._pauseable;
         var listeners = Ticker._listeners.slice();
         var l = listeners ? listeners.length : 0;
-        for (var i = 0; i < l; i++) {
+        for ( var i = 0; i < l; i++) {
             var listener = listeners[i];
-            if (listener == null || (paused && pauseable[i])) { continue; }
-            if (listener.tick) { listener.tick(elapsedTime, paused); }
-            else if (listener instanceof Function) { listener(elapsedTime, paused); }
+            if (listener == null || (paused && pauseable[i])) {
+                continue;
+            }
+            if (listener.tick) {
+                listener.tick(elapsedTime, paused);
+            } else if (listener instanceof Function) {
+                listener(elapsedTime, paused);
+            }
         }
-        Ticker.dispatchEvent({type: "tick", paused: paused, delta: elapsedTime, time: time, runTime: time - Ticker._pausedTime})
+        Ticker.dispatchEvent({
+            type: "tick",
+            paused: paused,
+            delta: elapsedTime,
+            time: time,
+            runTime: time - Ticker._pausedTime
+        })
         Ticker._tickTimes.unshift(Ticker._getTime() - time);
-        while (Ticker._tickTimes.length > 100) { Ticker._tickTimes.pop(); }
+        while (Ticker._tickTimes.length > 100) {
+            Ticker._tickTimes.pop();
+        }
         Ticker._times.unshift(time);
-        while (Ticker._times.length > 100) { Ticker._times.pop(); }
+        while (Ticker._times.length > 100) {
+            Ticker._times.pop();
+        }
     };
 
     /**

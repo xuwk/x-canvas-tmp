@@ -14,7 +14,7 @@ xc.module.define("xc.createjs.ColorMatrixFilter", function(exports) {
      * @param {Array} matrix A 4x5 matrix describing the color operation to perform. See also the ColorMatrix class.
      */
     var ColorMatrixFilter = Filter.extend({
-        _init: function(matrix) {
+        initialize: function(matrix) {
             this.matrix = matrix;
         },
 
@@ -36,8 +36,12 @@ xc.module.define("xc.createjs.ColorMatrixFilter", function(exports) {
          */
         applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
             targetCtx = targetCtx || ctx;
-            if (targetX == null) { targetX = x; }
-            if (targetY == null) { targetY = y; }
+            if (targetX == null) {
+                targetX = x;
+            }
+            if (targetY == null) {
+                targetY = y;
+            }
             try {
                 var imageData = ctx.getImageData(x, y, width, height);
             } catch (e) {
@@ -52,7 +56,7 @@ xc.module.define("xc.createjs.ColorMatrixFilter", function(exports) {
             var m5 = mtx[5], m6 = mtx[6], m7 = mtx[7], m8 = mtx[8], m9 = mtx[9];
             var m10 = mtx[10], m11 = mtx[11], m12 = mtx[12], m13 = mtx[13], m14 = mtx[14];
             var m15 = mtx[15], m16 = mtx[16], m17 = mtx[17], m18 = mtx[18], m19 = mtx[19];
-            for (var i = 0; i < l; i += 4) {
+            for ( var i = 0; i < l; i += 4) {
                 r = data[i];
                 g = data[i + 1];
                 b = data[i + 2];

@@ -31,8 +31,8 @@ xc.module.define("xc.createjs.Touch", function(exports) {
      * @static
      */
     Touch.isSupported = function() {
-        return  ('ontouchstart' in window) || // iOS
-                (window.navigator['msPointerEnabled']); // IE10
+        return ('ontouchstart' in window) || // iOS
+        (window.navigator['msPointerEnabled']); // IE10
     };
 
     /**
@@ -50,13 +50,23 @@ xc.module.define("xc.createjs.Touch", function(exports) {
      * @static
      */
     Touch.enable = function(stage, singleTouch, allowDefault) {
-        if (!stage || !stage.canvas || !Touch.isSupported()) { return false; }
+        if (!stage || !stage.canvas || !Touch.isSupported()) {
+            return false;
+        }
         // inject required properties on stage:
-        stage.__touch = {pointers: {}, multitouch: !singleTouch, preventDefault: !allowDefault, count: 0};
+        stage.__touch = {
+            pointers: {},
+            multitouch: !singleTouch,
+            preventDefault: !allowDefault,
+            count: 0
+        };
         // note that in the future we may need to disable the standard mouse event model before adding
         // these to prevent duplicate calls. It doesn't seem to be an issue with iOS devices though.
-        if ('ontouchstart' in window) { Touch._IOS_enable(stage); }
-        else if (window.navigator['msPointerEnabled']) { Touch._IE_enable(stage); }
+        if ('ontouchstart' in window) {
+            Touch._IOS_enable(stage);
+        } else if (window.navigator['msPointerEnabled']) {
+            Touch._IE_enable(stage);
+        }
         return true;
     };
 
@@ -68,9 +78,14 @@ xc.module.define("xc.createjs.Touch", function(exports) {
      * @static
      */
     Touch.disable = function(stage) {
-        if (!stage) { return; }
-        if ('ontouchstart' in window) { Touch._IOS_disable(stage); }
-        else if (window.navigator['msPointerEnabled']) { Touch._IE_disable(stage); }
+        if (!stage) {
+            return;
+        }
+        if ('ontouchstart' in window) {
+            Touch._IOS_disable(stage);
+        } else if (window.navigator['msPointerEnabled']) {
+            Touch._IE_disable(stage);
+        }
     };
 
     /**
@@ -81,7 +96,9 @@ xc.module.define("xc.createjs.Touch", function(exports) {
      */
     Touch._IOS_enable = function(stage) {
         var canvas = stage.canvas;
-        var f = stage.__touch.f = function(e) { Touch._IOS_handleEvent(stage, e); };
+        var f = stage.__touch.f = function(e) {
+            Touch._IOS_handleEvent(stage, e);
+        };
         canvas.addEventListener("touchstart", f, false);
         canvas.addEventListener("touchmove", f, false);
         canvas.addEventListener("touchend", f, false);
@@ -96,7 +113,9 @@ xc.module.define("xc.createjs.Touch", function(exports) {
      */
     Touch._IOS_disable = function(stage) {
         var canvas = stage.canvas;
-        if (!canvas) { return; }
+        if (!canvas) {
+            return;
+        }
         var f = stage.__touch.f;
         canvas.removeEventListener("touchstart", f, false);
         canvas.removeEventListener("touchmove", f, false);
@@ -110,14 +129,20 @@ xc.module.define("xc.createjs.Touch", function(exports) {
      * @static
      */
     Touch._IOS_handleEvent = function(stage, e) {
-        if (!stage) { return; }
-        if (stage.__touch.preventDefault) { e.preventDefault && e.preventDefault(); }
+        if (!stage) {
+            return;
+        }
+        if (stage.__touch.preventDefault) {
+            e.preventDefault && e.preventDefault();
+        }
         var touches = e.changedTouches;
         var type = e.type;
-        for (var i = 0, l = touches.length; i < l; i++) {
+        for ( var i = 0, l = touches.length; i < l; i++) {
             var touch = touches[i];
             var id = touch.identifier;
-            if (touch.target != stage.canvas) { continue; }
+            if (touch.target != stage.canvas) {
+                continue;
+            }
             if (type == "touchstart") {
                 this._handleStart(stage, id, e, touch.pageX, touch.pageY);
             } else if (type == "touchmove") {
@@ -136,12 +161,16 @@ xc.module.define("xc.createjs.Touch", function(exports) {
      */
     Touch._IE_enable = function(stage) {
         var canvas = stage.canvas;
-        var f = stage.__touch.f = function(e) { Touch._IE_handleEvent(stage, e); };
+        var f = stage.__touch.f = function(e) {
+            Touch._IE_handleEvent(stage, e);
+        };
         canvas.addEventListener("MSPointerDown", f, false);
         window.addEventListener("MSPointerMove", f, false);
         window.addEventListener("MSPointerUp", f, false);
         window.addEventListener("MSPointerCancel", f, false);
-        if (stage.__touch.preventDefault) { canvas.style.msTouchAction = "none"; }
+        if (stage.__touch.preventDefault) {
+            canvas.style.msTouchAction = "none";
+        }
         stage.__touch.activeIDs = {};
     };
 
@@ -167,20 +196,26 @@ xc.module.define("xc.createjs.Touch", function(exports) {
      * @static
      */
     Touch._IE_handleEvent = function(stage, e) {
-        if (!stage) { return; }
-        if (stage.__touch.preventDefault) { e.preventDefault && e.preventDefault(); }
+        if (!stage) {
+            return;
+        }
+        if (stage.__touch.preventDefault) {
+            e.preventDefault && e.preventDefault();
+        }
         var type = e.type;
         var id = e.pointerId;
         var ids = stage.__touch.activeIDs;
         if (type == "MSPointerDown") {
-            if (e.srcElement != stage.canvas) { return; }
+            if (e.srcElement != stage.canvas) {
+                return;
+            }
             ids[id] = true;
             this._handleStart(stage, id, e, e.pageX, e.pageY);
         } else if (ids[id]) { // it's an id we're watching
             if (type == "MSPointerMove") {
                 this._handleMove(stage, id, e, e.pageX, e.pageY);
             } else if (type == "MSPointerUp" || type == "MSPointerCancel") {
-                delete(ids[id]);
+                delete (ids[id]);
                 this._handleEnd(stage, id, e);
             }
         }
@@ -192,9 +227,13 @@ xc.module.define("xc.createjs.Touch", function(exports) {
      */
     Touch._handleStart = function(stage, id, e, x, y) {
         var props = stage.__touch;
-        if (!props.multitouch && props.count) { return; }
+        if (!props.multitouch && props.count) {
+            return;
+        }
         var ids = props.pointers;
-        if (ids[id]) { return; }
+        if (ids[id]) {
+            return;
+        }
         ids[id] = true;
         props.count++;
         stage._handlePointerDown(id, e, x, y);
@@ -205,7 +244,9 @@ xc.module.define("xc.createjs.Touch", function(exports) {
      * @protected
      */
     Touch._handleMove = function(stage, id, e, x, y) {
-        if (!stage.__touch.pointers[id]) { return; }
+        if (!stage.__touch.pointers[id]) {
+            return;
+        }
         stage._handlePointerMove(id, e, x, y);
     };
 
@@ -217,10 +258,12 @@ xc.module.define("xc.createjs.Touch", function(exports) {
         // TODO: cancel should be handled differently for proper UI (ex. an up would trigger a click, a cancel would more closely resemble an out).
         var props = stage.__touch;
         var ids = props.pointers;
-        if (!ids[id]) { return; }
+        if (!ids[id]) {
+            return;
+        }
         props.count--;
         stage._handlePointerUp(id, e, true);
-        delete(ids[id]);
+        delete (ids[id]);
     };
 
     return Touch;

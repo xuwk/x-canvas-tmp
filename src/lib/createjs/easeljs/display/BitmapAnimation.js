@@ -21,7 +21,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
      *  dimensions, and frame data. See {{#crossLink "SpriteSheet"}}{{/crossLink}} for more information.
      */
     var BitmapAnimation = DisplayObject.extend({
-        _init: function(spriteSheet) {
+        initialize: function(spriteSheet) {
             this._super();
             this.spriteSheet = spriteSheet;
         },
@@ -148,10 +148,14 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
          *  For example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
          */
         draw: function(ctx, ignoreCache) {
-            if (this._super(ctx, ignoreCache)) { return true; }
+            if (this._super(ctx, ignoreCache)) {
+                return true;
+            }
             this._normalizeFrame();
             var o = this.spriteSheet.getFrame(this.currentFrame);
-            if (!o) { return false; }
+            if (!o) {
+                return false;
+            }
             var rect = o.rect;
             ctx.drawImage(o.image, rect.x, rect.y, rect.width, rect.height, -o.regX, -o.regY, rect.width, rect.height);
             return true;
@@ -211,7 +215,11 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
          * @method advance
          */
         advance: function() {
-            if (this._animation) { this.currentAnimationFrame++; } else { this.currentFrame++; }
+            if (this._animation) {
+                this.currentAnimationFrame++;
+            } else {
+                this.currentFrame++;
+            }
             this._normalizeFrame();
         },
 
@@ -260,7 +268,9 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
          */
         _tick: function(params) {
             var f = this._animation ? this._animation.frequency : 1;
-            if (!this.paused && ((++this._advanceCount) + this.offset) % f == 0) { this.advance(); }
+            if (!this.paused && ((++this._advanceCount) + this.offset) % f == 0) {
+                this.advance();
+            }
             this._super(params);
         },
 
@@ -294,7 +304,9 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
             } else {
                 l = this.spriteSheet.getNumFrames();
                 if (frame >= l) {
-                    if (!this._dispatchAnimationEnd(animation, frame, paused, l - 1)) { this.currentFrame = 0; }
+                    if (!this._dispatchAnimationEnd(animation, frame, paused, l - 1)) {
+                        this.currentFrame = 0;
+                    }
                 }
             }
         },
@@ -310,8 +322,14 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
          */
         _dispatchAnimationEnd: function(animation, frame, paused, next, end) {
             var name = animation ? animation.name : null;
-            this.dispatchEvent({type: "animationend", name: name, next: next});
-            if (!paused && this.paused) { this.currentAnimationFrame = end; }
+            this.dispatchEvent({
+                type: "animationend",
+                name: name,
+                next: next
+            });
+            if (!paused && this.paused) {
+                this.currentAnimationFrame = end;
+            }
             return (this.paused != paused || this._animation != animation || this.currentFrame != frame);
         },
 

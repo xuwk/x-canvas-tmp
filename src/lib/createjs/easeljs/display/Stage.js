@@ -16,9 +16,9 @@ xc.module.define("xc.createjs.Stage", function(exports) {
      *     var image = new Bitmap("imagePath.png");
      *     Ticker.addEventListener("tick", handleTick);
      *     function handleTick(event) {
-   *         bitmap.x += 10;
-   *         stage.update();
-   *     }
+     *         bitmap.x += 10;
+     *         stage.update();
+     *     }
      *
      * @class Stage
      * @extends Container
@@ -27,11 +27,13 @@ xc.module.define("xc.createjs.Stage", function(exports) {
      *  of a canvas object in the current document.
      */
     var Stage = Container.extend({
-        _init: function(canvas) {
+        initialize: function(canvas) {
             this._super();
             this.canvas = (typeof canvas == "string") ? document.getElementById(canvas) : canvas;
             this._pointerData = {};
             this.enableDOMEvents(true);
+            // I am sorry that I've hacked,but this won't stay for long...
+            this.tick = this.update;
         },
 
         /**
@@ -170,9 +172,15 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          * @method update
          */
         update: function() {
-            if (!this.canvas) { return; }
-            if (this.autoClear) { this.clear(); }
-            if (this.tickOnUpdate) { this._tick((arguments.length ? arguments : null)); }
+            if (!this.canvas) {
+                return;
+            }
+            if (this.autoClear) {
+                this.clear();
+            }
+            if (this.tickOnUpdate) {
+                this._tick((arguments.length ? arguments : null));
+            }
             var ctx = this.canvas.getContext("2d");
             ctx.save();
             this.updateContext(ctx);
@@ -193,16 +201,20 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          * @type Function
          */
         handleEvent: function(evt) {
-            if (evt.type == "tick") { this.update(evt); }
+            if (evt.type == "tick") {
+                this.update(evt);
+            }
         },
-
+        
         /**
          * Clears the target canvas. Useful if <code>autoClear</code> is set to false.
          *
          * @method clear
          */
         clear: function() {
-            if (!this.canvas) { return; }
+            if (!this.canvas) {
+                return;
+            }
             var ctx = this.canvas.getContext("2d");
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -267,9 +279,15 @@ xc.module.define("xc.createjs.Stage", function(exports) {
                 clearInterval(this._mouseOverIntervalID);
                 this._mouseOverIntervalID = null;
             }
-            if (frequency == null) { frequency = 20; } else if (frequency <= 0) { return; }
+            if (frequency == null) {
+                frequency = 20;
+            } else if (frequency <= 0) {
+                return;
+            }
             var o = this;
-            this._mouseOverIntervalID = setInterval(function() { o._testMouseOver(); }, 1000 / Math.min(50, frequency));
+            this._mouseOverIntervalID = setInterval(function() {
+                o._testMouseOver();
+            }, 1000 / Math.min(50, frequency));
         },
 
         /**
@@ -281,7 +299,9 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          * @param {Boolean} [enable=true] Indicates whether to enable or disable the events. Default is true.
          */
         enableDOMEvents: function(enable) {
-            if (enable == null) { enable = true; }
+            if (enable == null) {
+                enable = true;
+            }
             var n, o, ls = this._eventListeners;
             if (!enable && ls) {
                 for (n in ls) {
@@ -293,11 +313,33 @@ xc.module.define("xc.createjs.Stage", function(exports) {
                 var t = window.addEventListener ? window : document;
                 var _this = this;
                 ls = this._eventListeners = {};
-                ls["mouseup"] = {t: t, f: function(e) { _this._handleMouseUp(e)} };
-                ls["mousemove"] = {t: t, f: function(e) { _this._handleMouseMove(e)} };
-                ls["dblclick"] = {t: t, f: function(e) { _this._handleDoubleClick(e)} };
+                ls["mouseup"] = {
+                    t: t,
+                    f: function(e) {
+                        _this._handleMouseUp(e)
+                    }
+                };
+                ls["mousemove"] = {
+                    t: t,
+                    f: function(e) {
+                        _this._handleMouseMove(e)
+                    }
+                };
+                ls["dblclick"] = {
+                    t: t,
+                    f: function(e) {
+                        _this._handleDoubleClick(e)
+                    }
+                };
                 t = this.canvas;
-                if (t) { ls["mousedown"] = {t: t, f: function(e) { _this._handleMouseDown(e)} }; }
+                if (t) {
+                    ls["mousedown"] = {
+                        t: t,
+                        f: function(e) {
+                            _this._handleMouseDown(e)
+                        }
+                    };
+                }
                 for (n in ls) {
                     o = ls[n];
                     o.t.addEventListener(n, o.f);
@@ -334,9 +376,14 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         _getPointerData: function(id) {
             var data = this._pointerData[id];
             if (!data) {
-                data = this._pointerData[id] = {x: 0, y: 0};
+                data = this._pointerData[id] = {
+                    x: 0,
+                    y: 0
+                };
                 // if it's the mouse (id == NaN) or the first new touch, then make it the primary pointer id:
-                if (this._primaryPointerID == null) { this._primaryPointerID = id; }
+                if (this._primaryPointerID == null) {
+                    this._primaryPointerID = id;
+                }
             }
             return data;
         },
@@ -347,7 +394,9 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          * @param {MouseEvent} e
          */
         _handleMouseMove: function(e) {
-            if (!e) { e = window.event; }
+            if (!e) {
+                e = window.event;
+            }
             this._handlePointerMove(-1, e, e.pageX, e.pageY);
         },
 
@@ -360,20 +409,23 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          * @param {Number} pageY
          */
         _handlePointerMove: function(id, e, pageX, pageY) {
-            if (!this.canvas) { return; } // this.mouseX = this.mouseY = null;
+            if (!this.canvas) {
+                return;
+            } // this.mouseX = this.mouseY = null;
             var evt;
             var o = this._getPointerData(id);
             var inBounds = o.inBounds;
             this._updatePointerPosition(id, pageX, pageY);
-            if (!inBounds && !o.inBounds && !this.mouseMoveOutside) { return; }
+            if (!inBounds && !o.inBounds && !this.mouseMoveOutside) {
+                return;
+            }
             if (this.hasEventListener("stagemousemove")) {
                 evt = new MouseEvent("stagemousemove", o.x, o.y, this, e, id, id == this._primaryPointerID, o.rawX, o.rawY);
                 this.dispatchEvent(evt);
             }
             var oEvt = o.event;
             if (oEvt && oEvt.hasEventListener("mousemove")) {
-                evt = new MouseEvent("mousemove", o.x, o.y, oEvt.target, e, id, id == this._primaryPointerID, o.rawX,
-                        o.rawY);
+                evt = new MouseEvent("mousemove", o.x, o.y, oEvt.target, e, id, id == this._primaryPointerID, o.rawX, o.rawY);
                 oEvt.dispatchEvent(evt, oEvt.target);
             }
         },
@@ -417,10 +469,18 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          */
         _getElementRect: function(e) {
             var bounds;
-            try { bounds = e.getBoundingClientRect(); } // this can fail on disconnected DOM elements in IE9
-            catch (err) { bounds = {top: e.offsetTop, left: e.offsetLeft, width: e.offsetWidth, height: e.offsetHeight}; }
-            var offX = (window.pageXOffset || document.scrollLeft || 0) -
-                    (document.clientLeft || document.body.clientLeft || 0);
+            try {
+                bounds = e.getBoundingClientRect();
+            } // this can fail on disconnected DOM elements in IE9
+            catch (err) {
+                bounds = {
+                    top: e.offsetTop,
+                    left: e.offsetLeft,
+                    width: e.offsetWidth,
+                    height: e.offsetHeight
+                };
+            }
+            var offX = (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || document.body.clientLeft || 0);
             var offY = (window.pageYOffset || document.scrollTop || 0) - (document.clientTop || document.body.clientTop || 0);
             var styles = window.getComputedStyle ? getComputedStyle(e) : e.currentStyle; // IE <9 compatibility.
             var padL = parseInt(styles.paddingLeft) + parseInt(styles.borderLeftWidth);
@@ -465,15 +525,18 @@ xc.module.define("xc.createjs.Stage", function(exports) {
                 oEvt.dispatchEvent(evt, oEvt.target);
             }
             var oTarget = o.target;
-            if (oTarget && oTarget.hasEventListener("click") &&
-                    this._getObjectsUnderPoint(o.x, o.y, null, true, (this._mouseOverIntervalID ? 3 : 1)) == oTarget) {
+            if (oTarget && oTarget.hasEventListener("click") && this._getObjectsUnderPoint(o.x, o.y, null, true, (this._mouseOverIntervalID ? 3 : 1)) == oTarget) {
                 evt = new MouseEvent("click", o.x, o.y, oTarget, e, id, id == this._primaryPointerID, o.rawX, o.rawY);
                 oTarget.dispatchEvent(evt);
             }
             if (clear) {
-                if (id == this._primaryPointerID) { this._primaryPointerID = null; }
-                delete(this._pointerData[id]);
-            } else { o.event = o.target = null; }
+                if (id == this._primaryPointerID) {
+                    this._primaryPointerID = null;
+                }
+                delete (this._pointerData[id]);
+            } else {
+                o.event = o.target = null;
+            }
         },
 
         /**
@@ -495,7 +558,9 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          */
         _handlePointerDown: function(id, e, x, y) {
             var o = this._getPointerData(id);
-            if (y != null) { this._updatePointerPosition(id, x, y); }
+            if (y != null) {
+                this._updatePointerPosition(id, x, y);
+            }
             if (this.hasEventListener("stagemousedown")) {
                 var evt = new MouseEvent("stagemousedown", o.x, o.y, this, e, id, id == this._primaryPointerID, o.rawX, o.rawY);
                 this.dispatchEvent(evt);
@@ -506,7 +571,9 @@ xc.module.define("xc.createjs.Stage", function(exports) {
                 if (target.hasEventListener("mousedown")) {
                     evt = new MouseEvent("mousedown", o.x, o.y, target, e, id, id == this._primaryPointerID, o.rawX, o.rawY);
                     target.dispatchEvent(evt);
-                    if (evt.hasEventListener("mousemove") || evt.hasEventListener("mouseup")) { o.event = evt; }
+                    if (evt.hasEventListener("mousemove") || evt.hasEventListener("mouseup")) {
+                        o.event = evt;
+                    }
                 }
             }
         },
@@ -517,9 +584,13 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          */
         _testMouseOver: function() {
             // for now, this only tests the mouse.
-            if (this._primaryPointerID != -1) { return; }
+            if (this._primaryPointerID != -1) {
+                return;
+            }
             // only update if the mouse position has changed. This provides a lot of optimization, but has some trade-offs.
-            if (this.mouseX == this._mouseOverX && this.mouseY == this._mouseOverY && this.mouseInBounds) { return; }
+            if (this.mouseX == this._mouseOverX && this.mouseY == this._mouseOverY && this.mouseInBounds) {
+                return;
+            }
             var target = null;
             if (this.mouseInBounds) {
                 target = this._getObjectsUnderPoint(this.mouseX, this.mouseY, null, 3);
@@ -533,12 +604,16 @@ xc.module.define("xc.createjs.Stage", function(exports) {
                     var evt = new MouseEvent("mouseout", o.x, o.y, mouseOverTarget, null, -1, o.rawX, o.rawY);
                     mouseOverTarget.dispatchEvent(evt);
                 }
-                if (mouseOverTarget) { this.canvas.style.cursor = ""; }
+                if (mouseOverTarget) {
+                    this.canvas.style.cursor = "";
+                }
                 if (target && target.hasEventListener("mouseover")) {
                     evt = new MouseEvent("mouseover", o.x, o.y, target, null, -1, o.rawX, o.rawY);
                     target.dispatchEvent(evt);
                 }
-                if (target) { this.canvas.style.cursor = target.cursor || ""; }
+                if (target) {
+                    this.canvas.style.cursor = target.cursor || "";
+                }
                 this._mouseOverTarget = target;
             }
         },
@@ -557,7 +632,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
             }
         }
     });
-
+    
     return Stage;
 
 });

@@ -13,11 +13,15 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
      * @param {Number} ty Specifies the ty property for the new matrix.
      */
     var Matrix2D = xc.class.create({
-        _init: function(a, b, c, d, tx, ty) {
-            if (a != null) { this.a = a; }
+        initialize: function(a, b, c, d, tx, ty) {
+            if (a != null) {
+                this.a = a;
+            }
             this.b = b || 0;
             this.c = c || 0;
-            if (d != null) { this.d = d; }
+            if (d != null) {
+                this.d = d;
+            }
             this.tx = tx || 0;
             this.ty = ty || 0;
             return this;
@@ -386,7 +390,9 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         decompose: function(target) {
             // TODO: it would be nice to be able to solve for whether the matrix can be decomposed into only scale/rotation
             // even when scale is negative
-            if (target == null) { target = {}; }
+            if (target == null) {
+                target = {};
+            }
             target.x = this.tx;
             target.y = this.ty;
             target.scaleX = Math.sqrt(this.a * this.a + this.b * this.b);

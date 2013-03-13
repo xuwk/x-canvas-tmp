@@ -16,7 +16,7 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
      * @param {Number} quality
      */
     var BoxBlurFilter = Filter.extend({
-        _initialize: function(blurX, blurY, quality) {
+        initialize: function(blurX, blurY, quality) {
             if (isNaN(blurX) || blurX < 0) {
                 blurX = 0;
             }
@@ -85,8 +85,12 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
          */
         applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
             targetCtx = targetCtx || ctx;
-            if (targetX == null) { targetX = x; }
-            if (targetY == null) { targetY = y; }
+            if (targetX == null) {
+                targetX = x;
+            }
+            if (targetY == null) {
+                targetY = y;
+            }
             try {
                 var imageData = ctx.getImageData(x, y, width, height);
             } catch (e) {
@@ -140,7 +144,7 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
                     bsum = pixels[yw + 2] * rad1x;
                     asum = pixels[yw + 3] * rad1x;
                     for (i = 1; i <= radiusX; i++) {
-                        p = yw + (((i > wm ? wm : i )) << 2 );
+                        p = yw + (((i > wm ? wm : i)) << 2);
                         rsum += pixels[p++];
                         gsum += pixels[p++];
                         bsum += pixels[p++];
@@ -163,7 +167,7 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
                         asum += pixels[p1] - pixels[p2];
                         yi++;
                     }
-                    yw += ( width << 2 );
+                    yw += (width << 2);
                 }
                 for (x = 0; x < width; x++) {
                     yp = x;
@@ -172,7 +176,7 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
                     bsum = b[yp] * rad1y;
                     asum = a[yp] * rad1y;
                     for (i = 1; i <= radiusY; i++) {
-                        yp += ( i > hm ? 0 : width );
+                        yp += (i > hm ? 0 : width);
                         rsum += r[yp];
                         gsum += g[yp];
                         bsum += b[yp];

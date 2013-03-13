@@ -17,7 +17,7 @@ xc.module.define("xc.createjs.AlphaMapFilter", function(exports) {
      *  exactly the same dimensions as the target.
      */
     var AlphaMapFilter = Filter.extend({
-        _init: function(alphaMap) {
+        initialize: function(alphaMap) {
             this.alphaMap = alphaMap;
         },
 
@@ -48,11 +48,19 @@ xc.module.define("xc.createjs.AlphaMapFilter", function(exports) {
          * @return {Boolean}
          */
         applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
-            if (!this.alphaMap) { return true; }
-            if (!this._prepAlphaMap()) { return false; }
+            if (!this.alphaMap) {
+                return true;
+            }
+            if (!this._prepAlphaMap()) {
+                return false;
+            }
             targetCtx = targetCtx || ctx;
-            if (targetX == null) { targetX = x; }
-            if (targetY == null) { targetY = y; }
+            if (targetX == null) {
+                targetX = x;
+            }
+            if (targetY == null) {
+                targetY = y;
+            }
             try {
                 var imageData = ctx.getImageData(x, y, width, height);
             } catch (e) {
@@ -61,7 +69,7 @@ xc.module.define("xc.createjs.AlphaMapFilter", function(exports) {
             var data = imageData.data;
             var map = this._mapData;
             var l = data.length;
-            for (var i = 0; i < l; i += 4) {
+            for ( var i = 0; i < l; i += 4) {
                 data[i + 3] = map[i] || 0;
             }
             imageData.data = data;
@@ -88,8 +96,12 @@ xc.module.define("xc.createjs.AlphaMapFilter", function(exports) {
         },
 
         _prepAlphaMap: function() {
-            if (!this.alphaMap) { return false; }
-            if (this.alphaMap == this._alphaMap && this._mapData) { return true; }
+            if (!this.alphaMap) {
+                return false;
+            }
+            if (this.alphaMap == this._alphaMap && this._mapData) {
+                return true;
+            }
             this._mapData = null;
             var map = this._alphaMap = this.alphaMap;
             var canvas = map;

@@ -21,72 +21,72 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
      * <h4>SpriteSheet Format</h4>
      *
      *     data = {
-   *
-   *         // DEFINING IMAGES:
-   *         // list of images or image URIs to use. SpriteSheet can handle preloading.
-   *         // the order dictates their index value for frame definition.
-   *         images: [image1, "path/to/image2.png"],
-   *
-   *         // DEFINING FRAMES:
-   *         // the simple way to define frames, only requires frame size because frames are consecutive:
-   *         // define frame width/height, and optionally the frame count and registration point x/y.
-   *         // if count is omitted, it will be calculated automatically based on image dimensions.
-   *         frames: {width:64, height:64, count:20, regX: 32, regY:64},
-   *
-   *         // OR, the complex way that defines individual rects for frames.
-   *         // The 5th value is the image index per the list defined in "images" (defaults to 0).
-   *         frames: [
-   *             // x, y, width, height, imageIndex, regX, regY
-   *             [0,0,64,64,0,32,64],
-   *             [64,0,96,64,0]
-   *         ],
-   *
-   *         // DEFINING ANIMATIONS:
-   *
-   *         // simple animation definitions. Define a consecutive range of frames.
-   *         // also optionally define a "next" animation name for sequencing.
-   *         // setting next to false makes it pause when it reaches the end.
-   *         animations: {
-   *              // start, end, next, frequency
-   *              run: [0,8],
-   *              jump: [9,12,"run",2],
-   *              stand: 13
-   *         }
-   *
-   *         // the complex approach which specifies every frame in the animation by index.
-   *         animations: {
-   *             run: {
-   *                 frames: [1,2,3,3,2,1]
-   *             },
-   *             jump: {
-   *                 frames: [1,4,5,6,1],
-   *                 next: "run",
-   *                 frequency: 2
-   *             },
-   *             stand: { frames: [7] }
-   *         }
-   *
-   *         // the above two approaches can be combined, you can also use a single frame definition:
-   *         animations: {
-   *             run: [0,8,true,2],
-   *             jump: {
-   *                 frames: [8,9,10,9,8],
-   *                 next: "run",
-   *                 frequency: 2
-   *             },
-   *             stand: 7
-   *         }
-   *     }
+     *
+     *         // DEFINING IMAGES:
+     *         // list of images or image URIs to use. SpriteSheet can handle preloading.
+     *         // the order dictates their index value for frame definition.
+     *         images: [image1, "path/to/image2.png"],
+     *
+     *         // DEFINING FRAMES:
+     *         // the simple way to define frames, only requires frame size because frames are consecutive:
+     *         // define frame width/height, and optionally the frame count and registration point x/y.
+     *         // if count is omitted, it will be calculated automatically based on image dimensions.
+     *         frames: {width:64, height:64, count:20, regX: 32, regY:64},
+     *
+     *         // OR, the complex way that defines individual rects for frames.
+     *         // The 5th value is the image index per the list defined in "images" (defaults to 0).
+     *         frames: [
+     *             // x, y, width, height, imageIndex, regX, regY
+     *             [0,0,64,64,0,32,64],
+     *             [64,0,96,64,0]
+     *         ],
+     *
+     *         // DEFINING ANIMATIONS:
+     *
+     *         // simple animation definitions. Define a consecutive range of frames.
+     *         // also optionally define a "next" animation name for sequencing.
+     *         // setting next to false makes it pause when it reaches the end.
+     *         animations: {
+     *              // start, end, next, frequency
+     *              run: [0,8],
+     *              jump: [9,12,"run",2],
+     *              stand: 13
+     *         }
+     *
+     *         // the complex approach which specifies every frame in the animation by index.
+     *         animations: {
+     *             run: {
+     *                 frames: [1,2,3,3,2,1]
+     *             },
+     *             jump: {
+     *                 frames: [1,4,5,6,1],
+     *                 next: "run",
+     *                 frequency: 2
+     *             },
+     *             stand: { frames: [7] }
+     *         }
+     *
+     *         // the above two approaches can be combined, you can also use a single frame definition:
+     *         animations: {
+     *             run: [0,8,true,2],
+     *             jump: {
+     *                 frames: [8,9,10,9,8],
+     *                 next: "run",
+     *                 frequency: 2
+     *             },
+     *             stand: 7
+     *         }
+     *     }
      *
      * <h4>Example</h4>
      * To define a simple sprite sheet, with a single image "sprites.jpg" arranged in a regular 50x50 grid with two
      * animations, "run" looping from frame 0-4 inclusive, and "jump" playing from frame 5-8 and sequencing back to run:
      *
      *     var data = {
-   *         images: ["sprites.jpg"],
-   *         frames: {width:50, height:50},
-   *         animations: {run:[0,4], jump:[5,8,"run"]}
-   *     };
+     *         images: ["sprites.jpg"],
+     *         frames: {width:50, height:50},
+     *         animations: {run:[0,4], jump:[5,8,"run"]}
+     *     };
      *     var animation = new BitmapAnimation(data);
      *     animation.gotoAndPlay("run");
      *
@@ -96,9 +96,11 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
      * @param data
      */
     var SpriteSheet = EventDispatcher.extend({
-        _init: function(data) {
+        initialize: function(data) {
             var i, l, o, a;
-            if (data == null) { return; }
+            if (data == null) {
+                return;
+            }
             // parse images:
             if (data.images && (l = data.images.length) > 0) {
                 a = this._images = [];
@@ -113,7 +115,11 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
                     if (!img.getContext && !img.complete) {
                         this._loadCount++;
                         this.complete = false;
-                        (function(o) { img.onload = function() { o._handleImageLoad(); } })(this);
+                        (function(o) {
+                            img.onload = function() {
+                                o._handleImageLoad();
+                            }
+                        })(this);
                     }
                 }
             }
@@ -124,8 +130,12 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
                 a = data.frames;
                 for (i = 0, l = a.length; i < l; i++) {
                     var arr = a[i];
-                    this._frames.push({image: this._images[arr[4] ? arr[4] : 0],
-                        rect: new Rectangle(arr[0], arr[1], arr[2], arr[3]), regX: arr[5] || 0, regY: arr[6] || 0 });
+                    this._frames.push({
+                        image: this._images[arr[4] ? arr[4] : 0],
+                        rect: new Rectangle(arr[0], arr[1], arr[2], arr[3]),
+                        regX: arr[5] || 0,
+                        regY: arr[6] || 0
+                    });
                 }
             } else {
                 o = data.frames;
@@ -134,7 +144,9 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
                 this._regX = o.regX || 0;
                 this._regY = o.regY || 0;
                 this._numFrames = o.count;
-                if (this._loadCount == 0) { this._calculateFrames(); }
+                if (this._loadCount == 0) {
+                    this._calculateFrames();
+                }
             }
             // parse animations:
             if ((o = data.animations) != null) {
@@ -142,7 +154,9 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
                 this._data = {};
                 var name;
                 for (name in o) {
-                    var anim = {name: name};
+                    var anim = {
+                        name: name
+                    };
                     var obj = o[name];
                     if (typeof obj == "number") { // single frame
                         a = anim.frames = [obj];
@@ -163,9 +177,10 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
                         var frames = obj.frames;
                         a = anim.frames = (typeof frames == "number") ? [frames] : frames.slice(0);
                     }
-                    anim.next = (a.length < 2 || anim.next == false) ? null :
-                            (anim.next == null || anim.next == true) ? name : anim.next;
-                    if (!anim.frequency) { anim.frequency = 1; }
+                    anim.next = (a.length < 2 || anim.next == false) ? null : (anim.next == null || anim.next == true) ? name : anim.next;
+                    if (!anim.frequency) {
+                        anim.frequency = 1;
+                    }
                     this._animations.push(name);
                     this._data[name] = anim;
                 }
@@ -179,9 +194,9 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
          * <h4>Example</h4>
          *     var sheet = new SpriteSheet(data);
          *     if (!sheet.complete) {
-     *         // not preloaded, listen for onComplete:
-     *         sheet.addEventListener("complete", handler);
-     *     }
+         *         // not preloaded, listen for onComplete:
+         *         sheet.addEventListener("complete", handler);
+         *     }
          *
          * @event complete
          * @param {Object} target The object that dispatched the event.
@@ -268,7 +283,11 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
                 return this._frames ? this._frames.length : this._numFrames;
             } else {
                 var data = this._data[animation];
-                if (data == null) { return 0; } else { return data.frames.length; }
+                if (data == null) {
+                    return 0;
+                } else {
+                    return data.frames.length;
+                }
             }
         },
 
@@ -307,7 +326,9 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
          */
         getFrame: function(frameIndex) {
             var frame;
-            if (this.complete && this._frames && (frame = this._frames[frameIndex])) { return frame; }
+            if (this.complete && this._frames && (frame = this._frames[frameIndex])) {
+                return frame;
+            }
             return null;
         },
 
@@ -372,19 +393,25 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
          * @protected
          */
         _calculateFrames: function() {
-            if (this._frames || this._frameWidth == 0) { return; }
+            if (this._frames || this._frameWidth == 0) {
+                return;
+            }
             this._frames = [];
             var ttlFrames = 0;
             var fw = this._frameWidth;
             var fh = this._frameHeight;
-            for (var i = 0, imgs = this._images; i < imgs.length; i++) {
+            for ( var i = 0, imgs = this._images; i < imgs.length; i++) {
                 var img = imgs[i];
                 var cols = (img.width + 1) / fw | 0;
                 var rows = (img.height + 1) / fh | 0;
                 var ttl = this._numFrames > 0 ? Math.min(this._numFrames - ttlFrames, cols * rows) : cols * rows;
-                for (var j = 0; j < ttl; j++) {
-                    this._frames.push({image: img, rect: new Rectangle(j % cols * fw, (j / cols | 0) * fh, fw,
-                            fh), regX: this._regX, regY: this._regY });
+                for ( var j = 0; j < ttl; j++) {
+                    this._frames.push({
+                        image: img,
+                        rect: new Rectangle(j % cols * fw, (j / cols | 0) * fh, fw, fh),
+                        regX: this._regX,
+                        regY: this._regY
+                    });
                 }
                 ttlFrames += ttl;
             }

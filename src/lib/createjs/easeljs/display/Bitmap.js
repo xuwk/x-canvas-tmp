@@ -93,7 +93,7 @@ xc.module.define("xc.createjs.Bitmap", function(exports) {
      *  If it is a URI, a new Image object will be constructed and assigned to the .image property.
      */
     var Bitmap = DisplayObject.extend({
-        _init: function(imageOrUri) {
+        initialize: function(imageOrUri) {
             this._super();
             if (typeof imageOrUri == "string") {
                 this.image = new Image();
@@ -139,8 +139,8 @@ xc.module.define("xc.createjs.Bitmap", function(exports) {
          * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas.
          */
         isVisible: function() {
-            var hasContent = this.cacheCanvas ||
-                    (this.image && (this.image.complete || this.image.getContext || this.image.readyState >= 2));
+            var hasContent = this.cacheCanvas
+                    || (this.image && (this.image.complete || this.image.getContext || this.image.readyState >= 2));
             return !!(this.visible && this.alpha > 0 && this.scaleX != 0 && this.scaleY != 0 && hasContent);
         },
 
@@ -156,7 +156,9 @@ xc.module.define("xc.createjs.Bitmap", function(exports) {
          *  For example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
          */
         draw: function(ctx, ignoreCache) {
-            if (this._super(ctx, ignoreCache)) { return true; }
+            if (this._super(ctx, ignoreCache)) {
+                return true;
+            }
             var rect = this.sourceRect;
             if (rect) {
                 ctx.drawImage(this.image, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
@@ -174,7 +176,9 @@ xc.module.define("xc.createjs.Bitmap", function(exports) {
          */
         clone: function() {
             var o = new Bitmap(this.image);
-            if (this.sourceRect) { o.sourceRect = this.sourceRect.clone(); }
+            if (this.sourceRect) {
+                o.sourceRect = this.sourceRect.clone();
+            }
             this.cloneProps(o);
             return o;
         },

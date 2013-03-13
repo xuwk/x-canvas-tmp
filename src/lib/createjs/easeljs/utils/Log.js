@@ -77,8 +77,11 @@ xc.module.define("xc.createjs.Log", function(exports) {
      */
     Log.out = function(message, details, level) {
         if (level <= Log.level && window.console) {
-            if (details === undefined) { console.log(message); }
-            else { console.log(message, details); }
+            if (details === undefined) {
+                console.log(message);
+            } else {
+                console.log(message, details);
+            }
         }
     };
 
@@ -129,10 +132,14 @@ xc.module.define("xc.createjs.Log", function(exports) {
      */
     Log.log = function(message, details, level) {
         var out = Log.out;
-        if (!out) { return; }
+        if (!out) {
+            return;
+        }
         var keys = Log._keys;
-        if (level == null) { level = 3; }
-        for (var i = 0; i < keys.length; i++) {
+        if (level == null) {
+            level = 3;
+        }
+        for ( var i = 0; i < keys.length; i++) {
             if (keys[i][message]) {
                 message = keys[i][message];
                 break;

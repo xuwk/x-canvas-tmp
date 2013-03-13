@@ -46,7 +46,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
      * @private
      */
     var TagPool = xc.class.create({
-        _init: function(src) {
+        initialize: function(src) {
             this.src = src;
             this.tags = [];
         },
@@ -236,7 +236,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
             // Reset this instance.
             this.offset = offset;
             this.volume = volume;
-            this.updateVolume();  // note this will set for mute and masterMute
+            this.updateVolume(); // note this will set for mute and masterMute
             this.remainingLoops = loop;
             if (tag.readyState !== 4) {
                 tag.addEventListener(HTMLAudioPlugin.AUDIO_READY, this.readyHandler, false);
@@ -400,7 +400,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
             // This will tell us when audio is buffered enough to play through, but not when its loaded.
             // The tag doesn't keep loading in Chrome once enough has buffered, and we have decided that behaviour is sufficient.
             // Note that canplaythrough callback doesn't work in Chrome, we have to use the event.
-            this.loadedHandler = Sound.proxy(this.sendLoadedEvent, this);  // we need this bind to be able to remove event listeners
+            this.loadedHandler = Sound.proxy(this.sendLoadedEvent, this); // we need this bind to be able to remove event listeners
             this.tag.addEventListener && this.tag.addEventListener("canplaythrough", this.loadedHandler);
             this.tag.onreadystatechange = Sound.proxy(this.sendLoadedEvent, this);
             this.tag.preload = "auto";
@@ -474,9 +474,9 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
          * @param {Object} evt The load Event
          */
         sendLoadedEvent: function(evt) {
-            this.tag.removeEventListener && this.tag.removeEventListener("canplaythrough", this.loadedHandler);  // cleanup and so we don't send the event more than once
-            this.tag.onreadystatechange = null;  // cleanup and so we don't send the event more than once
-            Sound.sendLoadComplete(this.src);  // fire event or callback on Sound
+            this.tag.removeEventListener && this.tag.removeEventListener("canplaythrough", this.loadedHandler); // cleanup and so we don't send the event more than once
+            this.tag.onreadystatechange = null; // cleanup and so we don't send the event more than once
+            Sound.sendLoadComplete(this.src); // fire event or callback on Sound
         },
 
         toString: function() {
@@ -565,17 +565,18 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
          *  controlling how many instances of a source can be played by default.
          */
         register: function(src, instances) {
-            this.audioSources[src] = true;  // Note this does not mean preloading has started
+            this.audioSources[src] = true; // Note this does not mean preloading has started
             var channel = TagPool.get(src);
             var tag = null;
             var l = instances || this.defaultNumChannels;
-            for (var i = 0; i < l; i++) {
+            for ( var i = 0; i < l; i++) {
                 tag = this.createTag(src);
                 channel.add(tag);
             }
             return {
                 tag: tag, // Return one instance for preloading purposes
-                numChannels: l  // The default number of channels to make for this Sound or the passed in value
+                numChannels: l
+            // The default number of channels to make for this Sound or the passed in value
             };
         },
 
@@ -608,7 +609,9 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
                 var channel = TagPool.get(src);
                 var tag = this.createTag(src);
                 channel.add(tag);
-                this.preload(src, {tag: tag});
+                this.preload(src, {
+                    tag: tag
+                });
             }
             return new HTMLAudioSoundInstance(src, this);
         },
@@ -729,7 +732,8 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
      * @static
      * @protected
      */
-    HTMLAudioPlugin.generateCapabilities = function() {
+    HTMLAudioPlugin.generateCapabilities =
+    function() {
         if (HTMLAudioPlugin.capabilities != null) {
             return;
         }
@@ -745,10 +749,11 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
         // determine which extensions our browser supports for this plugin by iterating through Sound.SUPPORTED_EXTENSIONS
         var supportedExtensions = Sound.SUPPORTED_EXTENSIONS;
         var extensionMap = Sound.EXTENSION_MAP;
-        for (var i = 0, l = supportedExtensions.length; i < l; i++) {
+        for ( var i = 0, l = supportedExtensions.length; i < l; i++) {
             var ext = supportedExtensions[i];
             var playType = extensionMap[ext] || ext;
-            HTMLAudioPlugin.capabilities[ext] = (t.canPlayType("audio/" + ext) != "no" && t.canPlayType("audio/" + ext) != "") || (t.canPlayType("audio/" + playType) != "no" && t.canPlayType("audio/" + playType) != "");
+            HTMLAudioPlugin.capabilities[ext] =
+            (t.canPlayType("audio/" + ext) != "no" && t.canPlayType("audio/" + ext) != "") || (t.canPlayType("audio/" + playType) != "no" && t.canPlayType("audio/" + playType) != "");
         }
     }
 

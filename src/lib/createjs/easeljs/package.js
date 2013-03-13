@@ -1,8 +1,8 @@
 xc.depends([
-    "display",
-    "events",
-    "filters",
-    "geom",
-    "ui",
-    "utils"
+  "display",
+  "events",
+  "filters",
+  "geom",
+  "ui",
+  "utils"
 ]);

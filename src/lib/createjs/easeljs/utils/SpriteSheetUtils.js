@@ -53,11 +53,19 @@ xc.module.define("xc.createjs.SpriteSheetUtils", function(exports) {
      * @param {Boolean} both If true, frames that are flipped both horizontally and vertically will be added.
      */
     SpriteSheetUtils.addFlippedFrames = function(spriteSheet, horizontal, vertical, both) {
-        if (!horizontal && !vertical && !both) { return; }
+        if (!horizontal && !vertical && !both) {
+            return;
+        }
         var count = 0;
-        if (horizontal) { SpriteSheetUtils._flip(spriteSheet, ++count, true, false); }
-        if (vertical) { SpriteSheetUtils._flip(spriteSheet, ++count, false, true); }
-        if (both) { SpriteSheetUtils._flip(spriteSheet, ++count, true, true); }
+        if (horizontal) {
+            SpriteSheetUtils._flip(spriteSheet, ++count, true, false);
+        }
+        if (vertical) {
+            SpriteSheetUtils._flip(spriteSheet, ++count, false, true);
+        }
+        if (both) {
+            SpriteSheetUtils._flip(spriteSheet, ++count, true, true);
+        }
     }
 
     /**
@@ -77,7 +85,9 @@ xc.module.define("xc.createjs.SpriteSheetUtils", function(exports) {
             frame = spriteSheet.getAnimation(frame).frames[0];
         }
         var data = spriteSheet.getFrame(frame);
-        if (!data) { return null; }
+        if (!data) {
+            return null;
+        }
         var r = data.rect;
         var canvas = SpriteSheetUtils._workingCanvas;
         canvas.width = r.width;
@@ -102,7 +112,9 @@ xc.module.define("xc.createjs.SpriteSheetUtils", function(exports) {
      * @return {canvas} A canvas with the combined image data. This can be used as a source for Bitmap or SpriteSheet.
      */
     SpriteSheetUtils.mergeAlpha = function(rgbImage, alphaImage, canvas) {
-        if (!canvas) { canvas = document.createElement("canvas"); }
+        if (!canvas) {
+            canvas = document.createElement("canvas");
+        }
         canvas.width = Math.max(alphaImage.width, rgbImage.width);
         canvas.height = Math.max(alphaImage.height, rgbImage.height);
         var ctx = canvas.getContext("2d");
@@ -119,7 +131,7 @@ xc.module.define("xc.createjs.SpriteSheetUtils", function(exports) {
         var canvas = SpriteSheetUtils._workingCanvas;
         var ctx = SpriteSheetUtils._workingContext;
         var il = imgs.length / count;
-        for (var i = 0; i < il; i++) {
+        for ( var i = 0; i < il; i++) {
             var src = imgs[i];
             src.__tmp = i; // a bit hacky, but faster than doing indexOf below.
             canvas.width = 0; // make sure it clears.
@@ -140,13 +152,18 @@ xc.module.define("xc.createjs.SpriteSheetUtils", function(exports) {
             src = frames[i];
             var rect = src.rect.clone();
             img = imgs[src.image.__tmp + il * count];
-            var frame = {image: img, rect: rect, regX: src.regX, regY: src.regY};
+            var frame = {
+                image: img,
+                rect: rect,
+                regX: src.regX,
+                regY: src.regY
+            };
             if (h) {
                 rect.x = img.width - rect.x - rect.width; // update rect
                 frame.regX = rect.width - src.regX; // update registration point
             }
             if (v) {
-                rect.y = img.height - rect.y - rect.height;  // update rect
+                rect.y = img.height - rect.y - rect.height; // update rect
                 frame.regY = rect.height - src.regY; // update registration point
             }
             frames.push(frame);
@@ -158,10 +175,17 @@ xc.module.define("xc.createjs.SpriteSheetUtils", function(exports) {
         for (i = 0; i < al; i++) {
             var name = names[i];
             src = data[name];
-            var anim = {name: name + sfx, frequency: src.frequency, next: src.next, frames: []};
-            if (src.next) { anim.next += sfx; }
+            var anim = {
+                name: name + sfx,
+                frequency: src.frequency,
+                next: src.next,
+                frames: []
+            };
+            if (src.next) {
+                anim.next += sfx;
+            }
             frames = src.frames;
-            for (var j = 0, l = frames.length; j < l; j++) {
+            for ( var j = 0, l = frames.length; j < l; j++) {
                 anim.frames.push(frames[j] + fl * count);
             }
             data[anim.name] = anim;

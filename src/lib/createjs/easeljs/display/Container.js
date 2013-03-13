@@ -23,7 +23,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
      * @constructor
      */
     var Container = DisplayObject.extend({
-        _init: function() {
+        initialize: function() {
             this._super();
             this.children = [];
         },
@@ -66,12 +66,16 @@ xc.module.define("xc.createjs.Container", function(exports) {
          *  For example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
          */
         draw: function(ctx, ignoreCache) {
-            if (this._super(ctx, ignoreCache)) { return true; }
+            if (this._super(ctx, ignoreCache)) {
+                return true;
+            }
             // this ensures we don't have issues with display list changes that occur during a draw:
             var list = this.children.slice(0);
-            for (var i = 0, l = list.length; i < l; i++) {
+            for ( var i = 0, l = list.length; i < l; i++) {
                 var child = list[i];
-                if (!child.isVisible()) { continue; }
+                if (!child.isVisible()) {
+                    continue;
+                }
                 // draw the child:
                 ctx.save();
                 child.updateContext(ctx);
@@ -93,13 +97,19 @@ xc.module.define("xc.createjs.Container", function(exports) {
          * @return {DisplayObject} The child that was added, or the last child if multiple children were added.
          */
         addChild: function(child) {
-            if (child == null) { return child; }
+            if (child == null) {
+                return child;
+            }
             var l = arguments.length;
             if (l > 1) {
-                for (var i = 0; i < l; i++) { this.addChild(arguments[i]); }
+                for ( var i = 0; i < l; i++) {
+                    this.addChild(arguments[i]);
+                }
                 return arguments[l - 1];
             }
-            if (child.parent) { child.parent.removeChild(child); }
+            if (child.parent) {
+                child.parent.removeChild(child);
+            }
             child.parent = this;
             this.children.push(child);
             return child;
@@ -122,12 +132,18 @@ xc.module.define("xc.createjs.Container", function(exports) {
         addChildAt: function(child, index) {
             var l = arguments.length;
             var idx = arguments[l - 1]; // can't use the same name as the index param or it replaces arguments[1]
-            if (idx < 0 || idx > this.children.length) { return arguments[l - 2]; }
-            if (l > 2) {
-                for (var i = 0; i < l - 1; i++) { this.addChildAt(arguments[i], idx + i); }
+            if (idx < 0 || idx > this.children.length) {
                 return arguments[l - 2];
             }
-            if (child.parent) { child.parent.removeChild(child); }
+            if (l > 2) {
+                for ( var i = 0; i < l - 1; i++) {
+                    this.addChildAt(arguments[i], idx + i);
+                }
+                return arguments[l - 2];
+            }
+            if (child.parent) {
+                child.parent.removeChild(child);
+            }
             child.parent = this;
             this.children.splice(index, 0, child);
             return child;
@@ -146,7 +162,9 @@ xc.module.define("xc.createjs.Container", function(exports) {
             var l = arguments.length;
             if (l > 1) {
                 var good = true;
-                for (var i = 0; i < l; i++) { good = good && this.removeChild(arguments[i]); }
+                for ( var i = 0; i < l; i++) {
+                    good = good && this.removeChild(arguments[i]);
+                }
                 return good;
             }
             return this.removeChildAt(this.children.indexOf(child));
@@ -164,15 +182,25 @@ xc.module.define("xc.createjs.Container", function(exports) {
             var l = arguments.length;
             if (l > 1) {
                 var a = [];
-                for (var i = 0; i < l; i++) { a[i] = arguments[i]; }
-                a.sort(function(a, b) { return b - a; });
+                for ( var i = 0; i < l; i++) {
+                    a[i] = arguments[i];
+                }
+                a.sort(function(a, b) {
+                    return b - a;
+                });
                 var good = true;
-                for (var i = 0; i < l; i++) { good = good && this.removeChildAt(a[i]); }
+                for ( var i = 0; i < l; i++) {
+                    good = good && this.removeChildAt(a[i]);
+                }
                 return good;
             }
-            if (index < 0 || index > this.children.length - 1) { return false; }
+            if (index < 0 || index > this.children.length - 1) {
+                return false;
+            }
             var child = this.children[index];
-            if (child) { child.parent = null; }
+            if (child) {
+                child.parent = null;
+            }
             this.children.splice(index, 1);
             return true;
         },
@@ -184,7 +212,9 @@ xc.module.define("xc.createjs.Container", function(exports) {
          */
         removeAllChildren: function() {
             var kids = this.children;
-            while (kids.length) { kids.pop().parent = null; }
+            while (kids.length) {
+                kids.pop().parent = null;
+            }
         },
 
         /**
@@ -207,8 +237,10 @@ xc.module.define("xc.createjs.Container", function(exports) {
          */
         getChildByName: function(name) {
             var kids = this.children;
-            for (var i = 0, l = kids.length; i < l; i++) {
-                if (kids[i].name == name) { return kids[i]; }
+            for ( var i = 0, l = kids.length; i < l; i++) {
+                if (kids[i].name == name) {
+                    return kids[i];
+                }
             }
             return null;
         },
@@ -256,7 +288,9 @@ xc.module.define("xc.createjs.Container", function(exports) {
             var kids = this.children;
             var o1 = kids[index1];
             var o2 = kids[index2];
-            if (!o1 || !o2) { return; }
+            if (!o1 || !o2) {
+                return;
+            }
             kids[index1] = o2;
             kids[index2] = o1;
         },
@@ -272,12 +306,20 @@ xc.module.define("xc.createjs.Container", function(exports) {
         swapChildren: function(child1, child2) {
             var kids = this.children;
             var index1, index2;
-            for (var i = 0, l = kids.length; i < l; i++) {
-                if (kids[i] == child1) { index1 = i; }
-                if (kids[i] == child2) { index2 = i; }
-                if (index1 != null && index2 != null) { break; }
+            for ( var i = 0, l = kids.length; i < l; i++) {
+                if (kids[i] == child1) {
+                    index1 = i;
+                }
+                if (kids[i] == child2) {
+                    index2 = i;
+                }
+                if (index1 != null && index2 != null) {
+                    break;
+                }
             }
-            if (i == l) { return; } // TODO: throw error?
+            if (i == l) {
+                return;
+            } // TODO: throw error?
             kids[index1] = child2;
             kids[index2] = child1;
         },
@@ -292,13 +334,21 @@ xc.module.define("xc.createjs.Container", function(exports) {
          */
         setChildIndex: function(child, index) {
             var kids = this.children, l = kids.length;
-            if (child.parent != this || index < 0 || index >= l) { return; }
-            for (var i = 0; i < l; i++) {
-                if (kids[i] == child) { break; }
+            if (child.parent != this || index < 0 || index >= l) {
+                return;
             }
-            if (i == l || i == index) { return; }
+            for ( var i = 0; i < l; i++) {
+                if (kids[i] == child) {
+                    break;
+                }
+            }
+            if (i == l || i == index) {
+                return;
+            }
             kids.splice(i, 1);
-            if (index < i) { index--; }
+            if (index < i) {
+                index--;
+            }
             kids.splice(index, 0, child);
         },
 
@@ -312,7 +362,9 @@ xc.module.define("xc.createjs.Container", function(exports) {
          */
         contains: function(child) {
             while (child) {
-                if (child == this) { return true; }
+                if (child == this) {
+                    return true;
+                }
                 child = child.parent;
             }
             return false;
@@ -380,7 +432,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
             this.cloneProps(o);
             if (recursive) {
                 var arr = o.children = [];
-                for (var i = 0, l = this.children.length; i < l; i++) {
+                for ( var i = 0, l = this.children.length; i < l; i++) {
                     var clone = this.children[i].clone(recursive);
                     clone.parent = o;
                     arr.push(clone);
@@ -404,9 +456,11 @@ xc.module.define("xc.createjs.Container", function(exports) {
          * @protected
          */
         _tick: function(params) {
-            for (var i = this.children.length - 1; i >= 0; i--) {
+            for ( var i = this.children.length - 1; i >= 0; i--) {
                 var child = this.children[i];
-                if (child._tick) { child._tick(params); }
+                if (child._tick) {
+                    child._tick(params);
+                }
             }
             this._super(params);
         },
@@ -441,10 +495,12 @@ xc.module.define("xc.createjs.Container", function(exports) {
             }
             // draw children one at a time, and check if we get a hit:
             var l = this.children.length;
-            for (var i = l - 1; i >= 0; i--) {
+            for ( var i = l - 1; i >= 0; i--) {
                 var child = this.children[i];
                 var hitArea = child.hitArea;
-                if (!child.visible || (!hitArea && !child.isVisible()) || (mouseEvents && !child.mouseEnabled)) { continue; }
+                if (!child.visible || (!hitArea && !child.isVisible()) || (mouseEvents && !child.mouseEnabled)) {
+                    continue;
+                }
                 var childHasHandler = mouseEvents && child._hasMouseHandler(mouseEvents);
                 // if a child container has a handler and a hitArea then we only need to check its hitArea, so we can treat it as a normal DO:
                 if (child instanceof Container && !(hitArea && childHasHandler)) {
@@ -452,10 +508,14 @@ xc.module.define("xc.createjs.Container", function(exports) {
                     if (hasHandler) {
                         // only concerned about the first hit, because this container is going to claim it anyway:
                         result = child._getObjectsUnderPoint(x, y);
-                        if (result) { return this; }
+                        if (result) {
+                            return this;
+                        }
                     } else {
                         result = child._getObjectsUnderPoint(x, y, arr, mouseEvents);
-                        if (!arr && result) { return result; }
+                        if (!arr && result) {
+                            return result;
+                        }
                     }
                 } else if (!mouseEvents || hasHandler || childHasHandler) {
                     child.getConcatenatedMatrix(mtx);
@@ -467,10 +527,18 @@ xc.module.define("xc.createjs.Container", function(exports) {
                     ctx.globalAlpha = mtx.alpha;
                     ctx.setTransform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx - x, mtx.ty - y);
                     (hitArea || child).draw(ctx);
-                    if (!this._testHit(ctx)) { continue; }
+                    if (!this._testHit(ctx)) {
+                        continue;
+                    }
                     canvas.width = 0;
                     canvas.width = 1;
-                    if (hasHandler) { return this; } else if (arr) { arr.push(child); } else { return child; }
+                    if (hasHandler) {
+                        return this;
+                    } else if (arr) {
+                        arr.push(child);
+                    } else {
+                        return child;
+                    }
                 }
             }
             return null;

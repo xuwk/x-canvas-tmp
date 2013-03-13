@@ -28,7 +28,9 @@ xc.module.define("xc.createjs.Ease", function(exports) {
      * @method linear
      * @static
      */
-    Ease.linear = function(t) { return t; }
+    Ease.linear = function(t) {
+        return t;
+    }
 
     /**
      * Identical to linear.
@@ -45,11 +47,19 @@ xc.module.define("xc.createjs.Ease", function(exports) {
      * @static
      */
     Ease.get = function(amount) {
-        if (amount < -1) { amount = -1; }
-        if (amount > 1) { amount = 1; }
+        if (amount < -1) {
+            amount = -1;
+        }
+        if (amount > 1) {
+            amount = 1;
+        }
         return function(t) {
-            if (amount == 0) { return t; }
-            if (amount < 0) { return t * (t * -amount + 1 + amount); }
+            if (amount == 0) {
+                return t;
+            }
+            if (amount < 0) {
+                return t * (t * -amount + 1 + amount);
+            }
             return t * ((2 - t) * amount + (1 - amount));
         }
     };

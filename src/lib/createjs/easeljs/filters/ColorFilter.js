@@ -20,7 +20,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
      * @param {Number} alphaOffset
      */
     var ColorFilter = Filter.extend({
-        _init: function(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset) {
+        initialize: function(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset) {
             this.redMultiplier = redMultiplier != null ? redMultiplier : 1;
             this.greenMultiplier = greenMultiplier != null ? greenMultiplier : 1;
             this.blueMultiplier = blueMultiplier != null ? blueMultiplier : 1;
@@ -111,8 +111,12 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
          */
         applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
             targetCtx = targetCtx || ctx;
-            if (targetX == null) { targetX = x; }
-            if (targetY == null) { targetY = y; }
+            if (targetX == null) {
+                targetX = x;
+            }
+            if (targetY == null) {
+                targetY = y;
+            }
             try {
                 var imageData = ctx.getImageData(x, y, width, height);
             } catch (e) {
@@ -121,7 +125,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
             }
             var data = imageData.data;
             var l = data.length;
-            for (var i = 0; i < l; i += 4) {
+            for ( var i = 0; i < l; i += 4) {
                 data[i] = data[i] * this.redMultiplier + this.redOffset;
                 data[i + 1] = data[i + 1] * this.greenMultiplier + this.greenOffset;
                 data[i + 2] = data[i + 2] * this.blueMultiplier + this.blueOffset;
@@ -149,8 +153,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
          * @return {ColorFilter} A clone of the current ColorFilter instance.
          */
         clone: function() {
-            return new ColorFilter(this.redMultiplier, this.greenMultiplier, this.blueMultiplier, this.alphaMultiplier,
-                    this.redOffset, this.greenOffset, this.blueOffset, this.alphaOffset);
+            return new ColorFilter(this.redMultiplier, this.greenMultiplier, this.blueMultiplier, this.alphaMultiplier, this.redOffset, this.greenOffset, this.blueOffset, this.alphaOffset);
         }
     });
 

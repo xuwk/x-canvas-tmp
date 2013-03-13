@@ -12,7 +12,7 @@ xc.module.define("xc.createjs.Point", function(exports) {
      * @param {Number} [y=0] Y position.
      */
     var Point = xc.class.create({
-        _init: function(x, y) {
+        initialize: function(x, y) {
             this.x = (x == null ? 0 : x);
             this.y = (y == null ? 0 : y);
         },

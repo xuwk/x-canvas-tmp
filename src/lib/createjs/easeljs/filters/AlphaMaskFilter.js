@@ -18,7 +18,7 @@ xc.module.define("xc.createjs.AlphaMaskFilter", function(exports) {
      * @param {Image} mask
      */
     var AlphaMaskFilter = Filter.extend({
-        _init: function(mask) {
+        initialize: function(mask) {
             this.mask = mask;
         },
 
@@ -46,10 +46,16 @@ xc.module.define("xc.createjs.AlphaMaskFilter", function(exports) {
          * @return {Boolean}
          */
         applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
-            if (!this.mask) { return true; }
+            if (!this.mask) {
+                return true;
+            }
             targetCtx = targetCtx || ctx;
-            if (targetX == null) { targetX = x; }
-            if (targetY == null) { targetY = y; }
+            if (targetX == null) {
+                targetX = x;
+            }
+            if (targetY == null) {
+                targetY = y;
+            }
             targetCtx.save();
             if (ctx != targetCtx) {
                 // TODO: support targetCtx and targetX/Y

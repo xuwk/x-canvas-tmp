@@ -23,7 +23,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
      *  </ul>
      */
     var Timeline = xc.class.create({
-        _init: function(tweens, labels, props) {
+        initialize: function(tweens, labels, props) {
             this._tweens = [];
             if (props) {
                 this._useTicks = props.useTicks;
@@ -31,11 +31,18 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
                 this.ignoreGlobalPause = props.ignoreGlobalPause;
                 this.onChange = props.onChange;
             }
-            if (tweens) { this.addTween.apply(this, tweens); }
+            if (tweens) {
+                this.addTween.apply(this, tweens);
+            }
             this.setLabels(labels);
-            if (props && props.paused) { this._paused = true; }
-            else { Tween._register(this, true); }
-            if (props && props.position != null) { this.setPosition(props.position, Tween.NONE); }
+            if (props && props.paused) {
+                this._paused = true;
+            } else {
+                Tween._register(this, true);
+            }
+            if (props && props.position != null) {
+                this.setPosition(props.position, Tween.NONE);
+            }
         },
 
         /**
@@ -133,16 +140,24 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         addTween: function(tween) {
             var l = arguments.length;
             if (l > 1) {
-                for (var i = 0; i < l; i++) { this.addTween(arguments[i]); }
+                for ( var i = 0; i < l; i++) {
+                    this.addTween(arguments[i]);
+                }
                 return arguments[0];
-            } else if (l == 0) { return null; }
+            } else if (l == 0) {
+                return null;
+            }
             this.removeTween(tween);
             this._tweens.push(tween);
             tween.setPaused(true);
             tween._paused = false;
             tween._useTicks = this._useTicks;
-            if (tween.duration > this.duration) { this.duration = tween.duration; }
-            if (this._prevPos >= 0) { tween.setPosition(this._prevPos, Tween.NONE); }
+            if (tween.duration > this.duration) {
+                this.duration = tween.duration;
+            }
+            if (this._prevPos >= 0) {
+                tween.setPosition(this._prevPos, Tween.NONE);
+            }
             return tween;
         },
 
@@ -157,15 +172,23 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
             var l = arguments.length;
             if (l > 1) {
                 var good = true;
-                for (var i = 0; i < l; i++) { good = good && this.removeTween(arguments[i]); }
+                for ( var i = 0; i < l; i++) {
+                    good = good && this.removeTween(arguments[i]);
+                }
                 return good;
-            } else if (l == 0) { return false; }
+            } else if (l == 0) {
+                return false;
+            }
             var index = this._tweens.indexOf(tween);
             if (index != -1) {
                 this._tweens.splice(index, 1);
-                if (tween.duration >= this.duration) { this.updateDuration(); }
+                if (tween.duration >= this.duration) {
+                    this.updateDuration();
+                }
                 return true;
-            } else { return false; }
+            } else {
+                return false;
+            }
         },
 
         /**
@@ -220,17 +243,25 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
          * @return Boolean Returns true if the timeline is complete (ie. the full timeline has run & loop is false).
          */
         setPosition: function(value, actionsMode) {
-            if (value < 0) { value = 0; }
+            if (value < 0) {
+                value = 0;
+            }
             var t = this.loop ? value % this.duration : value;
             var end = !this.loop && value >= this.duration;
-            if (t == this._prevPos) { return end; }
+            if (t == this._prevPos) {
+                return end;
+            }
             this._prevPosition = value;
             this.position = this._prevPos = t; // in case an action changes the current frame.
-            for (var i = 0, l = this._tweens.length; i < l; i++) {
+            for ( var i = 0, l = this._tweens.length; i < l; i++) {
                 this._tweens[i].setPosition(t, actionsMode);
-                if (t != this._prevPos) { return false; } // an action changed this timeline's position.
+                if (t != this._prevPos) {
+                    return false;
+                } // an action changed this timeline's position.
             }
-            if (end) { this.setPaused(true); }
+            if (end) {
+                this.setPaused(true);
+            }
             this.onChange && this.onChange(this);
             return end;
         },
@@ -255,9 +286,11 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
          */
         updateDuration: function() {
             this.duration = 0;
-            for (var i = 0, l = this._tweens.length; i < l; i++) {
+            for ( var i = 0, l = this._tweens.length; i < l; i++) {
                 tween = this._tweens[i];
-                if (tween.duration > this.duration) { this.duration = tween.duration; }
+                if (tween.duration > this.duration) {
+                    this.duration = tween.duration;
+                }
             }
         },
 
@@ -281,7 +314,9 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
          */
         resolve: function(positionOrLabel) {
             var pos = parseFloat(positionOrLabel);
-            if (isNaN(pos)) { pos = this._labels[positionOrLabel]; }
+            if (isNaN(pos)) {
+                pos = this._labels[positionOrLabel];
+            }
             return pos;
         },
 
@@ -300,7 +335,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
          * @protected
          */
         clone: function() {
-            throw("Timeline can not be cloned.")
+            throw ("Timeline can not be cloned.")
         },
 
         /**
@@ -309,7 +344,9 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
          */
         _goto: function(positionOrLabel) {
             var pos = this.resolve(positionOrLabel);
-            if (pos != null) { this.setPosition(pos); }
+            if (pos != null) {
+                this.setPosition(pos);
+            }
         }
     });
 

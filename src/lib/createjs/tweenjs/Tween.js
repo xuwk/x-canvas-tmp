@@ -18,8 +18,8 @@ xc.module.define("xc.createjs.Tween", function(exports) {
      *         .to({alpha:0, visible:false}, 1000)
      *         .call(onComplete);
      *     function onComplete() {
-   *         //Tween complete
-   *     }
+     *         //Tween complete
+     *     }
      *
      * Multiple tweens can point to the same instance, however if they affect the same properties there could be unexpected
      * behaviour. To stop all tweens on an object, use {{#crossLink "Tween/removeTweens"}}{{/crossLink}} or pass <code>override:true</code>
@@ -31,8 +31,8 @@ xc.module.define("xc.createjs.Tween", function(exports) {
      *
      *     Tween.get(target, {override:true}).to({x:100}).addEventListener("change", handleChange);
      *     function handleChange(event) {
-   *         // The tween changed.
-   *     }
+     *         // The tween changed.
+     *     }
      *
      * See the Tween {{#crossLink "Tween/get"}}{{/crossLink}} method for additional param documentation.
      *
@@ -43,24 +43,31 @@ xc.module.define("xc.createjs.Tween", function(exports) {
      * @param {Object} props
      * @param {Object} pluginData
      */
-    var Tween = EventDispatcher.extend({
-        _init: function(target, props, pluginData) {
+    var Tween = xc.class.create({
+        initialize: function(target, props, pluginData) {
             this.target = this._target = target;
             if (props) {
                 this._useTicks = props.useTicks;
                 this.ignoreGlobalPause = props.ignoreGlobalPause;
                 this.loop = props.loop;
                 this.onChange = props.onChange;
-                if (props.override) { Tween.removeTweens(target); }
+                if (props.override) {
+                    Tween.removeTweens(target);
+                }
             }
             this.pluginData = pluginData || {};
             this._curQueueProps = {};
             this._initQueueProps = {};
             this._steps = [];
             this._actions = [];
-            if (props && props.paused) { this._paused = true; }
-            else { Tween._register(this, true); }
-            if (props && props.position != null) { this.setPosition(props.position, Tween.NONE); }
+            if (props && props.paused) {
+                this._paused = true;
+            } else {
+                Tween._register(this, true);
+            }
+            if (props && props.position != null) {
+                this.setPosition(props.position, Tween.NONE);
+            }
         },
 
         /**
@@ -224,6 +231,15 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @protected
          */
         _useTicks: false,
+        
+        // 混合插件:
+        // EventDispatcher 方法:
+        addEventListener: null,
+        removeEventListener: null,
+        removeAllEventListeners: null,
+        dispatchEvent: null,
+        hasEventListener: null,
+        _listeners: null,
 
         /**
          * Queues a wait (essentially an empty tween).
@@ -237,9 +253,16 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @return {Tween} This tween instance (for chaining calls).
          */
         wait: function(duration) {
-            if (duration == null || duration <= 0) { return this; }
+            if (duration == null || duration <= 0) {
+                return this;
+            }
             var o = this._cloneProps(this._curQueueProps);
-            return this._addStep({d: duration, p0: o, e: this._linearEase, p1: o});
+            return this._addStep({
+                d: duration,
+                p0: o,
+                e: this._linearEase,
+                p1: o
+            });
         },
 
         /**
@@ -259,9 +282,15 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @return {Tween} This tween instance (for chaining calls).
          */
         to: function(props, duration, ease) {
-            if (isNaN(duration) || duration < 0) { duration = 0; }
-            return this._addStep({d: duration ||
-                    0, p0: this._cloneProps(this._curQueueProps), e: ease, p1: this._cloneProps(this._appendQueueProps(props))});
+            if (isNaN(duration) || duration < 0) {
+                duration = 0;
+            }
+            return this._addStep({
+                d: duration || 0,
+                p0: this._cloneProps(this._curQueueProps),
+                e: ease,
+                p1: this._cloneProps(this._appendQueueProps(props))
+            });
         },
 
         /**
@@ -279,7 +308,11 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @return {Tween} This tween instance (for chaining calls).
          */
         call: function(callback, params, scope) {
-            return this._addAction({f: callback, p: params ? params : [this], o: scope ? scope : this._target});
+            return this._addAction({
+                f: callback,
+                p: params ? params : [this],
+                o: scope ? scope : this._target
+            });
         },
 
         // TODO: add clarification between this and a 0 duration .to:
@@ -296,7 +329,11 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @return {Tween} This tween instance (for chaining calls).
          */
         set: function(props, target) {
-            return this._addAction({f: this._set, o: this, p: [props, target ? target : this._target]});
+            return this._addAction({
+                f: this._set,
+                o: this,
+                p: [props, target ? target : this._target]
+            });
         },
 
         /**
@@ -321,7 +358,9 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @return {Tween} This tween instance (for chaining calls)
          */
         pause: function(tween) {
-            if (!tween) { tween = this; }
+            if (!tween) {
+                tween = this;
+            }
             return this.call(tween.setPaused, [true], tween);
         },
 
@@ -337,19 +376,26 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @return {Boolean} Returns true if the tween is complete (ie. the full tween has run & loop is false).
          */
         setPosition: function(value, actionsMode) {
-            if (value < 0) { value = 0; }
-            if (actionsMode == null) { actionsMode = 1; }
+            if (value < 0) {
+                value = 0;
+            }
+            if (actionsMode == null) {
+                actionsMode = 1;
+            }
             // normalize position:
             var t = value;
             var end = false;
             if (t >= this.duration) {
-                if (this.loop) { t = t % this.duration; }
-                else {
+                if (this.loop) {
+                    t = t % this.duration;
+                } else {
                     t = this.duration;
                     end = true;
                 }
             }
-            if (t == this._prevPos) { return end; }
+            if (t == this._prevPos) {
+                return end;
+            }
             var prevPos = this._prevPos;
             this.position = this._prevPos = t; // set this in advance in case an action modifies position.
             this._prevPosition = value;
@@ -360,8 +406,10 @@ xc.module.define("xc.createjs.Tween", function(exports) {
                     this._updateTargetProps(null, 1);
                 } else if (this._steps.length > 0) {
                     // find our new tween index:
-                    for (var i = 0, l = this._steps.length; i < l; i++) {
-                        if (this._steps[i].t > t) { break; }
+                    for ( var i = 0, l = this._steps.length; i < l; i++) {
+                        if (this._steps[i].t > t) {
+                            break;
+                        }
                     }
                     var step = this._steps[i - 1];
                     this._updateTargetProps(step, (this._stepPosition = t - step.t) / step.d);
@@ -373,13 +421,17 @@ xc.module.define("xc.createjs.Tween", function(exports) {
                     // only run the actions we landed on.
                     this._runActions(t, t);
                 } else if (actionsMode == 1 && t < prevPos) {
-                    if (prevPos != this.duration) { this._runActions(prevPos, this.duration); }
+                    if (prevPos != this.duration) {
+                        this._runActions(prevPos, this.duration);
+                    }
                     this._runActions(0, t, true);
                 } else {
                     this._runActions(prevPos, t);
                 }
             }
-            if (end) { this.setPaused(true); }
+            if (end) {
+                this.setPaused(true);
+            }
             this.onChange && this.onChange(this);
             this.dispatchEvent("change");
             return end;
@@ -393,7 +445,9 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @param {Number} delta The time to advance in milliseconds (or ticks if <code>useTicks</code> is true).
          */
         tick: function(delta) {
-            if (this._paused) { return; }
+            if (this._paused) {
+                return;
+            }
             this.setPosition(this._prevPosition + delta);
         },
 
@@ -425,7 +479,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @protected
          */
         clone: function() {
-            throw("Tween can not be cloned.")
+            throw ("Tween can not be cloned.")
         },
 
         /**
@@ -440,14 +494,20 @@ xc.module.define("xc.createjs.Tween", function(exports) {
                 p0 = p1 = this._curQueueProps;
             } else {
                 // apply ease to ratio.
-                if (step.e) { ratio = step.e(ratio, 0, 1, 1); }
+                if (step.e) {
+                    ratio = step.e(ratio, 0, 1, 1);
+                }
                 p0 = step.p0;
                 p1 = step.p1;
             }
             for (n in this._initQueueProps) {
-                if ((v0 = p0[n]) == null) { p0[n] = v0 = this._initQueueProps[n]; }
-                if ((v1 = p1[n]) == null) { p1[n] = v1 = v0; }
-                if (v0 == v1 || ratio == 0 || ratio == 1 || (typeof(v0) != "number")) {
+                if ((v0 = p0[n]) == null) {
+                    p0[n] = v0 = this._initQueueProps[n];
+                }
+                if ((v1 = p1[n]) == null) {
+                    p1[n] = v1 = v0;
+                }
+                if (v0 == v1 || ratio == 0 || ratio == 1 || (typeof (v0) != "number")) {
                     // no interpolation - either at start, end, values don't change, or the value is non-numeric.
                     v = ratio == 1 ? v1 : v0;
                 } else {
@@ -455,13 +515,18 @@ xc.module.define("xc.createjs.Tween", function(exports) {
                 }
                 var ignore = false;
                 if (arr = Tween._plugins[n]) {
-                    for (var i = 0, l = arr.length; i < l; i++) {
+                    for ( var i = 0, l = arr.length; i < l; i++) {
                         var v2 = arr[i].tween(this, n, v, p0, p1, ratio, !!step && p0 == p1, !step);
-                        if (v2 == Tween.IGNORE) { ignore = true; }
-                        else { v = v2; }
+                        if (v2 == Tween.IGNORE) {
+                            ignore = true;
+                        } else {
+                            v = v2;
+                        }
                     }
                 }
-                if (!ignore) { this._target[n] = v; }
+                if (!ignore) {
+                    this._target[n] = v;
+                }
             }
         },
 
@@ -501,7 +566,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          */
         _appendQueueProps: function(o) {
             var arr, oldValue, i, l, injectProps;
-            for (var n in o) {
+            for ( var n in o) {
                 if (this._initQueueProps[n] === undefined) {
                     oldValue = this._target[n];
                     // init plugins:
@@ -518,12 +583,16 @@ xc.module.define("xc.createjs.Tween", function(exports) {
                     injectProps = injectProps || {};
                     for (i = 0, l = arr.length; i < l; i++) {
                         // TODO: remove the check for .step in the next version. It's here for backwards compatibility.
-                        if (arr[i].step) { arr[i].step(this, n, oldValue, o[n], injectProps); }
+                        if (arr[i].step) {
+                            arr[i].step(this, n, oldValue, o[n], injectProps);
+                        }
                     }
                 }
                 this._curQueueProps[n] = o[n];
             }
-            if (injectProps) { this._appendQueueProps(injectProps); }
+            if (injectProps) {
+                this._appendQueueProps(injectProps);
+            }
             return this._curQueueProps;
         },
 
@@ -534,7 +603,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          */
         _cloneProps: function(props) {
             var o = {};
-            for (var n in props) {
+            for ( var n in props) {
                 o[n] = props[n];
             }
             return o;
@@ -572,7 +641,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @protected
          */
         _set: function(props, o) {
-            for (var n in props) {
+            for ( var n in props) {
                 o[n] = props[n];
             }
         }
@@ -661,7 +730,9 @@ xc.module.define("xc.createjs.Tween", function(exports) {
      *  applied to the returned tween instance.
      */
     Tween.get = function(target, props, pluginData, override) {
-        if (override) { Tween.removeTweens(target); }
+        if (override) {
+            Tween.removeTweens(target);
+        }
         return new Tween(target, props, pluginData);
     };
 
@@ -678,9 +749,11 @@ xc.module.define("xc.createjs.Tween", function(exports) {
      */
     Tween.tick = function(delta, paused) {
         var tweens = Tween._tweens.slice(); // to avoid race conditions.
-        for (var i = tweens.length - 1; i >= 0; i--) {
+        for ( var i = tweens.length - 1; i >= 0; i--) {
             var tween = tweens[i];
-            if ((paused && !tween.ignoreGlobalPause) || tween._paused) { continue; }
+            if ((paused && !tween.ignoreGlobalPause) || tween._paused) {
+                continue;
+            }
             tween.tick(tween._useTicks ? 1 : delta);
         }
     };
@@ -693,9 +766,11 @@ xc.module.define("xc.createjs.Tween", function(exports) {
      * @param {Object} target The target object to remove existing tweens from.
      */
     Tween.removeTweens = function(target) {
-        if (!target.tweenjs_count) { return; }
+        if (!target.tweenjs_count) {
+            return;
+        }
         var tweens = Tween._tweens;
-        for (var i = tweens.length - 1; i >= 0; i--) {
+        for ( var i = tweens.length - 1; i >= 0; i--) {
             if (tweens[i]._target == target) {
                 tweens[i]._paused = true;
                 tweens.splice(i, 1);
@@ -714,7 +789,9 @@ xc.module.define("xc.createjs.Tween", function(exports) {
      * @return {Boolean} A boolean indicating whether there are any active tweens.
      */
     Tween.hasActiveTweens = function(target) {
-        if (target) { return target.tweenjs_count; }
+        if (target) {
+            return target.tweenjs_count;
+        }
         return Tween._tweens && Tween._tweens.length;
     };
 
@@ -729,14 +806,19 @@ xc.module.define("xc.createjs.Tween", function(exports) {
      */
     Tween.installPlugin = function(plugin, properties) {
         var priority = plugin.priority;
-        if (priority == null) { plugin.priority = priority = 0; }
-        for (var i = 0, l = properties.length, p = Tween._plugins; i < l; i++) {
+        if (priority == null) {
+            plugin.priority = priority = 0;
+        }
+        for ( var i = 0, l = properties.length, p = Tween._plugins; i < l; i++) {
             var n = properties[i];
-            if (!p[n]) { p[n] = [plugin]; }
-            else {
+            if (!p[n]) {
+                p[n] = [plugin];
+            } else {
                 var arr = p[n];
-                for (var j = 0, jl = arr.length; j < jl; j++) {
-                    if (priority < arr[j].priority) { break; }
+                for ( var j = 0, jl = arr.length; j < jl; j++) {
+                    if (priority < arr[j].priority) {
+                        break;
+                    }
                 }
                 p[n].splice(j, 0, plugin);
             }
@@ -754,17 +836,25 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         var target = tween._target;
         if (value) {
             // TODO: this approach might fail if a dev is using sealed objects in ES5
-            if (target) { target.tweenjs_count = target.tweenjs_count ? target.tweenjs_count + 1 : 1; }
+            if (target) {
+                target.tweenjs_count = target.tweenjs_count ? target.tweenjs_count + 1 : 1;
+            }
             Tween._tweens.push(tween);
         } else {
-            if (target) { target.tweenjs_count--; }
+            if (target) {
+                target.tweenjs_count--;
+            }
             var i = Tween._tweens.indexOf(tween);
-            if (i != -1) { Tween._tweens.splice(i, 1); }
+            if (i != -1) {
+                Tween._tweens.splice(i, 1);
+            }
         }
     };
-
+    
+    EventDispatcher.initialize(Tween.prototype);
+    
     Ticker.addListener(Tween, false);
-
+    
     return Tween;
 
 });

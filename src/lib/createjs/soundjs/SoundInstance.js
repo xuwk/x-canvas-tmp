@@ -22,8 +22,8 @@ xc.module.define("xc.createjs.SoundInstance", function(exports) {
      *     var myInstance = Sound.play("myAssetPath/mySrcFile.mp3");
      *     myInstance.addEventListener("complete", playAgain);
      *     function playAgain(event) {
-   *         myInstance.play();
-   *     }
+     *         myInstance.play();
+     *     }
      *
      * Events are dispatched from the instance to notify when the sound has completed, looped, or when playback fails
      *
@@ -40,7 +40,8 @@ xc.module.define("xc.createjs.SoundInstance", function(exports) {
      * @param {Object} owner The plugin instance that created this SoundInstance.
      */
     var SoundInstance = EventDispatcher.extend({
-        _init: function(src, owner) { },
+        initialize: function(src, owner) {
+        },
 
         /**
          * The source of the sound.

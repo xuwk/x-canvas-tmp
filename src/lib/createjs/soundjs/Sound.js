@@ -28,11 +28,11 @@ xc.module.define("xc.createjs.Sound", function(exports) {
      *     Sound.addEventListener("loadComplete", Sound.proxy(this.loadHandler, (this)));
      *     Sound.registerSound("path/to/mySound.mp3|path/to/mySound.ogg", "sound");
      *     function loadHandler(event) {
-   *         // This is fired for each sound that is registered.
-   *         var instance = Sound.play("sound");  // play using id. Could also use source.
-   *         instance.addEventListener("playComplete", Sound.proxy(this.handleComplete, this));
-   *         instance.setVolume(0.5);
-	 *     }
+     *         // This is fired for each sound that is registered.
+     *         var instance = Sound.play("sound");  // play using id. Could also use source.
+     *         instance.addEventListener("playComplete", Sound.proxy(this.handleComplete, this));
+     *         instance.setVolume(0.5);
+     *     }
      *
      * The maximum number of concurrently playing instances of the same sound can be specified in the "data" argument
      * of {{#crossLink "Sound/registerSound"}}{{/crossLink}}.
@@ -213,7 +213,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
      * @type {Object}
      * @static
      */
-            Sound.activePlugin = null;
+    Sound.activePlugin = null;
 
     /**
      * Determines if the plugins have been registered. If false, the first call to play() will instantiate the default
@@ -321,7 +321,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         if (!Sound.preloadHash[src]) {
             return;
         }
-        for (var i = 0, l = Sound.preloadHash[src].length; i < l; i++) {
+        for ( var i = 0, l = Sound.preloadHash[src].length; i < l; i++) {
             var item = Sound.preloadHash[src][i];
             var event = {
                 target: this,
@@ -377,7 +377,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
      * @static
      */
     Sound.registerPlugins = function(plugins) {
-        for (var i = 0, l = plugins.length; i < l; i++) {
+        for ( var i = 0, l = plugins.length; i < l; i++) {
             var plugin = plugins[i];
             if (Sound.registerPlugin(plugin)) {
                 return true;
@@ -505,12 +505,11 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         if (data != null) {
             if (!isNaN(data.channels)) {
                 numChannels = parseInt(data.channels);
-            }
-            else if (!isNaN(data)) {
+            } else if (!isNaN(data)) {
                 numChannels = parseInt(data);
             }
         }
-        var loader = Sound.activePlugin.register(details.src, numChannels);  // Note only HTML audio uses numChannels
+        var loader = Sound.activePlugin.register(details.src, numChannels); // Note only HTML audio uses numChannels
         if (loader != null) {
             if (loader.numChannels != null) {
                 numChannels = loader.numChannels;
@@ -525,8 +524,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
             // If the loader returns a tag, return it instead for preloading.
             if (loader.tag != null) {
                 details.tag = loader.tag;
-            }
-            else if (loader.src) {
+            } else if (loader.src) {
                 details.src = loader.src;
             }
             // If the loader returns a complete handler, pass it on to the prelaoder.
@@ -537,8 +535,12 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         }
         if (!Sound.preloadHash[details.src]) {
             Sound.preloadHash[details.src] = [];
-        }  // we do this so we can store multiple id's and data if needed
-        Sound.preloadHash[details.src].push({src: src, id: id, data: data});  // keep this data so we can return it onLoadComplete
+        } // we do this so we can store multiple id's and data if needed
+        Sound.preloadHash[details.src].push({
+            src: src,
+            id: id,
+            data: data
+        }); // keep this data so we can return it onLoadComplete
         if (Sound.preloadHash[details.src].length == 1) {
             Sound.activePlugin.preload(details.src, loader)
         }
@@ -569,7 +571,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
      */
     Sound.registerManifest = function(manifest) {
         var returnValues = [];
-        for (var i = 0, l = manifest.length; i < l; i++) {
+        for ( var i = 0, l = manifest.length; i < l; i++) {
             returnValues[i] = Sound.registerSound(manifest[i].src, manifest[i].id, manifest[i].data);
         }
         return returnValues;
@@ -590,7 +592,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         } else {
             src = Sound.getSrcById(src);
         }
-        return (Sound.preloadHash[src][0] == true);  // src only loads once, so if it's true for the first it's true for all
+        return (Sound.preloadHash[src][0] == true); // src only loads once, so if it's true for the first it's true for all
     }
 
     /**
@@ -609,11 +611,17 @@ xc.module.define("xc.createjs.Sound", function(exports) {
      * @protected
      */
     Sound.parsePath = function(value, type, id, data) {
-        if (typeof(value) != "string") {value = value.toString();}
+        if (typeof (value) != "string") {
+            value = value.toString();
+        }
         var sounds = value.split(Sound.DELIMITER);
-        var ret = {type: type || "sound", id: id, data: data};
+        var ret = {
+            type: type || "sound",
+            id: id,
+            data: data
+        };
         var c = Sound.getCapabilities();
-        for (var i = 0, l = sounds.length; i < l; i++) {
+        for ( var i = 0, l = sounds.length; i < l; i++) {
             var sound = sounds[i];
             var match = sound.match(Sound.FILE_PATTERN);
             if (match == null) {
@@ -691,8 +699,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
             src = Sound.getSrcById(src);
         }
         var dot = src.lastIndexOf(".");
-        var ext = src.slice(dot + 1);  // sound have format of "path+name . ext"
-        if (dot != -1 && Sound.SUPPORTED_EXTENSIONS.indexOf(ext) > -1) {  // we have an ext and it is one of our supported,Note this does not mean the plugin supports it.
+        var ext = src.slice(dot + 1); // sound have format of "path+name . ext"
+        if (dot != -1 && Sound.SUPPORTED_EXTENSIONS.indexOf(ext) > -1) { // we have an ext and it is one of our supported,Note this does not mean the plugin supports it.
             // make sure that we have a sound channel (sound is registered or previously played)
             SoundChannel.create(src);
             var instance = Sound.activePlugin.create(src);
@@ -719,7 +727,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         Sound.masterVolume = value;
         if (!this.activePlugin || !this.activePlugin.setVolume || !this.activePlugin.setVolume(value)) {
             var instances = this.instances;
-            for (var i = 0, l = instances.length; i < l; i++) {
+            for ( var i = 0, l = instances.length; i < l; i++) {
                 instances[i].setMasterVolume(value);
             }
         }
@@ -754,7 +762,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         this.masterMute = value;
         if (!this.activePlugin || !this.activePlugin.setMute || !this.activePlugin.setMute(value)) {
             var instances = this.instances;
-            for (var i = 0, l = instances.length; i < l; i++) {
+            for ( var i = 0, l = instances.length; i < l; i++) {
                 instances[i].setMasterMute(value);
             }
         }
@@ -782,8 +790,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
      */
     Sound.stop = function() {
         var instances = this.instances;
-        for (var i = instances.length; i > 0; i--) {
-            instances[i - 1].stop();  // NOTE stop removes instance from this.instances
+        for ( var i = instances.length; i > 0; i--) {
+            instances[i - 1].stop(); // NOTE stop removes instance from this.instances
         }
     }
 
@@ -947,7 +955,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
      * @constructor
      * @protected
      */
-    var SoundChannel = xc.class.create({
+    var SoundChannel =
+    xc.class.create({
         _init: function(src, max) {
             this.src = src;
             this.max = max || this.maxDefault;
@@ -1056,7 +1065,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
          */
         getSlot: function(interrupt, instance) {
             var target, replacement;
-            for (var i = 0, l = this.max; i < l; i++) {
+            for ( var i = 0, l = this.max; i < l; i++) {
                 target = this.get(i);
                 // Available Space
                 if (target == null) {
@@ -1070,14 +1079,11 @@ xc.module.define("xc.createjs.Sound", function(exports) {
                     continue;
                 }
                 // Audio is complete or not playing
-                if (target.playState == Sound.PLAY_FINISHED ||
-                        target == Sound.PLAY_INTERRUPTED ||
-                        target == Sound.PLAY_FAILED) {
+                if (target.playState == Sound.PLAY_FINISHED || target == Sound.PLAY_INTERRUPTED || target == Sound.PLAY_FAILED) {
                     replacement = target;
                     // Audio is a better candidate than the current target, according to playhead
-                } else if (
-                        (interrupt == Sound.INTERRUPT_EARLY && target.getPosition() < replacement.getPosition()) ||
-                                (interrupt == Sound.INTERRUPT_LATE && target.getPosition() > replacement.getPosition())) {
+                } else if ((interrupt == Sound.INTERRUPT_EARLY && target.getPosition() < replacement.getPosition())
+                || (interrupt == Sound.INTERRUPT_LATE && target.getPosition() > replacement.getPosition())) {
                     replacement = target;
                 }
             }

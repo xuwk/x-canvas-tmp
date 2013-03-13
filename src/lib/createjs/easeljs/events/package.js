@@ -1,4 +1,4 @@
 xc.depends([
-    "EventDispatcher.js",
-    "MouseEvent.js"
+  "EventDispatcher.js",
+  "MouseEvent.js"
 ]);

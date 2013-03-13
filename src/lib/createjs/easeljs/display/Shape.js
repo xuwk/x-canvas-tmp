@@ -26,7 +26,7 @@ xc.module.define("xc.createjs.Shape", function(exports) {
      * @param {Graphics} graphics Optional. The graphics instance to display. If null, a new Graphics instance will be created.
      */
     var Shape = DisplayObject.extend({
-        _init: function(graphics) {
+        initialize: function(graphics) {
             this._super();
             this.graphics = graphics ? graphics : new Graphics();
         },
@@ -65,7 +65,9 @@ xc.module.define("xc.createjs.Shape", function(exports) {
          *  used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
          */
         draw: function(ctx, ignoreCache) {
-            if (this._super(ctx, ignoreCache)) { return true; }
+            if (this._super(ctx, ignoreCache)) {
+                return true;
+            }
             this.graphics.draw(ctx);
             return true;
         },

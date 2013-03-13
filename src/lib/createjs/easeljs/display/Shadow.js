@@ -15,7 +15,7 @@ xc.module.define("xc.createjs.Shadow", function(exports) {
      * @param {Number} blur The size of the blurring effect.
      */
     var Shadow = xc.class.create({
-        _init: function(color, offsetX, offsetY, blur) {
+        initialize: function(color, offsetX, offsetY, blur) {
             this.color = color;
             this.offsetX = offsetX;
             this.offsetY = offsetY;

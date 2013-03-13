@@ -29,7 +29,7 @@ xc.module.define("xc.createjs.Text", function(exports) {
      *  "#F00", "red", or "#FF0000").
      */
     var Text = DisplayObject.extend({
-        _init: function(text, font, color) {
+        initialize: function(text, font, color) {
             this._super();
             this.text = text;
             this.font = font;
@@ -142,8 +142,14 @@ xc.module.define("xc.createjs.Text", function(exports) {
          *  For example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
          */
         draw: function(ctx, ignoreCache) {
-            if (this._super(ctx, ignoreCache)) { return true; }
-            if (this.outline) { ctx.strokeStyle = this.color; } else { ctx.fillStyle = this.color; }
+            if (this._super(ctx, ignoreCache)) {
+                return true;
+            }
+            if (this.outline) {
+                ctx.strokeStyle = this.color;
+            } else {
+                ctx.fillStyle = this.color;
+            }
             ctx.font = this.font;
             ctx.textAlign = this.textAlign || "start";
             ctx.textBaseline = this.textBaseline || "alphabetic";
@@ -243,31 +249,39 @@ xc.module.define("xc.createjs.Text", function(exports) {
          */
         _drawText: function(ctx) {
             var paint = !!ctx;
-            if (!paint) { ctx = this._getWorkingContext(); }
+            if (!paint) {
+                ctx = this._getWorkingContext();
+            }
             var lines = String(this.text).split(/(?:\r\n|\r|\n)/);
             var lineHeight = this.lineHeight || this.getMeasuredLineHeight();
             var count = 0;
-            for (var i = 0, l = lines.length; i < l; i++) {
+            for ( var i = 0, l = lines.length; i < l; i++) {
                 var w = ctx.measureText(lines[i]).width;
                 if (this.lineWidth == null || w < this.lineWidth) {
-                    if (paint) { this._drawTextLine(ctx, lines[i], count * lineHeight); }
+                    if (paint) {
+                        this._drawTextLine(ctx, lines[i], count * lineHeight);
+                    }
                     count++;
                     continue;
                 }
                 // split up the line
                 var words = lines[i].split(/(\s)/);
                 var str = words[0];
-                for (var j = 1, jl = words.length; j < jl; j += 2) {
+                for ( var j = 1, jl = words.length; j < jl; j += 2) {
                     // Line needs to wrap:
                     if (ctx.measureText(str + words[j] + words[j + 1]).width > this.lineWidth) {
-                        if (paint) { this._drawTextLine(ctx, str, count * lineHeight); }
+                        if (paint) {
+                            this._drawTextLine(ctx, str, count * lineHeight);
+                        }
                         count++;
                         str = words[j + 1];
                     } else {
                         str += words[j] + words[j + 1];
                     }
                 }
-                if (paint) { this._drawTextLine(ctx, str, count * lineHeight); } // Draw remaining text
+                if (paint) {
+                    this._drawTextLine(ctx, str, count * lineHeight);
+                } // Draw remaining text
                 count++;
             }
             return count;

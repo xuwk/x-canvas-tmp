@@ -2,7 +2,7 @@
  * @module xc.createjs
  */
 xc.depends([
-    "easeljs",
-    "soundjs",
-    "tweenjs"
+  "easeljs",
+  "soundjs",
+  "tweenjs"
 ]);

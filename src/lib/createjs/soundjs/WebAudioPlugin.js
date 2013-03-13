@@ -7,12 +7,12 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
      * WebAudioPlugin's SoundInstance implementation.
      */
     var WebAudioSoundInstance = SoundInstance.extend({
-        _init: function(src, owner) {
+        initialize: function(src, owner) {
             this.owner = owner;
             this.src = src;
-            this.panNode = this.owner.context.createPanner();  // allows us to manipulate left and right audio  // TODO test how this affects when we have mono audio
-            this.gainNode = this.owner.context.createGainNode();  // allows us to manipulate instance volume
-            this.gainNode.connect(this.panNode);  // connect us to our sequence that leads to context.destination
+            this.panNode = this.owner.context.createPanner(); // allows us to manipulate left and right audio  // TODO test how this affects when we have mono audio
+            this.gainNode = this.owner.context.createGainNode(); // allows us to manipulate instance volume
+            this.gainNode.connect(this.panNode); // connect us to our sequence that leads to context.destination
             if (this.owner.isPreloadComplete(this.src)) {
                 this.duration = this.owner.arrayBuffers[this.src].duration * 1000;
             }
@@ -41,7 +41,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
                 this.panNode.disconnect(0);
             } // this works because we only have one connection, and it returns 0 if we've already disconnected it.
             clearTimeout(this.delayTimeoutId); // clear timeout that plays delayed sound
-            clearTimeout(this.soundCompleteTimeout);  // clear timeout that triggers sound complete
+            clearTimeout(this.soundCompleteTimeout); // clear timeout that triggers sound complete
             Sound.playFinished(this);
         },
 
@@ -55,12 +55,12 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
             if (this.offset > this.getDuration()) {
                 this.playFailed();
                 return;
-            } else if (this.offset < 0) {  // may not need this check if noteGrainOn ignores negative values, this is not specified in the API http://www.w3.org/TR/webaudio/#AudioBufferSourceNode
+            } else if (this.offset < 0) { // may not need this check if noteGrainOn ignores negative values, this is not specified in the API http://www.w3.org/TR/webaudio/#AudioBufferSourceNode
                 this.offset = 0;
             }
             this.playState = Sound.PLAY_SUCCEEDED;
             this.paused = false;
-            this.panNode.connect(this.owner.gainNode);  // this line can cause a memory leak.  Nodes need to be disconnected from the audioDestination or any sequence that leads to it.
+            this.panNode.connect(this.owner.gainNode); // this line can cause a memory leak.  Nodes need to be disconnected from the audioDestination or any sequence that leads to it.
             // WebAudio supports BufferSource, MediaElementSource, and MediaStreamSource.
             // NOTE MediaElementSource requires different commands to play, pause, and stop because it uses audio tags.
             // The same is assumed for MediaStreamSource, although it may share the same commands as MediaElementSource.
@@ -68,7 +68,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
             this.sourceNode.buffer = this.owner.arrayBuffers[this.src];
             this.duration = this.owner.arrayBuffers[this.src].duration * 1000;
             this.sourceNode.connect(this.gainNode);
-            this.soundCompleteTimeout = setTimeout(this.endedHandler, (this.sourceNode.buffer.duration - this.offset) * 1000);  // NOTE *1000 because WebAudio reports everything in seconds but js uses milliseconds
+            this.soundCompleteTimeout = setTimeout(this.endedHandler, (this.sourceNode.buffer.duration - this.offset) * 1000); // NOTE *1000 because WebAudio reports everything in seconds but js uses milliseconds
             this.startTime = this.owner.context.currentTime - this.offset;
             this.sourceNode.noteGrainOn(0, this.offset, this.sourceNode.buffer.duration - this.offset);
         },
@@ -76,9 +76,9 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         // Audio has finished playing. Manually loop it if required.
         // called internally by soundCompleteTimeout in WebAudioPlugin
         handleSoundComplete: function(event) {
-            this.offset = 0;  // have to set this as it can be set by pause during playback
+            this.offset = 0; // have to set this as it can be set by pause during playback
             if (this.remainingLoops != 0) {
-                this.remainingLoops--;  // NOTE this introduces a theoretical limit on loops = float max size x 2 - 1
+                this.remainingLoops--; // NOTE this introduces a theoretical limit on loops = float max size x 2 - 1
                 this.handleSoundReady(null);
                 if (this.onLoop != null) {
                     this.onLoop(this);
@@ -98,7 +98,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
             if (!this.src) {
                 return;
             }
-            this.offset = offset / 1000;  //convert ms to sec
+            this.offset = offset / 1000; //convert ms to sec
             this.remainingLoops = loop;
             this.setVolume(volume);
             this.setPan(pan);
@@ -116,13 +116,13 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         pause: function() {
             if (!this.paused && this.playState == Sound.PLAY_SUCCEEDED) {
                 this.paused = true;
-                this.offset = this.owner.context.currentTime - this.startTime;  // this allows us to restart the sound at the same point in playback
-                this.sourceNode.noteOff(0);  // note this means the sourceNode cannot be reused and must be recreated
+                this.offset = this.owner.context.currentTime - this.startTime; // this allows us to restart the sound at the same point in playback
+                this.sourceNode.noteOff(0); // note this means the sourceNode cannot be reused and must be recreated
                 if (this.panNode.numberOfOutputs != 0) {
                     this.panNode.disconnect();
-                }  // this works because we only have one connection, and it returns 0 if we've already disconnected it.
+                } // this works because we only have one connection, and it returns 0 if we've already disconnected it.
                 clearTimeout(this.delayTimeoutId); // clear timeout that plays delayed sound
-                clearTimeout(this.soundCompleteTimeout);  // clear timeout that triggers sound complete
+                clearTimeout(this.soundCompleteTimeout); // clear timeout that triggers sound complete
                 return true;
             }
             return false;
@@ -139,7 +139,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         stop: function() {
             this.playState = Sound.PLAY_FINISHED;
             this.cleanUp();
-            this.offset = 0;  // set audio to start at the beginning
+            this.offset = 0; // set audio to start at the beginning
             return true;
         },
 
@@ -150,7 +150,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
             value = Math.max(0, Math.min(1, value));
             this.volume = value;
             this.updateVolume();
-            return true;  // This is always true because even if the volume is not updated, the value is set
+            return true; // This is always true because even if the volume is not updated, the value is set
         },
 
         updateVolume: function() {
@@ -174,8 +174,8 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         setPan: function(value) {
             if (this.owner.capabilities.panning) {
                 // Note that panning in WebAudioPlugin can support 3D audio, but our implementation does not.
-                this.panNode.setPosition(value, 0, -0.5);  // z need to be -0.5 otherwise the sound only plays in left, right, or center
-                this.pan = value;  // Unfortunately panner does not give us a way to access this after it is set http://www.w3.org/TR/webaudio/#AudioPannerNode
+                this.panNode.setPosition(value, 0, -0.5); // z need to be -0.5 otherwise the sound only plays in left, right, or center
+                this.pan = value; // Unfortunately panner does not give us a way to access this after it is set http://www.w3.org/TR/webaudio/#AudioPannerNode
             } else {
                 return false;
             }
@@ -192,10 +192,10 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
 
         setPosition: function(value) {
             this.offset = value / 1000; // convert milliseconds to seconds
-            if (this.sourceNode && this.sourceNode.playbackState != this.sourceNode.UNSCHEDULED_STATE) {  // if playbackState is UNSCHEDULED_STATE, then noteON or noteGrainOn has not been called so calling noteOff would throw an error
-                this.sourceNode.noteOff(0);  // we need to stop this sound from continuing to play, as we need to recreate the sourceNode to change position
-                clearTimeout(this.soundCompleteTimeout);  // clear timeout that triggers sound complete
-            }  // NOTE we cannot just call cleanup because it also calls the Sound function playFinished which releases this instance in SoundChannel
+            if (this.sourceNode && this.sourceNode.playbackState != this.sourceNode.UNSCHEDULED_STATE) { // if playbackState is UNSCHEDULED_STATE, then noteON or noteGrainOn has not been called so calling noteOff would throw an error
+                this.sourceNode.noteOff(0); // we need to stop this sound from continuing to play, as we need to recreate the sourceNode to change position
+                clearTimeout(this.soundCompleteTimeout); // clear timeout that triggers sound complete
+            } // NOTE we cannot just call cleanup because it also calls the Sound function playFinished which releases this instance in SoundChannel
             if (!this.paused && this.playState == Sound.PLAY_SUCCEEDED) {
                 this.handleSoundReady(null);
             }
@@ -303,7 +303,11 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
             if (this.onprogress == null) {
                 return;
             }
-            this.onprogress({loaded: loaded, total: total, progress: this.progress});
+            this.onprogress({
+                loaded: loaded,
+                total: total,
+                progress: this.progress
+            });
         },
 
         /**
@@ -313,9 +317,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
          * @protected
          */
         handleLoad: function() {
-            s.context.decodeAudioData(this.request.response,
-                    Sound.proxy(this.handleAudioDecoded, this),
-                    Sound.proxy(this.handleError, this));
+            s.context.decodeAudioData(this.request.response, Sound.proxy(this.handleAudioDecoded, this), Sound.proxy(this.handleError, this));
         },
 
         /**
@@ -432,7 +434,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
          * @return {Object} A result object, containing a "tag" for preloading purposes.
          */
         register: function(src, instances) {
-            this.arrayBuffers[src] = true;  // This is needed for PreloadJS
+            this.arrayBuffers[src] = true; // This is needed for PreloadJS
             var tag = new WebAudioLoader(src, this);
             return {
                 tag: tag
@@ -471,7 +473,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
          * @return {Boolean}
          */
         removeFromPreload: function(src) {
-            delete(this.arrayBuffers[src]);
+            delete (this.arrayBuffers[src]);
         },
 
         /**
@@ -493,7 +495,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
          * @private
          */
         handlePreloadComplete: function() {
-            Sound.sendLoadComplete(this.src);  // fire event or callback on Sound
+            Sound.sendLoadComplete(this.src); // fire event or callback on Sound
         },
 
         /**
@@ -533,7 +535,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
     /**
      * The capabilities of the plugin. This is generated via the <code>"WebAudioPlugin/generateCapabilities</code>
      * method.
-     *
+    *
      * @property capabilities
      * @type {Object}
      * @default null
@@ -543,13 +545,15 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
 
     /**
      * Determine if the plugin can be used in the current browser/OS.
-     *
+    *
      * @method isSupported
      * @return {Boolean} If the plugin can be initialized.
      * @static
      */
     WebAudioPlugin.isSupported = function() {
-        if (location.protocol == "file:") { return false; }  // Web Audio requires XHR, which is not available locally
+        if (location.protocol == "file:") {
+            return false;
+        } // Web Audio requires XHR, which is not available locally
         WebAudioPlugin.generateCapabilities();
         if (WebAudioPlugin.context == null) {
             return false;
@@ -560,12 +564,13 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
     /**
      * Determine the capabilities of the plugin. Used internally. Please see the Sound API {{#crossLink "Sound/getCapabilities"}}{{/crossLink}}
      * method for an overview of plugin capabilities.
-     *
+    *
      * @method generateCapabiities
      * @static
      * @protected
      */
-    WebAudioPlugin.generateCapabilities = function() {
+    WebAudioPlugin.generateCapabilities =
+    function() {
         if (WebAudioPlugin.capabilities != null) {
             return;
         }
@@ -592,10 +597,11 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         // determine which extensions our browser supports for this plugin by iterating through Sound.SUPPORTED_EXTENSIONS
         var supportedExtensions = Sound.SUPPORTED_EXTENSIONS;
         var extensionMap = Sound.EXTENSION_MAP;
-        for (var i = 0, l = supportedExtensions.length; i < l; i++) {
+        for ( var i = 0, l = supportedExtensions.length; i < l; i++) {
             var ext = supportedExtensions[i];
             var playType = extensionMap[ext] || ext;
-            WebAudioPlugin.capabilities[ext] = (t.canPlayType("audio/" + ext) != "no" && t.canPlayType("audio/" + ext) != "") || (t.canPlayType("audio/" + playType) != "no" && t.canPlayType("audio/" + playType) != "");
+            WebAudioPlugin.capabilities[ext] =
+            (t.canPlayType("audio/" + ext) != "no" && t.canPlayType("audio/" + ext) != "") || (t.canPlayType("audio/" + playType) != "no" && t.canPlayType("audio/" + playType) != "");
         }
         // 0=no output, 1=mono, 2=stereo, 4=surround, 6=5.1 surround.
         // See http://www.w3.org/TR/webaudio/#AudioChannelSplitter for more details on channels.

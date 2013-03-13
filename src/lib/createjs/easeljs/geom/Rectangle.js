@@ -14,7 +14,7 @@ xc.module.define("xc.createjs.Rectangle", function(exports) {
      * @param {Number} [height=0] The height of the Rectangle.
      */
     var Rectangle = xc.class.create({
-        _init: function(x, y, width, height) {
+        initialize: function(x, y, width, height) {
             this.x = (x == null ? 0 : x);
             this.y = (y == null ? 0 : y);
             this.width = (width == null ? 0 : width);
