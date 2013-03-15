@@ -1,25 +1,23 @@
 xc.module.define("xc.createjs.Ease", function(exports) {
 
     /**
-     * The Ease class provides a collection of easing functions for use with TweenJS. It does not use the standard 4 param
-     * easing signature. Instead it uses a single param which indicates the current linear ratio (0 to 1) of the tween.
+     * Ease 类提供了一个用于 TweenJS 的 easing 方法集合。
+     * 这里并不使用标准的4个参数。取而代之的是用单一的一个能表明进度比（0 到 1）的参数。
+     * <br/>
+     * <br/>
+     * 很多 Ease 里面的方法都能直接作为 easing 方法使用：<br />
+     *     Tween.get(target).to({x:100}, 500, Ease.linear);<br/>
+     * <br/>
+     * 然而，"get" 开始的方法将会基于参数值返回 easing 方法：<br /> 
+     *     Tween.get(target).to({y:200}, 500, Ease.getPowIn(2.2));<br/>
+     * <br/>
      *
-     * Most methods on Ease can be passed directly as easing functions:
-     *
-     *     Tween.get(target).to({x:100}, 500, Ease.linear);
-     *
-     * However, methods beginning with "get" will return an easing function based on parameter values:
-     *
-     *     Tween.get(target).to({y:200}, 500, Ease.getPowIn(2.2));
-     *
-     * Please see the <a href="http://www.createjs.com/#!/TweenJS/demos/sparkTable">spark table demo</a> for an overview
-     * of the different ease types on <a href="http://tweenjs.com">TweenJS.com</a>.
-     *
-     * <i>Equations derived from work by Robert Penner.</i>
+     * 请看 <a href="http://www.createjs.com/#!/TweenJS/demos/sparkTable">spark table demo</a> 获得其他不同的 ease 类型来自
+     * <a href="http://tweenjs.com">TweenJS.com</a>。
      *
      * @class Ease
      * @static
-     */
+     **/
     var Ease = function() {
         throw "Ease cannot be instantiated.";
     }
@@ -33,17 +31,18 @@ xc.module.define("xc.createjs.Ease", function(exports) {
     }
 
     /**
-     * Identical to linear.
+     * 与 linear 相同。
+     * 
      * @method none
      * @static
      */
     Ease.none = Ease.linear;
 
     /**
-     * Mimics the simple -100 to 100 easing in Flash Pro.
+     * 在 Flash Pro 里模仿简单的 -100 到 100 easing。
      *
      * @method get
-     * @param amount A value from -1 (ease in) to 1 (ease out) indicating the strength and direction of the ease.
+     * @param amount 一个介乎 -1 (ease in) 到 1 (ease out) 的值，指出 ease 的方向和强度。
      * @static
      */
     Ease.get = function(amount) {
@@ -64,39 +63,39 @@ xc.module.define("xc.createjs.Ease", function(exports) {
         }
     };
 
-    /**
-     * Configurable exponential ease.
-     *
+    /** 
+     * 可配置指数的 ease。
+     * 
      * @method getPowIn
-     * @param pow The exponent to use (ex. 3 would return a cubic ease).
+     * @param 要配置的指数 (ex. 3 会返回 ease 的立方)。
      * @static
-     */
+     **/
     Ease.getPowIn = function(pow) {
         return function(t) {
             return Math.pow(t, pow);
         }
     };
 
-    /**
-     * Configurable exponential ease.
-     *
+    /** 
+     * 可配置的指数的 ease。
+     * 
      * @method getPowOut
-     * @param pow The exponent to use (ex. 3 would return a cubic ease).
+     * @param pow 指数使用(ex. 3 会返回 ease 的立方)。
      * @static
-     */
+     **/
     Ease.getPowOut = function(pow) {
         return function(t) {
             return 1 - Math.pow(1 - t, pow);
         }
     };
 
-    /**
-     * Configurable exponential ease.
-     *
+    /** 
+     * 可配置指数的 ease。
+     * 
      * @method getPowInOut
-     * @param pow The exponent to use (ex. 3 would return a cubic ease).
+     * @param 要配置的指数 (ex. 3 会返回 ease 的立方)。
      * @static
-     */
+     **/
     Ease.getPowInOut = function(pow) {
         return function(t) {
             if ((t *= 2) < 1) {
@@ -202,13 +201,13 @@ xc.module.define("xc.createjs.Ease", function(exports) {
         return -0.5 * (Math.cos(Math.PI * t) - 1)
     };
 
-    /**
-     * Configurable "back in" ease.
-     *
+    /** 
+     * 配置 "back in" ease。
+     * 
      * @method getBackIn
-     * @param amount The strength of the ease.
+     * @param amount ease 的强度。
      * @static
-     */
+     **/
     Ease.getBackIn = function(amount) {
         return function(t) {
             return t * t * ((amount + 1) * t - amount);
@@ -221,13 +220,13 @@ xc.module.define("xc.createjs.Ease", function(exports) {
      */
     Ease.backIn = Ease.getBackIn(1.7);
 
-    /**
-     * Configurable "back out" ease.
-     *
+    /** 
+     * 配置 "back out" ease。
+     * 
      * @method getBackOut
-     * @param amount The strength of the ease.
+     * @param amount ease 的强度。
      * @static
-     */
+     **/
     Ease.getBackOut = function(amount) {
         return function(t) {
             return (--t * t * ((amount + 1) * t + amount) + 1);
@@ -240,13 +239,13 @@ xc.module.define("xc.createjs.Ease", function(exports) {
      */
     Ease.backOut = Ease.getBackOut(1.7);
 
-    /**
-     * Configurable "back in out" ease.
-     *
+    /** 
+     * 配置 "back in out" ease。
+     * 
      * @method getBackInOut
-     * @param amount The strength of the ease.
+     * @param amount ease 的强度。
      * @static
-     */
+     **/
     Ease.getBackInOut = function(amount) {
         amount *= 1.525;
         return function(t) {
@@ -325,14 +324,14 @@ xc.module.define("xc.createjs.Ease", function(exports) {
         return Ease.bounceOut(t * 2 - 1) * 0.5 + 0.5;
     };
 
-    /**
-     * Configurable elastic ease.
-     *
+    /** 
+     * 配置 elastic ease。
+     * 
      * @method getElasticIn
      * @param amplitude
      * @param period
      * @static
-     */
+     **/
     Ease.getElasticIn = function(amplitude, period) {
         var pi2 = Math.PI * 2;
         return function(t) {
@@ -350,14 +349,14 @@ xc.module.define("xc.createjs.Ease", function(exports) {
      */
     Ease.elasticIn = Ease.getElasticIn(1, 0.3);
 
-    /**
-     * Configurable elastic ease.
-     *
+    /** 
+     * 配置 elastic ease。
+     * 
      * @method getElasticOut
      * @param amplitude
      * @param period
      * @static
-     */
+     **/
     Ease.getElasticOut = function(amplitude, period) {
         var pi2 = Math.PI * 2;
         return function(t) {
@@ -375,13 +374,14 @@ xc.module.define("xc.createjs.Ease", function(exports) {
      */
     Ease.elasticOut = Ease.getElasticOut(1, 0.3);
 
-    /**
-     * Configurable elastic ease.
+    /** 
+     * 配置 elastic ease。
+     * 
      * @method getElasticInOut
      * @param amplitude
      * @param period
      * @static
-     */
+     **/
     Ease.getElasticInOut = function(amplitude, period) {
         var pi2 = Math.PI * 2;
         return function(t) {

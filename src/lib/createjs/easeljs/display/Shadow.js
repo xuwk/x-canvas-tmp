@@ -1,19 +1,18 @@
 xc.module.define("xc.createjs.Shadow", function(exports) {
 
     /**
-     * This class encapsulates the properties required to define a shadow to apply to a
-     * {{#crossLink "DisplayObject"}}{{/crossLink}} via it's <code>shadow</code> property.
+     * 这个类封装了一系列用于定义阴影的属性，然后通过其 <code>shadow</code> 属性应用于 {{#crossLink "DisplayObject"}}{{/crossLink}}
      *
-     * <h4>Example</h4>
-     *     myImage.shadow = new Shadow("#000000", 5, 5, 10);
+     * <h4>例子</h4>
+     *      myImage.shadow = new createjs.Shadow("#000000", 5, 5, 10);
      *
      * @class Shadow
      * @constructor
-     * @param {String} color The color of the shadow.
-     * @param {Number} offsetX The x offset of the shadow in pixels.
-     * @param {Number} offsetY The y offset of the shadow in pixels.
-     * @param {Number} blur The size of the blurring effect.
-     */
+     * @param {String} color 阴影颜色。
+     * @param {Number} offsetX 阴影的 x 偏移（以像素为单位）。
+     * @param {Number} offsetY 阴影的 y 偏移（以像素为单位）。
+     * @param {Number} blur 阴影的模糊度。
+     **/
     var Shadow = xc.class.create({
         initialize: function(color, offsetX, offsetY, blur) {
             this.color = color;
@@ -22,36 +21,32 @@ xc.module.define("xc.createjs.Shadow", function(exports) {
             this.blur = blur;
         },
 
-        /**
-         * The color of the shadow.
-         *
+        /** 
+         * 阴影颜色。
          * @property color
          * @type String
          * @default null
          */
         color: null,
 
-        /**
-         * The x offset of the shadow.
-         *
+        /** 
+         * 阴影的 x 偏移量。
          * @property offsetX
          * @type Number
          * @default 0
          */
         offsetX: 0,
 
-        /**
-         * The y offset of the shadow.
-         *
+        /** 
+         * 阴影的 y 偏移量。
          * @property offsetY
          * @type Number
          * @default 0
          */
         offsetY: 0,
 
-        /**
-         * The blur of the shadow.
-         *
+        /** 
+         * 阴影的模糊度。
          * @property blur
          * @type Number
          * @default 0
@@ -59,34 +54,31 @@ xc.module.define("xc.createjs.Shadow", function(exports) {
         blur: 0,
 
         /**
-         * Returns a string representation of this object.
-         *
+         * 返回该对象的字符串表示形式。
          * @method toString
-         * @return {String} a string representation of the instance.
-         */
+         * @return {String} 该对象的字符串表示形式。
+         **/
         toString: function() {
             return "[Shadow]";
         },
 
         /**
-         * Returns a clone of this Shadow instance.
-         *
+         * 返回克隆后的 Shadow 实例。
          * @method clone
-         * @return {Shadow} A clone of the current Shadow instance.
-         */
+         * @return {Shadow} 克隆后的 Shadow 实例。
+         **/
         clone: function() {
             return new Shadow(this.color, this.offsetX, this.offsetY, this.blur);
         }
     });
 
     /**
-     * An identity shadow object (all properties are set to 0). Read-only.
-     *
+     * 一个代表阴影身份的对象，只读。（所有属性都设置为 0）。
      * @property identity
      * @type Shadow
      * @static
      * @final
-     */
+     **/
     Shadow.identity = new Shadow("transparent", 0, 0, 0);
 
     return Shadow;

@@ -30,13 +30,12 @@ xc.module.define("xc.createjs.CSSPlugin", function(exports) {
     var Tween = xc.module.require("xc.createjs.Tween");
 
     /**
-     * A TweenJS plugin for working with numeric CSS string properties (ex. top, left). To use simply install after
-     * TweenJS has loaded:
+     * 一个 TweenJS 插件，用于处理 CSS 属性值 (ex. top, left)。使用时只需在 TweenJS 加载完成的时候简单调用：
      *
-     *     CSSPlugin.install();
+     *   createjs.CSSPlugin.install();
      *
-     * You can adjust the CSS properties it will work with by modifying the <code>cssSuffixMap</code> property. Currently,
-     * the top, left, bottom, right, width, height have a "px" suffix appended.
+     * 当你可以调整 CSS 的属性值时，会用到 <code>cssSuffixMap</code> 属性。
+     * 当前，top, left, bottom, right, width, height 属性都是 "px" 后缀。
      *
      * @class CSSPlugin
      * @constructor
@@ -46,11 +45,9 @@ xc.module.define("xc.createjs.CSSPlugin", function(exports) {
     };
 
     /**
-     * Defines the default suffix map for CSS tweens. This can be overridden on a per tween basis by specifying a
-     * cssSuffixMap value for the individual tween. The object maps CSS property names to the suffix to use when
-     * reading or setting those properties. For example a map in the form {top:"px"} specifies that when tweening
-     * the "top" CSS property, it should use the "px" suffix (ex. target.style.top = "20.5px"). This only applies
-     * to tweens with the "css" config property set to true.
+     * 一个默认的 CSS tween 的后缀列表。当要读取或设置属性的时候，将要用到 cssSuffixMap 的后缀。
+     * 例如，当有一个 map 是 {top:"px"} 这样的，则该 map 指定了当 tweening 有一个 Top CSS 属性的时候，就必须用 "px"
+     * 作为后缀，(ex. target.style.top = "20.5px")。这个仅仅在 tween 的 “css” 属性设置为 true 的时候生效。
      *
      * @property cssSuffixMap
      * @type Object
@@ -74,7 +71,7 @@ xc.module.define("xc.createjs.CSSPlugin", function(exports) {
     CSSPlugin.priority = -100; // very low priority, should run last
 
     /**
-     * Installs this plugin for use with TweenJS. Call this once after TweenJS is loaded to enable this plugin.
+     * 为 TweenJS 安装该插件。一旦 TweenJS 加载完成且激活了该插件就执行该方法。
      *
      * @method install
      * @static

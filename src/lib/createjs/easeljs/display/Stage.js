@@ -4,27 +4,25 @@ xc.module.define("xc.createjs.Stage", function(exports) {
     var MouseEvent = xc.module.require("xc.createjs.MouseEvent");
 
     /**
-     * A stage is the root level {{#crossLink "Container"}}{{/crossLink}} for a display list.
-     * Each time its {{#crossLink "Stage/tick"}}{{/crossLink}} method is called, it will render its display list to its
-     * target canvas.
+     * stage 是展示列表中 {{#crossLink "Container"}}{{/crossLink}} 的根。 
+     * 每当执行 {{#crossLink "Stage/tick"}}{{/crossLink}} 的时候，它都会将它的显示列表渲染到目标 canvas 上。
      *
-     * <h4>Example</h4>
-     * This example creates a stage, adds a child to it, then uses {{#crossLink "Ticker"}}{{/crossLink}} to update the
-     * child and redraw the stage using {{#crossLink "Stage/update"}}{{/crossLink}}.
+     * <h4>例子</h4>
+     * 这个例子创建一个 stage，往里面添加一个孩子, 然后通过执行 {{#crossLink "Ticker"}}{{/crossLink}} 来更新孩子，
+     * 通过 {{#crossLink "Stage/update"}}{{/crossLink}} 来重新绘制。
      *
-     *     var stage = new Stage("canvasElementId");
-     *     var image = new Bitmap("imagePath.png");
-     *     Ticker.addEventListener("tick", handleTick);
-     *     function handleTick(event) {
-     *         bitmap.x += 10;
-     *         stage.update();
-     *     }
+     *      var stage = new createjs.Stage("canvasElementId");
+     *      var image = new createjs.Bitmap("imagePath.png");
+     *      createjs.Ticker.addEventListener("tick", handleTick);
+     *      function handleTick(event) {
+     *          bitmap.x += 10;
+     *          stage.update();
+     *      }
      *
      * @class Stage
      * @extends Container
      * @constructor
-     * @param {HTMLCanvasElement | String | Object} canvas A canvas object that the Stage will render to, or the string id
-     *  of a canvas object in the current document.
+     * @param {HTMLCanvasElement | String | Object} canvas stage 将会渲染到的 canvas，或者是一个当前文档里面 canvas 的 字符串 id。
      */
     var Stage = Container.extend({
         initialize: function(canvas) {
@@ -37,39 +35,37 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         },
 
         /**
-         * Dispatched when the user moves the mouse over the canvas.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
+    　 　              * 当用户鼠标在 canvas 上滑过时触发。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
+         * 事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
+         * 
          * @event stagemousemove
          */
-
+    
         /**
-         * Dispatched when the user releases the mouse button anywhere that the page can detect it (this varies slightly between browsers).
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
+         * 当用户在可检测范围松开鼠标时触发。（这在不同的浏览器之间有微小的差别）。
+         * 事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
+         * 
          * @event stagemouseup
+         */
+    
+        /**
+         * 当用户在可检测范内按下鼠标时触发。（这在不同的浏览器之间有微小的差别）。
+         * 事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
+         * 
+         * @event stagemousedown
          */
 
         /**
-         * Dispatched when the user the user releases the mouse button anywhere that the page can detect it (this varies slightly between browsers).
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
-         * @event stagemouseup
-         */
-
-        /**
-         * Indicates whether the stage should automatically clear the canvas before each render. You can set this to false to manually
-         * control clearing (for generative art, or when pointing multiple stages at the same canvas for example).
-         *
+         * 指出 stage 是否在每一次渲染之前清空，你可以设置为 false 然后手动去控制 stage 的清空。
+         * 
          * @property autoClear
          * @type Boolean
          * @default true
-         */
+         **/
         autoClear: true,
 
         /**
-         * The canvas the stage will render to. Multiple stages can share a single canvas, but you must disable autoClear for all but the
-         * first stage that will be ticked (or they will clear each other's render).
+         * 用于渲染 stage 的 canvas，多个 stage 可以共用一个 canvas，但你必须禁止除第一个 stage 之外的所有 stage 的 autoClear 属性 （否则 stage 会清空其他 stage 渲染的内容）
          *
          * @property canvas
          * @type HTMLCanvasElement | Object
@@ -77,8 +73,8 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         canvas: null,
 
         /**
-         * READ-ONLY. The current mouse X position on the canvas. If the mouse leaves the canvas, this will indicate the most recent
-         * position over the canvas, and mouseInBounds will be set to false.
+         * 只读。当前鼠标相对于 canvas 的 x 坐标。如果鼠标离开了 canvas，这个值会保存鼠标离开 canvas 时的 x 坐标，
+         * 同时 mouseInBounds 属性将被设置为 false。
          *
          * @property mouseX
          * @type Number
@@ -86,8 +82,8 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         mouseX: 0,
 
         /**
-         * READ-ONLY. The current mouse Y position on the canvas. If the mouse leaves the canvas, this will indicate the most recent
-         * position over the canvas, and mouseInBounds will be set to false.
+         * 只读。当前鼠标相对于 canvas 的 y 坐标。如果鼠标离开了 canvas，这个值会保存鼠标离开 canvas 时的 y 坐标，
+         * 同时 mouseInBounds 属性将被设置为 false。
          *
          * @property mouseY
          * @type Number
@@ -95,7 +91,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         mouseY: 0,
 
         /**
-         * Indicates whether the mouse is currently within the bounds of the canvas.
+         * 指出鼠标是否在当前 canvas 内。
          *
          * @property mouseInBounds
          * @type Boolean
@@ -104,8 +100,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         mouseInBounds: false,
 
         /**
-         * If true, tick callbacks will be called on all display objects on the stage prior to rendering to the canvas.
-         * You can call
+         * 如果为 true，stage 下的每个 display object 在渲染到 canvas 之前都将先执行 tick 回调函数。
          *
          * @property tickOnUpdate
          * @type Boolean
@@ -114,8 +109,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         tickOnUpdate: true,
 
         /**
-         * If true, mouse move events will continue to be called when the mouse leaves the target canvas. See
-         * mouseInBounds, and MouseEvent.x/y/rawX/rawY.
+         * 如果为 true， 鼠标移动时间将在鼠标离开目标 canvas 后仍然继续进行。参阅 mouseInBounds 和 MouseEvent.x/y/rawX/rawY。
          *
          * @property mouseMoveOutside
          * @type Boolean
@@ -124,14 +118,14 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         mouseMoveOutside: false,
 
         /**
-         * The hitArea property is not supported for Stage.
+         * Stage 不支持 hitArea 属性
          * @property hitArea
          * @type {DisplayObject}
          * @default null
          */
 
         /**
-         * Holds objects with data for each active pointer id. Each object has the following properties:
+         * 持有所有活动对象指针的数据，每个对象都包含一下属性：
          * x, y, event, target, overTarget, overX, overY, inBounds
          *
          * @property _pointerData
@@ -141,7 +135,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         _pointerData: null,
 
         /**
-         * Number of active pointers.
+         * 活动指针数量。
          *
          * @property _pointerCount
          * @type {Object}
@@ -150,7 +144,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         _pointerCount: 0,
 
         /**
-         * Number of active pointers.
+         * 私有对象指针 ID。
          *
          * @property _pointerCount
          * @type {Object}
@@ -166,9 +160,11 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         _mouseOverIntervalID: null,
 
         /**
-         * Each time the update method is called, the stage will tick any descendants exposing a tick method (ex. {{#crossLink "BitmapAnimation"}}{{/crossLink}})
-         * and render its entire display list to the canvas. Any parameters passed to update will be passed on to any onTick handlers.
-         *
+         * 每当执行 update 方法， stage 就会执行其所有子孙的 tick 方法 (ex. {{#crossLink "BitmapAnimation"}}{{/crossLink}})，
+         * 以及渲染整个展示列表到 canvas 上。所有传到 update 的参数都会传到任何一个 tick 上。
+         * onTick handlers.
+         * 
+         * ？？？？？？？？？？？？
          * @method update
          */
         update: function() {
@@ -189,14 +185,12 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         },
 
         /**
-         * Default event handler that calls Stage.update() when a "tick" event is received. This allows you to register a
-         * Stage instance as a event listener on {{#crossLink "Ticker"}}{{/crossLink}} directly, using:
-         *
+         * 默认事件处理机制，当接收到 “tick” 事件的时候，调用 Stage.update()。
+         * 这里使你可以直接注册一个 stage 到 {{#crossLink "Ticker"}}{{/crossLink}} 事件监听里面, 通过：
+         * 
          *      Ticker.addEventListener("tick", myStage");
-         *
-         * Note that if you subscribe to ticks using this pattern then the tick event object will be passed through to display
-         * object tick handlers, instead of delta and paused parameters.
-         *
+         * 
+         * 注：如果你通过这种模式订阅 ticker，那么该 tick 事件对象将被传递到 display object，替代了原来的 delta 和 paused 参数
          * @property handleEvent
          * @type Function
          */
@@ -207,8 +201,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         },
         
         /**
-         * Clears the target canvas. Useful if <code>autoClear</code> is set to false.
-         *
+         * 清空目标 canvas。如果 <code>autoClear</code> 设置为 false 的时候用到。
          * @method clear
          */
         clear: function() {
@@ -221,16 +214,12 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         },
 
         /**
-         * Returns a data url that contains a Base64-encoded image of the contents of the stage. The returned data url can be
-         * specified as the src value of an image element.
-         *
+         * 返回一个 stage 内容里的 Base64 编码的图片资源路径，返回的数据可以被指定为一个图像元素的资源路径。
          * @method toDataURL
-         * @param {String} backgroundColor The background color to be used for the generated image. The value can be any value HTML color
-         *  value, including HEX colors, rgb and rgba. The default value is a transparent background.
-         * @param {String} mimeType The MIME type of the image format to be create. The default is "image/png". If an unknown MIME type
-         *  is passed in, or if the browser does not support the specified MIME type, the default value will be used.
-         * @return {String} a Base64 encoded image.
-         */
+         * @param {String} backgroundColor 生成的图片的背景颜色。这个值可以是所有 HTML 颜色值。包括 HEX，rgb，rgba。默认是透明的。
+         * @param {String} mimeType 生成的图片的 MIME type。默认是 "image/png"，当传入的 MIME type 是未知的，或浏览器不能识别该 MIME type, 则会使用默认值。
+         * @return {String} 一个 Base64 编码的图片。
+         **/
         toDataURL: function(backgroundColor, mimeType) {
             if (!mimeType) {
                 mimeType = "image/png";
@@ -240,40 +229,45 @@ xc.module.define("xc.createjs.Stage", function(exports) {
             var h = this.canvas.height;
             var data;
             if (backgroundColor) {
-                //get the current ImageData for the canvas.
+                // 为 canvas 获取当前图片数据。
                 data = ctx.getImageData(0, 0, w, h);
-                //store the current globalCompositeOperation
+
+                // 存储当前globalCompositeOperation
                 var compositeOperation = ctx.globalCompositeOperation;
-                //set to draw behind current content
+
+                // 设置在当前内容后面绘制
                 ctx.globalCompositeOperation = "destination-over";
-                //set background color
+
+                //设置背景颜色
                 ctx.fillStyle = backgroundColor;
-                //draw background on entire canvas
+
+                //整个画布上绘制背景
                 ctx.fillRect(0, 0, w, h);
             }
-            //get the image data from the canvas
+            //从画布上获取图像数据
             var dataURL = this.canvas.toDataURL(mimeType);
             if (backgroundColor) {
-                //clear the canvas
-                ctx.clearRect(0, 0, w, h);
-                //restore it with original settings
+                //清空 canvas
+                ctx.clearRect (0, 0, w, h);
+
+                //恢复原来的设置
                 ctx.putImageData(data, 0, 0);
-                //reset the globalCompositeOperation to what it was
+
+                //恢复 globalCompositeOperation 为原来值
                 ctx.globalCompositeOperation = compositeOperation;
             }
             return dataURL;
         },
 
         /**
-         * Enables or disables (by passing a frequency of 0) mouse over events (mouseover and mouseout) for this stage's display
-         * list. These events can be expensive to generate, so they are disabled by default, and the frequency of the events
-         * can be controlled independently of mouse move events via the optional <code>frequency</code> parameter.
-         *
+         * 设置监听或不监听（传递的 frequency 为 0）这个 stage 里面的所有 diplay object 的 mouse over 事件（moverover 和 mouseout）。
+         * 这些事件都是高消耗性能的，所以它们的默认值都为 false。
+         * 而且事件的频率可以通过独立设置 mouse move 事件的可选项 <code>frequency</code> 去改变的。
          * @method enableMouseOver
-         * @param {Number} [frequency=20] Optional param specifying the maximum number of times per second to broadcast
-         *  mouse over/out events. Set to 0 to disable mouse over events completely. Maximum is 50. A lower frequency is less
-         *  responsive, but uses less CPU.
-         */
+         * @param {Number} [frequency=20] 可选参数，指定监听 mousemove 事件的最大时间间隔。
+         * 当该值为0的时候，表示不监听 mouse over 事件。最大值为 50。
+         * 频率越低越不敏感，但消耗 CPU 就越少。
+         **/
         enableMouseOver: function(frequency) {
             if (this._mouseOverIntervalID) {
                 clearInterval(this._mouseOverIntervalID);
@@ -348,10 +342,10 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         },
 
         /**
-         * Returns a clone of this Stage.
-         *
-         * @return {Stage} A clone of the current Container instance.
-         */
+         * 返回一个克隆后的 stage 实例。
+         * 
+         * @return {Stage} 一个克隆后的 stage 实例。
+         **/
         clone: function() {
             var o = new Stage(null);
             this.cloneProps(o);
@@ -359,11 +353,11 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
-         *
+         * 返回该对象的字符串表示形式。
+         * 
          * @method toString
-         * @return {String} a string representation of the instance.
-         */
+         * @return {String} 该对象的字符串表示形式。
+         **/
         toString: function() {
             return "[Stage (name=" + this.name + ")]";
         },
@@ -380,7 +374,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
                     x: 0,
                     y: 0
                 };
-                // if it's the mouse (id == NaN) or the first new touch, then make it the primary pointer id:
+                // 如果是鼠标第一次点击或第一次触碰，就是指它为私用的指针 id：
                 if (this._primaryPointerID == null) {
                     this._primaryPointerID = id;
                 }
@@ -583,11 +577,11 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          * @protected
          */
         _testMouseOver: function() {
-            // for now, this only tests the mouse.
+            // 就目前而言，这只是测试鼠标
             if (this._primaryPointerID != -1) {
                 return;
             }
-            // only update if the mouse position has changed. This provides a lot of optimization, but has some trade-offs.
+            // 仅当鼠标位置发生改变时才更新，这里提供了很多优化的地方，但也需要放弃某些其他东西。
             if (this.mouseX == this._mouseOverX && this.mouseY == this._mouseOverY && this.mouseInBounds) {
                 return;
             }

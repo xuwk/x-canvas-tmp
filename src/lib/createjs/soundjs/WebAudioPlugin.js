@@ -26,8 +26,8 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         startTime: 0,
 
         /**
-         * Clean up the instance. Remove references and clean up any additional properties such as timers.
-         *
+         * 清除实例。移除引用以及清除所有的额外参数。例如 timers。
+         * 
          * @method cleanup
          * @protected
          */
@@ -45,12 +45,12 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
             Sound.playFinished(this);
         },
 
-        // Playback has stalled, and therefore failed.
+        // 播放已止步不前，因此失败。
         handleSoundStalled: function(event) {
             this.sendEvent("failed");
         },
 
-        // The sound is ready for playing
+        // 声音已经准备好播放。
         handleSoundReady: function(event) {
             if (this.offset > this.getDuration()) {
                 this.playFailed();
@@ -73,8 +73,8 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
             this.sourceNode.noteGrainOn(0, this.offset, this.sourceNode.buffer.duration - this.offset);
         },
 
-        // Audio has finished playing. Manually loop it if required.
-        // called internally by soundCompleteTimeout in WebAudioPlugin
+        // 音频完成播放。如果有需要，手动循环。
+        // 提供给 WebAudioPlugin 的 soundCompleteTimeout 内部调用。
         handleSoundComplete: function(event) {
             this.offset = 0; // have to set this as it can be set by pause during playback
             if (this.remainingLoops != 0) {
@@ -208,12 +208,12 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
     });
 
     /**
-     * An internal helper class that preloads web audio via XHR. Note that this class and its methods are not documented
-     * properly to avoid generating HTML documentation.
-     *
+     * 一个内部辅助类，用于帮助 web audio 通过 XHR，预加载。
+     * 注：这个类和它的方法没有适当的说明是为了避免长生 HTML 文档。
+     * 
      * @class WebAudioLoader
-     * @param {String} src The source of the sound to load.
-     * @param {Object} owner A reference to the class that created this instance.
+     * @param {String} src 要加载的音频资源。
+     * @param {Object} owner 创建当前实例的类的引用。
      * @constructor
      */
     var WebAudioLoader = xc.class.create({
@@ -222,7 +222,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
             this.owner = owner;
         },
 
-        // the request object for or XHR2 request
+        // XHR2 请求的请求对象。
         request: null,
 
         owner: null,
@@ -230,16 +230,16 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         progress: -1,
 
         /**
-         * The source of the sound to load. Used by callback functions when we return this class.
-         *
+         * 要加载的音频资源。当我们返回这个类的时候用于回调函数。
+         * 
          * @property src
          * @type {String}
          */
         src: null,
 
         /**
-         * The decoded AudioBuffer array that is returned when loading is complete.
-         *
+         * 加载完成时的返回的解压后的 AudioBuffer。
+         * 
          * @property result
          * @type {AudioBuffer}
          * @protected
@@ -247,24 +247,24 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         result: null,
 
         /**
-         * The callback that fires when the load completes. This follows HTML tag naming.
-         *
+         * 当加载完成的时候触发该回调。这个跟着 HTML 标签命名。
+         * 
          * @property onload
          * @type {Method}
          */
         onload: null,
 
         /**
-         * The callback that fires as the load progresses. This follows HTML tag naming.
-         *
+         * 当加载进度向前的时候触发。这个跟着 HTML 标签命名
+         * 
          * @property onprogress
          * @type {Method}
          */
         onprogress: null,
 
         /**
-         * The callback that fires if the load hits an error.
-         *
+         * 当加载出现错误的时候触发该回调。
+         * 
          * @property onError
          * @type {Method}
          * @protected
@@ -272,10 +272,10 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         onError: null,
 
         /**
-         * Begin loading the content.
-         *
+         * 开始加载内容。
+         * 
          * @method load
-         * @param {String} src The path to the sound.
+         * @param {String} src 音频的资源路径。
          */
         load: function(src) {
             if (src != null) {
@@ -291,11 +291,11 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         },
 
         /**
-         * The loader has reported progress.
-         *
+         * 一个汇报进度的加载器。
+         * 
          * @method handleProgress
-         * @param {Number} loaded The loaded amount.
-         * @param {Number} total The total amount.
+         * @param {Number} loaded 加载数。
+         * @param {Number} total 总数。
          * @private
          */
         handleProgress: function(loaded, total) {
@@ -311,8 +311,8 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         },
 
         /**
-         * The sound has completed loading.
-         *
+         * 音频完成了加载。
+         * 
          * @method handleLoad
          * @protected
          */
@@ -321,8 +321,8 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         },
 
         /**
-         * The audio has been decoded.
-         *
+         * 音频被解码。
+         * 
          * @method handleAudioDecoded
          * @protected
          */
@@ -334,8 +334,8 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         },
 
         /**
-         * Errors have been caused by the loader.
-         *
+         * 加载器导致的错误。
+         * 
          * @method handleError
          * @protected
          */
@@ -350,26 +350,21 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
     });
 
     /**
-     * Play sounds using Web Audio in the browser. The WebAudio plugin has been successfully tested with:
-     * <ul>
-     *  <li>Google Chrome, version 23+ on OS X and Windows</li>
-     *  <li>Safari 6+ on OS X</li>
-     *  <li>Mobile Safari on iOS 6+</li>
+     * 通过 Web Audio 在浏览器播放音频。WebAudio 插件已经成功通过以下测试：
+     * <ul><li>Google Chrome, version 23+ on OS X and Windows</li>
+     *      <li>Safari 6+ on OS X</li>
+     *      <li>Mobile Safari on iOS 6+</li>
      * </ul>
+     * 
+     * WebAudioPlugin 是当前的默认默认插件。以及会在任何支持它的情况下用到它。要修噶它的优先级的话，
+     * 请查阅 Sound API 的 {{#crossLink "Sound/registerPlugins"}}{{/crossLink}} 方法。
      *
-     * The WebAudioPlugin is currently the default plugin, and will be used anywhere that it is supported. To change
-     * plugin priority, check out the Sound API {{#crossLink "Sound/registerPlugins"}}{{/crossLink}} method.
-
-     * <h4>Known Browser and OS issues for Web Audio Plugin</h4>
-     * <b>Webkit (Chrome and Safari)</b><br />
-     * <ul>
-     *  <li>AudioNode.disconnect does not always seem to work. This can cause your file size to grow over time if you are playing a lot of audio files.</li>
-     * </ul>
+     * <h4>已知 Web Audio 插件浏览器和操作系统的问题</h4>
+     * <b>Webkit (Chrome 和 Safari)</b><br />
+     * <ul><li>AudioNode.disconnect 不是每次都有效。这个可能取决于文件的大小。</li>
      *
-     * <b>iOS 6 limitations</b><br />
-     * <ul>
-     *  <li>Sound is initially muted and will only unmute through play being called inside a user initiated event (touch).</li>
-     * </ul>
+     * <b>iOS 6 局限性</b><br />
+     * <ul><li>Sound 在用户事件里面不能静音 (touch)。</li>
      *
      * @class WebAudioPlugin
      * @constructor
@@ -386,36 +381,34 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         capabilities: null, // doc'd above
 
         /**
-         * The web audio context, which WebAudio uses to play audio. All nodes that interact with the WebAudioPlugin
-         * need to be created within this context.
-         *
+         * web audio context，用于播放音频。所有 WebAudioPlugin 的节点都必须在 context 内。
+         * 
          * @property context
          * @type {AudioContext}
          */
         context: null,
 
         /**
-         * A DynamicsCompressorNode, which is used to improve sound and prevent audio distortion according to
-         * http://www.w3.org/TR/webaudio/#DynamicsCompressorNode. It is connected to <code>context.destination</code>.
-         *
+         * 一个 DynamicsCompressorNode，用于改善声音以及防止声音失真（http://www.w3.org/TR/webaudio/#DynamicsCompressorNode）。
+         * 链接到 <code>context.destination</code>。
+         * 
          * @property dynamicsCompressorNode
          * @type {AudioNode}
          */
         dynamicsCompressorNode: null,
 
         /**
-         * A GainNode for controlling master volume. It is connected to <code>dynamicsCompressorNode</code>.
-         *
+         * 一个用于控制主音量GainNode。链接到 <code>dynamicsCompressorNode</code>。
+         * 
          * @property gainNode
          * @type {AudioGainNode}
          */
         gainNode: null,
 
-        /**
-         * A hash used internally to store ArrayBuffers, indexed by the source URI used  to load it. This prevents
-         * having to load and decode audio files more than once. If a load has been started on a file, <code>arrayBuffers[src]</code>
-         * will be set to true. Once load is complete, it is set the the loaded ArrayBuffer instance.
-         *
+        /** 
+         * 一个内部使用的 ArrayBuffers 哈希集合，以 资源的 URI 作为索引。这个用于防止多次加载或解析音频。
+         * 如果文件已经开始加载，<code>arrayBuffers[src]</code> 会设置为 true。一旦加载完成，则设置一个加载完成的 ArrayBuffer 实例。
+         * 
          * @property arrayBuffers
          * @type {Object}
          * @protected
@@ -423,15 +416,13 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         arrayBuffers: null,
 
         /**
-         * Pre-register a sound for preloading and setup. This is called by {{#crossLink "Sound"}}{{/crossLink}}.
-         * Note that WebAudio provides a <code>WebAudioLoader</code> instance, which <a href="http://preloadjs.com">PreloadJS</a>
-         * can use to assist with preloading.
-         *
+         * 为音频的预加载和安装进行预注册。这个通过 {{#crossLink "Sound"}}{{/crossLink}} 调用。
+         * 注意 WebAudio 提供了一个 <code>WebAudioLoader</code> 实例，该实例可以协助 <a href="http://preloadjs.com">PreloadJS</a> 去预加载。
+         * 
          * @method register
-         * @param {String} src The source of the audio
-         * @param {Number} instances The number of concurrently playing instances to allow for the channel at any time.
-         *  Note that the WebAudioPlugin does not manage this property.
-         * @return {Object} A result object, containing a "tag" for preloading purposes.
+         * @param {String} src 音频的资源路径
+         * @param {Number} instances 正在播放的音频实例允许 channel 的数量。请注意，WebAudioPlugin 不管理此优先级。
+         * @return {Object} 一个包含预加载标签的对象。
          */
         register: function(src, instances) {
             this.arrayBuffers[src] = true; // This is needed for PreloadJS
@@ -442,21 +433,19 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         },
 
         /**
-         * Checks if preloading has started for a specific source. If the source is found, we can assume it is loading,
-         * or has already finished loading.
-         *
+         * 检测是否已经开始预加载。
+         * 
          * @method isPreloadStarted
-         * @param {String} src The sound URI to check.
-         * @return {Boolean}
+         * @param {String} src 要检查的资源 URI。
+         * @return {Boolean} 如果已经开始预加载，则返回 true。
          */
         isPreloadStarted: function(src) {
             return (this.arrayBuffers[src] != null);
         },
 
         /**
-         * Checks if preloading has finished for a specific source. If the source is defined (but not === true), then
-         * it has finished loading.
-         *
+         * 检查是否已经对指定资源完成预加载，如果资源已经定义 （但不 === true），那么就加载完成了。
+         * 
          * @method isPreloadComplete
          * @param {String} src The sound URI to load.
          * @return {Boolean}
@@ -466,8 +455,8 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         },
 
         /**
-         * Remove a source from our preload list. Note this does not cancel a preload.
-         *
+         * 从预加载列表里移除一个资源。注意这个不会停止预加载。
+         * 
          * @method removeFromPreload
          * @param {String} src The sound URI to unload.
          * @return {Boolean}
@@ -477,11 +466,10 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         },
 
         /**
-         * Add loaded results to the preload hash.
-         *
+         * 将结果加载到预加载哈希集合。
+         * 
          * @method addPreloadResults
-         * @param {String} src The sound URI to unload.
-         * @param {AudioBuffer} result The reload result.
+         * @param {String} src 要卸载声音的 URI。
          * @return {Boolean}
          */
         addPreloadResults: function(src, result) {
@@ -489,8 +477,8 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         },
 
         /**
-         * Handles internal preload completion.
-         *
+         * 处理内部预载完成。
+         * 
          * @method handlePreloadComplete
          * @private
          */
@@ -499,11 +487,11 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         },
 
         /**
-         * Internally preload a sound. Loading uses XHR2 to load an array buffer for use with WebAudio.
-         *
+         * 内部预加载音频。利用 XHR2 加载 array buffer 格式的音频给 WebAudio 用。
+         * 
          * @method preload
-         * @param {String} src The sound URI to load.
-         * @param {Object} instance Not used in this plugin.
+         * @param {String} src 要加载的音频的 URI。
+         * @param {Object} instance 不在插件内使用。
          * @protected
          */
         preload: function(src, instance) {
@@ -514,11 +502,11 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         },
 
         /**
-         * Create a sound instance. If the sound has not been preloaded, it is internally preloaded here.
-         *
+         * 创建一个音频实例。如果音频是没有预加载的，则会在这里进行内部加载。
+         * 
          * @method create
-         * @param {String} src The sound source to use.
-         * @return {SoundInstance} A sound instance for playback and control.
+         * @param {String} src 要加载的音频的 URI。
+         * @return {SoundInstance} 一个用于播放和可以控制的音频实例。
          */
         create: function(src) {
             if (!this.isPreloadStarted(src)) {
@@ -533,9 +521,8 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
     });
 
     /**
-     * The capabilities of the plugin. This is generated via the <code>"WebAudioPlugin/generateCapabilities</code>
-     * method.
-    *
+     * 插件的能力。这个通过 <code>"WebAudioPlugin/generateCapabilities</code> 创建。
+     * 
      * @property capabilities
      * @type {Object}
      * @default null
@@ -544,10 +531,10 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
     WebAudioPlugin.capabilities = null;
 
     /**
-     * Determine if the plugin can be used in the current browser/OS.
-    *
+     * 判断插件能否在当期那的 浏览器/操作系统 使用。
+     * 
      * @method isSupported
-     * @return {Boolean} If the plugin can be initialized.
+     * @return {Boolean} 如果插件能被初始化，返回 true。
      * @static
      */
     WebAudioPlugin.isSupported = function() {
@@ -562,9 +549,8 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
     };
 
     /**
-     * Determine the capabilities of the plugin. Used internally. Please see the Sound API {{#crossLink "Sound/getCapabilities"}}{{/crossLink}}
-     * method for an overview of plugin capabilities.
-    *
+     * 决定插件的能力。内部使用，请看 Sound API 的 {{#crossLink "Sound/getCapabilities"}}{{/crossLink}} 方法了解如何重写插件的能力。
+     * 
      * @method generateCapabiities
      * @static
      * @protected

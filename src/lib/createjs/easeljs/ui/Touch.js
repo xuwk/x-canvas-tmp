@@ -3,14 +3,11 @@ xc.module.define("xc.createjs.Touch", function(exports) {
     // TODO: support for double tap.
 
     /**
-     * Global utility for working with multi-touch enabled devices in EaselJS. Currently supports W3C Touch API (iOS and
-     * modern Android browser) and IE10.
+     * EaselJS内支持多点触控的工具。当前支持W3C标准的Touch接口（iOS 和 安卓浏览器）和IE10。
+     * 当整理你的应用时确保已经关闭touch事件{{#crossLink "Touch/disable"}}{{/crossLink}}。
+     * 注：你没有必要在打开触控前特意去检查一下设备是否支持，因为如果确实不支持的话，它不会打开成功的。
      *
-     * Ensure that you {{#crossLink "Touch/disable"}}{{/crossLink}} touch when cleaning up your application.
-     * Note that you do not have to check if touch is supported to enable it, as it will fail gracefully if it is not
-     * supported.
-     *
-     * <h4>Example</h4>
+     * <h4>样例</h4>
      *     var stage = new Stage("canvas");
      *     Touch.enable(stage);
      *
@@ -20,14 +17,14 @@ xc.module.define("xc.createjs.Touch", function(exports) {
      * @module xc.createjs.easeljs
      */
     var Touch = function() {
-        throw "Touch cannot be instantiated";
+        throw "Touch不能被实例化";
     };
 
     /**
-     * Returns true if touch is supported in the current browser.
+     * 如果当前浏览器支持触控事件，则返回true。
      *
      * @method isSupported
-     * @return {Boolean} Indicates whether touch is supported in the current browser.
+     * @return {Boolean} 表示当前浏览器是否支持触控。
      * @static
      */
     Touch.isSupported = function() {
@@ -36,32 +33,28 @@ xc.module.define("xc.createjs.Touch", function(exports) {
     };
 
     /**
-     * Enables touch interaction for the specified EaselJS stage. Currently supports iOS (and compatible browsers, such
-     * as modern Android browsers), and IE10.
-     * Supports both single touch and multi-touch modes. Extends the EaselJS MouseEvent model, but without support for
-     * double click or over/out events. See MouseEvent.pointerID for more information.
+     * 使指定的EaselJS场景支持触控的交互方式。当前支持iOS（和适配的浏览器，例如当今的安卓浏览器），和IE10。
+     * 支持单点或多点触控模式。扩展自EaselJS的MouseEvent模块，但是不支持双击或经过/离开事件。想了解更多信息，请看MouseEvent.pointerID。
      *
      * @method enable
-     * @param {Stage} stage The stage to enable touch on.
-     * @param {Boolean} [singleTouch=false] If true, only a single touch will be active at a time.
-     * @param {Boolean} [allowDefault=false] If true, then default gesture actions (ex. scrolling, zooming) will be
-     *  allowed when the user is interacting with the target canvas.
-     * @return {Boolean} Returns true if touch was successfully enabled on the target stage.
+     * @param {Stage} stage 需要打开触控的场景。
+     * @param {Boolean} [singleTouch=false] 如果设置为true，则只支持单点触控。
+     * @param {Boolean} [allowDefault=false] 如果设为true，则当用户在目标画布上操作时，默认的手势操作（滚动，放大等）会被允许。
+     * @return {Boolean} 如果目标场景的触控被成功打开，则返回true。
      * @static
      */
     Touch.enable = function(stage, singleTouch, allowDefault) {
         if (!stage || !stage.canvas || !Touch.isSupported()) {
             return false;
         }
-        // inject required properties on stage:
+        // 往场景上注入需要的属性
         stage.__touch = {
             pointers: {},
             multitouch: !singleTouch,
             preventDefault: !allowDefault,
             count: 0
         };
-        // note that in the future we may need to disable the standard mouse event model before adding
-        // these to prevent duplicate calls. It doesn't seem to be an issue with iOS devices though.
+        // 将来我们可能需要在添加这些事件前把标准的鼠标事件模块禁用掉以防止多次调用。虽然这个在iOS设备上不是一个问题。
         if ('ontouchstart' in window) {
             Touch._IOS_enable(stage);
         } else if (window.navigator['msPointerEnabled']) {
@@ -71,10 +64,10 @@ xc.module.define("xc.createjs.Touch", function(exports) {
     };
 
     /**
-     * Removes all listeners that were set up when calling Touch.enable on a stage.
+     * 把场景里面通过Touch.enable打开的监听器移除掉。
      *
      * @method disable
-     * @param {Stage} stage The stage to disable touch on.
+     * @param {Stage} stage 需要移除Touch监听器的场景。
      * @static
      */
     Touch.disable = function(stage) {

@@ -1,16 +1,16 @@
 xc.module.define("xc.createjs.Matrix2D", function(exports) {
 
     /**
-     * Represents an affine transformation matrix, and provides tools for constructing and concatenating matrixes.
+     * 代表一个仿射的变换矩阵，并提供了一些构造和合并矩阵的工具。
      *
      * @class Matrix2D
      * @constructor
-     * @param {Number} a Specifies the a property for the new matrix.
-     * @param {Number} b Specifies the b property for the new matrix.
-     * @param {Number} c Specifies the c property for the new matrix.
-     * @param {Number} d Specifies the d property for the new matrix.
-     * @param {Number} tx Specifies the tx property for the new matrix.
-     * @param {Number} ty Specifies the ty property for the new matrix.
+     * @param {Number} a 为一个新的矩阵指定一个a属性。
+     * @param {Number} b 为一个新的矩阵指定一个b属性。
+     * @param {Number} c 为一个新的矩阵指定一个c属性。
+     * @param {Number} d 为一个新的矩阵指定一个d属性。
+     * @param {Number} tx 为一个新的矩阵指定一个tx属性。
+     * @param {Number} ty 为一个新的矩阵指定一个ty属性。
      */
     var Matrix2D = xc.class.create({
         initialize: function(a, b, c, d, tx, ty) {
@@ -28,7 +28,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Position (0, 0) in a 3x3 affine transformation matrix.
+         * 在3×3仿射变换矩阵中（0, 0）位置的值。
          *
          * @property a
          * @type Number
@@ -36,7 +36,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         a: 1,
 
         /**
-         * Position (0, 1) in a 3x3 affine transformation matrix.
+         * 在3×3仿射变换矩阵中（0, 1）位置的值。
          *
          * @property b
          * @type Number
@@ -44,7 +44,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         b: 0,
 
         /**
-         * Position (1, 0) in a 3x3 affine transformation matrix.
+         * 在3×3仿射变换矩阵中（1, 0）位置的值。
          *
          * @property c
          * @type Number
@@ -52,7 +52,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         c: 0,
 
         /**
-         * Position (1, 1) in a 3x3 affine transformation matrix.
+         * 在3×3仿射变换矩阵中（1, 1）位置的值。
          *
          * @property d
          * @type Number
@@ -60,7 +60,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         d: 1,
 
         /**
-         * Position (2, 0) in a 3x3 affine transformation matrix.
+         * 在3×3仿射变换矩阵中（2, 0）位置的值。
          *
          * @property atx
          * @type Number
@@ -68,7 +68,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         tx: 0,
 
         /**
-         * Position (2, 1) in a 3x3 affine transformation matrix.
+         * 在3×3仿射变换矩阵中（2, 1）位置的值。
          *
          * @property ty
          * @type Number
@@ -76,8 +76,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         ty: 0,
 
         /**
-         * Property representing the alpha that will be applied to a display object. This is not part of matrix
-         * operations, but is used for operations like getConcatenatedMatrix to provide concatenated alpha values.
+         * 该属性代表了一个显示对象的透明度。这不是矩阵操作的一部分，但是会在类似getConcatenatedMatrix等方法里面提供合并后的透明度值。
          *
          * @property alpha
          * @type Number
@@ -85,8 +84,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         alpha: 1,
 
         /**
-         * Property representing the shadow that will be applied to a display object. This is not part of matrix
-         * operations, but is used for operations like getConcatenatedMatrix to provide concatenated shadow values.
+         * 该属性代表了一个显示对象的阴影值。这不是矩阵操作的一部分，但是会在类似getConcatenatedMatrix等方法里面提供合并后的阴影值。
          *
          * @property shadow
          * @type Shadow
@@ -94,10 +92,9 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         shadow: null,
 
         /**
-         * Property representing the compositeOperation that will be applied to a display object. This is not part of
-         * matrix operations, but is used for operations like getConcatenatedMatrix to provide concatenated
-         * compositeOperation values. You can find a list of valid composite operations at:
-         * <a href="https://developer.mozilla.org/en/Canvas_tutorial/Compositing">https://developer.mozilla.org/en/Canvas_tutorial/Compositing</a>
+         * 该属性代表了一个显示对象的组合操作。这不是矩阵操作的一部分，但是会在类似getConcatenatedMatrix等方法里面提供合并的组合操作。
+         * 你可以在下面的地址里面找到一个组合操作的列表：
+         * <a href="https://developer.mozilla.org/zh-CN/docs/Canvas_tutorial/Compositing">https://developer.mozilla.org/zh-CN/docs/Canvas_tutorial/Compositing</a>
          *
          * @property compositeOperation
          * @type String
@@ -105,7 +102,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         compositeOperation: null,
 
         /**
-         * Concatenates the specified matrix properties with this matrix. All parameters are required.
+         * 通过将当前矩阵对象与另一个矩阵相乘来追加一个矩阵。要求提供所有参数的值。
          *
          * @method prepend
          * @param {Number} a
@@ -114,7 +111,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
          * @param {Number} d
          * @param {Number} tx
          * @param {Number} ty
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         prepend: function(a, b, c, d, tx, ty) {
             var tx1 = this.tx;
@@ -132,7 +129,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Appends the specified matrix properties with this matrix. All parameters are required.
+         * 通过另一个矩阵与当前矩阵相乘来附加一个矩阵。要求提供所有参数的值。
          *
          * @method append
          * @param {Number} a
@@ -141,7 +138,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
          * @param {Number} d
          * @param {Number} tx
          * @param {Number} ty
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         append: function(a, b, c, d, tx, ty) {
             var a1 = this.a;
@@ -158,10 +155,11 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Prepends the specified matrix with this matrix.
+         * 把一个指定矩阵追加到当前矩阵上。
          *
          * @method prependMatrix
          * @param {Matrix2D} matrix
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         prependMatrix: function(matrix) {
             this.prepend(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
@@ -170,11 +168,11 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Appends the specified matrix with this matrix.
+         * 把一个指定矩阵附加到当前矩阵上。
          *
          * @method appendMatrix
          * @param {Matrix2D} matrix
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         appendMatrix: function(matrix) {
             this.append(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
@@ -183,8 +181,10 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Generates matrix properties from the specified display object transform properties, and prepends them with this matrix.
-         * For example, you can use this to generate a matrix from a display object: var mtx = new Matrix2D();
+         * 把指定的矩阵属性追加到当前矩阵上，该矩阵由指定的显示对象中的转换属性组成。
+         * 例如，你可以使用以下方式从一个显示对象上生成一个矩阵：
+         * var o = new DisplayObject();
+         * var mtx = new Matrix2D();
          * mtx.prependTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation);
          *
          * @method prependTransform
@@ -195,9 +195,9 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
          * @param {Number} rotation
          * @param {Number} skewX
          * @param {Number} skewY
-         * @param {Number} regX Optional.
-         * @param {Number} regY Optional.
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @param {Number} regX 可选。
+         * @param {Number} regY 可选。
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         prependTransform: function(x, y, scaleX, scaleY, rotation, skewX, skewY, regX, regY) {
             if (rotation % 360) {
@@ -209,12 +209,12 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
                 sin = 0;
             }
             if (regX || regY) {
-                // append the registration offset:
+                // 把偏移值计算上
                 this.tx -= regX;
                 this.ty -= regY;
             }
             if (skewX || skewY) {
-                // TODO: can this be combined into a single prepend operation?
+                // TODO: 这个能不能合并为单一的追加操作？
                 skewX *= Matrix2D.DEG_TO_RAD;
                 skewY *= Matrix2D.DEG_TO_RAD;
                 this.prepend(cos * scaleX, sin * scaleX, -sin * scaleY, cos * scaleY, 0, 0);
@@ -226,10 +226,12 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Generates matrix properties from the specified display object transform properties, and appends them with this matrix.
-         * For example, you can use this to generate a matrix from a display object: var mtx = new Matrix2D();
+         * 把指定的矩阵属性附加到当前矩阵上，该矩阵由指定的显示对象中的转换属性组成。
+         * 例如，你可以使用以下方式从一个显示对象上生成一个矩阵：
+         * var o = new DisplayObject();
+         * var mtx = new Matrix2D();
          * mtx.appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation);
-         *
+         * 
          * @method appendTransform
          * @param {Number} x
          * @param {Number} y
@@ -238,9 +240,9 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
          * @param {Number} rotation
          * @param {Number} skewX
          * @param {Number} skewY
-         * @param {Number} regX Optional.
-         * @param {Number} regY Optional.
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @param {Number} regX 可选。
+         * @param {Number} regY 可选。
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         appendTransform: function(x, y, scaleX, scaleY, rotation, skewX, skewY, regX, regY) {
             if (rotation % 360) {
@@ -252,7 +254,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
                 sin = 0;
             }
             if (skewX || skewY) {
-                // TODO: can this be combined into a single append?
+                // TODO: 这个能不能合并为单一的附加操作？
                 skewX *= Matrix2D.DEG_TO_RAD;
                 skewY *= Matrix2D.DEG_TO_RAD;
                 this.append(Math.cos(skewY), Math.sin(skewY), -Math.sin(skewX), Math.cos(skewX), x, y);
@@ -261,7 +263,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
                 this.append(cos * scaleX, sin * scaleX, -sin * scaleY, cos * scaleY, x, y);
             }
             if (regX || regY) {
-                // prepend the registration offset:
+             // 把偏移值计算上
                 this.tx -= regX * this.a + regY * this.c;
                 this.ty -= regX * this.b + regY * this.d;
             }
@@ -269,11 +271,11 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Applies a rotation transformation to the matrix.
+         * 对指定的矩阵作旋转操作。
          *
          * @method rotate
-         * @param {Number} angle The angle in degrees.
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @param {Number} angle 角度。
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         rotate: function(angle) {
             var cos = Math.cos(angle);
@@ -290,12 +292,12 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Applies a skew transformation to the matrix.
+         * 对指定的矩阵作倾斜操作。
          *
          * @method skew
-         * @param {Number} skewX The amount to skew horizontally in degrees.
-         * @param {Number} skewY The amount to skew vertically in degrees.
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @param {Number} skewX 水平倾斜的角度。
+         * @param {Number} skewY 垂直倾斜的角度。
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         skew: function(skewX, skewY) {
             skewX = skewX * Matrix2D.DEG_TO_RAD;
@@ -305,12 +307,12 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Applies a scale transformation to the matrix.
+         * 对指定矩阵作缩放操作。
          *
          * @method scale
          * @param {Number} x
          * @param {Number} y
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         scale: function(x, y) {
             this.a *= x;
@@ -321,12 +323,12 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Translates the matrix on the x and y axes.
+         * 在xy轴上对矩阵作移位操作。
          *
          * @method translate
          * @param {Number} x
          * @param {Number} y
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         translate: function(x, y) {
             this.tx += x;
@@ -335,10 +337,10 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Sets the properties of the matrix to those of an identity matrix (one that applies a null transformation).
+         * 把当前矩阵的属性值设置为单位矩阵的属性值。
          *
          * @method identity
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         identity: function() {
             this.alpha = this.a = this.d = 1;
@@ -348,9 +350,9 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Inverts the matrix, causing it to perform the opposite transformation.
+         * 把当前矩阵翻转，使它转换到完全相反的位置上。
          * @method invert
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         invert: function() {
             var a1 = this.a;
@@ -369,7 +371,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Returns true if the matrix is an identity matrix.
+         * 判断当前矩阵是否为单位矩阵。
          *
          * @method isIdentity
          * @return {Boolean}
@@ -379,17 +381,14 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Decomposes the matrix into transform properties (x, y, scaleX, scaleY, and rotation). Note that this these values
-         * may not match the transform properties you used to generate the matrix, though they will produce the same visual
-         * results.
+         * 把当前矩阵拆分为变换属性(x, y, scaleX, scaleY, 和 rotation)。注意：这些值可能不会与你过去生成的矩阵的属性值一致，虽然他们产生的视觉效果可能是一样的。
          *
          * @method decompose
-         * @param {Object} target The object to apply the transform properties to. If null, then a new object will be returned.
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @param {Object} target 需要进行拆分的对象。如果为空，则返回一个新创建的对象。
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         decompose: function(target) {
-            // TODO: it would be nice to be able to solve for whether the matrix can be decomposed into only scale/rotation
-            // even when scale is negative
+            // TODO: 如果能够仅仅把矩阵拆分为缩放或旋转属性，那就很好了。
             if (target == null) {
                 target = {};
             }
@@ -413,7 +412,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Reinitializes all matrix properties to those specified.
+         * 把当前矩阵的所有属性值重新初始化成指定值。
          *
          * @method appendProperties
          * @param {Number} a
@@ -422,10 +421,10 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
          * @param {Number} d
          * @param {Number} tx
          * @param {Number} ty
-         * @param {Number} alpha desired alpha value
-         * @param {Shadow} shadow desired shadow value
-         * @param {String} compositeOperation desired composite operation value
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @param {Number} alpha 透明度。
+         * @param {Shadow} shadow 阴影值。
+         * @param {String} compositeOperation 组合操作
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         reinitialize: function(a, b, c, d, tx, ty, alpha, shadow, compositeOperation) {
             this._init(a, b, c, d, tx, ty);
@@ -436,13 +435,13 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Appends the specified visual properties to the current matrix.
+         * 把指定的视觉属性附加到当前矩阵上。
          *
          * @method appendProperties
-         * @param {Number} alpha desired alpha value
-         * @param {Shadow} shadow desired shadow value
-         * @param {String} compositeOperation desired composite operation value
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @param {Number} alpha 透明度。
+         * @param {Shadow} shadow 阴影值。
+         * @param {String} compositeOperation 组合操作。
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         appendProperties: function(alpha, shadow, compositeOperation) {
             this.alpha *= alpha;
@@ -452,13 +451,13 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Prepends the specified visual properties to the current matrix.
+         * 把指定的视觉属性追加到当前矩阵前。
          *
          * @method prependProperties
-         * @param {Number} alpha desired alpha value
-         * @param {Shadow} shadow desired shadow value
-         * @param {String} compositeOperation desired composite operation value
-         * @return {Matrix2D} This matrix. Useful for chaining method calls.
+         * @param {Number} alpha 透明度。
+         * @param {Shadow} shadow 阴影值。
+         * @param {String} compositeOperation 组合操作。
+         * @return {Matrix2D} 当前矩阵。这个在链式方法调用上使用。
          */
         prependProperties: function(alpha, shadow, compositeOperation) {
             this.alpha *= alpha;
@@ -468,10 +467,10 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Returns a clone of the Matrix2D instance.
+         * 返回当前矩阵的克隆实例。
          *
          * @method clone
-         * @return {Matrix2D} a clone of the Matrix2D instance.
+         * @return {Matrix2D} 克隆的矩阵实例。
          */
         clone: function() {
             var mtx = new Matrix2D(this.a, this.b, this.c, this.d, this.tx, this.ty);
@@ -482,10 +481,10 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回当前对象的字符串表示。
          *
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 当前实例的字符串表示。
          */
         toString: function() {
             return "[Matrix2D (a=" + this.a + " b=" + this.b + " c=" + this.c + " d=" + this.d + " tx=" + this.tx + " ty=" + this.ty + ")]";
@@ -493,7 +492,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
     });
 
     /**
-     * Multiplier for converting degrees to radians. Used internally by Matrix2D. Read-only.
+     * 只读。把角度转化成弧度的乘数。在Matrix2D内部使用。
      *
      * @property DEG_TO_RAD
      * @static
@@ -503,7 +502,7 @@ xc.module.define("xc.createjs.Matrix2D", function(exports) {
     Matrix2D.DEG_TO_RAD = Math.PI / 180;
 
     /**
-     * An identity matrix, representing a null transformation. Read-only.
+     * 只读。一个单位矩阵，代表了一个未经变换的矩阵。
      *
      * @property identity
      * @static

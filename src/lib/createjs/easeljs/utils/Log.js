@@ -1,8 +1,7 @@
 xc.module.define("xc.createjs.Log", function(exports) {
 
     /**
-     * Log provides a centralized system for outputting errors. By default it will attempt to use console.log
-     * to output messages, but this can be changed by setting the out property.
+     * Log提供一个集中输出错误信息的系统。它默认会调用console.log方法去打印信息，但是这个可以通过输出属性去修改输出方式。
      *
      * @class Log
      * @constructor
@@ -10,7 +9,7 @@ xc.module.define("xc.createjs.Log", function(exports) {
     var Log = {};
 
     /**
-     * Read-only. Output no messages.
+     * 只读。不输出任何信息。
      *
      * @type Number
      * @property NONE
@@ -20,7 +19,7 @@ xc.module.define("xc.createjs.Log", function(exports) {
     Log.NONE = 0;
 
     /**
-     * Read-only. Error messages.
+     * 只读。输出错误信息。
      *
      * @type Number
      * @property ERROR
@@ -30,7 +29,7 @@ xc.module.define("xc.createjs.Log", function(exports) {
     Log.ERROR = 1;
 
     /**
-     * Read-only. Warning messages.
+     * 只读。输出警告信息。
      *
      * @type Number
      * @property WARNING
@@ -40,7 +39,7 @@ xc.module.define("xc.createjs.Log", function(exports) {
     Log.WARNING = 2;
 
     /**
-     * Read-only. Trace messages.
+     * 只读。输出跟踪信息。
      *
      * @type Number
      * @property TRACE
@@ -50,7 +49,7 @@ xc.module.define("xc.createjs.Log", function(exports) {
     Log.TRACE = 3;
 
     /**
-     * Read-only. Output all messages.
+     * 只读。输出所有信息。
      *
      * @type Number
      * @property ALL
@@ -60,16 +59,9 @@ xc.module.define("xc.createjs.Log", function(exports) {
     Log.ALL = 255;
 
     /**
-     * Defines the function that will be used to handle any logged messages. By default it will use console.log. The
-     * specified function will be passed the same three parameters as Log.log, but the message will
-     * be expanded if a matching key was found.
-     *
-     * For example, you could use this to log any messages to a server, or output it to a TextArea. You can disable all
-     * logging by setting this to null.
-     *
-     * All messages are passed to the out function regardless of level settings, and the function must handle the level
-     * appropriately. This is to allow, for example, functions that log all messages to a server, but only display
-     * messages under the current level in the UI.
+     * 定义一个用来处理所有日志信息的方法。默认情况下使用console.log。像Log.log方法一样会有三个参数传入到指定的方法内，但是一旦碰到适配的关键词，消息就会被展开。<br /><br />
+     * 例如，你可以改写一个方法把所有日志记录在服务器，或者提示到一个文本框内。你也可以把这个设为空值来禁止所有的日志。<br /><br />
+     * 所有的信息都会传递到out方法，无论你设为什么等级，你的方法必须适当地控制日志等级来输出信息。例如，你完全可以允许所有信息都传递到服务器，但仅仅在前台展示当前等级设置相对应的信息。
      *
      * @type Function
      * @property out
@@ -86,8 +78,7 @@ xc.module.define("xc.createjs.Log", function(exports) {
     };
 
     /**
-     * Specifies the level of messages to output. For example, if you set <code>Log.level = Log.WARNING</code>, then any
-     * messages with a level of 2 (Log.WARNING) or less (ex. Log.ERROR) will be output. Defaults to Log.ALL.
+     * 指定了日志输出的等级。例如，如果你设置<code>Log.level = Log.WARNING</code>，那么所以等级在2（Log.WARNING）或更低的等级（例如：Log.ERROR）会被输出。默认： Log.ALL。
      *
      * @type Function
      * @property out
@@ -105,15 +96,13 @@ xc.module.define("xc.createjs.Log", function(exports) {
     Log._keys = [];
 
     /**
-     * Adds a definition object that associates one or more keys with longer messages.
-     * These messages can optionally include "%DETAILS%" which will be replaced by any details passed with the error.
-     *
-     * <h4>Example</h4>
-     *     Log.addKeys({MY_ERROR: "This is a description of my error [%DETAILS%]"});
-     *     Log.error("MY_ERROR", 5); // outputs "This is a description of my error [5]"
+     * 添加一个自定义对象，该对象保存了若干个关键词和信息主体，方便输出一些较长的信息。这些信息可以选择性地包含“%DETAILS%”，该关键词会在信息传递到输出方法时被替换。例如：<br/>
+     * 
+     * Log.addKeys( {MY_ERROR:"这是一段输出内容 [%DETAILS%]"} );
+     * Log.error( "MY_ERROR" , 5 ); // 会输出成 "这是一段输出内容 [5]"
      *
      * @method addKeys
-     * @param {Object} keys The generic object defining the keys and messages.
+     * @param {Object} keys 定义了关键词和消息的对象。
      * @static
      */
     Log.addKeys = function(keys) {
@@ -121,13 +110,12 @@ xc.module.define("xc.createjs.Log", function(exports) {
     };
 
     /**
-     * Outputs the specified error via the method assigned to the "out" property. If the error matches a key in any of the
-     * loaded def objects, it will substitute that message.
+     * 通过被分配为“out”属性的方法，把指定的输出信息展示出来。如果是一个关键词，且这个关键词已经加到_keys里面，那么它会直接替换掉原来的消息。
      *
      * @method log
-     * @param {String} message The error message or key to output.
-     * @param {Object} details Any details associated with this message.
-     * @param {Number} level A number between 1 and 254 specifying the severity of this message. See Log.level for details.
+     * @param {String} message 要输出的信息或者关键词。
+     * @param {Object} details 与这条信息相关的任何详情。
+     * @param {Number} level 一个介乎1和254之间的数字，它代表了该信息的严重程度。查看Log.level获取更多信息。
      * @static
      */
     Log.log = function(message, details, level) {

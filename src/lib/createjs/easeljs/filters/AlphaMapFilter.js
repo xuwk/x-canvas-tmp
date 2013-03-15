@@ -3,18 +3,15 @@ xc.module.define("xc.createjs.AlphaMapFilter", function(exports) {
     var Filter = xc.module.require("xc.createjs.Filter");
 
     /**
-     * Applies a greyscale alpha map image (or canvas) to the target, such that the alpha channel of the result will
-     * be copied from the red channel of the map, and the RGB channels will be copied from the target.
-     *
-     * Generally, it is recommended that you use {{#crossLink "AlphaMaskFilter"}}{{/crossLink}}, because it has much better performance.
-     *
-     * See {{#crossLink "Filter"}}{{/crossLink}} for an example of how to apply filters.
+     * 把一张灰度alpha图片（或canvas）应用到目标上，这样图片的红色通道会复制到输出结果的alpha通道上，当前目标的RGB通道也会复制到结果的对应通道上。
+     * 
+     * 一般来说，推荐你使用{{#crossLink "AlphaMaskFilter"}}{{/crossLink}}，因为它的效率高很多。
+     * 想了解滤镜的使用，请查看{{#crossLink "Filter"}}{{/crossLink}}。
      *
      * @class AlphaMapFilter
      * @extends Filter
      * @constructor
-     * @param {Image} alphaMap The greyscale image (or canvas) to use as the alpha value for the result. This should be
-     *  exactly the same dimensions as the target.
+     * @param {Image} alphaMap 被用作输出结果alpha值的灰度图片。尺寸要跟目标完全一致。
      */
     var AlphaMapFilter = Filter.extend({
         initialize: function(alphaMap) {
@@ -22,8 +19,7 @@ xc.module.define("xc.createjs.AlphaMapFilter", function(exports) {
         },
 
         /**
-         * The greyscale image (or canvas) to use as the alpha value for the result. This should be exactly the same
-         * dimensions as the target.
+         * 被用作输出结果alpha值的灰度图片。尺寸要跟目标完全一致。
          *
          * @property alphaMap
          * @type Image
@@ -34,17 +30,17 @@ xc.module.define("xc.createjs.AlphaMapFilter", function(exports) {
         _mapData: null,
 
         /**
-         * Applies the filter to the specified context.
+         * 把滤镜应用到指定的上下文。
          *
          * @method applyFilter
-         * @param {CanvasRenderingContext2D} ctx The 2D context to use as the source.
-         * @param {Number} x The x position to use for the source rect.
-         * @param {Number} y The y position to use for the source rect.
-         * @param {Number} width The width to use for the source rect.
-         * @param {Number} height The height to use for the source rect.
-         * @param {CanvasRenderingContext2D} targetCtx Optional. The 2D context to draw the result to. Defaults to the context passed to ctx.
-         * @param {Number} targetX Optional. The x position to draw the result to. Defaults to the value passed to x.
-         * @param {Number} targetY Optional. The y position to draw the result to. Defaults to the value passed to y.
+         * @param {CanvasRenderingContext2D} ctx 用作资源的2D上下文。
+         * @param {Number} x 应用到资源矩阵的x坐标值。
+         * @param {Number} y 应用到资源矩阵的y坐标值。
+         * @param {Number} width 应用到资源矩阵的宽度。
+         * @param {Number} height 应用到资源矩阵的高度。
+         * @param {CanvasRenderingContext2D} targetCtx 可选。绘制结果的2D上下文。默认为ctx代表的上下文。
+         * @param {Number} targetX 可选。绘制结果的x坐标值。默认为x传递的坐标值。
+         * @param {Number} targetY 可选。绘制结果的y坐标值。默认为y传递的坐标值。
          * @return {Boolean}
          */
         applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
@@ -78,18 +74,18 @@ xc.module.define("xc.createjs.AlphaMapFilter", function(exports) {
         },
 
         /**
-         * Returns a clone of this object.
+         * 返回当前对象的克隆。
          *
-         * @return {AlphaMapFilter} A clone of the current AlphaMapFilter instance.
+         * @return {AlphaMapFilter} 当前AlphaMapFilter实例的克隆。
          */
         clone: function() {
             return new AlphaMapFilter(this.mask);
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回一个当前对象的字符串表示。
          *
-         * @return {String} a string representation of the instance.
+         * @return {String} 一个当前对象的字符串表示。
          */
         toString: function() {
             return "[AlphaMapFilter]";

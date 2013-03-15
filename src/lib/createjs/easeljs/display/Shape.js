@@ -4,27 +4,24 @@ xc.module.define("xc.createjs.Shape", function(exports) {
     var Graphics = xc.module.require("xc.createjs.Graphics");
 
     /**
-     * A Shape allows you to display vector art in the display list.
-     * It composites a {{#crossLink "Graphics"}}{{/crossLink}} instance which exposes all of the vector drawing methods.
-     * The Graphics instance can be shared between multiple Shape instances to display the same vector graphics with
-     * different positions or transforms.
+     * 一个 Shape 让你可以在展示列表上画矢量图。包含了一个封装了所有矢量绘制方法的 {{#crossLink "Graphics"}}{{/crossLink}} 实例。
+     * 一个 Graphics 实例可以被多个 Shape 实例共同来显示不同位置的形状。
      *
-     * If the vector art will not change between draws, you may want to use the
-     * {{#crossLink "DisplayObject/cache"}}{{/crossLink}} method to reduce the rendering cost.
+     * 如果矢量图在 draws 方法之间不用变动的，那你可以使用 {{#crossLink "DisplayObject/cache"}}{{/crossLink}} 方法去减低性能消耗。
      *
-     * <h4>Example</h4>
-     *     var graphics = new Graphics().beginFill("#ff0000").drawRect(0, 0, 100, 100);
-     *     var shape = new Shape(graphics);
-     *
-     *     // Alternatively use can also use the graphics property of the Shape class to renderer the same as above.
-     *     var shape = new Shape();
-     *     shape.graphics.beginFill("#ff0000").drawRect(0, 0, 100, 100);
+     * <h4>例子</h4>
+     *      var graphics = new createjs.Graphics().beginFill("#ff0000").drawRect(0, 0, 100, 100);
+     *      var shape = new createjs.Shape(graphics);
+     *      
+     *      //Alternatively use can also use the graphics property of the Shape class to renderer the same as above.
+     *      var shape = new createjs.Shape();
+     *      shape.graphics.beginFill("#ff0000").drawRect(0, 0, 100, 100);
      *
      * @class Shape
      * @extends DisplayObject
      * @constructor
-     * @param {Graphics} graphics Optional. The graphics instance to display. If null, a new Graphics instance will be created.
-     */
+     * @param {Graphics} graphics 可选项. 用于显示的 graphics 实例。 如果为 null, 将会创建一个新的 graphics 实例。
+     **/
     var Shape = DisplayObject.extend({
         initialize: function(graphics) {
             this._super();
@@ -32,38 +29,34 @@ xc.module.define("xc.createjs.Shape", function(exports) {
         },
 
         /**
-         * The graphics instance to display.
-         *
+         * 用于显示的 graphics 实例。
+         * 
          * @property graphics
          * @type Graphics
-         */
+         **/
         graphics: null,
 
         /**
-         * Returns true or false indicating whether the Shape would be visible if drawn to a canvas.
-         * This does not account for whether it would be visible within the boundaries of the stage.
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
-         *
+         * 通过返回 true 或 false 去表示该 display object 画在 canvas 上时，是否被显示。
+         * 并不是通过该 display object 是否在 stage 可视范围内进行判断的。
+         * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          * @method isVisible
-         * @return {Boolean} Boolean indicating whether the Shape would be visible if drawn to a canvas
-         */
+         * @return {Boolean} Boolean 表示该 display object 画在 canvas 上时，是否被显示。
+         **/
         isVisible: function() {
             var hasContent = this.cacheCanvas || (this.graphics && !this.graphics.isEmpty());
             return !!(this.visible && this.alpha > 0 && this.scaleX != 0 && this.scaleY != 0 && hasContent);
         },
 
         /**
-         * Draws the Shape into the specified context ignoring it's visible, alpha, shadow, and transform. Returns true if
-         * the draw was handled (useful for overriding functionality).
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
-         *
+         * 绘制 Shape 到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
+         * 当绘制动作正在处理，将返回 true （用于覆盖功能）。
+         * 注：这种方法主要是供内部使用，几时它可能有高级用法。
          * @method draw
-         * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
-         * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache. For example,
-         *  used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
-         */
+         * @param {CanvasRenderingContext2D} ctx canvas 2D 上下文对象将渲染到这里。
+         * @param {Boolean} ignoreCache 表示这个画的行为是否忽略所有当前的缓存。
+         * 例如，用来画 cache （以防止它简单地绘制到自身现有的 cache）。
+         **/
         draw: function(ctx, ignoreCache) {
             if (this._super(ctx, ignoreCache)) {
                 return true;
@@ -73,13 +66,11 @@ xc.module.define("xc.createjs.Shape", function(exports) {
         },
 
         /**
-         * Returns a clone of this Shape. Some properties that are specific to this instance's current context are reverted
-         * to their defaults (for example .parent).
-         *
+         * 返回克隆后的 Shape。一些在当前背景下的特定属性值将还原为默认值（例如 .parent）。
          * @method clone
-         * @param {Boolean} recursive If true, this Shape's {{#crossLink "Graphics"}}{{/crossLink}} instance will also be
-         *  cloned. If false, the Graphics instance will be shared with the new Shape.
-         */
+         * @param {Boolean} recursive 如果为 true，这个 Shape 的 {{#crossLink "Graphics"}}{{/crossLink}} 实例也会被克隆，
+         * 如果为 false，这个 Graphics 实例将会和克隆出来的 Shape 实例共用。
+         **/
         clone: function(recursive) {
             var o = new Shape((recursive && this.graphics) ? this.graphics.clone() : this.graphics);
             this.cloneProps(o);
@@ -87,11 +78,10 @@ xc.module.define("xc.createjs.Shape", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
-         *
+         * 返回该对象的字符串表示形式。
          * @method toString
-         * @return {String} a string representation of the instance.
-         */
+         * @return {String} 该对象的字符串表示形式。
+         **/
         toString: function() {
             return "[Shape (name=" + this.name + ")]";
         }

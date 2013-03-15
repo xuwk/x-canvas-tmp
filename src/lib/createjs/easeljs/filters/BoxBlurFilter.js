@@ -4,9 +4,8 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
     var Filter = xc.module.require("xc.createjs.Filter");
 
     /**
-     * BoxBlurFilter applies a box blur to DisplayObjects
-     *
-     * See {{#crossLink "Filter"}}{{/crossLink}} for an example of how to apply filters.
+     * BoxBlurFilter把快速均值模糊应用到显示对象上。
+     * 想了解滤镜的使用，请查看{{#crossLink "Filter"}}{{/crossLink}}。
      *
      * @class BoxBlurFilter
      * @extends Filter
@@ -32,7 +31,7 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
         },
 
         /**
-         * Horizontal blur radius
+         * 水平模糊半径
          *
          * @property blurX
          * @type Number
@@ -40,7 +39,7 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
         blurX: 0,
 
         /**
-         * Vertical blur radius
+         * 垂直模糊半径
          *
          * @property blurY
          * @type Number
@@ -48,8 +47,7 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
         blurY: 0,
 
         /**
-         * Number of blur iterations. For example, a value of 1 will produce a rough blur.
-         * A value of 2 will produce a smoother blur, but take twice as long to run.
+         * 模糊迭代次数。例如，值为1会产生一个僵硬的模糊效果。值为2会产生一个较为平滑的效果，不过也需要2倍的运算时间。
          *
          * @property quality
          * @type Number
@@ -57,30 +55,28 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
         quality: 1,
 
         /**
-         * Returns a rectangle with values indicating the margins required to draw the filter.
-         * For example, a filter that will extend the drawing area 4 pixels to the left, and 7 pixels to the right
-         * (but no pixels up or down) would return a rectangle with (x=-4, y=0, width=11, height=0).
+         * 返回一个绘制滤镜所需的边框宽度的长方形。例如，一个滤镜会向外扩展绘图区域左4个像素，右7个像素（上下不扩展），那么会返回一个（x=-4, y=0, width=11, height=0）的长方形。
          *
          * @method getBounds
-         * @return {Rectangle} a rectangle object indicating the margins required to draw the filter.
+         * @return {Rectangle} 一个绘制滤镜所需的边框宽度的长方形。
          */
         getBounds: function() {
-            // TODO: this doesn't properly account for blur quality.
+            // TODO: 这个不作为模糊的质量。
             return new Rectangle(-this.blurX, -this.blurY, 2 * this.blurX, 2 * this.blurY);
         },
 
         /**
-         * Applies the filter to the specified context.
+         * 把滤镜应用到指定的上下文。
          *
          * @method applyFilter
-         * @param {CanvasRenderingContext2D} ctx The 2D context to use as the source.
-         * @param {Number} x The x position to use for the source rect.
-         * @param {Number} y The y position to use for the source rect.
-         * @param {Number} width The width to use for the source rect.
-         * @param {Number} height The height to use for the source rect.
-         * @param {CanvasRenderingContext2D} targetCtx Optional. The 2D context to draw the result to. Defaults to the context passed to ctx.
-         * @param {Number} targetX Optional. The x position to draw the result to. Defaults to the value passed to x.
-         * @param {Number} targetY Optional. The y position to draw the result to. Defaults to the value passed to y.
+         * @param {CanvasRenderingContext2D} ctx 用作资源的2D上下文。
+         * @param {Number} x 应用到资源矩阵的x坐标值。
+         * @param {Number} y 应用到资源矩阵的y坐标值。
+         * @param {Number} width 应用到资源矩阵的宽度。
+         * @param {Number} height 应用到资源矩阵的高度。
+         * @param {CanvasRenderingContext2D} targetCtx 可选。绘制结果的2D上下文。默认为ctx代表的上下文。
+         * @param {Number} targetX 可选。绘制结果的x坐标值。默认为x传递的坐标值。
+         * @param {Number} targetY 可选。绘制结果的y坐标值。默认为y传递的坐标值。
          * @return {Boolean}
          */
         applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
@@ -207,7 +203,7 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
         },
 
         /**
-         * Returns a clone of this object.
+         * 返回当前对象的克隆。
          *
          * @return {BoxBlurFilter}
          */
@@ -216,7 +212,7 @@ xc.module.define("xc.createjs.BoxBlurFilter", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回一个当前对象的字符串表示。
          *
          * @return {String}
          */

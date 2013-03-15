@@ -1,28 +1,23 @@
 xc.module.define("xc.createjs.ButtonHelper", function(exports) {
 
     /**
-     * The ButtonHelper is a helper class to create interactive buttons from {{#crossLink "MovieClip"}}{{/crossLink}} or
-     * {{#crossLink "BitmapAnimation"}}{{/crossLink}} instances. This class will intercept mouse events from an object, and
-     * automatically call {{#crossLink "BitmapAnimation/gotoAndStop"}}{{/crossLink}} or {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}},
-     * to the respective animation labels, add a pointer cursor, and allows the user to define a hit state frame.
+     * ButtonHelper是一个小助手，它可以帮你把按钮的交互创建在{{#crossLink "MovieClip"}}{{/crossLink}}或者{{#crossLink "BitmapAnimation"}}{{/crossLink}}实例上。
+     * ButtonHelper会从一个对象上拦截鼠标的事件，并自动执行{{#crossLink "BitmapAnimation/gotoAndStop"}}{{/crossLink}} 
+     * 或者 {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}}方法，
+     * 它可以根据不同的事件创建标识、修改鼠标经过的指针图标，并且可以让用户指定点击的区域。
+     * 
+     * ButtonHelper的实例不需要创建在场景上，不过你需要维护一个引用来防止垃圾回收的机制。
      *
-     * The ButtonHelper instance does not need to be added to the stage, but a reference should be maintained to prevent
-     * garbage collection.
-     *
-     * <h4>Example</h4>
+     * <h4>样例</h4>
      *     var helper = new ButtonHelper(myInstance, "out", "over", "down", false, myInstance, "hit");
      *
-     * @param {BitmapAnimation|MovieClip} target The instance to manage.
-     * @param {String} [outLabel="out"] The label or animation to go to when the user rolls out of the button.
-     * @param {String} [overLabel="over"] The label or animation to go to when the user rolls over the button.
-     * @param {String} [downLabel="down"] The label or animation to go to when the user presses the button.
-     * @param {Boolean} [play=false] If the helper should call "gotoAndPlay" or "gotoAndStop" on the button when changing
-     *  states.
-     * @param {DisplayObject} [hitArea] An optional item to use as the hit state for the button. If this is not defined,
-     *  then the button's visible states will be used instead. Note that the same instance as the "target" argument can be
-     *  used for the hitState.
-     * @param {String} [hitLabel] The label or animation on the hitArea instance that defines the hitArea bounds. If this is
-     *  null, then the default state of the hitArea will be used.
+     * @param {BitmapAnimation|MovieClip} target BitmapAnimation或MovieClip的实例。
+     * @param {String} [outLabel="out"] 当用户离开当前按钮时显示的标识或动画。
+     * @param {String} [overLabel="over"] 当用户停留在当前按钮上时显示的标识或动画。
+     * @param {String} [downLabel="down"] 当用户按下按钮时显示的标识或动画。
+     * @param {Boolean} [play=false] 该参数判断当按钮的状态改变时应该触发“gotoAndPlay”还是“gotoAndStop”方法。
+     * @param {DisplayObject} [hitArea] 这是一个可选的参数，它用来限定按钮的点击区域。如果这个参数没有定义，则按钮可以在可视区域内被点击。注：与“target”参数值相同的实例可以被用作点击区域。
+     * @param {String} [hitLabel] 定义了点击区域界限的标识或动画。如果为空，则以默认的点击区域代替。
      * @constructor
      */
     var ButtonHelper = xc.class.create({
@@ -48,7 +43,7 @@ xc.module.define("xc.createjs.ButtonHelper", function(exports) {
         },
 
         /**
-         * Read-only. The target for this button helper.
+         * 只读。需要创建按钮事件的目标。
          *
          * @property target
          * @type MovieClip | BitmapAnimation
@@ -56,7 +51,7 @@ xc.module.define("xc.createjs.ButtonHelper", function(exports) {
         target: null,
 
         /**
-         * The label name or frame number to display when the user mouses out of the target. Defaults to "over".
+         * 当用户鼠标经过当前目标时显示的标识名或帧数。默认为“over”。
          *
          * @property overLabel
          * @type String | Number
@@ -64,7 +59,7 @@ xc.module.define("xc.createjs.ButtonHelper", function(exports) {
         overLabel: null,
 
         /**
-         * The label name or frame number to display when the user mouses over the target. Defaults to "out".
+         * 当用户鼠标离开当前目标时显示的标识名或帧数。默认为“out”。
          *
          * @property outLabel
          * @type String | Number
@@ -72,7 +67,7 @@ xc.module.define("xc.createjs.ButtonHelper", function(exports) {
         outLabel: null,
 
         /**
-         * The label name or frame number to display when the user presses on the target. Defaults to "down".
+         * 当用户按压当前目标时显示的标识名或帧数。默认为“down”。
          *
          * @property downLabel
          * @type String | Number
@@ -80,7 +75,7 @@ xc.module.define("xc.createjs.ButtonHelper", function(exports) {
         downLabel: null,
 
         /**
-         * If true, then ButtonHelper will call gotoAndPlay, if false, it will use gotoAndStop. Default is false.
+         * 如果为true，ButtonHelper会触发gotoAndPlay，否则会用gotoAndStop代替。默认是false。
          *
          * @property play
          * @default false
@@ -103,7 +98,7 @@ xc.module.define("xc.createjs.ButtonHelper", function(exports) {
         _isOver: false,
 
         /**
-         * Enables or disables the button functionality on the target.
+         * 打开或关闭当前目标上的按钮事件。
          *
          * @method setEnabled
          * @param {Boolean} value
@@ -122,10 +117,10 @@ xc.module.define("xc.createjs.ButtonHelper", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回当前对象的字符串表示。
          *
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 当前对象的字符串表示。
          */
         toString: function() {
             return "[ButtonHelper]";

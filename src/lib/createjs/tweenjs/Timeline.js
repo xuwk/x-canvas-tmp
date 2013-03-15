@@ -3,25 +3,20 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
     var Tween = xc.module.require("xc.createjs.Tween");
 
     /**
-     * The Timeline class synchronizes multiple tweens and allows them to be controlled as a group. Please note that if a
-     * timeline is looping, the tweens on it may appear to loop even if the "loop" property of the tween is false.
-     *
+     * Temeline 类将许多个 tweens 同步管理，并允许他们以组为单位控制。
      * @class Timeline
      * @constructor
-     * @param tweens An array of Tweens to add to this timeline. See addTween for more info.
-     * @param labels An object defining labels for using gotoAndPlay/Stop. See {{#crossLink "Timeline/setLabels"}}{{/crossLink}}
-     *  for details.
-     * @param props The configuration properties to apply to this tween instance (ex. {loop:true}). All properties default to false.
-     *  Supported props are:
-     *  <ul>
-     *    <li>loop: sets the loop property on this tween.</li>
-     *    <li>useTicks: uses ticks for all durations instead of milliseconds.</li>
-     *    <li>ignoreGlobalPause: sets the ignoreGlobalPause property on this tween.</li>
-     *    <li>paused: indicates whether to start the tween paused.</li>
-     *    <li>position: indicates the initial position for this timeline.</li>
-     *    <li>onChanged: specifies an onChange handler for this timeline.</li>
-     *  </ul>
-     */
+     * @param tweens 一组将会被添加到 timeline 的 Tween。看 addTween 获取更多信息。
+     * @param labels 一个对象，该对象标记用于使用 gotoAndPlay/Stop 的标签位置。 看 {{#crossLink "Timeline/setLabels"}}{{/crossLink}} 获取更多信息。
+     * 应用到这个 tween 实例的配置属性 (ex. {loop:true})。所有属性的默认值都是 false。支持以下属性：<UL>
+     *    <LI> loop: 设置这个 tween 的 loop 属性。</LI>
+     *    <LI> useTicks: 利用 tick 替代毫秒充当所有周期</LI>
+     *    <LI> ignoreGlobalPause: 设置这个 tween 的 ignoreGlobalPause 属性。</LI>
+     *    <LI> paused: 表示是否启动补间暂停。</LI>
+     *    <LI> position: 指出 timeline 的起始位置。</LI>
+     *    <LI> onChanged: 配置一个 onChanged 处理程序。</LI>
+     * </UL>
+     **/
     var Timeline = xc.class.create({
         initialize: function(tweens, labels, props) {
             this._tweens = [];
@@ -46,7 +41,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         },
 
         /**
-         * Causes this timeline to continue playing when a global pause is active.
+         * 若为 true，能使得这个 timeline 当 global pause 的时候继续运行。
          *
          * @property ignoreGlobalPause
          * @type Boolean
@@ -54,8 +49,8 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         ignoreGlobalPause: false,
 
         /**
-         * Read-only property specifying the total duration of this timeline in milliseconds (or ticks if useTicks is true).
-         * This value is usually automatically updated as you modify the timeline. See updateDuration for more information.
+         * 只读。指出当前 timeline 有多少个以毫秒为单位的周期（或当 useTicks 为 true 时候，以 tick 为单位）。
+         * 这个值通常会在更改了 timeline 之后自动更新。看 updateDuration 获取更多信息。
          *
          * @property duration
          * @type Number
@@ -63,7 +58,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         duration: 0,
 
         /**
-         * If true, the timeline will loop when it reaches the end. Can be set via the props param.
+         * 如果为 true，这个 timeline 将会循环一旦它去到最后端。可以通过 props 参数设置该属性。
          *
          * @property loop
          * @type Boolean
@@ -71,7 +66,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         loop: false,
 
         /**
-         * Called, with a single parameter referencing this timeline instance, whenever the timeline's position changes.
+         * 每当 timeline 的位置发生改变的时候，这个方法都会执行。
          *
          * @property onChange
          * @type Function
@@ -79,8 +74,8 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         onChange: null,
 
         /**
-         * Read-only. The current normalized position of the timeline. This will always be a value between 0 and duration.
-         * Changing this property directly will have no effect.
+         * 只读。timeline 的当前位置。这个值通常是 0 到 duration 之间。
+         * 直接修改这个值是无效的。
          *
          * @property position
          * @type Object
@@ -130,12 +125,12 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         _useTicks: false,
 
         /**
-         * Adds one or more tweens (or timelines) to this timeline. The tweens will be paused (to remove them from the normal ticking system)
-         * and managed by this timeline. Adding a tween to multiple timelines will result in unexpected behaviour.
+         * 添加一个或多个 tween (或 timelines) 到这个 timeline 里面。所有被添加的 tween 将会暂停（即在 ticking 系统里面删除它们），然后由 timeline 管理。
+         * 将一个 tween 添加到多个 timeline 里面将会导致不可预估的后果。
          *
          * @method addTween
-         * @param tween The tween(s) to add. Accepts multiple arguments.
-         * @return Tween The first tween that was passed in.
+         * @param tween 要添加的 tween，可接受多个参数。
+         * @return Tween 第一个传进来的 tween。
          */
         addTween: function(tween) {
             var l = arguments.length;
@@ -161,13 +156,13 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
             return tween;
         },
 
-        /**
-         * Removes one or more tweens from this timeline.
-         *
+        /** 
+         * 从 timeline 里面删除一个或多个 tween。
+         * 
          * @method removeTween
-         * @param tween The tween(s) to remove. Accepts multiple arguments.
-         * @return Boolean Returns true if all of the tweens were successfully removed.
-         */
+         * @param tween 要删除的 tween，可接受多个参数。
+         * @return Boolean 如果所有的 tween 都成功删除，则返回 true。
+         **/
         removeTween: function(tween) {
             var l = arguments.length;
             if (l > 1) {
@@ -191,57 +186,57 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
             }
         },
 
-        /**
-         * Adds a label that can be used with gotoAndPlay/Stop.
-         *
+        /** 
+         * 添加一个标签，用于标记使用 gotoAndPlay/Stop 的位置。
+         * 
          * @method addLabel
-         * @param label The label name.
-         * @param position The position this label represents.
-         */
+         * @param label label名。
+         * @param position 这个标签所代表的位置。
+         **/
         addLabel: function(label, position) {
             this._labels[label] = position;
         },
 
-        /**
-         * Defines labels for use with gotoAndPlay/Stop. Overwrites any previously set labels.
-         *
+        /** 
+         * 定义一个标签对象，标记用于使用 gotoAndPlay/Stop 的位置。覆盖前面所有设置了的 labels。
+         * 
          * @method addLabel
-         * @param o An object defining labels for using gotoAndPlay/Stop in the form {labelName:time} where time is in ms (or ticks if useTicks is true).
-         */
+         * @param o 一个对象，该对象定义了时间以 ms 做单位（或当 useTicks 为 true 时候，以 tick 为单位）处的标签，用于使用 gotoAndPlay/Stop。
+         **/
         setLabels: function(o) {
             this._labels = o ? o : {};
         },
 
-        /**
-         * Unpauses this timeline and jumps to the specified position or label.
-         *
+        /** 
+         * 让 timeline 取消暂停以及跳到指定的位置或标签。
+         * 
          * @method gotoAndPlay
-         * @param positionOrLabel The position in milliseconds (or ticks if useTicks is true) or label to jump to.
-         */
+         * @param positionOrLabel 以毫秒为单位的位置（或当 useTicks 为 true 时候，以 tick 为单位）或标签。
+         **/
         gotoAndPlay: function(positionOrLabel) {
             this.setPaused(false);
             this._goto(positionOrLabel);
         },
 
-        /**
-         * Pauses this timeline and jumps to the specified position or label.
-         *
-         * @method gotoAndStop
-         * @param positionOrLabel The position in milliseconds (or ticks if useTicks is true) or label to jump to.
-         */
+        /** 
+         * 让 timeline 启动暂停以及跳到指定的位置或标签。
+         * 
+         * @method gotoAndPlay
+         * @param positionOrLabel 以毫秒为单位的位置（或当 useTicks 为 true 时候，以 tick 为单位）或标签。
+         **/
         gotoAndStop: function(positionOrLabel) {
             this.setPaused(true);
             this._goto(positionOrLabel);
         },
 
-        /**
-         * Advances the timeline to the specified position.
-         *
+        /** 
+         * 使得 timeline 前进到指定位置。
+         * 
          * @method setPosition
-         * @param value The position to seek to in milliseconds (or ticks if useTicks is true).
-         * @param actionsMode Optional parameter specifying how actions are handled. See Tween.setPosition for more details.
-         * @return Boolean Returns true if the timeline is complete (ie. the full timeline has run & loop is false).
-         */
+         * @param value 以毫秒为单位的位置（或当 useTicks 为 true 时候，以 tick 为单位）
+         * @param actionsMode 可选项参数，指出如何处理 action。 看 Tween.setPosition 获取更多信息。
+         * @return Boolean 如果 timeline 完成，返回 true (ie. 整个 tween 都运行完了 & loop 为 false)。
+         **/
         setPosition: function(value, actionsMode) {
             if (value < 0) {
                 value = 0;
@@ -266,24 +261,23 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
             return end;
         },
 
-        /**
-         * Pauses or plays this timeline.
-         *
+        /** 
+         * 暂停或播放 timeline。
+         * 
          * @method setPaused
-         * @param value Indicates whether the tween should be paused (true) or played (false).
-         */
+         * @param value 指出 tween 是否应该被暂停或播放。
+         **/
         setPaused: function(value) {
             this._paused = !!value;
             Tween._register(this, !value);
         },
 
-        /**
-         * Recalculates the duration of the timeline.
-         * The duration is automatically updated when tweens are added or removed, but this method is useful
-         * if you modify a tween after it was added to the timeline.
-         *
+        /** 
+         * 重新计算 timeline 的周期数。
+         * 周期数会在每当添加或删除 tween 的时候自动更新的，这个方法主要用于当你添加了一个 tween 之后对他进行修改。
+         * 
          * @method updateDuration
-         */
+         **/
         updateDuration: function() {
             this.duration = 0;
             for ( var i = 0, l = this._tweens.length; i < l; i++) {
@@ -294,24 +288,23 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
             }
         },
 
-        /**
-         * Advances this timeline by the specified amount of time in milliseconds (or ticks if useTicks is true).
-         * This is normally called automatically by the Tween engine (via Tween.tick), but is exposed for advanced uses.
-         *
+        /** 
+         * 根据指定的毫秒数（或者是 tick 数，如果 useTicks 为 true）为周期，推进该 timeline。
+         * 这个正常会在 Tween 引擎中自动执行（通过 Tween.tick）。但同时也暴露出来所谓推进 timeline 的方法。
+         * 
          * @method tick
          * @param delta The time to advance in milliseconds (or ticks if useTicks is true).
-         */
+         **/
         tick: function(delta) {
             this.setPosition(this._prevPosition + delta);
         },
 
-        /**
-         * If a numeric position is passed, it is returned unchanged. If a string is passed, the position of the
-         * corresponding frame label will be returned, or null if a matching label is not defined.
-         *
+        /** 
+         * 如果传入的是数值，则直接返回。如果传入的是一个 string，返回对应帧标签的位置，当找不到对应标签的时候，返回 null。
+         * 
          * @method resolve
-         * @param positionOrLabel A numeric position value or label string.
-         */
+         * @param positionOrLabel 一个数值位置或字符串标签。
+         **/
         resolve: function(positionOrLabel) {
             var pos = parseFloat(positionOrLabel);
             if (isNaN(pos)) {
@@ -321,11 +314,11 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
-         *
+         * 返回该对象的字符串表示形式
+         * 
          * @method toString
-         * @return {String} a string representation of the instance.
-         */
+         * @return {String} 该对象的字符串表示形式。
+         **/
         toString: function() {
             return "[Timeline]";
         },

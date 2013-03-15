@@ -3,20 +3,18 @@ xc.module.define("xc.createjs.Container", function(exports) {
     var DisplayObject = xc.module.require("xc.createjs.DisplayObject");
 
     /**
-     * A Container is a nestable display list that allows you to work with compound display elements. For example you
-     * could group arm, leg, torso and head {{#crossLink "Bitmap"}}{{/crossLink}} instances together into a Person
-     * Container, and transform them as a group, while still being able to move the individual parts relative to each
-     * other. Children of containers have their <code>transform</code> and <code>alpha</code> properties concatenated with
-     * their parent Container.
+     * Container 是一个嵌套展示列表，能让你组合多个 display 元素进行展示。例如你可以组合手臂，躯干和头3个实例，然后在把他们都放到 Person Container 里面。
+     * 然后把他们看成一个整体，但它们仍然可以相对于各自的相对位置进行移动。Container 的孩子的 <code>transform</code> 和 <code>alpha</code> 属性
+     * 将关联到他们的父亲 Container。
      *
-     * For example, a {{#crossLink "Shape"}}{{/crossLink}} with x=100 and alpha=0.5, placed in a Container with <code>x=50</code>
-     * and <code>alpha=0.7</code> will be rendered to the canvas at <code>x=150</code> and <code>alpha=0.35</code>.
-     * Containers have some overhead, so you generally shouldn't create a Container to hold a single child.
+     * 例如，一个 {{#crossLink "Shape"}}{{/crossLink}}，x=100, alpha=0.5, 在 Container 的 <code>x=50</code> 的位置和 <code>alpha=0.7</code>
+     * 相当于 canvas 的 <code>x=150</code> 和 <code>alpha=0.35</code>。
+     * 容器有一定的开销，所以你不应该创建一个容器来仅仅保存一个孩子。
      *
-     * <h4>Example</h4>
-     *     var container = new Container();
-     *     container.addChild(bitmapInstance, shapeInstance);
-     *     container.x = 100;
+     * <h4>例子</h4>
+     *      var container = new createjs.Container();
+     *      container.addChild(bitmapInstance, shapeInstance);
+     *      container.x = 100;
      *
      * @class Container
      * @extends DisplayObject
@@ -29,10 +27,10 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * The array of children in the display list. You should usually use the child management methods such as
-         * {{#crossLink "Container/addChild"}}{{/crossLink}}, {{#crossLink "Container/removeChild"}}{{/crossLink}},
-         * {{#crossLink "Container/swapChildren"}}{{/crossLink}}, etc, rather than accessing this directly, but it is
-         * included for advanced users.
+         * 在展示列表中的 Children 数组，你将经常用到管理这些 Children 的方法。
+         * 例如 {{#crossLink "Container/addChild"}}{{/crossLink}},
+         * {{#crossLink "Container/removeChild"}}{{/crossLink}}, {{#crossLink "Container/swapChildren"}}{{/crossLink}}等等,
+         * 比起直接操作它，利用一些高级的方法去操作它会更好。
          *
          * @property children
          * @type Array
@@ -41,13 +39,12 @@ xc.module.define("xc.createjs.Container", function(exports) {
         children: null,
 
         /**
-         * Returns true or false indicating whether the display object would be visible if drawn to a canvas.
-         * This does not account for whether it would be visible within the boundaries of the stage.
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
+         * 通过返回 true 或 false 去表示该 display object 画在 canvas 上时，是否被显示。
+         * 并不是通过该 display object 是否在 stage 可视范围内进行判断的。
+         * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          *
          * @method isVisible
-         * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas
+         * @return {Boolean} Boolean 表示该 display object 画在 canvas 上时，是否被显示。
          */
         isVisible: function() {
             var hasContent = this.cacheCanvas || this.children.length;
@@ -55,15 +52,14 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Draws the display object into the specified context ignoring it's visible, alpha, shadow, and transform.
-         * Returns true if the draw was handled (useful for overriding functionality).
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
+         * 绘制 display object 到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
+         * 当绘制动作正在处理，将返回 true （用于覆盖功能）。
+         * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          *
          * @method draw
-         * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
-         * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache.
-         *  For example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
+         * @param {CanvasRenderingContext2D} ctx canvas 2D 上下文对象将渲染到这里。
+         * @param {Boolean} ignoreCache 表示这个绘制行为是否忽略当前所有缓存。
+         * 例如，用来画 cache （以防止它简单地绘制到自身现有的 cache 上）。
          */
         draw: function(ctx, ignoreCache) {
             if (this._super(ctx, ignoreCache)) {
@@ -86,15 +82,15 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Adds a child to the top of the display list. You can also add multiple children, such as "addChild(child1, child2, ...);".
-         * Returns the child that was added, or the last child if multiple children were added.
+         * 往展示列表的最上方添加孩子。当然你也可以添加多个孩子。比如 "addChild(child1, child2, ...);"。
+         * 返回被添加的孩子，当添加多个孩子时将返回最上方的孩子。
          *
-         * <h4>Example</h4>
-         *     container.addChild(bitmapInstance, shapeInstance);
+         * <h4>例子</h4>
+         *      container.addChild(bitmapInstance, shapeInstance);
          *
          * @method addChild
-         * @param {DisplayObject} child The display object to add.
-         * @return {DisplayObject} The child that was added, or the last child if multiple children were added.
+         * @param {DisplayObject} child 要添加的 display object。
+         * @return {DisplayObject} 被添加的孩子，当添加多个孩子时将返回最上方的孩子。
          */
         addChild: function(child) {
             if (child == null) {
@@ -116,18 +112,17 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Adds a child to the display list at the specified index, bumping children at equal or greater indexes up one,
-         * and setting its parent to this Container. You can also add multiple children, such as "addChildAt(child1, child2, ..., index);".
-         * The index must be between 0 and numChildren. For example, to add myShape under otherShape in the display list,
-         * you could use: container.addChildAt(myShape, container.getChildIndex(otherShape)).
-         * This would also bump otherShape's index up by one.
-         * Returns the last child that was added, or the last child if multiple children were added.
-         * Fails silently if the index is out of range.
-         *
+         * 往指定索引处添加孩子，大于等于该索引号后面的孩子都加 1，同时设置它的父亲为 Container。
+         * 你可以同时添加多个 children，比如 "addChildAt(child1, child2, ..., index);"。
+         * index 必须在 0 到 numChildren 之间。
+         * 例如，在展示列表中，将 myShape 添加到 otherShape 下，你可以这样做，container.addChildAt(myShape, container.getChildIndex(otherShape))。
+         * 这样也会使得 otherShape 的索引号加 1。
+         * 返回被添加的孩子，当添加多个孩子时将返回最上方的 child。
+         * 当指定的索引号超出孩子索引总数范围，会添加失败。
          * @method addChildAt
-         * @param {DisplayObject} child The display object to add.
-         * @param {Number} index The index to add the child at.
-         * @return {DisplayObject} The child that was added, or the last child if multiple children were added.
+         * @param {DisplayObject} child 要添加的 display object。
+         * @param {Number} index 孩子将要添加到的索引号。
+         * @return {DisplayObject} 被添加的孩子，当添加多个孩子时将返回最上方的孩子。
          */
         addChildAt: function(child, index) {
             var l = arguments.length;
@@ -150,14 +145,13 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Removes the specified child from the display list. Note that it is faster to use removeChildAt() if the index is
-         * already known. You can also remove multiple children, such as "removeChild(child1, child2, ...);".
-         * Returns true if the child (or children) was removed, or false if it was not in the display list.
-         *
+         * 在展示列表里删除指定的孩子。注：当你知道孩子对应的索引号时，使用 removeChildAt() 会快很多。
+         * 你可以同时删除多个孩子，比如 "removeChild(child1, child2, ...);"。
+         * 当成功删除，返回 true，如果孩子不在展示列表内，将返回 false。
          * @method removeChild
-         * @param {DisplayObject} child The child to remove.
-         * @return {Boolean} true if the child (or children) was removed, or false if it was not in the display list.
-         */
+         * @param {DisplayObject} child 要删除的孩子。
+         * @return {Boolean} 当删除成功，返回 true，如果孩子不在展示列表内，将返回 false。
+         **/
         removeChild: function(child) {
             var l = arguments.length;
             if (l > 1) {
@@ -171,13 +165,12 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Removes the child at the specified index from the display list, and sets its parent to null. You can also remove
-         * multiple children, such as "removeChildAt(2, 7, ...);".
-         * Returns true if the child (or children) was removed, or false if any index was out of range.
-         *
-         * @param {Number} index The index of the child to remove.
-         * @return {Boolean} true if the child (or children) was removed, or false if any index was out of range.
-         */
+         * 在展示列表里删除在特定索引号位置的孩子，同时设置他的父亲为 null。
+         * 你可以死同时删除多个孩子，例如 "removeChildAt(2, 7, ...);"。
+         * 当删除成功时，会返回 true，当任意一个 index 超出 children 界限时，返回 false。 
+         * @param {Number} index 将要被移除的孩子对应的索引号。
+         * @return {Boolean} 如果成功移除孩子，则返回 true，任意一个 index 超出范围，则返回 false。
+         **/
         removeChildAt: function(index) {
             var l = arguments.length;
             if (l > 1) {
@@ -206,7 +199,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Removes all children from the display list.
+         * 删除展示列表的所有子对象。
          *
          * @method removeAllChildren
          */
@@ -218,22 +211,22 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Returns the child at the specified index.
+         * 返回指定下标的子对象。
          *
          * @method getChildAt
-         * @param {Number} index The index of the child to return.
-         * @return {DisplayObject} The child at the specified index.
+         * @param {Number} index 将返回该下标的子对象。
+         * @return {DisplayObject} 指定下标的子对象。
          */
         getChildAt: function(index) {
             return this.children[index];
         },
 
         /**
-         * Returns the child with the specified name.
+         * 返回指定名称的子对象。
          *
          * @method getChildByName
-         * @param {String} name The name of the child to return.
-         * @return {DisplayObject} The child with the specified name.
+         * @param {String} name 将返回该名称的子对象。
+         * @return {DisplayObject} 指定名称的子对象。
          */
         getChildByName: function(name) {
             var kids = this.children;
@@ -246,39 +239,38 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Performs an array sort operation on the child list.
+         * 在展示列表里对子对象进行重新排序。
          *
          * @method sortChildren
-         * @param {Function} sortFunction the function to use to sort the child list. See javascript's Array.sort
-         *  documentation for details.
+         * @param {Function} sortFunction 用于排序的方法。看 javascript 的 Array.sort 文档获取更多信息。
          */
         sortChildren: function(sortFunction) {
             this.children.sort(sortFunction);
         },
 
         /**
-         * Returns the index of the specified child in the display list, or -1 if it is not in the display list.
+         * 返回指定子对象的下标，当子对象不存在于展示列表的时候，返回 -1。
          *
          * @method getChildIndex
-         * @param {DisplayObject} child The child to return the index of.
-         * @return {Number} The index of the specified child. -1 if the child is not found.
+         * @param {DisplayObject} child 返回该子对象的下标。
+         * @return {Number} 指定子对象的下标，当子对象不存在于展示列表的时候，返回 -1。
          */
         getChildIndex: function(child) {
             return this.children.indexOf(child);
         },
 
         /**
-         * Returns the number of children in the display list.
+         * 返回展示列表中子对象数量。
          *
          * @method getNumChildren
-         * @return {Number} The number of children in the display list.
+         * @return {Number} 展示列表中子对象数量。
          */
         getNumChildren: function() {
             return this.children.length;
         },
 
         /**
-         * Swaps the children at the specified indexes. Fails silently if either index is out of range.
+         * 在特定的下标处交换子对象。当任意一个下标越界的时候，就会失败。
          *
          * @param {Number} index1
          * @param {Number} index2
@@ -296,8 +288,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Swaps the specified children's depth in the display list.
-         * Fails silently if either child is not a child of this Container.
+         * 交换2个指定的子对象。当任何一个子对象不在 Container 时，交换失败。
          *
          * @param {DisplayObject} child1
          * @param {DisplayObject} child2
@@ -325,8 +316,8 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Changes the depth of the specified child.
-         * Fails silently if the child is not a child of this container, or the index is out of range.
+         * 改变指定子对象的深度。
+         * 当子对象不在 Container 内，或下标越界，该方法会失败。
          *
          * @param {DisplayObject} child
          * @param {Number} index
@@ -353,12 +344,11 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Returns true if the specified display object either is this container or is a descendent.
-         * (child, grandchild, etc) of this container.
+         * 当子对象是当前 Container 或其后代(子, 孙子等等)，则返回 true。
          *
          * @method contains
-         * @param {DisplayObject} child The DisplayObject to be checked.
-         * @return {Boolean} true if the specified display object either is this container or is a descendent.
+         * @param {DisplayObject} child 要检查的显示对象。
+         * @return {Boolean} 当子对象是当前 Container 或其后代，则返回 true。
          */
         contains: function(child) {
             while (child) {
@@ -371,15 +361,13 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Tests whether the display object intersects the specified local point (ie. draws a pixel with alpha > 0 at the
-         * specified position). This ignores the alpha, shadow and compositeOperation of the display object, and all
-         * transform properties including regX/Y.
+         * 测试显示对象是否与本地特定的位置相交（ie. 在特定的位置绘制一个 alpha > 0 的像素）。
+         * 该方法执行时不受显示对象的 alpha, shadow 和 compositeOperation, 和所有的转换属性，包括 regX/Y 影响。
          *
          * @method hitTest
-         * @param {Number} x The x position to check in the display object's local coordinates.
-         * @param {Number} y The y position to check in the display object's local coordinates.
-         * @return {Boolean} A Boolean indicating whether there is a visible section of a DisplayObject that overlaps the
-         *  specified coordinates.
+         * @param {Number} x 显示对象 坐标系的 x 坐标，将用于检测。
+         * @param {Number} y 显示对象 坐标系的 y 坐标，将用于检测。
+         * @return {Boolean} 一个指出 displayObject 是否相交于本地某个特定位置的布尔值。
          */
         hitTest: function(x, y) {
             // TODO: optimize to use the fast cache check where possible.
@@ -387,16 +375,16 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Returns an array of all display objects under the specified coordinates that are in this container's display list.
-         * This routine ignores any display objects with mouseEnabled set to false. The array will be sorted in order of
-         * visual depth, with the top-most display object at index 0. This uses shape based hit detection, and can be an
-         * expensive operation to run, so it is best to use it carefully. For example, if testing for objects under the
-         * mouse, test on tick (instead of on mousemove), and only if the mouse's position has changed.
+         * 返回包含指定坐标下所有属于展示列表的 显示对象 数组。
+         * 这个方法将忽略所有 mouseEnabled = false 的 显示对象。
+         * 数组会根据 显示对象 的深度排序，最高的 显示对象 的 index 为 0。
+         * 这里使用以形状为基础的命中检测，消耗比较高，要慎用。比如，如果要测试对象是否在鼠标下面，
+         * 只要鼠标的位置一变化，每个 tick 都需要检测（代替 onMouseMove），
          *
          * @method getObjectsUnderPoint
-         * @param {Number} x The x position in the container to test.
-         * @param {Number} y The y position in the container to test.
-         * @return {Array} An Array of DisplayObjects under the specified coordinates.
+         * @param {Number} x 用作测试的 container 的 x 坐标。
+         * @param {Number} y 用作测试的 container 的 y 坐标。
+         * @return {Array} 包含指定坐标下所有属于展示列表的显示对象数组。
          */
         getObjectsUnderPoint: function(x, y) {
             var arr = [];
@@ -406,13 +394,14 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Similar to getObjectsUnderPoint(), but returns only the top-most display object. This runs significantly faster
-         * than getObjectsUnderPoint(), but is still an expensive operation. See getObjectsUnderPoint() for more information.
+         * 类似 getObjectsUnderPoint(), 但这里只返回展示列表中最高的一个 显示对象。 
+         * 这里比 getObjectsUnderPoint() 运行要快，但仍然是高消耗的。
+         * 看 getObjectsUnderPoint() 获取更多信息。
          *
          * @method getObjectUnderPoint
-         * @param {Number} x The x position in the container to test.
-         * @param {Number} y The y position in the container to test.
-         * @return {DisplayObject} The top-most display object under the specified coordinates.
+         * @param {Number} x 用作测试的 container 的 x 坐标。
+         * @param {Number} y 用作测试的 container 的 y 坐标。
+         * @return {DisplayObject} 展示列表中最高的一个 显示对象。
          */
         getObjectUnderPoint: function(x, y) {
             var pt = this.localToGlobal(x, y);
@@ -420,12 +409,10 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Returns a clone of this Container. Some properties that are specific to this instance's current context are
-         * reverted to their defaults (for example .parent).
+         * 返回克隆后的 Container。一些在当前背景下的特定属性值将还原为默认值（例如 .parent）
          *
-         * @param {Boolean} recursive If true, all of the descendants of this container will be cloned recursively.
-         *  If false, the properties of the container will be cloned, but the new instance will not have any children.
-         * @return {Container} A clone of the current Container instance.
+         * @param {Boolean} recursive 当 recursive 为 true 时候，container 所有的孩子会递归克隆，当 recursive 为 false 时，仅仅会克隆所有的属性，不会克隆任何孩子。
+         * @return {Container} 当前 Container 克隆后的 Container 对象。
          */
         clone: function(recursive) {
             var o = new Container();
@@ -442,10 +429,10 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回该对象的字符串表示形式。
          *
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 该对象的字符串表示形式。
          */
         toString: function() {
             return "[Container (name=" + this.name + ")]";
@@ -470,8 +457,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
          * @param {Number} x
          * @param {Number} y
          * @param {Array} arr
-         * @param {Number} mouseEvents A bitmask indicating which event types to look for. Bit 1 specifies press & click &
-         *  double click, bit 2 specifies it should look for mouse over and mouse out. This implementation may change.
+         * @param {Number} mouseEvents 一个位掩码，表示事件类型来。第1位指定 press 和 click 和 double click，第2位，指定它应该是 mouse over 和 mouse out。此实现可能会改变。
          * @return {Array}
          * @protected
          */
@@ -480,8 +466,8 @@ xc.module.define("xc.createjs.Container", function(exports) {
             var canvas = DisplayObject._hitTestCanvas;
             var mtx = this._matrix;
             var hasHandler = this._hasMouseHandler(mouseEvents);
-            // if we have a cache handy & this has a handler, we can use it to do a quick check.
-            // we can't use the cache for screening children, because they might have hitArea set.
+            // 如果我们有一个便利的 cache 和一个处理程序，我们使用它们来提升效率。
+            // 我们不能通过 cache 来筛选孩子，因为他们呢可能设置了 hitArea。
             if (!this.hitArea && this.cacheCanvas && hasHandler) {
                 this.getConcatenatedMatrix(mtx);
                 ctx.setTransform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx - x, mtx.ty - y);
@@ -493,7 +479,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
                     return this;
                 }
             }
-            // draw children one at a time, and check if we get a hit:
+            // 每画一次 children，就检查一次它是否命中。
             var l = this.children.length;
             for ( var i = l - 1; i >= 0; i--) {
                 var child = this.children[i];
@@ -502,11 +488,11 @@ xc.module.define("xc.createjs.Container", function(exports) {
                     continue;
                 }
                 var childHasHandler = mouseEvents && child._hasMouseHandler(mouseEvents);
-                // if a child container has a handler and a hitArea then we only need to check its hitArea, so we can treat it as a normal DO:
+                // 如果 child container 有一个处理程序和一个 hitArea，那我们只需要检查它对应 hitArea 就可以了，所以我们可以像平常一样处理就可以了
                 if (child instanceof Container && !(hitArea && childHasHandler)) {
                     var result;
                     if (hasHandler) {
-                        // only concerned about the first hit, because this container is going to claim it anyway:
+                        // 只需要考虑第一次 命中，因为这样这个 container 讲无论如何都要声明
                         result = child._getObjectsUnderPoint(x, y);
                         if (result) {
                             return this;

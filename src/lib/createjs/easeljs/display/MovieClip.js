@@ -6,27 +6,21 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
     var DisplayObject = xc.module.require("xc.createjs.DisplayObject");
 
     /**
-     * The MovieClip class associates a TweenJS Timeline with an EaselJS
-     * {{#crossLink "Container"}}{{/crossLink}}. It allows you to create objects
-     * which encapsulate timeline animations, state changes, and synched
-     * actions. Due to the complexities inherent in correctly setting up a
-     * MovieClip, it is largely intended for tool output and is not included in
-     * the main EaselJS library. Currently MovieClip only works properly if it
-     * is tick based (as opposed to time based) though some concessions have
-     * been made to support time-based timelines in the future.
-     * 
+     * MovieClip 类关联一个 EaselJS {{#crossLink "Container"}}{{/crossLink}} 的 TweenJS Timeline。
+     * 它允许你创建封装时间轴动画对象，可以改变状态，和同步 action。
+     * 由于制作一套影片的固有复杂性，这将主要作为输出工具，并不包含在主 EaselJS 库里。
+     *
+     * 目前 MovieClip 只能基于 tick 去工作，但已做出一些让步让它在未来能基于时间表去工作。
+     *
      * @class MovieClip
+     * @main MovieClip
      * @extends Container
      * @constructor
-     * @param {String} mode Initial value for the mode property. One of
-     *            MovieClip.INDEPENDENT, MovieClip.SINGLE_FRAME, or
-     *            MovieClip.SYNCHED.
-     * @param {Number} startPosition Initial value for the startPosition
-     *            property.
-     * @param {Boolean} loop Initial value for the loop property.
-     * @param {Object} labels A hash of labels to pass to the timeline instance
-     *            associated with this MovieClip.
-     */
+     * @param {String} mode 初始化 mode 属性。是 MovieClip.INDEPENDENT, MovieClip.SINGLE_FRAME, 或 MovieClip.SYNCHED 其中一个值。
+     * @param {Number} startPosition 初始化 startPosition 属性
+     * @param {Boolean} loop 初始化 loop 属性.
+     * @param {Object} labels 一个 labels 的 hash 表传入 timeline 实例。
+     **/
     var MovieClip = Container.extend({
         initialize: function(mode, startPosition, loop, labels) {
             this.mode = mode || MovieClip.INDEPENDENT;
@@ -43,9 +37,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         },
 
         /**
-         * Controls how this MovieClip advances its time. Must be one of 0
-         * (INDEPENDENT), 1 (SINGLE_FRAME), or 2 (SYNCHED). See each constant
-         * for a description of the behaviour.
+         * 控制这个 MovieClip 的前进模式。必须是 0 (INDEPENDENT), 1 (SINGLE_FRAME), 或 2 (SYNCHED) 其中一个模式。
          * 
          * @property mode
          * @type String
@@ -54,8 +46,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         mode: null,
 
         /**
-         * Specifies what the first frame to play in this movieclip, or the only
-         * frame to display if mode is SINGLE_FRAME.
+         * 指定 movieclip 从第几帧开始，如果 mode 的值为 SINGLE_FRAME，则该参数是指定只播放哪一帧。
          * 
          * @property startPosition
          * @type Number
@@ -64,8 +55,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         startPosition: 0,
 
         /**
-         * Indicates whether this MovieClip should loop when it reaches the end
-         * of its timeline.
+         * 说明当前 MovieClip 播放完的时候是否循环播放。
          * 
          * @property loop
          * @type Boolean
@@ -74,7 +64,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         loop: true,
 
         /**
-         * Read-Only. The current frame of the movieclip.
+         * 只读。movieclip 当前的 frame。
          * 
          * @property currentFrame
          * @type Number
@@ -82,8 +72,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         currentFrame: 0,
 
         /**
-         * The TweenJS Timeline that is associated with this MovieClip. This is
-         * created automatically when the MovieClip instance is initialized.
+         * 当前影片的时间轴。这是当 MovieClip 创建的时候就初始化好的。
          * 
          * @property timeline
          * @type Timeline
@@ -92,7 +81,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         timeline: null,
 
         /**
-         * If true, the MovieClip's position will not advance when ticked.
+         * 如果该值为 true，则 MovieClip 将会暂停。
          * 
          * @property paused
          * @type Boolean
@@ -101,8 +90,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         paused: false,
 
         /**
-         * If true, actions in this MovieClip's tweens will be run when the
-         * playhead advances.
+         * 如果为 true，MovieClip 里面的 action 就会当播放头前进的时候运行。
          * 
          * @property actionsEnabled
          * @type Boolean
@@ -111,13 +99,11 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         actionsEnabled: true,
 
         /**
-         * If true, the MovieClip will automatically be reset to its first frame
-         * whenever the timeline adds it back onto the display list. This only
-         * applies to MovieClip instances with mode=INDEPENDENT. For example, if
-         * you had a character animation with a "body" child MovieClip instance
-         * with different costumes on each frame, you could set body.autoReset =
-         * false, so that you can manually change the frame it is on, without
-         * worrying that it will be reset automatically.
+         * 如果为 true，则 timeline 在任何时候往展示列表里面添加 back 的时候，MoiveClip 都将自动重置到第一帧。
+         * 这个仅仅在 mode=INDEPENDENT 的时候生效。
+         * <br><br>
+         * 举例，如果你有一个含有 "body" 子动画的动画。你可以设置 body.autoReset = false。
+         * 那你就可以掌控 frame 的行为，不用担心它会自动重置了。
          * 
          * @property autoReset
          * @type Boolean
@@ -151,8 +137,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         _prevPosition: 0,
 
         /**
-         * List of display objects that are actively being managed by the
-         * MovieClip.
+         * 将受 MovieClip 管理的 display objects 列表。
          * 
          * @property _managed
          * @type Object
@@ -161,16 +146,12 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         _managed: null,
 
         /**
-         * Returns true or false indicating whether the display object would be
-         * visible if drawn to a canvas. This does not account for whether it
-         * would be visible within the boundaries of the stage. Note: This
-         * method is mainly for internal use, though it may be useful for
-         * advanced uses.
-         * 
+         * 通过返回 true 或 false 去表示该 display object 画在 canvas 上时，是否被显示。
+         * 并不是通过该 display object 是否在 stage 可视范围内进行判断的。
+         * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          * @method isVisible
-         * @return {Boolean} Boolean indicating whether the display object would
-         *         be visible if drawn to a canvas
-         */
+         * @return {Boolean} Boolean 表示该 display object 画在 canvas 上时，是否被显示。
+         **/
         isVisible: function() {
             // children are placed in draw, so we can't determine if we have
             // content.
@@ -178,19 +159,14 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         },
 
         /**
-         * Draws the display object into the specified context ignoring it's
-         * visible, alpha, shadow, and transform. Returns true if the draw was
-         * handled (useful for overriding functionality). Note: This method is
-         * mainly for internal use, though it may be useful for advanced uses.
-         * 
+         * 绘制 display object 到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
+         * 当绘制动作正在处理，将返回 true （用于覆盖功能）。
+         * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          * @method draw
-         * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to
-         *            draw into.
-         * @param {Boolean} ignoreCache Indicates whether the draw operation
-         *            should ignore any current cache. For example, used for
-         *            drawing the cache (to prevent it from simply drawing an
-         *            existing cache back into itself).
-         */
+         * @param {CanvasRenderingContext2D} ctx canvas 2D 上下文对象将渲染到这里。
+         * @param {Boolean} ignoreCache 表示这个绘制行为是否忽略当前所有缓存。
+         * 例如，用来画 cache （以防止它简单地绘制到自身现有的 cache 上）。
+         **/
         draw: function(ctx, ignoreCache) {
             // draw to cache first:
             this.dispObj = new DisplayObject();
@@ -203,52 +179,48 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         },
 
         /**
-         * Sets paused to false.
-         * 
+         * 设置 paused 为 false。
          * @method play
-         */
+         **/
         play: function() {
             this.paused = false;
         },
 
         /**
-         * Sets paused to true.
-         * 
+         * 设置 paused 为 true。
          * @method stop
-         */
+         **/
         stop: function() {
             this.paused = true;
         },
 
         /**
-         * Advances this movie clip to the specified position or label and sets
-         * paused to false.
+         * 在特定的位置开始播放该 movie clip。
          * 
          * @method gotoAndPlay
          * @param {String|Number} positionOrLabel
-         */
+         **/
         gotoAndPlay: function(positionOrLabel) {
             this.paused = false;
             this._goto(positionOrLabel);
         },
 
         /**
-         * Advances this movie clip to the specified position or label and sets
-         * paused to true.
+         * 在特定的位置停止该 movie clip。
          * 
          * @method gotoAndStop
          * @param {String|Number} positionOrLabel
-         */
+         **/
         gotoAndStop: function(positionOrLabel) {
             this.paused = true;
             this._goto(positionOrLabel);
         },
 
         /**
-         * MovieClip instances cannot be cloned.
+         * MovieClip 对象不能被克隆。
          * 
          * @method clone
-         */
+         **/
         clone: function() {
             // TODO: add support for this? Need to clone the Timeline & retarget
             // tweens - pretty complex.
@@ -256,11 +228,11 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回该对象的字符串表示形式。
          * 
          * @method toString
-         * @return {String} a string representation of the instance.
-         */
+         * @return {String} 该对象的字符串表示形式。
+         **/
         toString: function() {
             return "[MovieClip (name=" + this.name + ")]";
         },
@@ -313,7 +285,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
             var kids = this.children;
             var synched = this.mode != MovieClip.INDEPENDENT;
             tl.loop = this.loop == null ? true : this.loop;
-            // update timeline position, ignoring actions if this is a graphic.
+            // 更新时间抽位置，如果是 graphic，则忽略动作。
             if (synched) {
                 // TODO: this would be far more ideal if the _synchOffset was
                 // somehow provided by the parent, so that reparenting wouldn't
@@ -375,11 +347,11 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         },
 
         /**
-         * Adds a child to the timeline, and sets it up as a managed child.
+         * 一个孩子添加到时间线，并将其设置为一个托管的孩子。
          * 
          * @method _addManagedChild
          * @private
-         */
+         **/
         _addManagedChild: function(child, offset) {
             if (child._off) {
                 return;
@@ -399,8 +371,8 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
     });
 
     /**
-     * Read-only. The MovieClip will advance independently of its parent, even
-     * if its parent is paused. This is the default mode.
+     * 只读。MovieClip 相对于其父亲是独立的，即使它父亲是暂停的。
+     * 这是默认的 mode。
      * 
      * @property INDEPENDENT
      * @static
@@ -410,8 +382,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
     MovieClip.INDEPENDENT = "independent";
 
     /**
-     * Read-only. The MovieClip will only display a single frame (as determined
-     * by the startPosition property).
+     * 只读。MovieClip 将只播放一个独立的 frame（根据 startPosition 属性决定的）。
      * 
      * @property SINGLE_FRAME
      * @static
@@ -421,8 +392,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
     MovieClip.SINGLE_FRAME = "single";
 
     /**
-     * Read-only. The MovieClip will be advanced only when it's parent advances
-     * and will be synched to the position of the parent MovieClip.
+     * 只读。每当 MovieClip 的父亲前进，它才会前进，它将与它父亲同步。
      * 
      * @property SYNCHED
      * @static
@@ -432,9 +402,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
     MovieClip.SYNCHED = "synched";
 
     /**
-     * This plugin works with <a href="http://tweenjs.com"
-     * target="_blank">TweenJS</a> to prevent the startPosition property from
-     * tweening.
+     * 这个插件与 <a href="http://tweenjs.com" target="_blank"> TweenJS </a> 防止 StartPosition 属性补间动画。
      * 
      * @private
      * @class MovieClipPlugin
