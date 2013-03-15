@@ -3,7 +3,7 @@
  * 这样可以更容易地在 Canvas 上处理 2D 图像。
  * EaselJS 提供一个关于 HTML5 Canvas 处理丰富和交互图像的解决方案。
  *
- * <h4>开始</h4>
+ * <h4>开始</h4> 
  * 开始使用 Easel，首先创建一个包含 CANVAS 元素的 {{#crossLink "Stage"}}{{/crossLink}}，以及添加一个
  * {{#crossLink "DisplayObject"}}{{/crossLink}} 实例作为其孩子。EaselJS 支持：
  * <ul>
