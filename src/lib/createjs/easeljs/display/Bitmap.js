@@ -14,7 +14,7 @@
  *      <li>作为容器装载其他 DisplayObject 使用 {{#crossLink "Container"}}{{/crossLink}}</li>
  *      <li>控制 HTML 元素使用 {{#crossLink "DOMElement"}}{{/crossLink}}</li>
  * </ul>
- *
+ * 
  * 所有的 display object 都可以作为儿子添加到 stage 里面，或直接绘制到 canvas 上。
  *
  * <b>用户交互</b><br/>
