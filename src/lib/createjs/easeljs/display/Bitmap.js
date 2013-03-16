@@ -13,10 +13,10 @@
  *      <li>简单 text 实例 {{#crossLink "Text"}}{{/crossLink}}</li>
  *      <li>作为容器装载其他 DisplayObject 使用 {{#crossLink "Container"}}{{/crossLink}}</li>
  *      <li>控制 HTML 元素使用 {{#crossLink "DOMElement"}}{{/crossLink}}</li>
- * </ul>
+ * </ul> 
  * 
  * 所有的 display object 都可以作为儿子添加到 stage 里面，或直接绘制到 canvas 上。
- *
+ * 
  * <b>用户交互</b><br/>
  * 所有 stage 里面的 display object （除了 DOM 元素），当用户有交互的时候（如鼠标点击或触碰），都将调度事件。
  * EaselJS 支持 hover, press, 和 release 事件，也有 easy-to-use drag-and-drop 模式。
