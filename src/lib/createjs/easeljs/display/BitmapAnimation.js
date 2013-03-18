@@ -5,7 +5,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
     /**
      * 图片精灵的帧或帧序列（即动画）。一个图片精灵就是一系列的图片（通常是动画帧）
      * 组合到一张大图片中（或许多张图片）。例如，一个动画由 8 张 100x100 的图片组成，就会组合成一个 400 x 200 的图片精灵。
-     * 你可以单独将一个帧作为动画播放，也可以讲多个动画组合在一起播放。
+     * 你可以单独将一个帧作为动画播放，也可以将多个动画组合在一起播放。
      *
      * 看 {{#crossLink "SpriteSheet"}}{{/crossLink}} 类获取更多关于构建帧和动画的信息。
      *
@@ -17,7 +17,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
      * @extends DisplayObject
      * @constructor
      * @param {SpriteSheet} spriteSheet 待播放的SpriteSheet实例。
-     * 这里包括 image 资源，帧尺寸，和帧数据。看 {{#crossLink "SpriteSheet"}}{{/crossLink}} 获取更多信息。
+     * 这里包括图片资源，帧尺寸，和帧数据。看 {{#crossLink "SpriteSheet"}}{{/crossLink}} 获取更多信息。
      */
     var BitmapAnimation = DisplayObject.extend({
         initialize: function(spriteSheet) {
@@ -31,12 +31,12 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
          * @event animationend
          * @param {Object} target 监听该事件的目标对象。
          * @param {String} type 事件类型。
-         * @param {String} name 刚播放完的动画名称。
-         * @param {String} next 下一个要播放的动画，或 null，如果动画在循环，则这个值和 name 属性的值相同。
+         * @param {String} name 刚播放完的动画的名称。
+         * @param {String} next 下一个要播放的动画，或为 null，如果动画在循环，则这个值和 name 属性的值相同。
          */
 
         /**
-         * 当 draw 方法在执行时，将要被渲染的 frame。
+         * 当 draw 方法在执行时，将要被渲染的帧。
          * 注：有一些 SpriteSheet 数据是不按顺序前进的。
          * 只读。
          *
@@ -56,7 +56,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         currentAnimation: null, // 只读
 
         /**
-         * 阻止动画前进。例如，你可以创建一个关于 icons 的图片精灵，然后设置 paused 属性 为 true，
+         * 阻止动画前进。例如，你可以创建一个图片精灵，然后设置 paused 属性 为 true，
          * 而通过改变 <code>currentFrame</code> 的值来达到播放效果。
          *
          * @property paused
@@ -85,7 +85,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
 
         /**
          * 当使用多个交替的动画的时候，这个能让你决定哪个 tick 才是播放头。
-         * 举例，你可以创建 2 个 BitmapAnimation，大家的频率都是 2，但其中有一个的 offset 属性设置为 1。两个实例都会在每一
+         * 举例，你可以创建 2 个 BitmapAnimation 对象，大家的频率都是 2，但其中有一个的 offset 属性设置为 1。两个实例都会在每一
          * 个 tick 往前移，但它们会交替向前。（属性所影响到的地方就是，其中一个将会在奇数 tick 的时候前进，另外一个则会在偶数 tick 的时候前进）。
          *
          * @property offset
@@ -120,12 +120,12 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         _animation: null,
 
         /**
-         * 通过返回 true 或 false 去表示该 display object 画在 canvas 上时，是否被显示。
-         * 并不是通过该 display object 是否在 stage 可视范围内进行判断的。
+         * 通过返回 true 或 false 去表示该显示对象画在 Canvas 上时，是否被显示。
+         * 并不是通过该显示对象是否在 Stage 可视范围内进行判断的。
          * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          *
          * @method isVisible
-         * @return {Boolean} Boolean 表示该 display object 画在 canvas 上时，是否被显示。
+         * @return {Boolean} Boolean 表示该显示对象画在 Canvas 上时，是否被显示。
          */
         isVisible: function() {
             var hasContent = this.cacheCanvas || (this.spriteSheet.complete && this.currentFrame >= 0);
@@ -133,7 +133,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * 绘制 display object 到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
+         * 绘制显示对象到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
          * 当绘制动作正在处理，将返回 true （用于覆盖功能）。
          * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          *
@@ -157,7 +157,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * 开始播放正在暂停的动画。
+         * 播放正在暂停的动画。
          * 当调用 {{#crossLink "BitmapAnimation/stop"}}{{/crossLink}} 或 {{#crossLink "BitmapAnimation/gotoAndStop"}}{{/crossLink}} 时，
          * BitmapAnimation 就会暂停。
          * 单格动画将保持不变。
@@ -171,7 +171,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         /**
          * 停止正在播放的动画。
          * 当调用 {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}} 时，动画就会播放。
-         * 注： 当调用 {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}} 或 {{#crossLink "BitmapAnimation/play"}}{{/crossLink}} 的时候会恢复播放。
+         * 注：当调用 {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}} 或 {{#crossLink "BitmapAnimation/play"}}{{/crossLink}} 的时候会恢复播放。
          *
          * @method stop
          */
@@ -180,10 +180,10 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * 设置 paused 属性为 false 以及播放特定的动画，或跳到特定的帧或帧号码。
+         * 设置 paused 属性为 false 以及跳到特定的帧或帧号，播放特定的动画。
          *
          * @method gotoAndPlay
-         * @param {String|Number} frameOrAnimation 将要播放的帧号码或动画名称。
+         * @param {String|Number} frameOrAnimation 将要播放的帧号或动画名称。
          */
         gotoAndPlay: function(frameOrAnimation) {
             this.paused = false;
@@ -191,10 +191,10 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * 设置 paused 属性为 true 以及停止播放特定的动画，或跳到特定的帧或帧号码。
+         * 设置 paused 属性为 true 以及跳到特定的帧或帧号，停止播放特定的动画。
          *
          * @method gotoAndStop
-         * @param {String|Number} frameOrAnimation 将要到那里停止播放的帧号码或动画名称。
+         * @param {String|Number} frameOrAnimation 将要到那里停止播放的帧号或动画名称。
          */
         gotoAndStop: function(frameOrAnimation) {
             this.paused = true;
@@ -216,20 +216,20 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * 返回一个描述当前帧相对于原点的 {{#crossLink "Rectangle"}}{{/crossLink}} 实例。
+         * 返回一个描述当前帧相对于帧原点的 {{#crossLink "Rectangle"}}{{/crossLink}} 实例。
          * 举例，一个 90 x 70 的帧，<code>regX=50</code> 和 <code>regY=40</code> 将会返回 [x=-50, y=-40, width=90, height=70]
          *
          * 也可以看 SpriteSheet 的 {{#crossLink "SpriteSheet/getFrameBounds"}}{{/crossLink}} 方法获取更多信息。
          *
          * @method getBounds
-         * @return {Rectangle} 一个 Rectangle 实例. 当 frame 不存在或图片没有加载完全的时候，返回 null。
+         * @return {Rectangle} 一个 Rectangle 实例. 当帧不存在或图片没有加载完全的时候，返回 null。
          */
         getBounds: function() {
             return this.spriteSheet.getFrameBounds(this.currentFrame);
         },
 
         /**
-         * 返回克隆后的 BitmapAnimation 实。注：克隆出来的 BitmapAnimation 实例与原来的 BitmapAnimation 共用一个 SpriteSheet。
+         * 返回克隆后的 BitmapAnimation 实例。注：克隆出来的 BitmapAnimation 实例与原来的 BitmapAnimation 共用一个 SpriteSheet。
          *
          * @method clone
          * @return {BitmapAnimation} 克隆后的 BitmapAnimation 实例。
@@ -265,7 +265,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * 标准化的当前帧，推进动画和调度的适当的回调。
+         * 标准化的当前帧，推进动画和调度适当的回调。
          *
          * @protected
          * @method _normalizeCurrentFrame
@@ -280,7 +280,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
                 if (this.currentAnimationFrame >= l) {
                     var next = animation.next;
                     if (this._dispatchAnimationEnd(animation, frame, paused, next, l - 1)) {
-                        // do nothing, something changed in the event stack.
+                        // 当事件栈改变的时候做出的相关处理。
                     } else if (next) {
                         this._goto(next);
                     } else {
@@ -302,9 +302,8 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * 调用 “animationend” 事件。当动画发生了改变的时候返回 true。
-         * (例如，调用 {{#crossLink "BitmapAnimation/stop"}}{{/crossLink}},
-         * {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}}等等.)
+         * 调用 animationend 事件。当动画发生了改变的时候返回 true。
+         * (例如，调用 {{#crossLink "BitmapAnimation/stop"}}{{/crossLink}}, {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}}等等.)
          *
          * @property _dispatchAnimationEnd
          * @private

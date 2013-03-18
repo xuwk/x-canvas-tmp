@@ -1,20 +1,17 @@
 /**
- * The TweenJS Javascript library provides a simple but powerful tweening interface. It supports tweening of both
- * numeric object properties & CSS style properties, and allows you to chain tweens and actions together to create
- * complex sequences.
  *
- * <h4>Simple Tween</h4>
- * This tween will tween the target's alpha property from 0 to 1 for 1s then call the <code>onComplete</code> function.
+ * TweenJs 库提供了一个简单但非常有用的补间接口。它同时支持数据对象属性和 CSS 样式属性，同时支持你把 action 链接在一起。
  *
+ * <h4>简单 Tween</h4>
+ * 这个 tween 将会对目标对象的透明度进行补间，该补间是在 1 秒内将透明度从 0 变到 1，然后调用 <code>onComplete</code> 回调。
  *     target.alpha = 0;
  *     Tween.get(target).to({alpha:1}, 1000).call(onComplete);
  *     function onComplete() {
  *         // Tween complete
  *     }
  *
- * <h4>Chainable Tween</h4>
- * This tween will wait 0.5s, tween the target's alpha property to 0 over 1s, set it's visible to false, then call the
- * <code>onComplete</code> function.
+ * <h4>可链接的 Tween</h4>
+ * 这个补间首先等待 0.5 秒，然后目标对象从的透明度从在 1 秒内变到 0，再设置 visible 属性为 false，然后调用 onComplete 回调。
  *
  *     target.alpha = 1;
  *     Tween.get(target).wait(500).to({alpha:0, visible:false}, 1000).call(onComplete);

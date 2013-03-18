@@ -247,7 +247,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         result: null,
 
         /**
-         * 当加载完成的时候触发该回调。这个跟着 HTML 标签命名。
+         * 当加载完成的时候触发该回调。这个紧接 HTML 标签命名。
          * 
          * @property onload
          * @type {Method}
@@ -398,7 +398,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         dynamicsCompressorNode: null,
 
         /**
-         * 一个用于控制主音量GainNode。链接到 <code>dynamicsCompressorNode</code>。
+         * 一个用于控制主音量 GainNode。链接到 <code>dynamicsCompressorNode</code>。
          * 
          * @property gainNode
          * @type {AudioGainNode}
@@ -406,7 +406,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         gainNode: null,
 
         /** 
-         * 一个内部使用的 ArrayBuffers 哈希集合，以 资源的 URI 作为索引。这个用于防止多次加载或解析音频。
+         * 一个内部使用的 ArrayBuffers 哈希集合，以资源的 URI 作为索引。这个用于防止多次加载或解析音频。
          * 如果文件已经开始加载，<code>arrayBuffers[src]</code> 会设置为 true。一旦加载完成，则设置一个加载完成的 ArrayBuffer 实例。
          * 
          * @property arrayBuffers
@@ -447,7 +447,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
          * 检查是否已经对指定资源完成预加载，如果资源已经定义 （但不 === true），那么就加载完成了。
          * 
          * @method isPreloadComplete
-         * @param {String} src The sound URI to load.
+         * @param {String} src 要加载音频的 URI。
          * @return {Boolean}
          */
         isPreloadComplete: function(src) {
@@ -458,7 +458,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
          * 从预加载列表里移除一个资源。注意这个不会停止预加载。
          * 
          * @method removeFromPreload
-         * @param {String} src The sound URI to unload.
+         * @param {String} src 要加载音频的 URI。
          * @return {Boolean}
          */
         removeFromPreload: function(src) {
@@ -477,7 +477,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
         },
 
         /**
-         * 处理内部预载完成。
+         * 处理内部预加载完成。
          * 
          * @method handlePreloadComplete
          * @private
@@ -531,7 +531,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
     WebAudioPlugin.capabilities = null;
 
     /**
-     * 判断插件能否在当期那的 浏览器/操作系统 使用。
+     * 判断插件能否在当前的 浏览器/操作系统 使用。
      * 
      * @method isSupported
      * @return {Boolean} 如果插件能被初始化，返回 true。

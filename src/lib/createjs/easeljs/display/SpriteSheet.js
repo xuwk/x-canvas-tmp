@@ -11,7 +11,7 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
      * 3个传递到 SpriteSheet 的数据定义了 3 个比较重要的信息:<ol>
      *    <li> 将要用到的图片 </li>
      *    <li> 帧定义，动画每一帧对应的图片位置。这些数据可以通过 2 种方式表示:
-     *    作为一个规则的网格的顺序，同等大小的帧，或单独定义的，可变大小的帧，排列不规则的（非顺序）。</li>
+     *             作为一个规则的网格的顺序，同等大小的帧，或单独定义的，可变大小的帧，排列不规则的（非顺序）。</li>
      *    <li> 同样，动画可以在两个方面表示：作为一系列连续画幅，所定义的开始和结束帧[0,3]，或者作为一个帧列表[0,1,2,3]。</li>
      * </OL>
      *
@@ -27,7 +27,7 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
      *
      *          // 定义 FRAMES:
      *
-     *          // 一种简单定义帧的方法，只需要定义真的 size，因为帧是连续的：
+     *          // 一种简单定义帧的方法，只需要定义真的大小，因为帧是连续的：
      *          // 定义帧的 width 或 height 和 可选项（包括 count regx regy）。 
      *          // 如果 count 省略了，那么将会根据图片的尺寸自动计算该值。
      *          frames: {width:64, height:64, count:20, regX: 32, regY:64},
@@ -186,8 +186,8 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
 
         /**
          * 当所有图片加载完时触发该事件。
-         * 注：这个事件只能在初始化 sprite sheet 的时候没完全加载完图片时能绑定。
-         * 所以你必须再监听这个事件之前检查一下 sprite sheet 的 complete 属性。
+         * 注：这个事件只能在初始化 spritesheet 的时候没完全加载完图片时能绑定。
+         * 所以你必须在监听这个事件之前检查一下 sprite sheet 的 complete 属性。
          * Ex.
          * <pre><code>var sheet = new SpriteSheet(data);
          * if (!sheet.complete) {
@@ -271,8 +271,8 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
          * 返回指定动画的帧的总数，当 animation 参数省略时，返回所有 srpite sheet 的帧的总数。
          * 
          * @method getNumFrames
-         * @param {String} animation 指定要计算该 animation 的 frames 的总数。
-         * @return {Number} 指定动画的 frames 的总数，当 animation 参数省略时，返回所有 srpite sheet 的 frame 的总数。
+         * @param {String} animation 指定要计算该动画的帧的总数。
+         * @return {Number} 指定动画的帧的总数，当动画参数省略时，返回所有 srpite sheet 的帧的总数。
          */
         getNumFrames: function(animation) {
             if (animation == null) {
@@ -319,7 +319,7 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
          * 以及指定帧对应在图片内的矩形。
          * 
          * @method getFrame
-         * @param {Number} frameIndex 帧的索引号。
+         * @param {Number} frameIndex 帧的下标号。
          * @return {Object} 一个对象，该对象包括图片资源和指定帧对应的矩形。
          **/
         getFrame: function(frameIndex) {
@@ -335,7 +335,7 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
          * 
          * @method getFrameBounds
          * @param {Number} frameIndex 帧的索引号。
-         * @return {Rectangle} 一个指定帧的范围的 Rectangle 实例，当 frame 不存在或图片没有加载完全的时候，返回 null。
+         * @return {Rectangle} 一个指定帧的范围的 Rectangle 实例，当帧不存在或图片没有加载完全的时候，返回 null。
          **/
         getFrameBounds: function(frameIndex) {
             var frame = this.getFrame(frameIndex);
