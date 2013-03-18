@@ -49,14 +49,14 @@ xc.module.define("xc.createjs.SamplePlugin", function(exports) {
     };
 
     /**
-     * 当该插件添加到 tween 的属性时执行，(ie. 一个新的 "to" 行为添加到 tween)。
+     * 当该插件添加到 tween 的属性时执行，(例如： 一个新的 "to" 行为添加到 tween)。
      * @method init
      * @param {Tween} tween 相关的 tween 实例。
      * @param {String} prop tween 正在执行的属性名。
-     * @param {any} startValue step 开端的属性值。如果这个 step 是第一个 step ，
-     *                         则该值将等于初始化值。如果不是第一个 setp，则该值将会等于上一个 step 对应的该属性的值。
-     * @param {Object} injectProps 一个普通对象，该对象可以让当前插件展开其他可以在这个 step 里 update 的属性。
-     * @param {any} endValue 该 step 结尾时对应 tween 属性的值。
+     * @param {any} startValue 步骤开端的属性值。如果这个步骤是第一个步骤，
+     *                         则该值将等于初始化值。如果不是第一个步骤，则该值将会等于上一个步骤对应的该属性的值。
+     * @param {Object} injectProps 一个普通对象，该对象可以让当前插件展开其他可以在这个步骤里 update 的属性。
+     * @param {any} endValue 该步骤结尾时对应 tween 属性的值。
      * @static
      **/
     SamplePlugin.step = function(tween, prop, startValue, endValue, injectProps) {
@@ -69,10 +69,10 @@ xc.module.define("xc.createjs.SamplePlugin", function(exports) {
      * @param {Tween} tween 相关的 tween 实例。
      * @param {String} prop tween 正在执行的属性名。
      * @param {any} value tween 当前属性的值, 由 TweenJS 计算。
-     * @param {Object} 一个关于当前 step 的初始值哈希集合。你可以通过 startValues[prop] 获取当前属性的初始值。
+     * @param {Object} 一个关于当前步骤的初始值哈希集合。你可以通过 startValues[prop] 获取当前属性的初始值。
      * @param {Object} endValues  一个关于当前 step 结束后的所有属性的值的哈希集合。
-     * @param {Number} ratio 一个指出当前 step eased 进度的值。这个值一般在 0 到 1 之间，即使有些 eases 会产生在 0 到 1 之外的值。
-     * @param {Boolean} wait 指出当前的 setp 是不是一个 “wait” step。
+     * @param {Number} ratio 一个指出当前步骤的 eased 进度的值。这个值一般在 0 到 1 之间，即使有些 eases 会产生在 0 到 1 之外的值。
+     * @param {Boolean} wait 指出当前的步骤是不是一个 “wait” 步骤。
      * @param {Boolean} end 指出 tween 是否结束。
      * @return {any} 返回一些能分配到目标属性上的值。举例，返回 <code>Math.round(value)</code> 会分配一个正整数到目标属性。
      *               返回 Tween.IGNORE 将会禁止目标属性分配到值。

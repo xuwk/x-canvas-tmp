@@ -23,8 +23,8 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
 
     /**
     *
-    * Graphics 类暴露了一系列用于生成和绘制矢量图的 API 的指令。
-    * 注：Graphics 的使用不依赖于什么框架，你可以直接在 {{#crossLink "DisplayObject/draw"}}{{/crossLink}} 中使用，也可以通过 
+    * Graphics 类提供了一系列用于生成和绘制矢量图的 API 的指令。 
+    * 注：Graphics 的使用可以不依赖于框架直接在 draw 中使用，也可以通过 Shape 对象在画架显示列表环境中去绘制矢量图形。cs 的使用不依赖于什么框架，你可以直接在 {{#crossLink "DisplayObject/draw"}}{{/crossLink}} 中使用，也可以通过 
     * {{#crossLink "Shape"}}{{/crossLink}} 对象去调用。
     *
     * <h4>例子</h4>
@@ -49,8 +49,8 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
 
     * <h4>tiny API</h4>
     *
-    * Graphics 类同时提供了一套 “tiny API”，这些 API 把原来 Graphics 类的画图方法缩短成只有一到两个字母的方法。
-    * 这些方法有助于构建简洁的指令。与此同时，Toolkit for CreateJS 也通过这些方法生成可读代码。所有的 “tiny methods” 都
+    * Graphics 类同时提供了一套短方法，这些 API 把原来 Graphics 类的画图方法缩短成只有一到两个字母的方法。
+    * 这些方法有助于构建简洁的指令。与此同时，Toolkit for CreateJS 也通过这些方法生成可读代码。所有的短方法都
     * 是 protected 的，所以你可以在文档里面查阅。
     *
     * <table>
@@ -83,7 +83,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
     *     <td>p</td><td>{{#crossLink "Graphics/decodePath"}}{{/crossLink}} </td></tr>
     * </table>
     *
-    * 这是上面例子转换为 tiny API 后的代码。
+    * 这是上面例子转换为短方法后的代码。
     *
     *      myGraphics.s("#F00").f("#00F").r(20, 20, 100, 50).draw(myContext2D);
     *
@@ -173,7 +173,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
         },
 
         /**
-         * 绘制 display object 到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
+         * 绘制显示对象到指定的上下文，忽略 visible, alpha, shadow, 和 transform 属性。
          * 当绘制动作正在处理，将返回 true （用于覆盖功能）。
          * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          * @method draw
@@ -334,7 +334,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
         },
 
         /**
-         * 关闭当前的路径，有效地在当前描绘点和对上那个fill或stroke方法设置的描绘点之间画一条线。
+         * 关闭当前的路径，有效地在当前描绘点和对上那个 fill 或 stroke 方法设置的描绘点之间画一条线。
          * 
          * @method closePath
          * @return {Graphics} 调用该方法的 Graphics（用于把方法链接在一起）。
@@ -348,7 +348,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
         },
 
         /**
-         * 清空所有画图指令，有效的重置Graphics实例。
+         * 清空所有画图指令，有效的重置 Graphics 实例。
          * @method clear
          * @return {Graphics} 调用该方法的 Graphics（用于把方法链接在一起）。
          */
@@ -378,7 +378,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
         /**
          * 
          * 开始从 (x0, y0) 到 (x1, y1) 进行线性渐变画线。这会结束当前子路径。
-         * 例如，下面的代码定义了一条从黑到摆的垂直线性渐变，从 20px 到 120px 的方形。
+         * 例如，下面的代码定义了一条从黑到白的垂直线性渐变，从 20px 到 120px 的方形。
          *      myGraphics.beginLinearGradientFill(["#000","#FFF"], [0, 1], 0, 20, 0, 120).drawRect(20, 20, 120, 120);
          *
          * @method beginLinearGradientFill
@@ -542,7 +542,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
         },
 
         /**
-         * 开始径向梯度 stroke. 这会结束当前子路径. 举例, 以下代码定义了从红到蓝的径向梯度以 (100, 100) 为中心，50为半径的矩形。
+         * 开始径向梯度 stroke. 这会结束当前子路径. 举例, 以下代码定义了从红到蓝的径向梯度以 (100, 100) 为中心，50 为半径的矩形。
          *
          *      myGraphics.setStrokeStyle(10)
          *          .beginRadialGradientStroke(["#F00","#00F"], [0, 1], 100, 100, 0, 100, 100, 50)
@@ -572,11 +572,11 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
         },
 
         /**
-         * 利用指定的图片填充内容.这回结束当前子路径。区别于 bitmap fills，strokes 目前不支持矩阵参数，这是由于 canvas API 的限制。
+         * 利用指定的图片填充内容.这会结束当前子路径。区别于 bitmap fills，strokes 目前不支持矩阵参数，这是由于 canvas API 的限制。
          * @method beginBitmapStroke
          * @param {HTMLImageElement | HTMLCanvasElement | HTMLVideoElement} image Image，Canvas 或 Vedio。
          * @param {String} [repetition=repeat] 可选项。 说明图片是否需要 repeat 去填充区域，可以使 "repeat", "repeat-x", "repeat-y",
-           "no-repeat", 默认值是"repeat"。
+           "no-repeat", 默认值是 "repeat"。
          * @return {Graphics} 调用该方法的 Graphics（用于把方法链接在一起）。
          **/
         beginBitmapStroke: function(image, repetition) {
@@ -590,7 +590,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
         },
 
         /**
-         * 结束当前子路径，以及重新开一条新的没有 stroke 路径。功能与<code>beginStroke(null)</ code>相同。
+         * 结束当前子路径，以及重新开一条新的没有 stroke 路径。功能与 <code>beginStroke(null)</ code> 相同。
          * @method endStroke
          * @return {Graphics} 调用该方法的 Graphics（用于把方法链接在一起）。
          **/
@@ -755,9 +755,9 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
         /**
          * 解码一系列编码的路径字符串，使其加入 instructions 指令集。
          * 这种格式是不可读的，是通过工具去解读的。
-         * 格式使用base64编码字符集，每个字符代表6位，定义了一系列的绘制命令。
+         * 格式使用 base64 编码字符集，每个字符代表6位，定义了一系列的绘制命令。
          *
-         * 每一个 command 由单一个 “header” 后接 x 和 y 的位置。从左到右读 “header”，1 到 3 字节指定了操作类型(0-moveTo, 1-lineTo, 2-quadraticCurveTo, 3-bezierCurveTo, 4-closePath, 5-7 unused)。
+         * 每一个 Command 由单一个 “header” 后接 x 和 y 的位置。从左到右读 “header”，1 到 3 字节指定了操作类型(0-moveTo, 1-lineTo, 2-quadraticCurveTo, 3-bezierCurveTo, 4-closePath, 5-7 unused)。
          * 第 4 个字节表示，位置值是使用 12 字节的，还是使用 18 字节的。第 5 和第 6 字节目前还没用到。
          *
          * 紧接着 header 是一系列的 0 (closePath), 2 (moveTo, lineTo), 4 (quadraticCurveTo), or 6 (bezierCurveTo) 参数。
@@ -892,7 +892,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
         },
 
         /**
-         * 用于设置属性值的指令
+         * 用于设置属性值的指令。
          * @method _setProp
          * @param {String} name
          * @param {String} value
@@ -1034,11 +1034,11 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
     };
 
     /**
-     * {{#crossLink "Graphics/setStrokeStyle"}}{{/crossLink}} caps 属性的数字列表。这个仅仅是提供给 tiny API。
+     * {{#crossLink "Graphics/setStrokeStyle"}}{{/crossLink}} caps 属性的数字列表。这个仅仅是提供给短方法。
      * 0：butt，１：round，2：square
      * 例如, 把 caps 设置成 "square":
      *
-     *      myGraphics.ss(16, 2);
+     *     myGraphics.ss(16, 2);
      * @property STROKE_CAPS_MAP
      * @static
      * @final
@@ -1047,10 +1047,9 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
     Graphics.STROKE_CAPS_MAP = ["butt", "round", "square"];
 
     /**
-     * {{#crossLink "Graphics/setStrokeStyle"}}{{/crossLink}} 的 joints 属性列表。这个仅仅是提供给 tiny API。
+     * {{#crossLink "Graphics/setStrokeStyle"}}{{/crossLink}} 的 joints 属性列表。这个仅仅是提供给短方法。
      * 0：miter，１：round，2：bevel
      *
-     * For example, to set the line joints to "bevel":
      * 例如，把 joints 属性设置为 "bevel"：
      *      myGraphics.ss(16, 0, 2);
      * @property STROKE_JOINTS_MAP

@@ -117,8 +117,8 @@ xc.module.define("xc.createjs.Text", function(exports) {
         lineWidth: null,
 
         /**
-         * 通过返回 true 或 false 去表示该 display object 画在 canvas 上时，是否被显示
-         * 这里并不是通过该 display object 是否显示在 stage 内进行判断的。
+         * 通过返回 true 或 false 去表示该显示对象画在 Canvas 上时，是否被显示
+         * 这里并不是通过该显示对象是否显示在 Stage 内进行判断的。
          * 注：这种方法主要是供内部使用，虽然它可能有高级用法。
          * 
          * @method isVisible
@@ -130,7 +130,7 @@ xc.module.define("xc.createjs.Text", function(exports) {
         },
 
         /**
-         * 绘制 display object 到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
+         * 绘制显示对象到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
          * 当绘制动作正在处理，将返回 true （用于覆盖功能）。
          * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          * 

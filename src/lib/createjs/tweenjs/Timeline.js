@@ -7,7 +7,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
      * @class Timeline
      * @constructor
      * @param tweens 一组将会被添加到 timeline 的 Tween。看 addTween 获取更多信息。
-     * @param labels 一个对象，该对象标记用于使用 gotoAndPlay/Stop 的标签位置。 看 {{#crossLink "Timeline/setLabels"}}{{/crossLink}} 获取更多信息。
+     * @param labels 一个对象，该对象记录用于使用 gotoAndPlay/Stop 的标签。 看 {{#crossLink "Timeline/setLabels"}}{{/crossLink}} 获取更多信息。
      * 应用到这个 tween 实例的配置属性 (ex. {loop:true})。所有属性的默认值都是 false。支持以下属性：<UL>
      *    <LI> loop: 设置这个 tween 的 loop 属性。</LI>
      *    <LI> useTicks: 利用 tick 替代毫秒充当所有周期</LI>
@@ -41,7 +41,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         },
 
         /**
-         * 若为 true，能使得这个 timeline 当 global pause 的时候继续运行。
+         * 若为 true，能使得这个 timeline 当全局暂停的时候继续运行。
          *
          * @property ignoreGlobalPause
          * @type Boolean
@@ -58,7 +58,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         duration: 0,
 
         /**
-         * 如果为 true，这个 timeline 将会循环一旦它去到最后端。可以通过 props 参数设置该属性。
+         * 如果为 true，这个 timeline 一旦去到最后端将会循环。可以通过 props 参数设置该属性。
          *
          * @property loop
          * @type Boolean
@@ -187,7 +187,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         },
 
         /** 
-         * 添加一个标签，用于标记使用 gotoAndPlay/Stop 的位置。
+         * 添加一个标签，该标签用于 gotoAndPlay/Stop。
          * 
          * @method addLabel
          * @param label label名。
@@ -198,10 +198,10 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
         },
 
         /** 
-         * 定义一个标签对象，标记用于使用 gotoAndPlay/Stop 的位置。覆盖前面所有设置了的 labels。
+         * 定义一个标签对象，该对象记录用于使用 gotoAndPlay/Stop 的标签。覆盖前面所有设置了的标签。
          * 
          * @method addLabel
-         * @param o 一个对象，该对象定义了时间以 ms 做单位（或当 useTicks 为 true 时候，以 tick 为单位）处的标签，用于使用 gotoAndPlay/Stop。
+         * @param o 一个对象，该对象定义了时间以毫秒做单位（或当 useTicks 为 true 时候，以 tick 为单位）处的标签，用于使用 gotoAndPlay/Stop。
          **/
         setLabels: function(o) {
             this._labels = o ? o : {};
@@ -235,7 +235,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
          * @method setPosition
          * @param value 以毫秒为单位的位置（或当 useTicks 为 true 时候，以 tick 为单位）
          * @param actionsMode 可选项参数，指出如何处理 action。 看 Tween.setPosition 获取更多信息。
-         * @return Boolean 如果 timeline 完成，返回 true (ie. 整个 tween 都运行完了 & loop 为 false)。
+         * @return Boolean 如果 timeline 完成，返回 true (例如：整个 tween 都运行完了 & loop 为 false)。
          **/
         setPosition: function(value, actionsMode) {
             if (value < 0) {
@@ -247,12 +247,12 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
                 return end;
             }
             this._prevPosition = value;
-            this.position = this._prevPos = t; // in case an action changes the current frame.
+            this.position = this._prevPos = t; // 如果一个 action 改变当前帧
             for ( var i = 0, l = this._tweens.length; i < l; i++) {
                 this._tweens[i].setPosition(t, actionsMode);
                 if (t != this._prevPos) {
                     return false;
-                } // an action changed this timeline's position.
+                } // 一个改变 timeline 当前位置的 action
             }
             if (end) {
                 this.setPaused(true);
@@ -274,7 +274,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
 
         /** 
          * 重新计算 timeline 的周期数。
-         * 周期数会在每当添加或删除 tween 的时候自动更新的，这个方法主要用于当你添加了一个 tween 之后对他进行修改。
+         * 周期数会在每当添加或删除 tween 的时候自动更新的，这个方法主要用于当你添加了一个 tween 之后再对其进行修改。
          * 
          * @method updateDuration
          **/
@@ -290,10 +290,10 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
 
         /** 
          * 根据指定的毫秒数（或者是 tick 数，如果 useTicks 为 true）为周期，推进该 timeline。
-         * 这个正常会在 Tween 引擎中自动执行（通过 Tween.tick）。但同时也暴露出来所谓推进 timeline 的方法。
+         * 这个正常会在 Tween 引擎中自动执行（通过 Tween.tick）。但同时也暴露出来作为推进 timeline 的方法。
          * 
          * @method tick
-         * @param delta The time to advance in milliseconds (or ticks if useTicks is true).
+         * @param delta delta 前进一次相隔的毫秒数（如果 userTicks 为 true 的话，则为 tick 数量）
          **/
         tick: function(delta) {
             this.setPosition(this._prevPosition + delta);

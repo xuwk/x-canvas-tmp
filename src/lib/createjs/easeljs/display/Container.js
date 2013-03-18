@@ -3,13 +3,12 @@ xc.module.define("xc.createjs.Container", function(exports) {
     var DisplayObject = xc.module.require("xc.createjs.DisplayObject");
 
     /**
-     * Container 是一个嵌套展示列表，能让你组合多个 display 元素进行展示。例如你可以组合手臂，躯干和头3个实例，然后在把他们都放到 Person Container 里面。
-     * 然后把他们看成一个整体，但它们仍然可以相对于各自的相对位置进行移动。Container 的孩子的 <code>transform</code> 和 <code>alpha</code> 属性
-     * 将关联到他们的父亲 Container。
-     *
-     * 例如，一个 {{#crossLink "Shape"}}{{/crossLink}}，x=100, alpha=0.5, 在 Container 的 <code>x=50</code> 的位置和 <code>alpha=0.7</code>
-     * 相当于 canvas 的 <code>x=150</code> 和 <code>alpha=0.35</code>。
-     * 容器有一定的开销，所以你不应该创建一个容器来仅仅保存一个孩子。
+     * Container 是一个嵌套展示列表，能将多个显示元素进行组合展示。
+     * 例如可以用手臂，腿，躯干和头等Bitmap实例一起组合成一个 Person Container，Person Container 作为一个整体进行动作变换，
+     * 同时各Bitmap实例仍然可以相对于各自的相对位置进行移动。
+     * Container 中子元素的 <code>transform</code> 和 <code>alpha</code> 属性 将关系到他们的父 Container的对应属性。
+     * 例如，一个 {{#crossLink "Shape"}}{{/crossLink}}，x=100, alpha=0.5, 在 Container 的 x=50 的位置和 alpha=0.7 相当于 canvas 的 <code>x=50</code> 和 <code>alpha=0.7</code>。
+     * 容器需要有一定的冗余，通常不会创建只能容纳一个子元素的 Container。
      *
      * <h4>例子</h4>
      *      var container = new createjs.Container();
@@ -27,7 +26,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 在展示列表中的 Children 数组，你将经常用到管理这些 Children 的方法。
+         * 在展示列表中的子对象数组，你将经常用到管理这些子对象的方法。
          * 例如 {{#crossLink "Container/addChild"}}{{/crossLink}},
          * {{#crossLink "Container/removeChild"}}{{/crossLink}}, {{#crossLink "Container/swapChildren"}}{{/crossLink}}等等,
          * 比起直接操作它，利用一些高级的方法去操作它会更好。
@@ -39,12 +38,12 @@ xc.module.define("xc.createjs.Container", function(exports) {
         children: null,
 
         /**
-         * 通过返回 true 或 false 去表示该 display object 画在 canvas 上时，是否被显示。
-         * 并不是通过该 display object 是否在 stage 可视范围内进行判断的。
+         * 通过返回 true 或 false 去表示该显示对象画在 Canvas 上时，是否被显示。
+         * 并不是通过该显示对象是否在 Stage 可视范围内进行判断的。
          * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          *
          * @method isVisible
-         * @return {Boolean} Boolean 表示该 display object 画在 canvas 上时，是否被显示。
+         * @return {Boolean} Boolean 表示该显示对象画在 Canvas 上时，是否被显示。
          */
         isVisible: function() {
             var hasContent = this.cacheCanvas || this.children.length;
@@ -52,7 +51,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 绘制 display object 到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
+         * 绘制显示对象到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
          * 当绘制动作正在处理，将返回 true （用于覆盖功能）。
          * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          *
@@ -82,15 +81,15 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 往展示列表的最上方添加孩子。当然你也可以添加多个孩子。比如 "addChild(child1, child2, ...);"。
-         * 返回被添加的孩子，当添加多个孩子时将返回最上方的孩子。
+         * 往展示列表的最上方添加子对象。当然你也可以添加多个子对象。比如 "addChild(child1, child2, ...);"。
+         * 返回被添加的子对象，当添加多个子对象时将返回最后一个。
          *
          * <h4>例子</h4>
          *      container.addChild(bitmapInstance, shapeInstance);
          *
          * @method addChild
-         * @param {DisplayObject} child 要添加的 display object。
-         * @return {DisplayObject} 被添加的孩子，当添加多个孩子时将返回最上方的孩子。
+         * @param {DisplayObject} child 要添加的显示对象。
+         * @return {DisplayObject} 被添加的子对象，当添加多个子对象时将返回最后一个。
          */
         addChild: function(child) {
             if (child == null) {
@@ -112,17 +111,17 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 往指定索引处添加孩子，大于等于该索引号后面的孩子都加 1，同时设置它的父亲为 Container。
-         * 你可以同时添加多个 children，比如 "addChildAt(child1, child2, ..., index);"。
-         * index 必须在 0 到 numChildren 之间。
+         * 往指定下标号处添加子对象，大于等于该下标号的子对象的下标号都加 1，同时设置它的父对象为 Container。
+         * 你可以同时添加多个子对象，比如 "addChildAt(child1, child2, ..., index);"。
+         * 下标号必须在 0 到 numChildren 之间。
          * 例如，在展示列表中，将 myShape 添加到 otherShape 下，你可以这样做，container.addChildAt(myShape, container.getChildIndex(otherShape))。
          * 这样也会使得 otherShape 的索引号加 1。
-         * 返回被添加的孩子，当添加多个孩子时将返回最上方的 child。
-         * 当指定的索引号超出孩子索引总数范围，会添加失败。
+         * 返回被添加的子对象，当添加多个子对象时将返回最上方的子对象。
+         * 当指定的索引号超出子对象下标总数范围，会添加失败。
          * @method addChildAt
-         * @param {DisplayObject} child 要添加的 display object。
-         * @param {Number} index 孩子将要添加到的索引号。
-         * @return {DisplayObject} 被添加的孩子，当添加多个孩子时将返回最上方的孩子。
+         * @param {DisplayObject} child 要添加的显示对象。
+         * @param {Number} index 子对象将要添加到的下标号。
+         * @return {DisplayObject} 被添加的子对象，当添加多个子对象时将返回最上方的子对象。
          */
         addChildAt: function(child, index) {
             var l = arguments.length;
@@ -145,12 +144,12 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 在展示列表里删除指定的孩子。注：当你知道孩子对应的索引号时，使用 removeChildAt() 会快很多。
-         * 你可以同时删除多个孩子，比如 "removeChild(child1, child2, ...);"。
-         * 当成功删除，返回 true，如果孩子不在展示列表内，将返回 false。
+         * 在展示列表里删除指定的子对象。注：当你知道子对象对应的下标号时，使用 removeChildAt() 会更快。
+         * 你可以同时删除多个子对象，比如 "removeChild(child1, child2, ...);"。
+         * 当成功删除，返回 true，如果子对象不在展示列表内，将返回 false。
          * @method removeChild
-         * @param {DisplayObject} child 要删除的孩子。
-         * @return {Boolean} 当删除成功，返回 true，如果孩子不在展示列表内，将返回 false。
+         * @param {DisplayObject} child 要删除的子对象。
+         * @return {Boolean} 当删除成功，返回 true，如果子对象不在展示列表内，将返回 false。
          **/
         removeChild: function(child) {
             var l = arguments.length;
@@ -165,11 +164,11 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 在展示列表里删除在特定索引号位置的孩子，同时设置他的父亲为 null。
-         * 你可以死同时删除多个孩子，例如 "removeChildAt(2, 7, ...);"。
-         * 当删除成功时，会返回 true，当任意一个 index 超出 children 界限时，返回 false。 
-         * @param {Number} index 将要被移除的孩子对应的索引号。
-         * @return {Boolean} 如果成功移除孩子，则返回 true，任意一个 index 超出范围，则返回 false。
+         * 在展示列表里删除在特定下标号的子对象，同时设置他的父对象为 null。
+         * 你可以同时删除多个子对象，例如 "removeChildAt(2, 7, ...);"。
+         * 当删除成功时，会返回 true，当任意一个下标号越界时，返回 false。 
+         * @param {Number} index 将要被移除的子对象对应的下标号。
+         * @return {Boolean} 如果成功移除子对象，则返回 true，任意一个下标号越界时，则返回 false。
          **/
         removeChildAt: function(index) {
             var l = arguments.length;
@@ -288,7 +287,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 交换2个指定的子对象。当任何一个子对象不在 Container 时，交换失败。
+         * 交换 2 个指定的子对象。当任何一个子对象不在 Container 时，交换失败。
          *
          * @param {DisplayObject} child1
          * @param {DisplayObject} child2
@@ -367,7 +366,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
          * @method hitTest
          * @param {Number} x 显示对象 坐标系的 x 坐标，将用于检测。
          * @param {Number} y 显示对象 坐标系的 y 坐标，将用于检测。
-         * @return {Boolean} 一个指出 displayObject 是否相交于本地某个特定位置的布尔值。
+         * @return {Boolean} 一个指出显示对象是否相交于本地某个特定位置的布尔值。
          */
         hitTest: function(x, y) {
             // TODO: optimize to use the fast cache check where possible.
@@ -375,9 +374,9 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 返回包含指定坐标下所有属于展示列表的 显示对象 数组。
-         * 这个方法将忽略所有 mouseEnabled = false 的 显示对象。
-         * 数组会根据 显示对象 的深度排序，最高的 显示对象 的 index 为 0。
+         * 返回包含指定坐标下所有属于展示列表的显示对象数组。
+         * 这个方法将忽略所有 mouseEnabled = false 的显示对象。
+         * 数组会根据显示对象的深度排序，最高的显示对象的下标为 0。
          * 这里使用以形状为基础的命中检测，消耗比较高，要慎用。比如，如果要测试对象是否在鼠标下面，
          * 只要鼠标的位置一变化，每个 tick 都需要检测（代替 onMouseMove），
          *
@@ -394,7 +393,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 类似 getObjectsUnderPoint(), 但这里只返回展示列表中最高的一个 显示对象。 
+         * 类似 getObjectsUnderPoint(), 但这里只返回展示列表中最高的一个显示对象。 
          * 这里比 getObjectsUnderPoint() 运行要快，但仍然是高消耗的。
          * 看 getObjectsUnderPoint() 获取更多信息。
          *
@@ -411,7 +410,8 @@ xc.module.define("xc.createjs.Container", function(exports) {
         /**
          * 返回克隆后的 Container。一些在当前背景下的特定属性值将还原为默认值（例如 .parent）
          *
-         * @param {Boolean} recursive 当 recursive 为 true 时候，container 所有的孩子会递归克隆，当 recursive 为 false 时，仅仅会克隆所有的属性，不会克隆任何孩子。
+         * @param {Boolean} recursive 当 recursive 为 true 时候，container 所有的子对象会递归克隆，
+         *     当 recursive 为 false 时，仅仅会克隆所有的属性，不会克隆任何子对象。
          * @return {Container} 当前 Container 克隆后的 Container 对象。
          */
         clone: function(recursive) {
@@ -457,7 +457,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
          * @param {Number} x
          * @param {Number} y
          * @param {Array} arr
-         * @param {Number} mouseEvents 一个位掩码，表示事件类型来。第1位指定 press 和 click 和 double click，第2位，指定它应该是 mouse over 和 mouse out。此实现可能会改变。
+         * @param {Number} mouseEvents 一个位掩码，表示事件类型来。第 1 位指定 press 和 click 和 double click，第2位，指定它应该是 mouse over 和 mouse out。此实现可能会改变。
          * @return {Array}
          * @protected
          */
@@ -467,7 +467,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
             var mtx = this._matrix;
             var hasHandler = this._hasMouseHandler(mouseEvents);
             // 如果我们有一个便利的 cache 和一个处理程序，我们使用它们来提升效率。
-            // 我们不能通过 cache 来筛选孩子，因为他们呢可能设置了 hitArea。
+            // 我们不能通过 cache 来筛选子对象，因为他们呢可能设置了 hitArea。
             if (!this.hitArea && this.cacheCanvas && hasHandler) {
                 this.getConcatenatedMatrix(mtx);
                 ctx.setTransform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx - x, mtx.ty - y);
@@ -479,7 +479,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
                     return this;
                 }
             }
-            // 每画一次 children，就检查一次它是否命中。
+            // 每画一次子对象列表，就检查一次它是否命中。
             var l = this.children.length;
             for ( var i = l - 1; i >= 0; i--) {
                 var child = this.children[i];
@@ -488,11 +488,11 @@ xc.module.define("xc.createjs.Container", function(exports) {
                     continue;
                 }
                 var childHasHandler = mouseEvents && child._hasMouseHandler(mouseEvents);
-                // 如果 child container 有一个处理程序和一个 hitArea，那我们只需要检查它对应 hitArea 就可以了，所以我们可以像平常一样处理就可以了
+                // 如果子对象 container 有一个处理程序和一个 hitArea，那我们只需要检查它对应 hitArea 就可以了，所以我们可以像平常一样处理就可以了
                 if (child instanceof Container && !(hitArea && childHasHandler)) {
                     var result;
                     if (hasHandler) {
-                        // 只需要考虑第一次 命中，因为这样这个 container 讲无论如何都要声明
+                        // 只需要考虑第一次命中，因为这样这个 container 讲无论如何都要声明
                         result = child._getObjectsUnderPoint(x, y);
                         if (result) {
                             return this;
