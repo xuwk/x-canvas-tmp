@@ -5,7 +5,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
     /**
      * 图片精灵的帧或帧序列（即动画）。一个图片精灵就是一系列的图片（通常是动画帧）
      * 组合到一张大图片中（或许多张图片）。例如，一个动画由 8 张 100x100 的图片组成，就会组合成一个 400 x 200 的图片精灵。
-     * 你可以单独将一个帧作为动画播放，也可以将多个动画组合在一起播放。
+     * 可以单独将一个帧作为动画播放，也可以将多个动画组合在一起播放。
      *
      * 看 {{#crossLink "SpriteSheet"}}{{/crossLink}} 类获取更多关于构建帧和动画的信息。
      *
@@ -56,7 +56,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         currentAnimation: null, // 只读
 
         /**
-         * 阻止动画前进。例如，你可以创建一个图片精灵，然后设置 paused 属性 为 true，
+         * 阻止动画前进。例如，可以创建一个图片精灵，然后设置 paused 属性 为 true，
          * 而通过改变 <code>currentFrame</code> 的值来达到播放效果。
          *
          * @property paused
@@ -84,8 +84,8 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         snapToPixel: true,
 
         /**
-         * 当使用多个交替的动画的时候，这个能让你决定哪个 tick 才是播放头。
-         * 举例，你可以创建 2 个 BitmapAnimation 对象，大家的频率都是 2，但其中有一个的 offset 属性设置为 1。两个实例都会在每一
+         * 当使用多个交替的动画的时候，这个能决定哪个 tick 才是播放头。
+         * 举例，可以创建 2 个 BitmapAnimation 对象，大家的频率都是 2，但其中有一个的 offset 属性设置为 1。两个实例都会在每一
          * 个 tick 往前移，但它们会交替向前。（属性所影响到的地方就是，其中一个将会在奇数 tick 的时候前进，另外一个则会在偶数 tick 的时候前进）。
          *
          * @property offset

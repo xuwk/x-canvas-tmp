@@ -64,7 +64,7 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
      *              stand: { frames: [7] }
      *          }
      *
-     *          // 上面2种方法可以结合在一起使用，当然你也可以单独使用一种:
+     *          // 上面2种方法可以结合在一起使用，当然也可以单独使用一种:
      *          animations: {
      *              run: [0,8,true,2],
      *              jump: {
@@ -187,7 +187,7 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
         /**
          * 当所有图片加载完时触发该事件。
          * 注：这个事件只能在初始化 spritesheet 的时候没完全加载完图片时能绑定。
-         * 所以你必须在监听这个事件之前检查一下 sprite sheet 的 complete 属性。
+         * 所以必须在监听这个事件之前检查一下 sprite sheet 的 complete 属性。
          * Ex.
          * <pre><code>var sheet = new SpriteSheet(data);
          * if (!sheet.complete) {

@@ -151,7 +151,7 @@ xc.module.define("xc.createjs.MotionGuidePlugin", function(exports) {
     /**
      * 确定沿着路径的一个的合适的 x/y/rotation 比值。
      * 假设这个路径对象是由所有可选参数指定的。
-     * @param data Data 对象。 你将会传入 "guide:" 对应的属性值。
+     * @param data Data 对象。 将会传入 "guide:" 对应的属性值。
      * @param ratio 沿着路径 0-1 的距离，若值大于 0-1 则是 “best guess”。
      * @param target 所有内容要复制到的目标对象，如果没提供该参数，将会创建一个新的对象。
      * @return {Object} 接受了 tweened 属性的目标对象或新创建的对象。

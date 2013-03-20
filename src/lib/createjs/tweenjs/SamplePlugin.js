@@ -69,7 +69,7 @@ xc.module.define("xc.createjs.SamplePlugin", function(exports) {
      * @param {Tween} tween 相关的 tween 实例。
      * @param {String} prop tween 正在执行的属性名。
      * @param {any} value tween 当前属性的值, 由 TweenJS 计算。
-     * @param {Object} 一个关于当前步骤的初始值哈希集合。你可以通过 startValues[prop] 获取当前属性的初始值。
+     * @param {Object} 一个关于当前步骤的初始值哈希集合。可以通过 startValues[prop] 获取当前属性的初始值。
      * @param {Object} endValues  一个关于当前 step 结束后的所有属性的值的哈希集合。
      * @param {Number} ratio 一个指出当前步骤的 eased 进度的值。这个值一般在 0 到 1 之间，即使有些 eases 会产生在 0 到 1 之外的值。
      * @param {Boolean} wait 指出当前的步骤是不是一个 “wait” 步骤。

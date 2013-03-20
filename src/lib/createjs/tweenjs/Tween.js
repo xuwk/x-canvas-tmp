@@ -93,7 +93,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
 
         /**
          * 只读。指定 tween 的总周期数，周期以毫秒为单位（如果 userTicks 为 true，则为 tick 的总数量）。
-         * 当你修改 tween 时，这个值会自动更新。直接改变可能会带来不可预期的行为。
+         * 当修改 tween 时，这个值会自动更新。直接改变可能会带来不可预期的行为。
          *
          * @property duration
          * @type {Number}
@@ -102,7 +102,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         duration: 0,
 
         /**
-         * 允许你指定安装的插件将会用到的数据。每个插件使用该参数噶方法都不同，但当你设置它的是时候要与插件类相同名。<br/>
+         * 可以指定安装的插件将会用到的数据。每个插件使用该参数噶方法都不同，但当设置它的是时候要与插件类相同名。<br/>
          * 例如 myTween.pluginData.PluginClassName = data;<br/>
          * <br/>
          * 同时，很多插件都支持一个属性去确定自身可用或不可用。这一般在插件类名后面接 "_enabled"。<br/>
@@ -722,7 +722,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
     };
 
     /**
-     * 推进所有 tween。这个通常是用到 Ticker 类（在 EaselJS 库），但如果你想用自己的“心跳”模式，你也可以手动更改它。
+     * 推进所有 tween。这个通常是用到 Ticker 类（在 EaselJS 库），但如果想用自己的“心跳”模式，也可以手动更改它。
      * 
      * @method tick
      * @static
