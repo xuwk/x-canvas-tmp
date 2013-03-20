@@ -332,6 +332,29 @@ xc.module.define("xc.createjs.Sound", function(exports) {
             Sound.dispatchEvent(event);
         }
     }
+    
+    /**
+     * 获取预加载规则，允许 Sound 作为一个 <a href="http://preloadjs.com" target="_blank">PreloadJS</a> 的一个插件。
+     * 任何所有匹配到类型的或扩展的加载调用，都会触发回调函数，并且返回 Sound 生成的对象。
+     * 这有助于确定正确的路径，以及注册 Sound 实例。这个方法除了 PreloadJS 之外，不能被调用。
+     *
+     * @method getPreloadHandlers
+     * @return {Object} An object containing:
+     * <ul>
+     *     <li>callback ：一个预加载回调，当文件被添加到 PreloadJS 时候触发，提供 Sound 一个修改加载参数的机制，选择正确的文件格式，注册音频，等等。</li>
+     *     <li>types: 一个 Sound 支持的格式列表 (目前支持 "sound")。</li>
+     *     <li>extensions 一个 Sound 支持的文件拓展列表 (看 Sound.SUPPORTED_EXTENSIONS)。</li>
+     * </ul>
+     * @static
+     * @protected
+     */
+    Sound.getPreloadHandlers = function () {
+        return {
+            callback: Sound.proxy(Sound.initLoad, Sound),
+            types: ["sound"],
+            extensions: Sound.SUPPORTED_EXTENSIONS
+        };
+    }
 
     /**
      * 注册一个 Sound 插件。插件本质上用于播放音频。如果当用户播放音频的时候没有任何其他插件，默认的插件
@@ -460,6 +483,26 @@ xc.module.define("xc.createjs.Sound", function(exports) {
             return null;
         }
         return Sound.activePlugin.capabilities[key];
+    }
+    
+    /**
+     * 处理 <a href="http://preloadjs.com" target="_blank">PreloadJS</a> 的清单。该方法只适用于插件，不适用于直接调用。
+     * @method initLoad
+     * @param {String | Object} src 将要被加载的资源路径或对象。这里通常是一个字符串路径，但也可以是一个 HTMLAudioElement 或 音频播放对象。
+     * @param {String} [type] 对象类型。可能是 "sound" 或 null。
+     * @param {String} [id] 可选的用户指定的 id，用于播放音频。
+     * @param {Number|String|Boolean|Object} [data] 与该项目相关的数据。Sound 将这些数据参数作为频道用于音频实例。然而，一个 “channels” 属性可被追加到 data 对象，
+     * 如果该属性被作为其他信息使用。音频的 channels 属性默认值为 1。
+     * @return {Boolean|Object} 一个包含修改完的值的对象，或当当前可用插件不能播放音频类型的时候，返回 false。
+     * @protected
+     * @static
+     */
+    Sound.initLoad = function (src, type, id, data) {
+        var details = Sound.registerSound(src, id, data, false);
+        if (details == null) {
+            return false;
+        }
+        return details;
     }
 
     /**
@@ -682,6 +725,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
             src = Sound.getSrcById(src);
         }
         var dot = src.lastIndexOf(".");
+        
         var ext = src.slice(dot + 1); // sound have format of "path+name . ext"
         if (dot != -1 && Sound.SUPPORTED_EXTENSIONS.indexOf(ext) > -1) { // we have an ext and it is one of our supported,Note this does not mean the plugin supports it.
             // make sure that we have a sound channel (sound is registered or previously played)
@@ -905,6 +949,30 @@ xc.module.define("xc.createjs.Sound", function(exports) {
             return method.apply(scope, Array.prototype.slice.call(arguments, 0).concat(aArgs));
         };
     }
+    
+    // 不往 SoundChannel 添加命名空间。
+
+    // 这是一个虚拟的音频实例，用于让 Sound 返回，这样能使开发者不需要每次都检查 null 值。
+    function SoundInstance() {
+        this.isDefault = true;
+        this.addEventListener = this.removeEventListener = this.removeAllEventListener = 
+            this.dispatchEvent = this.hasEventListener = this._listeners = this.interrupt = 
+                this.playFailed = this.pause = this.resume = this.play = this.beginPlaying = 
+                    this.cleanUp = this.stop = this.setMasterVolume = this.setVolume = this.mute = 
+                        this.setMute = this.getMute = this.setPan = this.getPosition = 
+                            this.setPosition = function () {
+            return false;
+        };
+        this.getVolume = this.getPan = this.getDuration = function () {
+            return 0;
+        }
+        this.playState = Sound.PLAY_FAILED;
+        this.toString = function () {
+            return "[Sound Default Sound Instance]";
+        }
+    }
+    
+    Sound.defaultSoundInstance = new SoundInstance();
 
     /**
      * 一个内部类，用于管理每一个音频类型的活跃 {{#crossLink "SoundInstance"}}{{/crossLink}} 实例。
@@ -920,9 +988,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
      * @constructor
      * @protected
      */
-    var SoundChannel =
-    xc.class.create({
-        _init: function(src, max) {
+    var SoundChannel = xc.class.create({
+        initialize: function(src, max) {
             this.src = src;
             this.max = max || this.maxDefault;
             if (this.max == -1) {

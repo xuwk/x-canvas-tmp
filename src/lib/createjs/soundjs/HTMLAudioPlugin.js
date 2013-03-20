@@ -195,7 +195,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
      * HTMLAudioPlugin's SoundInstance implementation.
      */
     var HTMLAudioSoundInstance = SoundInstance.extend({
-        _init: function(src, owner) {
+        initialize: function(src, owner) {
             this.src = src;
             this.owner = owner;
             this.endedHandler = Sound.proxy(this.handleSoundComplete, this);
@@ -387,7 +387,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
      * @private
      */
     var HTMLAudioLoader = xc.class.create({
-        _init: function(src, tag) {
+        initialize: function(src, tag) {
             this.src = src;
             this.tag = tag;
             this.preloadTimer = setInterval(Sound.proxy(this.preloadTick, this), 200);
@@ -480,7 +480,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
     });
 
     var HTMLAudioPlugin = xc.class.create({
-        _init: function() {
+        initialize: function() {
             this.capabilities = HTMLAudioPlugin.capabilities;
             this.audioSources = {};
         },

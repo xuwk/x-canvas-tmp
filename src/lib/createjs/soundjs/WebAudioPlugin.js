@@ -217,7 +217,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
      * @constructor
      */
     var WebAudioLoader = xc.class.create({
-        _init: function(src, owner) {
+        initialize: function(src, owner) {
             this.src = src;
             this.owner = owner;
         },
@@ -317,7 +317,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
          * @protected
          */
         handleLoad: function() {
-            s.context.decodeAudioData(this.request.response, Sound.proxy(this.handleAudioDecoded, this), Sound.proxy(this.handleError, this));
+            WebAudioPlugin.context.decodeAudioData(this.request.response, Sound.proxy(this.handleAudioDecoded, this), Sound.proxy(this.handleError, this));
         },
 
         /**
@@ -370,7 +370,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
      * @constructor
      */
     var WebAudioPlugin = xc.class.create({
-        _init: function() {
+        initialize: function() {
             this.capabilities = WebAudioPlugin.capabilities;
             this.arrayBuffers = {};
             this.context = WebAudioPlugin.context;
@@ -587,7 +587,8 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
             var ext = supportedExtensions[i];
             var playType = extensionMap[ext] || ext;
             WebAudioPlugin.capabilities[ext] =
-            (t.canPlayType("audio/" + ext) != "no" && t.canPlayType("audio/" + ext) != "") || (t.canPlayType("audio/" + playType) != "no" && t.canPlayType("audio/" + playType) != "");
+            (t.canPlayType("audio/" + ext) != "no" && t.canPlayType("audio/" + ext) != "") 
+            || (t.canPlayType("audio/" + playType) != "no" && t.canPlayType("audio/" + playType) != "");
         }
         // 0=no output, 1=mono, 2=stereo, 4=surround, 6=5.1 surround.
         // See http://www.w3.org/TR/webaudio/#AudioChannelSplitter for more details on channels.

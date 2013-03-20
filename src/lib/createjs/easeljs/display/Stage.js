@@ -281,7 +281,8 @@ xc.module.define("xc.createjs.Stage", function(exports) {
             var o = this;
             this._mouseOverIntervalID = setInterval(function() {
                 o._testMouseOver();
-            }, 1000 / Math.min(50, frequency));
+                o._testTouchOver();
+            }, 1000 / Math.min(1000, frequency));
         },
 
         /**
@@ -454,6 +455,12 @@ xc.module.define("xc.createjs.Stage", function(exports) {
                 this.mouseY = o.y;
                 this.mouseInBounds = o.inBounds;
             }
+            this.touchs[id] = {
+                id: id,
+                x: o.x,
+                y: o.y,
+                inBounds: o.inBounds
+            }
         },
 
         /**
@@ -609,6 +616,53 @@ xc.module.define("xc.createjs.Stage", function(exports) {
                     this.canvas.style.cursor = target.cursor || "";
                 }
                 this._mouseOverTarget = target;
+            }
+        },
+
+        touchs: {},
+        _touchOver: {},
+        mouseOverTargets: {},
+
+        _testTouchOver: function() {
+            for (var i in this.touchs) {
+                if (i == -1) {
+                    continue ;
+                }
+                var touch = this.touchs[i];
+                var _touchOver = this._touchOver[i];
+                if (touch && _touchOver && _touchOver.x == touch.x && _touchOver.y == touch.y && touch.inBounds) {
+                    continue ;
+                };
+
+                var target = null;
+                if (touch.inBounds) {
+                    target = this._getObjectsUnderPoint(touch.x, touch.y, null, 3);
+                    this._touchOver[i] = {
+                        x: touch.x,
+                        y: touch.y
+                    }
+                }
+
+                var mouseOverTarget = this.mouseOverTargets[i];
+                if (mouseOverTarget != target) {
+                    var o = this._getPointerData(i);
+                    if (mouseOverTarget && (mouseOverTarget.onMouseOut ||  mouseOverTarget.hasEventListener("mouseout"))) {
+                        var evt = new createjs.MouseEvent("mouseout", o.x, o.y, mouseOverTarget, null, -1, o.rawX, o.rawY);
+                        mouseOverTarget.onMouseOut&&mouseOverTarget.onMouseOut(evt);
+                        mouseOverTarget.dispatchEvent(evt);
+                        this.touchs[i] = undefined;
+                    }
+                    if (mouseOverTarget) { this.canvas.style.cursor = ""; }
+                    
+                    if (target && (target.onMouseOver || target.hasEventListener("mouseover"))) {
+                        evt = new createjs.MouseEvent("mouseover", o.x, o.y, target, null, -1, o.rawX, o.rawY);
+                        target.onMouseOver&&target.onMouseOver(evt);
+                        target.dispatchEvent(evt);
+                    }
+                    if (target) { this.canvas.style.cursor = target.cursor||""; }
+                    
+                    this.mouseOverTargets[i] = target;
+                }
             }
         },
 
