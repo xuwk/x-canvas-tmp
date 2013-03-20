@@ -3,15 +3,15 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     var EventDispatcher = xc.module.require("xc.createjs.EventDispatcher");
 
     /**
-     * Sound 类包含所有创建声音，控制声音级别，以及管理插件的 API。
+     * Sound 类包含所有创建声音，控制声音，以及管理声音插件的 API。
      * 所有在这个类里面的 API 都是静态的。
      *
      * <b>注册和预加载</b><br />
-     * 在你要播放一段音频之前，它必须是已经被注册的。你可以通过 {{#crossLink "Sound/registerSound"}}{{/crossLink}} 注册单个音频
+     * 在播放一段音频之前，必须先注册该音频。可以通过 {{#crossLink "Sound/registerSound"}}{{/crossLink}} 注册单个音频
      * 或 {{#crossLink "Sound/registerManifest"}}{{/crossLink}} 注册多个。
-     * 如果你没有及时注册，它们会在你尝试通过 {{#crossLink "Sound/play"}}{{/crossLink}} 去播放的时候自动注册。
-     * 如果你使用 <a href="http://preloadjs.com" target="_blank">PreloadJS</a>，则会当你加载完的时候帮你注册。
-     * 这里建议，内部加载音频的时候使用 register 方法，而外部加载的时候使用 PreloadJS。这样会使得当你使用他们的时候都是准备好的状态。
+     * 如果没有及时注册，则会在调用 {{#crossLink "Sound/play"}}{{/crossLink}} 时自动注册。
+     * 如果使用 <a href="http://preloadjs.com" target="_blank">PreloadJS</a>，则会当加载完的时候注册。
+     * 这里建议，内部加载音频的时候使用 register 方法，而外部加载的时候使用 PreloadJS。这样会使得音频在任何时候都是准备好的状态。
      * 
      * <b>播放</b><br />
      * 使用 {{#crossLink "Sound/play"}}{{/crossLink}} 方法，播放一段加载并注册好的音频。
@@ -35,20 +35,20 @@ xc.module.define("xc.createjs.Sound", function(exports) {
      *          instance.setVolume(0.5);
      *      }
      *
-     * 可以通过指定 {{#crossLink "Sound/registerSound"}}{{/crossLink}} 的参数以指定同时播放的音频实例的最大数量。
+     * 可以通过指定 {{#crossLink "Sound/registerSound"}}{{/crossLink}} 的参数来指定同时播放的最大音频实例数。
      *
      *      createjs.Sound.registerSound("sound.mp3", "soundId", 4);
      *
      * Sound 可以作为一个 PreloadJS 的插件，更恰当地加载音频。通过 PreloadJS 加载的音频会自动加载到 Sound 里面。
      * 当音频没有预加载，Sound 会做一个内部的预加载，也就是说，当第一次播放的时候，它并不是马上就播放的，它需要一次预加载的过程。
      * 通过监听 {{#crossLink "Sound/loadComplete"}}{{/crossLink}} 事件判断音频何时加载完成。
-     * 这里建议所有的音频都在播放之前先加载完成。
+     * 这里建议所有的音频都在播放之前完成加载。
      *
      *      createjs.PreloadJS.installPlugin(createjs.Sound);
      *
      * <h4>已知浏览器和操作系统问题</h4>
      * <b>IE 9 的 html 局限性</b><br />
-     * <ul><li> 当改变音频状态的时候有一个延迟。所以当你希望静音的时候，音频将在延迟的这段时间里面继续播放。此时对音频进行任何操作均无济于事。</li>
+     * <ul><li> 当改变音频状态的时候有一个延迟。所以当进行静音操作的时，音频将在延迟的这段时间里继续播放。此时对音频进行任何操作均无济于事。</li>
      * <li> MP3 编码并不是任何时候都有效，尤其是在 IE 下。我们发现默认 64kbps 编码是有效的。</li></ul>
      *
      * <b>iOS 6 局限性</b><br />
@@ -58,8 +58,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
      *
      * <b>Android 局限性</b><br />
      * <ul><li>当调用 createjs.Sound.BrowserDetect.isChrome 的时候 Android chrome 会返回 true, 但其他不同的浏览器会返回不同的结果。</li>
-     *     <li>我们不能控制音量的大小，只有用户可以设置设备的音量大小。</li>
-     *     <li>我们只能在用户事件里面播放音频，这意味着你不能循环播放。</li></ul>
+     *     <li>不能控制音量的大小，只有用户可以设置设备的音量大小。</li>
+     *     <li>只能在用户事件里面播放音频，这意味着音频不能循环播放。</li></ul>
      *
      * @class Sound
      * @static
@@ -79,7 +79,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.DELIMITER = "|";
 
     /**
-     * 一个中断值，标识当前播放的音频中，中断最早播放并拥有相同资源的音频,该音频距离起点最近。前提是最大数量的音频实例已经在播放。
+     * 一个中断值，标识当前播放的音频中，当最大数量的音频实例已经在播放时，
+     * 中断最早播放并拥有相同资源的音频,该音频距离起点最近。
      * 
      * @property INTERRUPT_EARLY
      * @type {String}
@@ -89,7 +90,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.INTERRUPT_EARLY = "early";
 
     /**
-     * 一个中断值，标识在当前播放的音频中，中断最晚播放并拥有相同资源的音频,该音频距离起点最远。前提是最大数量的音频实例已经在播放。
+     * 一个中断值，标识在当前播放的音频中，当最大数量的音频实例已经在播放时，
+     * 中断最晚播放并拥有相同资源的音频,该音频距离起点最远。
      * 
      * @property INTERRUPT_LATE
      * @type {String}
@@ -99,7 +101,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.INTERRUPT_LATE = "late";
 
     /**
-     * 一个中断值，标识不中断任何当前播放并拥有相同资源的音频。前提是最大数量的音频实例已经在播放。
+     * 一个中断值，标识当最大数量的音频实例已经在播放时，不中断任何当前播放并拥有相同资源的音频。
      * 
      * @property INTERRUPT_NONE
      * @type {String}
@@ -109,7 +111,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.INTERRUPT_NONE = "none";
 
     /**
-     * playState 是正在播放或暂停的实例
+     * 正在播放或暂停的实例状态。
      * 
      * @property PLAY_SUCCEEDED
      * @type {String}
@@ -119,7 +121,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.PLAY_SUCCEEDED = "playSucceeded";
 
     /**
-     * playState 是被其他实例中断的实例。
+     * 被其他实例中断的实例状态。
      *
      * @property PLAY_INTERRUPTED
      * @type {String}
@@ -128,7 +130,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.PLAY_INTERRUPTED = "playInterrupted";
 
     /**
-     * playState 是完成播放的实例。
+     * 完成播放的实例状态。
      *
      * @property PLAY_FINISHED
      * @type {String}
@@ -137,7 +139,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.PLAY_FINISHED = "playFinished";
 
     /**
-     * playState 是一个播放失败的实例。这个通常发生在当调用 INTERRUPT_NONE 的时候，缺乏可用频道，播放中断，或找不到音频资源。
+     * 播放失败的实例状态。通常发生在当调用 INTERRUPT_NONE 的时候，缺乏可用频道，播放中断，或找不到音频资源。
      *
      * @property PLAY_FAILED
      * @type {String}
@@ -147,12 +149,12 @@ xc.module.define("xc.createjs.Sound", function(exports) {
 
     /**
      * 一个 Sound 默认支持格式列表，Sound 将根据这些格式尝试去播放音频。插件会检查浏览器是否支持列表中的音频格式，
-     * 所以当插件初始化之前改变该表格，将允许插件尝试去支持额外的音频格式。
+     * 所以当插件初始化之前改变该表格，将允许插件支持额外的音频格式。
      *
      * 注意，目前不支持 {{#crossLink "FlashPlugin"}}{{/crossLink}}。
      *
-     * 文件格式更多信息，请查阅 http://en.wikipedia.org/wiki/Audio_file_format. A very detailed
-     * 文件格式列表，请查阅 //http://www.fileinfo.com/filetypes/audio. 
+     * 文件格式更多信息，请查阅 http://en.wikipedia.org/wiki/Audio_file_format。
+     * 文件格式列表，请查阅 //http://www.fileinfo.com/filetypes/audio。
      * 一个有用的扩展名格式列表，请查阅 http://html5doctor.com/html5-audio-the-state-of-play/
      *
      * @property SUPPORTED_EXTENSIONS
@@ -163,7 +165,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.SUPPORTED_EXTENSIONS = ["mp3", "ogg", "mpeg", "wav", "m4a", "mp4", "aiff", "wma", "mid"];
 
     /**
-     * 一些扩展类型使用另一种扩展类型的支持（其中一个是 codex）。这个允许你映射响应的支持格式，这样插件可以准确的知道
+     * 一些扩展类型使用另一种扩展类型支持（其中一个是 codex）。这个允许你映射支持格式，这样插件可以准确地检测到
      * 该扩展是否被支持。添加该列表，能帮助插件更加准确地判断扩展是否被支持。
      *
      * @property EXTENSION_MAP
@@ -219,7 +221,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
 
     /**
      * 确定插件是否被注册。如果为 fasle，第一次调用 play() 的时候会初始化默认的插件 ({{#crossLink "WebAudioPlugin"}}{{/crossLink}}
-     * 其次是 {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}})。如果插件被注册了，但没有一个适用，那么音频在播放时会失败。
+     * 其次是 {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}})。如果插件被注册了，但没有一个适用，音频将会播放失败。
      *
      * @property pluginsRegistered
      * @type {Boolean}
@@ -241,7 +243,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.masterVolume = 1;
 
     /**
-     * 静音管理。这个适用于所有 sound 实例。这个值可以通过 {{#crossLink "Sound/setMute"}}{{/crossLink}}
+     * 静音管理。适用于所有 sound 实例。该值可以通过 {{#crossLink "Sound/setMute"}}{{/crossLink}}
      * 和通过 {{#crossLink "Sound/getMute"}}{{/crossLink}} 获取。
      *
      * @property masterMute
@@ -287,8 +289,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.preloadHash = {};
 
     /**
-     * 一个音频对象，该对象用于音频播放失败时。允许开发者在不检查实例是否有效的前提下，在失败的实例上继续调用方法。
-     * 一旦实例被初始化，将会共享保持下来的内存空间。
+     * 一个音频对象，该对象在音频播放失败时使用。允许开发者在不检查实例是否有效的前提下，继续调用方法。
+     * 一旦实例被初始化，将会占用内存空间。
      *
      * @property defaultSoundInstance
      * @type {Object}
@@ -298,8 +300,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.defaultSoundInstance = null;
 
     /**
-     * 这个事件是当所有的文件加载完成的时候触发的。这个事件对所有加载完成的音频都有效，
-     * 所有任何 handler 方法都必须根据 <code>event.src</code> 去处理特定的音频。
+     * 当所有的文件加载完成的时候触发该事件。这个事件对所有加载完成的音频都有效，
+     * 任何处理程序方法都必须根据 <code>event.src</code> 去处理特定的音频。
      * 
      * @event loadComplete
      * @param {Object} target 要调度事件的对象。
@@ -311,7 +313,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
 
     /**
      * @method sendLoadComplete
-     * @param {String} src 一个完成加载的文件资源路径，将触发事件调度。
+     * @param {String} src 一个完成加载文件的资源路径。
      * @private
      * @static
      */
