@@ -64,7 +64,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         loop: true,
 
         /**
-         * 只读。movieclip 当前的 frame。
+         * 只读。movieclip 当前的帧。
          * 
          * @property currentFrame
          * @type Number
@@ -99,11 +99,11 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         actionsEnabled: true,
 
         /**
-         * 如果为 true，则 timeline 在任何时候往展示列表里面添加 back 的时候，MoiveClip 都将自动重置到第一帧。
+         * 如果为 true，则 timeline 在任何时候往展示列表里面添加返回属性的时候，MoiveClip 都将自动重置到第一帧。
          * 这个仅仅在 mode=INDEPENDENT 的时候生效。
          * <br><br>
          * 举例，如果你有一个含有 "body" 子动画的动画。你可以设置 body.autoReset = false。
-         * 那你就可以掌控 frame 的行为，不用担心它会自动重置了。
+         * 那你就可以掌控帧的行为，不用担心它会自动重置了。
          * 
          * @property autoReset
          * @type Boolean
@@ -137,7 +137,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         _prevPosition: 0,
 
         /**
-         * 将受 MovieClip 管理的 display objects 列表。
+         * 将受 MovieClip 管理的显示对象列表。
          * 
          * @property _managed
          * @type Object
@@ -146,11 +146,11 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         _managed: null,
 
         /**
-         * 通过返回 true 或 false 去表示该 display object 画在 canvas 上时，是否被显示。
-         * 并不是通过该 display object 是否在 stage 可视范围内进行判断的。
+         * 通过返回 true 或 false 去表示该显示对象画在 canvas 上时，是否被显示。
+         * 并不是通过该显示对象是否在 Stage 可视范围内进行判断的。
          * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          * @method isVisible
-         * @return {Boolean} Boolean 表示该 display object 画在 canvas 上时，是否被显示。
+         * @return {Boolean} Boolean 表示该显示对象画在 Canvas 上时，是否被显示。
          **/
         isVisible: function() {
             // children are placed in draw, so we can't determine if we have
@@ -159,7 +159,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
         },
 
         /**
-         * 绘制 display object 到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
+         * 绘制显示对象到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
          * 当绘制动作正在处理，将返回 true （用于覆盖功能）。
          * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          * @method draw

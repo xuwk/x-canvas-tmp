@@ -37,11 +37,11 @@ xc.module.define("xc.createjs.Shape", function(exports) {
         graphics: null,
 
         /**
-         * 通过返回 true 或 false 去表示该 display object 画在 canvas 上时，是否被显示。
-         * 并不是通过该 display object 是否在 stage 可视范围内进行判断的。
+         * 通过返回 true 或 false 去表示该显示对象画在 Canvas 上时，是否被显示。
+         * 并不是通过该显示对象是否在 Stage 可视范围内进行判断的。
          * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          * @method isVisible
-         * @return {Boolean} Boolean 表示该 display object 画在 canvas 上时，是否被显示。
+         * @return {Boolean} Boolean 表示该显示对象画在 Canvas 上时，是否被显示。
          **/
         isVisible: function() {
             var hasContent = this.cacheCanvas || (this.graphics && !this.graphics.isEmpty());

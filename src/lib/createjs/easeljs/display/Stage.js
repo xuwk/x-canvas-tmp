@@ -4,11 +4,11 @@ xc.module.define("xc.createjs.Stage", function(exports) {
     var MouseEvent = xc.module.require("xc.createjs.MouseEvent");
 
     /**
-     * stage 是展示列表中 {{#crossLink "Container"}}{{/crossLink}} 的根。 
+     * stage 是展示列表中根一级的 {{#crossLink "Container"}}{{/crossLink}}。 
      * 每当执行 {{#crossLink "Stage/tick"}}{{/crossLink}} 的时候，它都会将它的显示列表渲染到目标 canvas 上。
      *
      * <h4>例子</h4>
-     * 这个例子创建一个 stage，往里面添加一个孩子, 然后通过执行 {{#crossLink "Ticker"}}{{/crossLink}} 来更新孩子，
+     * 这个例子创建一个 stage，往里面添加一个子对象, 然后通过执行 {{#crossLink "Ticker"}}{{/crossLink}} 来更新子对象，
      * 通过 {{#crossLink "Stage/update"}}{{/crossLink}} 来重新绘制。
      *
      *      var stage = new createjs.Stage("canvasElementId");
@@ -35,7 +35,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         },
 
         /**
-    　 　              * 当用户鼠标在 canvas 上滑过时触发。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
+    　 　* 当用户鼠标在 canvas 上滑过时触发。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * 事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * 
          * @event stagemousemove
@@ -100,7 +100,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         mouseInBounds: false,
 
         /**
-         * 如果为 true，stage 下的每个 display object 在渲染到 canvas 之前都将先执行 tick 回调函数。
+         * 如果为 true，stage 下的每个显示对象在渲染到 canvas 之前都将先执行 tick 回调函数。
          *
          * @property tickOnUpdate
          * @type Boolean
@@ -160,11 +160,10 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         _mouseOverIntervalID: null,
 
         /**
-         * 每当执行 update 方法， stage 就会执行其所有子孙的 tick 方法 (ex. {{#crossLink "BitmapAnimation"}}{{/crossLink}})，
+         * 每当执行 update 方法， stage 就会执行其所有子对象的 tick 方法 (ex. {{#crossLink "BitmapAnimation"}}{{/crossLink}})，
          * 以及渲染整个展示列表到 canvas 上。所有传到 update 的参数都会传到任何一个 tick 上。
          * onTick handlers.
          * 
-         * ？？？？？？？？？？？？
          * @method update
          */
         update: function() {
@@ -190,7 +189,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          * 
          *      Ticker.addEventListener("tick", myStage");
          * 
-         * 注：如果你通过这种模式订阅 ticker，那么该 tick 事件对象将被传递到 display object，替代了原来的 delta 和 paused 参数
+         * 注：如果你通过这种模式订阅 ticker，那么该 tick 事件对象将被传递到显示对象，替代了原来的 delta 和 paused 参数
          * @property handleEvent
          * @type Function
          */
@@ -260,7 +259,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         },
 
         /**
-         * 设置监听或不监听（传递的 frequency 为 0）这个 stage 里面的所有 diplay object 的 mouse over 事件（moverover 和 mouseout）。
+         * 设置监听或不监听（传递的 frequency 为 0）这个 stage 里面的所有显示对象的 mouse over 事件（moverover 和 mouseout）。
          * 这些事件都是高消耗性能的，所以它们的默认值都为 false。
          * 而且事件的频率可以通过独立设置 mouse move 事件的可选项 <code>frequency</code> 去改变的。
          * @method enableMouseOver
@@ -588,7 +587,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
             if (this._primaryPointerID != -1) {
                 return;
             }
-            // 仅当鼠标位置发生改变时才更新，这里提供了很多优化的地方，但也需要放弃某些其他东西。
+            // 仅当鼠标位置发生改变时才更新，这里提供了很多优化的地方，所以需要放弃某些其他东西。
             if (this.mouseX == this._mouseOverX && this.mouseY == this._mouseOverY && this.mouseInBounds) {
                 return;
             }

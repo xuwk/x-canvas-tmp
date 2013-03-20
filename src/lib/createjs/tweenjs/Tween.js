@@ -7,7 +7,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
     var EventDispatcher = xc.module.require("xc.createjs.EventDispatcher");
 
     /**
-     * 一个拥有一个 target 的 Tween 实例。实例的方法可以按顺序简单的连接在一起：
+     * 一个拥有一个目标对象的 Tween 实例。实例的方法可以按顺序简单的连接在一起：
      * 
      * <h4>例子</h4>
      *
@@ -83,7 +83,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         ignoreGlobalPause: false,
 
         /**
-         * 如果为 true，当到尾的时候，tween 将会重新循环。可以通过设置 props 参数设置。
+         * 如果为 true，当到结尾时，tween 将会重新循环。可以通过设置 props 参数设置。
          *
          * @property loop
          * @type {Boolean}
@@ -92,7 +92,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         loop: false,
 
         /**
-         * 只读。指定 tween 的总周期数，周期以毫秒为单位（总 tick 数，如果 userTicks 为 true）。
+         * 只读。指定 tween 的总周期数，周期以毫秒为单位（如果 userTicks 为 true，则为 tick 的总数量）。
          * 当你修改 tween 时，这个值会自动更新。直接改变可能会带来不可预期的行为。
          *
          * @property duration
@@ -130,7 +130,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         change: null,
 
         /**
-         * 只读。使用 tween 的 target。将要执行 tween 的对象。在 tween 创建之后再改变该属性的值是无效的。
+         * 只读。使用 tween 的目标对象。将要执行 tween 的目标对象。在 tween 创建之后再改变该属性的值是无效的。
          *
          * @property target
          * @type {Object}
@@ -192,7 +192,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         _prevPosition: 0,
 
         /**
-         * 当前 step 内的位置。
+         * 当前步骤内的位置。
          *
          * @property _stepPosition
          * @type {Number}
@@ -243,7 +243,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          *  createjs.Tween.get(target).wait(1000).to({alpha:0}, 1000);
          *  
          * @method wait
-         * @param {Number} duration 需要等待的毫秒数（如果 userTicks 为 true 则为 tick 数）。
+         * @param {Number} duration 需要等待的毫秒数（如果 userTicks 为 true 则为 tick 的总数量）。
          * @return {Tween} 当前的 tween 实例（用于链接方法）。
          **/
         wait: function(duration) {
@@ -268,7 +268,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          *  
          * @method to
          * @param {Object} props 该 tween 目标属性的对象(Ex. {x:300} 将 x 属性变至 300)。
-         * @param {Number} duration 可选项. 需要等待的毫秒数（如果 userTicks 为 true 则为 tick 数）。默认值是 0。
+         * @param {Number} duration 可选项. 需要等待的毫秒数（如果 userTicks 为 true 则为 tick 的总数量）。默认值是 0。
          * @param {Function} ease 可选项. 这个 tween 的 easing 方法。默认是 linear ease。
          * @return {Tween} 当前的 tween 实例（用于链接方法）。
          **/
@@ -285,8 +285,8 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         },
 
         /** 
-         * 调用指定噶方法。举例：
-         * myTween.wait(1000).call(myFunction); 将会在 1s 后条用 myFunction()。
+         * 调用指定的方法。举例：
+         * myTween.wait(1000).call(myFunction); 将会在 1s 后调用 myFunction()。
          * 
          * @example
          *   //1 秒后会执行 myFunction()。     
@@ -294,7 +294,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          *   
          * @method call
          * @param {Function} callback 要调用的方法。
-         * @param {Array} params 可选项。要调用的方法的参数。如果这里省略这个值, 那么这个方法调用的时候只有单一一个参数。
+         * @param {Array} params 可选项。要调用的方法的参数。如果这个值省略, 那么该方法调用的时候只有单一一个参数。
          * @param {Object} scope 可选项。条用方法的范围。如果省略，则该范围就是目标对象范围。
          * @return {Tween} 当前的 tween 实例（用于链接方法）。
          **/
@@ -308,14 +308,14 @@ xc.module.define("xc.createjs.Tween", function(exports) {
 
         // TODO: add clarification between this and a 0 duration .to:
         /** 
-         * 对指定噶目标设置指定噶属性。如果目标为 null，就会作用于当前 tween 的 target。
+         * 对指定的目标设置指定的属性。如果目标为 null，就会作用于当前 tween 的目标对象。
          * 
          * @example
          *  myTween.wait(1000).set({visible:false},foo);
          *  
          * @method set
          * @param {Object} props 要设置的属性集合 (ex. {visible:false}).
-         * @param {Object} target 可选项. 指定噶目标，如果省略，则默认为当前 tween 的 target
+         * @param {Object} target 可选项. 指定噶目标，如果省略，则默认为当前 tween 的目标对象。
          * @return {Tween} 当前的 tween 实例（用于链接方法）。
          **/
         set: function(props, target) {
@@ -358,9 +358,9 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * 使 tween 去到指定位置。
          * 
          * @method setPosition
-         * @param {Number} value 去到指定位置所需要的的毫秒数。（如果 userTicks 为 true 则为 tick 数）
-         * @param {Number} actionsMode 可选项，指出 action 如何处理。 (ie. call, set, play, pause):
-         *      Tween.NONE (0) - run no actions。
+         * @param {Number} value 去到指定位置所需要的的毫秒数。（如果 userTicks 为 true 则为 tick 的总数量）
+         * @param {Number} actionsMode 可选项，指出 action 如何处理。 (例如： call, set, play, pause):
+         *      Tween.NONE (0) - 没有任何 action。
          *      Tween.LOOP (1) - 如果新的位置小于旧的位置, 则先运行就的位置到 duration，再运行 0 到 新位置。
          *      Tween.REVERSE (2) - 如果新位置小于旧位置，运行所有在他们之间的 action
          * @return {Boolean} 如果 tween 完成了就返回 true (ie. 整个 tween 都运行完了 & loop 为 false)。
@@ -372,7 +372,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
             if (actionsMode == null) {
                 actionsMode = 1;
             }
-            // normalize position:
+            // 正常位置:
             var t = value;
             var end = false;
             if (t >= this.duration) {
@@ -387,15 +387,15 @@ xc.module.define("xc.createjs.Tween", function(exports) {
                 return end;
             }
             var prevPos = this._prevPos;
-            this.position = this._prevPos = t; // set this in advance in case an action modifies position.
+            this.position = this._prevPos = t;
             this._prevPosition = value;
-            // handle tweens:
+            // 处理 tween:
             if (this._target) {
                 if (end) {
-                    // addresses problems with an ending zero length step.
+                    // 解决长度为零的步骤问题
                     this._updateTargetProps(null, 1);
                 } else if (this._steps.length > 0) {
-                    // find our new tween index:
+                    // 寻找新的 tween 索引；
                     for ( var i = 0, l = this._steps.length; i < l; i++) {
                         if (this._steps[i].t > t) {
                             break;
@@ -405,10 +405,10 @@ xc.module.define("xc.createjs.Tween", function(exports) {
                     this._updateTargetProps(step, (this._stepPosition = t - step.t) / step.d);
                 }
             }
-            // run actions:
+            // 运行 action:
             if (actionsMode != 0 && this._actions.length > 0) {
                 if (this._useTicks) {
-                    // only run the actions we landed on.
+                    // 只运行已绑定的 action
                     this._runActions(t, t);
                 } else if (actionsMode == 1 && t < prevPos) {
                     if (prevPos != this.duration) {
@@ -428,11 +428,11 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         },
 
         /** 
-         * 按照指定的相隔毫秒数推进这个 tween。（如果 userTicks 为 true 则为 tick 数）
+         * 按照指定的相隔毫秒数推进这个 tween。（如果 userTicks 为 true 则为 tick 的总数量）
          * 这个正常会根据 Tween 的引擎前进的（通过 Tween.tick）, 但也暴露给更高级的应用。
          * 
          * @method tick
-         * @param {Number} delta 前进一次相隔的毫秒数（如果 userTicks 为 true 的话，则为 tick 数）
+         * @param {Number} delta 前进一次相隔的毫秒数（如果 userTicks 为 true 的话，则为 tick 的总数量）
          **/
         tick: function(delta) {
             if (this._paused) {
@@ -638,7 +638,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
     });
 
     /** 
-     * 用于 setPostion 的常量 none actionsMode
+     * 用于 setPostion 的常量 none 模型
      * 
      * @property NONE
      * @type Number
@@ -648,7 +648,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
     Tween.NONE = 0;
 
     /** 
-     * 用于 setPostion 的常量 loop actionsMode
+     * 用于 setPostion 的常量 loop 模型
      * 
      * @property LOOP
      * @type Number
@@ -658,7 +658,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
     Tween.LOOP = 1;
 
     /** 
-     * 用于 setPostion 的常量 reverse actionsMode
+     * 用于 setPostion 的常量 reverse 模型
      * 
      * @property REVERSE
      * @type Number
@@ -668,7 +668,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
     Tween.REVERSE = 2;
 
     /**
-     * 插件返回的常量用于让 tween 不要用默认的分配。
+     * 插件返回的常量让 tween 不要用默认的分配。
      * 
      * @property IGNORE
      * @type Object
