@@ -325,7 +325,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
         setChildIndex: function(child, index) {
             var kids = this.children, l = kids.length;
             if (child.parent != this || index < 0 || index >= l) {
-                return;
+                return "1";
             }
             for ( var i = 0; i < l; i++) {
                 if (kids[i] == child) {
@@ -333,13 +333,14 @@ xc.module.define("xc.createjs.Container", function(exports) {
                 }
             }
             if (i == l || i == index) {
-                return;
+                return "2";
             }
             kids.splice(i, 1);
             if (index < i) {
                 index--;
             }
             kids.splice(index, 0, child);
+            return true;
         },
 
         /**

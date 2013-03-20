@@ -194,7 +194,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
      * HTMLAudioPlugin's SoundInstance implementation.
      */
     var HTMLAudioSoundInstance = SoundInstance.extend({
-        _init: function(src, owner) {
+        initialize: function(src, owner) {
             this.src = src;
             this.owner = owner;
             this.endedHandler = Sound.proxy(this.handleSoundComplete, this);
@@ -242,6 +242,8 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
             return 1;
         },
 
+        // Note: Sounds stall when trying to begin playback of a new audio instance when the existing instances
+        // has not loaded yet. This doesn't mean the sound will not play.
         handleSoundStalled: function(event) {
             this.sendEvent("failed");
         },
@@ -384,10 +386,14 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
      * @private
      */
     var HTMLAudioLoader = xc.class.create({
-        _init: function(src, tag) {
+        initialize: function(src, tag) {
             this.src = src;
             this.tag = tag;
             this.preloadTimer = setInterval(Sound.proxy(this.preloadTick, this), 200);
+            // This will tell us when audio is buffered enough to play through, but not when its loaded.
+            // The tag doesn't keep loading in Chrome once enough has buffered, and we have decided that behaviour is sufficient.
+            // Note that canplaythrough callback doesn't work in Chrome, we have to use the event.
+            this.loadedHandler = Sound.proxy(this.sendLoadedEvent, this); // we need this bind to be able to remove event listeners
             this.loadedHandler = Sound.proxy(this.sendLoadedEvent, this);
             this.tag.addEventListener && this.tag.addEventListener("canplaythrough", this.loadedHandler);
             this.tag.onreadystatechange = Sound.proxy(this.sendLoadedEvent, this);
@@ -474,7 +480,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
     });
 
     var HTMLAudioPlugin = xc.class.create({
-        _init: function() {
+        initialize: function() {
             this.capabilities = HTMLAudioPlugin.capabilities;
             this.audioSources = {};
         },
@@ -518,7 +524,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
          * @return {Object} 一个结果对象, 包括一个资源标签和允许的最大实例资源数。
          */
         register: function(src, instances) {
-            this.audioSources[src] = true;
+            this.audioSources[src] = true; // Note this does not mean preloading has started
             var channel = TagPool.get(src);
             var tag = null;
             var l = instances || this.defaultNumChannels;
@@ -527,8 +533,9 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
                 channel.add(tag);
             }
             return {
-                tag: tag,
+                tag: tag, // Return one instance for preloading purposes
                 numChannels: l
+            // The default number of channels to make for this Sound or the passed in value
             };
         },
 
@@ -664,6 +671,9 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
      * @static
      */
     HTMLAudioPlugin.isSupported = function() {
+        // You can enable this plugin on iOS by removing this line, but it is not recommended due to the limitations:
+        // iOS can only have a single <audio> instance, cannot preload or autoplay, cannot cache sound, and can only be
+        // played in response to a user event (click)
         HTMLAudioPlugin.generateCapabilities();
         if (HTMLAudioPlugin.capabilities == null) {
             return false;
