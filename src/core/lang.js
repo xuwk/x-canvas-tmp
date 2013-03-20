@@ -140,5 +140,5 @@
             return this.replace(/^\s+|\s+$/g, '');
         };
     }
-
+    
 })();
