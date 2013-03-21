@@ -3,7 +3,7 @@ xc.module.define("xc.createjs.AlphaMaskFilter", function(exports) {
     var Filter = xc.module.require("xc.createjs.Filter");
 
     /**
-     * See {{#crossLink "Filter"}}{{/crossLink}} for an example of how to apply filters.
+     * 想了解滤镜的使用，请查看{{#crossLink "Filter"}}{{/crossLink}}。
      * 把遮罩图片（或canvas）的alpha通道应用到目标上，这样就可以从遮罩图片中导出结果的alpha通道，当前目标的RGB通道也会复制到结果的对应通道上。例如，可以用来给一个显示对象加蒙层。
      * 这个也可以用来合并一张压缩的带RGB通道的JPG图片和一张带alpha遮罩的PNG32图片，这样生成图片体积会比一张带ARGB通道的PNG32图片小得多。 
      * 
