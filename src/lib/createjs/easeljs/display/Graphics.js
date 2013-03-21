@@ -24,7 +24,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
     /**
     *
     * Graphics 类提供了一系列用于生成和绘制矢量图的 API 的指令。 
-    * 注：Graphics 的使用可以不依赖于框架直接在 draw 中使用，也可以通过 Shape 对象在画架显示列表环境中去绘制矢量图形。cs 的使用不依赖于什么框架，你可以直接在 {{#crossLink "DisplayObject/draw"}}{{/crossLink}} 中使用，也可以通过 
+    * 注：Graphics 的使用可以不依赖于框架直接在 draw 中使用，也可以通过 Shape 对象在画架显示列表环境中去绘制矢量图形。cs 的使用不依赖于什么框架，可以直接在 {{#crossLink "DisplayObject/draw"}}{{/crossLink}} 中使用，也可以通过 
     * {{#crossLink "Shape"}}{{/crossLink}} 对象去调用。
     *
     * <h4>例子</h4>
@@ -41,7 +41,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
     *      stage.addChild(s);
     *      stage.update();
     *
-    * 注： Graphics 类中，每一个画图方法都会返回一个 Graphics 实例，因此我们可以把他们链在一起使用。
+    * 注： Graphics 类中，每一个画图方法都会返回一个 Graphics 实例，因此可以把它们链在一起使用。
     * 例如，下面一段代码功能是用指定的 context2D 画一个红色边框，蓝色填充的矩形。
     *
     *      myGraphics.beginStroke("#F00").beginFill("#00F").drawRect(20, 20, 100, 50).draw(myContext2D);
@@ -51,7 +51,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
     *
     * Graphics 类同时提供了一套短方法，这些 API 把原来 Graphics 类的画图方法缩短成只有一到两个字母的方法。
     * 这些方法有助于构建简洁的指令。与此同时，Toolkit for CreateJS 也通过这些方法生成可读代码。所有的短方法都
-    * 是 protected 的，所以你可以在文档里面查阅。
+    * 是 protected 的，所以可以在文档里面查阅。
     *
     * <table>
     *     <tr><td><b>Tiny</b></td><td><b>Method</b></td><td><b>Tiny</b></td><td><b>Method</b></td></tr>
@@ -468,7 +468,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
         },
 
         /**
-         * 设置当前子路径的 stroke 样式。像所有的绘图方法一样，这个也可以与其他方法连接在一起，所以你可以
+         * 设置当前子路径的 stroke 样式。像所有的绘图方法一样，这个也可以与其他方法连接在一起，所以可以
          * 单独在一行里面定义 stroke 的样式和颜色。例如：
          * 
          *      myGraphics.setStrokeStyle(8,"round").beginStroke("#F00");
@@ -477,7 +477,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
          * @param {Number} thickness stroke 的宽度。
          * @param {String | Number} [caps=0] 指示的行结束时使用的类型的 cap type。butt，round 或 square。默认为 “butt”。此外，还接受值0（butt），1（round）和2（square）使用tiny API。
          * @param {String | Number} [joints=0] 指定 joints（两条线相交）的类型。其中的 bevel，round 或 miter。默认为“miter”。此外，还接受值0（miter），1（round）和2（bevel）使用tiny API。
-         * @param {Number} [miterLimit=10] 如果 joints 属性设置为 miter， 那你可以指定 miterLimit 属性。
+         * @param {Number} [miterLimit=10] 如果 joints 属性设置为 miter， 那可以指定 miterLimit 属性。
          * @param {Boolean} [ignoreScale=false] 如果为 true，stroke 将会根据指定的厚度绘制，不理会活动的 transformations。
          * @return {Graphics} 调用该方法的 Graphics（用于把方法链接在一起）。
          **/
@@ -691,7 +691,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
         },
 
         /**
-         * 根据指定你的 宽度 (w) 和 高度 (h), 类似于 {{#crossLink "Graphics/drawCircle"}}{{/crossLink}} 方法，宽度和高度可以不同。
+         * 根据指定的 宽度 (w) 和 高度 (h), 类似于 {{#crossLink "Graphics/drawCircle"}}{{/crossLink}} 方法，宽度和高度可以不同。
          * @method drawEllipse
          * @param {Number} x ellipse 中心的 x 坐标。
          * @param {Number} y ellipse 中心的 y 坐标。

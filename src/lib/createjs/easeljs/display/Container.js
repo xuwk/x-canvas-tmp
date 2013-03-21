@@ -26,7 +26,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 在展示列表中的子对象数组，你将经常用到管理这些子对象的方法。
+         * 在展示列表中的子对象数组，将经常用到管理这些子对象的方法。
          * 例如 {{#crossLink "Container/addChild"}}{{/crossLink}},
          * {{#crossLink "Container/removeChild"}}{{/crossLink}}, {{#crossLink "Container/swapChildren"}}{{/crossLink}}等等,
          * 比起直接操作它，利用一些高级的方法去操作它会更好。
@@ -81,7 +81,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 往展示列表的最上方添加子对象。当然你也可以添加多个子对象。比如 "addChild(child1, child2, ...);"。
+         * 往展示列表的最上方添加子对象。当然也可以添加多个子对象。比如 "addChild(child1, child2, ...);"。
          * 返回被添加的子对象，当添加多个子对象时将返回最后一个。
          *
          * <h4>例子</h4>
@@ -112,9 +112,9 @@ xc.module.define("xc.createjs.Container", function(exports) {
 
         /**
          * 往指定下标号处添加子对象，大于等于该下标号的子对象的下标号都加 1，同时设置它的父对象为 Container。
-         * 你可以同时添加多个子对象，比如 "addChildAt(child1, child2, ..., index);"。
+         * 可以同时添加多个子对象，比如 "addChildAt(child1, child2, ..., index);"。
          * 下标号必须在 0 到 numChildren 之间。
-         * 例如，在展示列表中，将 myShape 添加到 otherShape 下，你可以这样做，container.addChildAt(myShape, container.getChildIndex(otherShape))。
+         * 例如，在展示列表中，将 myShape 添加到 otherShape 下，可以这样做，container.addChildAt(myShape, container.getChildIndex(otherShape))。
          * 这样也会使得 otherShape 的索引号加 1。
          * 返回被添加的子对象，当添加多个子对象时将返回最上方的子对象。
          * 当指定的索引号超出子对象下标总数范围，会添加失败。
@@ -144,8 +144,8 @@ xc.module.define("xc.createjs.Container", function(exports) {
         },
 
         /**
-         * 在展示列表里删除指定的子对象。注：当你知道子对象对应的下标号时，使用 removeChildAt() 会更快。
-         * 你可以同时删除多个子对象，比如 "removeChild(child1, child2, ...);"。
+         * 在展示列表里删除指定的子对象。注：当知道子对象对应的下标号时，使用 removeChildAt() 会更快。
+         * 可以同时删除多个子对象，比如 "removeChild(child1, child2, ...);"。
          * 当成功删除，返回 true，如果子对象不在展示列表内，将返回 false。
          * @method removeChild
          * @param {DisplayObject} child 要删除的子对象。
@@ -165,7 +165,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
 
         /**
          * 在展示列表里删除在特定下标号的子对象，同时设置他的父对象为 null。
-         * 你可以同时删除多个子对象，例如 "removeChildAt(2, 7, ...);"。
+         * 可以同时删除多个子对象，例如 "removeChildAt(2, 7, ...);"。
          * 当删除成功时，会返回 true，当任意一个下标号越界时，返回 false。 
          * @param {Number} index 将要被移除的子对象对应的下标号。
          * @return {Boolean} 如果成功移除子对象，则返回 true，任意一个下标号越界时，则返回 false。
@@ -467,8 +467,8 @@ xc.module.define("xc.createjs.Container", function(exports) {
             var canvas = DisplayObject._hitTestCanvas;
             var mtx = this._matrix;
             var hasHandler = this._hasMouseHandler(mouseEvents);
-            // 如果我们有一个便利的 cache 和一个处理程序，我们使用它们来提升效率。
-            // 我们不能通过 cache 来筛选子对象，因为他们呢可能设置了 hitArea。
+            // 如果有一个便利的 cache 和一个处理程序，使用它们来提升效率。
+            // 不能通过 cache 来筛选子对象，因为他们呢可能设置了 hitArea。
             if (!this.hitArea && this.cacheCanvas && hasHandler) {
                 this.getConcatenatedMatrix(mtx);
                 ctx.setTransform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx - x, mtx.ty - y);
@@ -489,7 +489,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
                     continue;
                 }
                 var childHasHandler = mouseEvents && child._hasMouseHandler(mouseEvents);
-                // 如果子对象 container 有一个处理程序和一个 hitArea，那我们只需要检查它对应 hitArea 就可以了，所以我们可以像平常一样处理就可以了
+                // 如果子对象 container 有一个处理程序和一个 hitArea，那只需要检查它对应 hitArea 就可以了，所以可以像平常一样处理就可以了
                 if (child instanceof Container && !(hitArea && childHasHandler)) {
                     var result;
                     if (hasHandler) {

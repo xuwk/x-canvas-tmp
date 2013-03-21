@@ -5,11 +5,11 @@ xc.module.define("xc.createjs.Text", function(exports) {
     /**
      *  
      * 显示一行或多行的动态文字（用户不能编辑的）在展示列表上。支持最基本的换行（利用行宽），包含了 spaces 和 tabs。
-     * 注：作为替代文本，你可以调用 {{#crossLink "DisplayObject/localToGlobal"}}{{/crossLink}} 或 {{#crossLink "DOMElement"}}{{/crossLink}}
+     * 注：作为替代文本，可以调用 {{#crossLink "DisplayObject/localToGlobal"}}{{/crossLink}} 或 {{#crossLink "DOMElement"}}{{/crossLink}}
      * 定位 HTML 文本在 canvas 的上方 或者 下方
      *
      * <b>注： Text 不支持 HTML 文本，一次只能显示一种字体样式</b>
-     * 如果你需要多种字体样式，你只能创建多个 Text 实例，再手动对他们进行排序。
+     * 如果需要多种字体样式，只能创建多个 Text 实例，再手动对他们进行排序。
      *
      * <h4>例子</h4>
      *      var text = new createjs.Text("Hello World", "20px Arial", #ff7700");

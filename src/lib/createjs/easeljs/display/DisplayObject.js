@@ -59,7 +59,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          * @param {Object} target 调用该事件的object。
          * @param {String} type 事件类型。
          * @param {Array} params 一个包含所有传递到 stage update 的参数。
-         * 例如 如果你执行 stage.update("hello"), 那参数就会是 ["hello"]。
+         * 例如 如果执行 stage.update("hello"), 那参数就会是 ["hello"]。
          * @since 0.6.0
          */
 
@@ -118,7 +118,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * 用于定位该显示对象的 x 坐标。
-         * 比如：当你需要一个 100x100px 的 Bitmap 围绕其中心旋转，你应该设置 regX = regY = 50。
+         * 比如：当需要一个 100x100px 的 Bitmap 围绕其中心旋转，应该设置 regX = regY = 50。
          * @property regX
          * @type {Number}
          * @default 0
@@ -127,7 +127,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
 
         /**
          * 用于定位该显示对象的 y 坐标。
-         * 比如：当你需要一个 100x100px 的 Bitmap 围绕其中心旋转，你应该设置 regX = regY = 50。
+         * 比如：当需要一个 100x100px 的 Bitmap 围绕其中心旋转，应该设置 regX = regY = 50。
          * @property regY
          * @type {Number}
          * @default 0
@@ -396,8 +396,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          * @param {Number} width 缓存区域的宽度。
          * @param {Number} height 缓存区域的高度。
          * @param {Number} scale 可选. 放大倍数。
-         * 例如，如果你用缓存画一个矢量图 myShape.cache(0,0,100,100,2) 它将产生一个 200*200 px 的缓存 Canvas。
-         * 这使你可以通过缩放和旋转缓存使得元素有更高的保真度。
+         * 例如，如果用缓存画一个矢量图 myShape.cache(0,0,100,100,2) 它将产生一个 200*200 px 的缓存 Canvas。
+         * 这可以通过缩放和旋转缓存使得元素有更高的保真度。
          * 默认值 1。
          */
         cache: function(x, y, width, height, scale) {
@@ -702,7 +702,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          * @protected
          */
         _tick: function(params) {
-            // 因为 onTick 性能是很敏感，所以我们将内联一些 dispatchEvent 工作。
+            // 因为 onTick 性能是很敏感，所以将内联一些 dispatchEvent 工作。
             // 这或许可以在某些时候能解决某些问题。这对现今有成千上万的对象的浏览器有显著的影响。
             var ls = this._listeners;
             if (ls && ls["tick"]) {

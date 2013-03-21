@@ -1,6 +1,6 @@
 /**
  *
- * TweenJs 库提供了一个简单但非常有用的补间接口。它同时支持数据对象属性和 CSS 样式属性，同时支持你把 action 链接在一起。
+ * TweenJs 库提供了一个简单但非常有用的补间接口。它同时支持数据对象属性和 CSS 样式属性，同时可以把 action 链接在一起。
  *
  * <h4>简单 Tween</h4>
  * 这个 tween 将会对目标对象的透明度进行补间，该补间是在 1 秒内将透明度从 0 变到 1，然后调用 <code>onComplete</code> 回调。
@@ -31,7 +31,7 @@ xc.module.define("xc.createjs.CSSPlugin", function(exports) {
      *
      *   createjs.CSSPlugin.install();
      *
-     * 当你可以调整 CSS 的属性值时，会用到 <code>cssSuffixMap</code> 属性。
+     * 当调整 CSS 的属性值时，会用到 <code>cssSuffixMap</code> 属性。
      * 当前，top, left, bottom, right, width, height 属性都是 "px" 后缀。
      *
      * @class CSSPlugin

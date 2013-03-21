@@ -4,7 +4,7 @@ xc.module.define("xc.createjs.SoundInstance", function(exports) {
 
     /**
      * SoundInstance，当调用 Sound API 的 {{#crossLink "Sound/play"}}{{/crossLink}} 方法，或 {{#crossLink "Sound/createInstance"}}{{/crossLink}}
-     * 的时候就会我创建。这个 SoundInstance 是通过活跃的插件返回给用户去操作的。
+     * 的时候就会创建。这个 SoundInstance 是通过活跃的插件返回给用户去操作的。
      *
      * <h4>例子</h4>
      *      Sound.play("myAssetPath/mySrcFile.mp3");
@@ -173,7 +173,7 @@ xc.module.define("xc.createjs.SoundInstance", function(exports) {
 
         /**
          * 注：这个只是作为一个 <code>WebAudioPlugin</code> 的属性存在，而且只是用于高级用法。
-         * panNode 允许你左右声道平移。连接到我们的 <code>WebAudioPlugin.gainNode</code> 等同于 <code>context.destination</code>。
+         * panNode 允许左右声道平移。连接到 <code>WebAudioPlugin.gainNode</code> 等同于 <code>context.destination</code>。
          *
          * @property panNode
          * @type {AudioPannerNode}
@@ -193,7 +193,7 @@ xc.module.define("xc.createjs.SoundInstance", function(exports) {
 
         /**
          * 注：这个只是作为一个 <code>WebAudioPlugin</code> 的属性存在，而且只是用于高级用法。
-         * sourceNode 是我们的音频资源。 链接到 <code>gainNode</code>。
+         * sourceNode 是音频资源。 链接到 <code>gainNode</code>。
          *
          * @property sourceNode
          * @type {AudioSourceNode}
@@ -226,11 +226,8 @@ xc.module.define("xc.createjs.SoundInstance", function(exports) {
          */
 
         /**
-         * The event that is fired when playback has failed. This happens when there are too many channels with the same
-         * src property already playing (and the interrupt value doesn't cause an interrupt of another instance), or
-         * the sound could not be played, perhaps due to a 404 error.
-         * 
-         * 当播放失败的时候触发该事件。余下的呢？？？
+         * 当播放失败的时候触发该事件。通常是过多调用相同资源的频道同时播放的时候，触发该事件（以及中断值设置错误）。
+         * 或者是音频不能被播放，又可能是 404 错误。
          *
          * @event failed
          * @param {Object} target 被事件调度的对象。
@@ -275,7 +272,7 @@ xc.module.define("xc.createjs.SoundInstance", function(exports) {
          * @protected
          */
         cleanUp: function() {
-            clearTimeout(this.delayTimeoutId); // clear timeout that plays delayed sound
+            clearTimeout(this.delayTimeoutId); // 清除播放时的 timeout。
             createjs.Sound.playFinished(this);
         },
 
@@ -375,7 +372,7 @@ xc.module.define("xc.createjs.SoundInstance", function(exports) {
         },
 
         /**
-         * 设置实例的音量。你可以通过 {{#crossLink "SoundInstance/getVolume"}}{{/crossLink}} 获取音量。
+         * 设置实例的音量。通过 {{#crossLink "SoundInstance/getVolume"}}{{/crossLink}} 获取音量。
          * <h4>例子</h4>
          *      myInstance.setVolume(0.5);
          *
@@ -430,7 +427,7 @@ xc.module.define("xc.createjs.SoundInstance", function(exports) {
         },
 
         /**
-         * 获取实例的静音值。 
+         * 获取实例的静音值。
          *
          * <h4>例子</h4>
          *      var isMuted = myInstance.getMute();
@@ -491,7 +488,7 @@ xc.module.define("xc.createjs.SoundInstance", function(exports) {
 
         /**
          * 获取实例的周期，以毫秒为单位。
-         * 注：在很多情况下，你需要在周期正确返回之前，就要调用 {{#crossLink "SoundInstance/play"}}{{/crossLink}} 或 
+         * 注：在很多情况下，需要在周期正确返回之前，就要调用 {{#crossLink "SoundInstance/play"}}{{/crossLink}} 或 
          * Sound API {{#crossLink "Sound.play"}}{{/crossLink}}。
          * 
          * @method getDuration

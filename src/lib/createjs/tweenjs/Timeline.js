@@ -274,7 +274,7 @@ xc.module.define("xc.createjs.Timeline", function(exports) {
 
         /** 
          * 重新计算 timeline 的周期数。
-         * 周期数会在每当添加或删除 tween 的时候自动更新的，这个方法主要用于当你添加了一个 tween 之后再对其进行修改。
+         * 周期数会在每当添加或删除 tween 的时候自动更新的，这个方法主要用于当添加了一个 tween 之后再对其进行修改。
          * 
          * @method updateDuration
          **/

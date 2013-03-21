@@ -7,7 +7,7 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
 
     /**
      * MovieClip 类关联一个 EaselJS {{#crossLink "Container"}}{{/crossLink}} 的 TweenJS Timeline。
-     * 它允许你创建封装时间轴动画对象，可以改变状态，和同步 action。
+     * 它可以创建封装时间轴动画对象，可以改变状态，和同步 action。
      * 由于制作一套影片的固有复杂性，这将主要作为输出工具，并不包含在主 EaselJS 库里。
      *
      * 目前 MovieClip 只能基于 tick 去工作，但已做出一些让步让它在未来能基于时间表去工作。
@@ -102,8 +102,8 @@ xc.module.define("xc.createjs.MovieClip", function(exports) {
          * 如果为 true，则 timeline 在任何时候往展示列表里面添加返回属性的时候，MoiveClip 都将自动重置到第一帧。
          * 这个仅仅在 mode=INDEPENDENT 的时候生效。
          * <br><br>
-         * 举例，如果你有一个含有 "body" 子动画的动画。你可以设置 body.autoReset = false。
-         * 那你就可以掌控帧的行为，不用担心它会自动重置了。
+         * 举例，如果有一个含有 "body" 子动画的动画。可以设置 body.autoReset = false。
+         * 那就可以掌控帧的行为，不用担心它会自动重置了。
          * 
          * @property autoReset
          * @type Boolean

@@ -11,8 +11,8 @@
  * 请使用 {{#crossLink "Sound.MAX_INSTANCES"}}{{/crossLink}} 作为最大安全音频标签数的参考。 
  *
  * <b>IE9 html 局限性</b><br />
- * <ul><li> 改变音频状态的时候会有一个延迟。所以当你希望静音的时候，音频将在延迟的这段时间里面继续播放。此时对音频进行任何操作均无济于事。</li>
- * <li> MP3 编码并不是任何时候都有效，尤其是在 IE 下。我们发现默认 64kbps 编码是有效的</li></ul>。
+ * <ul><li> 改变音频状态的时候会有一个延迟。所以当希望进行静音操作时，音频将在延迟的这段时间里面继续播放。此时对音频进行任何操作均无济于事。</li>
+ * <li> MP3 编码并不是任何时候都有效，尤其是在 IE 下。但默认的 64kbps 编码是有效的</li></ul>。
  *
  * <b>iOS 6 局限性</b><br />
  * 注：建议在 iOS (6+) 中使用 {{#crossLink "WebAudioPlugin"}}{{/crossLink}}，HTML Audio 只能拥有一个 <audio> 标签。
@@ -32,7 +32,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
     var SoundInstance = xc.module.require("xc.createjs.SoundInstance");
 
     /**
-     * TagPool 是一个 HTMLAudio 的标签实例。在 Chrome 里面。我们必须加载数据前，确定 HTML audio 的标签实例数。
+     * TagPool 是一个 HTMLAudio 的标签实例。在 Chrome 里面。必须在加载数据前，确定 HTML audio 的标签实例数。
      * （这个可能是 Chrome 的 bug）。
      * 
      * @class TagPool
@@ -55,7 +55,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
         src: null,
 
         /**
-         * 当前 HTMLAudio 标签的总数。该设置确保能同时播放的实例的最大值。
+         * 当前 HTMLAudio 标签的总数。该设置确保能同时播放的最大实例数。
          *
          * @property length
          * @type {Number}
@@ -96,7 +96,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
         },
 
         /**
-         * 获取一个马上要播放的 HTMLAudioElement。然后把它从标签列表中抽出来。 
+         * 获取一个马上要播放的 HTMLAudio 元素。然后把它从标签列表中抽离出来。 
          *
          * @method get
          * @return {HTMLAudioElement} 一个 HTML audio 标签。
@@ -114,7 +114,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
         },
 
         /**
-         * 把一个 HTMLAudioElement 重新放回标签列表。
+         * 把一个 HTMLAudio 元素重新放回标签列表。
          *
          * @method set
          * @param {HTMLAudioElement} tag HTML audio 标签。
@@ -133,7 +133,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
     });
 
     /**
-     * 一个用于寻找 SoundChannel 的哈希集合，该哈希以 audio 资源路径作为索引。
+     * 一个用于寻找 SoundChannel 的哈希集合，该哈希以音频资源路径作为索引。
      *
      * @property tags
      * @static
@@ -191,7 +191,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
     }
 
     /**
-     * HTMLAudioPlugin's SoundInstance implementation.
+     * HTMLAudio 插件的 SoundInstance 具体执行方法。
      */
     var HTMLAudioSoundInstance = SoundInstance.extend({
         initialize: function(src, owner) {
@@ -242,8 +242,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
             return 1;
         },
 
-        // Note: Sounds stall when trying to begin playback of a new audio instance when the existing instances
-        // has not loaded yet. This doesn't mean the sound will not play.
+        // 注：Sounds stall 将在播放一段还没加载完成的音频时执行，这并不意味着音频不会播放。
         handleSoundStalled: function(event) {
             this.sendEvent("failed");
         },
@@ -377,7 +376,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
 
     /**
      * 一个内部的辅助类，利用 HTMLAudioElement 标签预加载 html audio 标签。注意 PreloadJS 不会用这个加载器。
-     * 注意这个类和它的方法没有文档是为了避免产生 HTML 文件。
+     * 注：这个类和它的方法没有文档是为了避免产生 HTML 文件。
      *
      * #class HTMLAudioLoader
      * @param {String} src 要加载的音频的资源路径。
@@ -390,10 +389,10 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
             this.src = src;
             this.tag = tag;
             this.preloadTimer = setInterval(Sound.proxy(this.preloadTick, this), 200);
-            // This will tell us when audio is buffered enough to play through, but not when its loaded.
-            // The tag doesn't keep loading in Chrome once enough has buffered, and we have decided that behaviour is sufficient.
-            // Note that canplaythrough callback doesn't work in Chrome, we have to use the event.
-            this.loadedHandler = Sound.proxy(this.sendLoadedEvent, this); // we need this bind to be able to remove event listeners
+            // 这里告诉用户音频是否具备足够的缓冲去播放。
+            // 一旦缓冲足够了，标签将不再保存在 Chrome 里面。
+            // 注：Chrome 不支持 canplaythrough 回调，只能触发事件。 
+            this.loadedHandler = Sound.proxy(this.sendLoadedEvent, this); // 这里为了能移除事件监听。
             this.loadedHandler = Sound.proxy(this.sendLoadedEvent, this);
             this.tag.addEventListener && this.tag.addEventListener("canplaythrough", this.loadedHandler);
             this.tag.onreadystatechange = Sound.proxy(this.sendLoadedEvent, this);
@@ -436,7 +435,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
         loadedHandler: null,
 
         /**
-         * 让我们可以知道预加载进度和什么时候完成。
+         * 让用户可以知道预加载进度和什么时候完成。
          *
          * @method preloadTick
          * @protected
@@ -465,12 +464,12 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
          * 用于加载完成后与 Sound 之间的通讯。
          *
          * @method sendLoadedEvent
-         * @param {Object} evt The load Event
+         * @param {Object} evt 加载事件
          */
         sendLoadedEvent: function(evt) {
             this.tag.removeEventListener && this.tag.removeEventListener("canplaythrough", this.loadedHandler); // cleanup and so we don't send the event more than once
-            this.tag.onreadystatechange = null; // cleanup and so we don't send the event more than once
-            Sound.sendLoadComplete(this.src); // fire event or callback on Sound
+            this.tag.onreadystatechange = null; // 移除状态，意味着不会发超过一次的事件信息。
+            Sound.sendLoadComplete(this.src); // 在 Sound 中触发事件或调用回调。
         },
 
         // 用于调试。
@@ -486,7 +485,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
         },
 
         /**
-         * 插件的能力，通过 {{#crossLink "HTMLAudioPlugin/generateCapabilities"}}{{/crossLink}} 创建
+         * 插件的功能，通过 {{#crossLink "HTMLAudioPlugin/generateCapabilities"}}{{/crossLink}} 创建
          *
          * @property capabilities
          * @type Object
@@ -533,9 +532,8 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
                 channel.add(tag);
             }
             return {
-                tag: tag, // Return one instance for preloading purposes
-                numChannels: l
-            // The default number of channels to make for this Sound or the passed in value
+                tag: tag, // 返回一个用于预加载的实例。
+                numChannels: l // Sound 的默认频道数或是传进的值。
             };
         },
 
@@ -562,7 +560,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
          * @return {SoundInstance} 一个能控制的音频实例。
          */
         create: function(src) {
-            // if this sound has not be registered, create a tag and preload it
+            // 如果该音频没有注册，创建一个标签然后进行预加载。
             if (!this.isPreloadStarted(src)) {
                 var channel = TagPool.get(src);
                 var tag = this.createTag(src);
@@ -613,7 +611,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
     HTMLAudioPlugin.MAX_INSTANCES = 30;
 
     /**
-     * 插件的能力。这个是通过 SoundInstance {{#crossLink "TMLAudioPlugin/generateCapabilities"}}{{/crossLink}} 创建的。
+     * 插件的功能。这个是通过 SoundInstance {{#crossLink "TMLAudioPlugin/generateCapabilities"}}{{/crossLink}} 创建的。
      * 请看 Sound 的 {{#crossLink "Sound/getCapabilities"}}{{/crossLink}} 方法获取更多可用属性。
      *
      * @property capabilities
@@ -623,7 +621,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
     HTMLAudioPlugin.capabilities = null;
 
     /**
-     * 代表 canPlayThrough 事件的静态常量
+     * 代表 canPlayThrough 事件的静态常量。
      *
      * @property AUDIO_READY
      * @type {String}
@@ -633,7 +631,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
     HTMLAudioPlugin.AUDIO_READY = "canplaythrough";
 
     /**
-     * 代表 ended 事件的静态常量
+     * 代表 ended 事件的静态常量。
      *
      * @property AUDIO_ENDED
      * @type {String}
@@ -643,7 +641,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
     HTMLAudioPlugin.AUDIO_ENDED = "ended";
 
     /**
-     * 代表 error 事件的静态常量
+     * 代表 error 事件的静态常量。
      *
      * @property AUDIO_ERROR
      * @type {String}
@@ -653,7 +651,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
     HTMLAudioPlugin.AUDIO_ERROR = "error"; //TODO: Handle error cases
 
     /**
-     * 代表 stalled 事件的静态常量
+     * 代表 stalled 事件的静态常量。
      *
      * @property AUDIO_STALLED
      * @type {String}
@@ -671,9 +669,8 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
      * @static
      */
     HTMLAudioPlugin.isSupported = function() {
-        // You can enable this plugin on iOS by removing this line, but it is not recommended due to the limitations:
-        // iOS can only have a single <audio> instance, cannot preload or autoplay, cannot cache sound, and can only be
-        // played in response to a user event (click)
+        // 在 IOS 上，可以通过移除这一行去启用该插件，但基于局限性，这个做法是不推荐的。
+        // IOS 只能拥有一个音频实例，不支持预加载以及自动不放，不能缓存音频，而且只能在用户事件中播放（如：click）
         HTMLAudioPlugin.generateCapabilities();
         if (HTMLAudioPlugin.capabilities == null) {
             return false;
@@ -682,7 +679,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
     };
 
     /**
-     * 决定插件的能力管理。内部使用。请看 Sound API {{#crossLink "Sound/getCapabilities"}}{{/crossLink}} 获取各个属性的值。
+     * 决定插件的功能管理。内部使用。请看 Sound API {{#crossLink "Sound/getCapabilities"}}{{/crossLink}} 获取各个属性的值。
      *
      * @method generateCapabiities
      * @static

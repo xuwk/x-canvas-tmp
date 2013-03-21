@@ -56,7 +56,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          */
 
         /**
-         * 指出 stage 是否在每一次渲染之前清空，你可以设置为 false 然后手动去控制 stage 的清空。
+         * 指出 stage 是否在每一次渲染之前清空，可以设置为 false 然后手动去控制 stage 的清空。
          * 
          * @property autoClear
          * @type Boolean
@@ -65,7 +65,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         autoClear: true,
 
         /**
-         * 用于渲染 stage 的 canvas，多个 stage 可以共用一个 canvas，但你必须禁止除第一个 stage 之外的所有 stage 的 autoClear 属性 （否则 stage 会清空其他 stage 渲染的内容）
+         * 用于渲染 stage 的 canvas，多个 stage 可以共用一个 canvas，但必须禁止除第一个 stage 之外的所有 stage 的 autoClear 属性 （否则 stage 会清空其他 stage 渲染的内容）
          *
          * @property canvas
          * @type HTMLCanvasElement | Object
@@ -185,11 +185,11 @@ xc.module.define("xc.createjs.Stage", function(exports) {
 
         /**
          * 默认事件处理机制，当接收到 “tick” 事件的时候，调用 Stage.update()。
-         * 这里使你可以直接注册一个 stage 到 {{#crossLink "Ticker"}}{{/crossLink}} 事件监听里面, 通过：
+         * 这里可以直接注册一个 stage 到 {{#crossLink "Ticker"}}{{/crossLink}} 事件监听里面, 通过：
          * 
          *      Ticker.addEventListener("tick", myStage");
          * 
-         * 注：如果你通过这种模式订阅 ticker，那么该 tick 事件对象将被传递到显示对象，替代了原来的 delta 和 paused 参数
+         * 注：如果通过这种模式订阅 ticker，那么该 tick 事件对象将被传递到显示对象，替代了原来的 delta 和 paused 参数
          * @property handleEvent
          * @type Function
          */

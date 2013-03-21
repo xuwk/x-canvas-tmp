@@ -4,10 +4,10 @@ xc.module.define("xc.createjs.Shape", function(exports) {
     var Graphics = xc.module.require("xc.createjs.Graphics");
 
     /**
-     * 一个 Shape 让你可以在展示列表上画矢量图。包含了一个封装了所有矢量绘制方法的 {{#crossLink "Graphics"}}{{/crossLink}} 实例。
+     * 一个 Shape 可以在展示列表上画矢量图。包含了一个封装了所有矢量绘制方法的 {{#crossLink "Graphics"}}{{/crossLink}} 实例。
      * 一个 Graphics 实例可以被多个 Shape 实例共同来显示不同位置的形状。
      *
-     * 如果矢量图在 draws 方法之间不用变动的，那你可以使用 {{#crossLink "DisplayObject/cache"}}{{/crossLink}} 方法去减低性能消耗。
+     * 如果矢量图在 draws 方法之间不用变动的，那可以使用 {{#crossLink "DisplayObject/cache"}}{{/crossLink}} 方法去减低性能消耗。
      *
      * <h4>例子</h4>
      *      var graphics = new createjs.Graphics().beginFill("#ff0000").drawRect(0, 0, 100, 100);
