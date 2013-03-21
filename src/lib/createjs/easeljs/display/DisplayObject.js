@@ -21,26 +21,22 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         /**
          * 当用户在显示对象上按下鼠标左键时触发该事件。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * @event mousedown
-         * @since 0.6.0
          */
          
         /**
          * 当用户在显示对象上按下鼠标左键再放开左键时触发该事件。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * @event click
-         * @since 0.6.0
          */
          
         /**
          * 当用户在 display object 上双击鼠标左键时触发该事件。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * @event dblClick
-         * @since 0.6.0
          */
          
         /**
          * 当用户鼠标在显示对象上滑过时触发该事件。必须调用了 Stage.enableMouseOver 该事件才能生效。
          * 事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * @event mouseover
-         * @since 0.6.0
          */
          
         
@@ -48,7 +44,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          * 当用户鼠标在显示对象上滑出时触发该事件。必须调用了 Stage.enableMouseOver 该事件才能生效。
          * 事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * @event mouseout
-         * @since 0.6.0
          */
          
         /**
@@ -60,7 +55,6 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          * @param {String} type 事件类型。
          * @param {Array} params 一个包含所有传递到 stage update 的参数。
          * 例如 如果执行 stage.update("hello"), 那参数就会是 ["hello"]。
-         * @since 0.6.0
          */
 
         /**
