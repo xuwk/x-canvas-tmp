@@ -109,7 +109,7 @@ xc.module.define("xc.createjs.EventDispatcher", function(exports) {
          *
          * @method dispatchEvent
          * @param {Object | String} eventObj 一个包含了“type”属性的对象，或者一个类型名称。如果使用类型名称，dispatchEvent会构造一个包含了“type”和“params”的通用事件对象。
-         * @param {Object} [target] 那个作为事件对象的目标属性来使用的对象。这个会作为分派对象的默认值。
+         * @param {Object} [target] 此对象用于事件对象的目标属性，默认为分配对象。
          * @return {Boolean} 如果任意一个监听器返回true则返回true。
          */
         dispatchEvent: function(eventObj, target) {

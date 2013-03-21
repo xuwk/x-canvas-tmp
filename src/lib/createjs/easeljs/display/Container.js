@@ -446,7 +446,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
         _tick: function(params) {
             for ( var i = this.children.length - 1; i >= 0; i--) {
                 var child = this.children[i];
-                if (child._tick) {
+                if (undefined !== child && child._tick) {
                     child._tick(params);
                 }
             }
