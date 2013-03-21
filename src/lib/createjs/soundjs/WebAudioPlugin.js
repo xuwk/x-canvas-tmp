@@ -210,7 +210,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
 
     /**
      * 一个内部辅助类，用于帮助 web audio 通过 XHR，预加载。
-     * 注：这个类和它的方法没有适当的说明是为了避免长生 HTML 文档。
+     * 注：这个类和它的方法没有适当的说明是为了避免产生 HTML 文档。
      * 
      * @class WebAudioLoader
      * @param {String} src 要加载的音频资源。
