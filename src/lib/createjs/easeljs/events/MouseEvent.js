@@ -128,7 +128,9 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
          * @return {MouseEvent} MouseEvent实例的克隆
          */
         clone: function() {
-            return new MouseEvent(this.type, this.stageX, this.stageY, this.target, this.nativeEvent, this.pointerID, this.primary, this.rawX, this.rawY);
+            return new MouseEvent(this.type, this.stageX, this.stageY, 
+                                this.target, this.nativeEvent, this.pointerID, 
+                                this.primary, this.rawX, this.rawY);
         },
 
         /**

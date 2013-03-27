@@ -29,7 +29,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          */
          
         /**
-         * 当用户在 display object 上双击鼠标左键时触发该事件。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
+         * 当用户在显示对象上双击鼠标左键时触发该事件。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * @event dblClick
          */
          

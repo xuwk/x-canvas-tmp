@@ -6,3 +6,6 @@ for(var i = ids.length - 1; i >= 0; i--) {
         createjs[match[1]] = xc.module.require(ids[i]);
     }
 }
+
+HTMLCanvasElement = HTMLCanvasElement ? HTMLCanvasElement : Canvas;
+HTMLAudioElement = HTMLAudioElement ? HTMLAudioElement : Audio;

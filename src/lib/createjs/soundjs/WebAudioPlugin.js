@@ -196,7 +196,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
             if (this.sourceNode && this.sourceNode.playbackState != this.sourceNode.UNSCHEDULED_STATE) { //如果 playbackState 的值为 UNSCHEDULED_STATE，继而 noteON 或 noteGrainOn 没有被调用，则调用 noteOff 会抛出错误。
                 this.sourceNode.noteOff(0); // 停止该音频, 因为需要创建一个重新定位的 sourceNode
                 clearTimeout(this.soundCompleteTimeout); // 清除完成时的 timeout。
-            // 注：不能仅仅执行 cleanup，原因是同时执行了 Sound 类的 playFinished 方法。
+            }// 注：不能仅仅执行 cleanup，原因是同时执行了 Sound 类的 playFinished 方法。
             if (!this.paused && this.playState == Sound.PLAY_SUCCEEDED) {
                 this.handleSoundReady(null);
             }
@@ -556,8 +556,7 @@ xc.module.define("xc.createjs.WebAudioPlugin", function(exports) {
      * @static
      * @protected
      */
-    WebAudioPlugin.generateCapabilities =
-    function() {
+    WebAudioPlugin.generateCapabilities = function() {
         if (WebAudioPlugin.capabilities != null) {
             return;
         }
