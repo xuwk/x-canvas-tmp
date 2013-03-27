@@ -4,102 +4,101 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
     var Rectangle = xc.module.require("xc.createjs.Rectangle");
 
     /**
-     * Encapsulates the properties and methods associated with a sprite sheet. A sprite sheet is a series of images
-     * (usually animation frames) combined into a larger image (or images). For example, an animation consisting of eight
-     * 100x100 images could be combined into a single 400x200 sprite sheet (4 frames across by 2 high).
      *
-     * The data passed to the SpriteSheet constructor defines three critical pieces of information:
-     * <ol>
-     *  <li>The image or images to use.</li>
-     *  <li>The positions of individual image frames. This data can be represented in one of two ways:
-     *      As a regular grid of sequential, equal-sized frames, or as individually defined, variable sized frames
-     *      arranged in an irregular (non-sequential) fashion.</li>
-     *  <li>Likewise, animations can be represented in two ways: As a series of sequential frames, defined by a start and
-     *      end frame [0,3], or as a list of frames [0,1,2,3].</li>
-     * </ol>
+     * 封装一系列关于 sprite sheet 的属性和方法。一个 sprite sheet 就是一系列的图片（通常是动画帧），
+     * 组合到一张大图片中（或许多张图片）。例如，一个动画由 8 张 100x100 的图片组成，就会组合成一个 400 x 200 的 sprite sheet。
+     * 
+     * 3个传递到 SpriteSheet 的数据定义了 3 个比较重要的信息:<ol>
+     *    <li> 将要用到的图片 </li>
+     *    <li> 帧定义，动画每一帧对应的图片位置。这些数据可以通过 2 种方式表示:
+     *             作为一个规则的网格的顺序，同等大小的帧，或单独定义的，可变大小的帧，排列不规则的（非顺序）。</li>
+     *    <li> 同样，动画可以在两个方面表示：作为一系列连续画幅，所定义的开始和结束帧[0,3]，或者作为一个帧列表[0,1,2,3]。</li>
+     * </OL>
      *
-     * <h4>SpriteSheet Format</h4>
+     * <h4>SpriteSheet 格式</h4>
      *
-     *     data = {
-   *
-   *         // DEFINING IMAGES:
-   *         // list of images or image URIs to use. SpriteSheet can handle preloading.
-   *         // the order dictates their index value for frame definition.
-   *         images: [image1, "path/to/image2.png"],
-   *
-   *         // DEFINING FRAMES:
-   *         // the simple way to define frames, only requires frame size because frames are consecutive:
-   *         // define frame width/height, and optionally the frame count and registration point x/y.
-   *         // if count is omitted, it will be calculated automatically based on image dimensions.
-   *         frames: {width:64, height:64, count:20, regX: 32, regY:64},
-   *
-   *         // OR, the complex way that defines individual rects for frames.
-   *         // The 5th value is the image index per the list defined in "images" (defaults to 0).
-   *         frames: [
-   *             // x, y, width, height, imageIndex, regX, regY
-   *             [0,0,64,64,0,32,64],
-   *             [64,0,96,64,0]
-   *         ],
-   *
-   *         // DEFINING ANIMATIONS:
-   *
-   *         // simple animation definitions. Define a consecutive range of frames.
-   *         // also optionally define a "next" animation name for sequencing.
-   *         // setting next to false makes it pause when it reaches the end.
-   *         animations: {
-   *              // start, end, next, frequency
-   *              run: [0,8],
-   *              jump: [9,12,"run",2],
-   *              stand: 13
-   *         }
-   *
-   *         // the complex approach which specifies every frame in the animation by index.
-   *         animations: {
-   *             run: {
-   *                 frames: [1,2,3,3,2,1]
-   *             },
-   *             jump: {
-   *                 frames: [1,4,5,6,1],
-   *                 next: "run",
-   *                 frequency: 2
-   *             },
-   *             stand: { frames: [7] }
-   *         }
-   *
-   *         // the above two approaches can be combined, you can also use a single frame definition:
-   *         animations: {
-   *             run: [0,8,true,2],
-   *             jump: {
-   *                 frames: [8,9,10,9,8],
-   *                 next: "run",
-   *                 frequency: 2
-   *             },
-   *             stand: 7
-   *         }
-   *     }
+     *      data = {
      *
-     * <h4>Example</h4>
-     * To define a simple sprite sheet, with a single image "sprites.jpg" arranged in a regular 50x50 grid with two
-     * animations, "run" looping from frame 0-4 inclusive, and "jump" playing from frame 5-8 and sequencing back to run:
+     *          // 定义图片:
      *
-     *     var data = {
-   *         images: ["sprites.jpg"],
-   *         frames: {width:50, height:50},
-   *         animations: {run:[0,4], jump:[5,8,"run"]}
-   *     };
-     *     var animation = new BitmapAnimation(data);
-     *     animation.gotoAndPlay("run");
+     *          // 图片列表 或 图片 URI 列表。SpriteSheet 有预加载功能。
+     *          // 该命令决定了帧对应的索引号。
+     *          images: [image1, "path/to/image2.png"],
+     *
+     *          // 定义 FRAMES:
+     *
+     *          // 一种简单定义帧的方法，只需要定义真的大小，因为帧是连续的：
+     *          // 定义帧的 width 或 height 和 可选项（包括 count regx regy）。 
+     *          // 如果 count 省略了，那么将会根据图片的尺寸自动计算该值。
+     *          frames: {width:64, height:64, count:20, regX: 32, regY:64},
+     *
+     *          // 或者，一种复杂的方法去定义帧，通过定义单位矩形。
+     *          frames: [
+     *              // x, y, width, height, imageIndex, regX, regY
+     *              [0,0,64,64,0,32,64],
+     *              [64,0,96,64,0]
+     *          ],
+     *
+     *          // 定义动画:
+     *
+     *          // 简单动画定义。定义一个连续的帧。
+     *          // 同样可以自选的定义下一帧的名称用于测序。
+     *          // 设置 next 属性为 false 使得它一旦接收到 end 就会停止。
+     *          animations: {
+     *              // start, end, next, frequency
+     *              run: [0,8],
+     *              jump: [9,12,"run",2],
+     *              stand: 13
+     *          }
+     *
+     *          // 复杂的方法，通过索引指定动画中的每一帧
+     *          animations: {
+     *              run: {
+     *                  frames: [1,2,3,3,2,1]
+     *              },
+     *              jump: {
+     *                  frames: [1,4,5,6,1],
+     *                  next: "run",
+     *                  frequency: 2
+     *              },
+     *              stand: { frames: [7] }
+     *          }
+     *
+     *          // 上面2种方法可以结合在一起使用，当然也可以单独使用一种:
+     *          animations: {
+     *              run: [0,8,true,2],
+     *              jump: {
+     *                  frames: [8,9,10,9,8],
+     *                  next: "run",
+     *                  frequency: 2
+     *              },
+     *              stand: 7
+     *          }
+     *      }
+     *
+     * <h4>例子</h4>
+     * 定义一个简单的精灵表，一张以 50x50 为网格的图片 "sprites.jpg", “run” 动作从 0 到 4 帧。“jump” 动作从 5 到 8 帧，然后再接 “run”。
+     * 
+     *      var data = {
+     *          images: ["sprites.jpg"],
+     *          frames: {width:50, height:50},
+     *          animations: {run:[0,4], jump:[5,8,"run"]}
+     *      };
+     *      var animation = new createjs.BitmapAnimation(data);
+     *      animation.gotoAndPlay("run");
      *
      * @class SpriteSheet
-     * @extends EventDispatcher
      * @constructor
      * @param data
-     */
+     * @uses EventDispatcher
+     **/
     var SpriteSheet = EventDispatcher.extend({
-        _init: function(data) {
+        initialize: function(data) {
             var i, l, o, a;
-            if (data == null) { return; }
-            // parse images:
+            if (data == null) {
+                return;
+            }
+            //解析图片:
             if (data.images && (l = data.images.length) > 0) {
                 a = this._images = [];
                 for (i = 0; i < l; i++) {
@@ -113,7 +112,11 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
                     if (!img.getContext && !img.complete) {
                         this._loadCount++;
                         this.complete = false;
-                        (function(o) { img.onload = function() { o._handleImageLoad(); } })(this);
+                        (function(o) {
+                            img.onload = function() {
+                                o._handleImageLoad();
+                            }
+                        })(this);
                     }
                 }
             }
@@ -124,8 +127,12 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
                 a = data.frames;
                 for (i = 0, l = a.length; i < l; i++) {
                     var arr = a[i];
-                    this._frames.push({image: this._images[arr[4] ? arr[4] : 0],
-                        rect: new Rectangle(arr[0], arr[1], arr[2], arr[3]), regX: arr[5] || 0, regY: arr[6] || 0 });
+                    this._frames.push({
+                        image: this._images[arr[4] ? arr[4] : 0],
+                        rect: new Rectangle(arr[0], arr[1], arr[2], arr[3]),
+                        regX: arr[5] || 0,
+                        regY: arr[6] || 0
+                    });
                 }
             } else {
                 o = data.frames;
@@ -134,7 +141,9 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
                 this._regX = o.regX || 0;
                 this._regY = o.regY || 0;
                 this._numFrames = o.count;
-                if (this._loadCount == 0) { this._calculateFrames(); }
+                if (this._loadCount == 0) {
+                    this._calculateFrames();
+                }
             }
             // parse animations:
             if ((o = data.animations) != null) {
@@ -142,7 +151,9 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
                 this._data = {};
                 var name;
                 for (name in o) {
-                    var anim = {name: name};
+                    var anim = {
+                        name: name
+                    };
                     var obj = o[name];
                     if (typeof obj == "number") { // single frame
                         a = anim.frames = [obj];
@@ -163,9 +174,10 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
                         var frames = obj.frames;
                         a = anim.frames = (typeof frames == "number") ? [frames] : frames.slice(0);
                     }
-                    anim.next = (a.length < 2 || anim.next == false) ? null :
-                            (anim.next == null || anim.next == true) ? name : anim.next;
-                    if (!anim.frequency) { anim.frequency = 1; }
+                    anim.next = (a.length < 2 || anim.next == false) ? null : (anim.next == null || anim.next == true) ? name : anim.next;
+                    if (!anim.frequency) {
+                        anim.frequency = 1;
+                    }
                     this._animations.push(name);
                     this._data[name] = anim;
                 }
@@ -173,23 +185,22 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
         },
 
         /**
-         * Dispatched when all images are loaded.  Note that this only fires if the images were not fully loaded when the
-         * sprite sheet was initialized. You should check the complete property to prior to adding a listener.
-         *
-         * <h4>Example</h4>
-         *     var sheet = new SpriteSheet(data);
-         *     if (!sheet.complete) {
-     *         // not preloaded, listen for onComplete:
-     *         sheet.addEventListener("complete", handler);
-     *     }
-         *
+         * 当所有图片加载完时触发该事件。
+         * 注：这个事件只能在初始化 spritesheet 的时候没完全加载完图片时能绑定。
+         * 所以必须在监听这个事件之前检查一下 sprite sheet 的 complete 属性。
+         * Ex.
+         * <pre><code>var sheet = new SpriteSheet(data);
+         * if (!sheet.complete) {
+         *  &nbsp; // not preloaded, listen for onComplete:
+         *  &nbsp; sheet.addEventListener("complete", handler);
+         * }</code></pre>
          * @event complete
-         * @param {Object} target The object that dispatched the event.
-         * @param {String} type The event type.
+         * @param {Object} target 要监听事件的对象。
+         * @param {String} type 事件类型。
          */
 
         /**
-         * Read-only property indicating whether all images are finished loading.
+         * 只读。指出所有的图片是否已经加载完成。
          *
          * @property complete
          * @type Boolean
@@ -257,89 +268,96 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
         _regY: 0,
 
         /**
-         * Returns the total number of frames in the specified animation, or in the whole sprite sheet if the animation param is omitted.
-         *
+         * 返回指定动画的帧的总数，当 animation 参数省略时，返回所有 srpite sheet 的帧的总数。
+         * 
          * @method getNumFrames
-         * @param {String} animation The name of the animation to get a frame count for.
-         * @return {Number} The number of frames in the animation, or in the entire sprite sheet if the animation param is omitted.
+         * @param {String} animation 指定要计算该动画的帧的总数。
+         * @return {Number} 指定动画的帧的总数，当动画参数省略时，返回所有 srpite sheet 的帧的总数。
          */
         getNumFrames: function(animation) {
             if (animation == null) {
                 return this._frames ? this._frames.length : this._numFrames;
             } else {
                 var data = this._data[animation];
-                if (data == null) { return 0; } else { return data.frames.length; }
+                if (data == null) {
+                    return 0;
+                } else {
+                    return data.frames.length;
+                }
             }
         },
 
         /**
-         * Returns an array of all available animation names as strings.
-         *
+         * 返回所有有效动画名字的字符串数组。
+         * 
          * @method getAnimations
-         * @return {Array} an array of animation names available on this sprite sheet.
-         */
+         * @return {Array} 所有有效动画名字的字符串数组。
+         **/
         getAnimations: function() {
             return this._animations.slice(0);
         },
 
         /**
-         * Returns an object defining the specified animation. The returned object has a frames property containing an array
-         * of the frame id's in the animation, a frequency property indicating the advance frequency for this animation,
-         * a name property, and a next property, which specifies the default next animation. If the animation loops,
-         * the name and next property will be the same.
-         *
+         * 返回一个指定的动画对象。
+         * 返回的对象包括一个包括该对象所有帧的 id 数组，frequency 属性，
+         * frames 属性，
+         * name 属性，该动画名称，
+         * 和 next 属性，该属性指定了下一个动画。
+         * 该动画的频率属性，
+         * 如果当一个动画循环播放，则 name 属性会等于 next 属性。
          * @method getAnimation
-         * @param {String} name The name of the animation to get.
-         * @return {Object} a generic object with frames, frequency, name, and next properties.
-         */
+         * @param {String} name 要获取的动画对象的 name 属性。
+         * @return {Object} 一个带有 frames, frequency, name, next 属性的对象。
+         **/
         getAnimation: function(name) {
             return this._data[name];
         },
 
         /**
-         * Returns an object specifying the image and source rect of the specified frame. The returned object has an image
-         * property holding a reference to the image object in which the frame is found, and a rect property containing a
-         * Rectangle instance which defines the boundaries for the frame within that image.
-         *
+         * 返回一个对象，该对象包括图片资源和指定帧对应的矩形。
+         * 返回的对象包括一个 image 属性，该属性持有指定帧对应的 image 属性，
+         * 以及指定帧对应在图片内的矩形。
+         * 
          * @method getFrame
-         * @param {Number} frameIndex The index of the frame.
-         * @return {Object} a generic object with image and rect properties. Returns null if the frame does not exist, or the image is not fully loaded.
-         */
+         * @param {Number} frameIndex 帧的下标号。
+         * @return {Object} 一个对象，该对象包括图片资源和指定帧对应的矩形。
+         **/
         getFrame: function(frameIndex) {
             var frame;
-            if (this.complete && this._frames && (frame = this._frames[frameIndex])) { return frame; }
+            if (this.complete && this._frames && (frame = this._frames[frameIndex])) {
+                return frame;
+            }
             return null;
         },
 
         /**
-         * Returns a Rectangle instance defining the bounds of the specified frame relative to the origin. For example, a
-         * 90 x 70 frame with a regX of 50 and a regY of 40 would return a rectangle with [x=-50, y=-40, width=90, height=70].
-         *
+         * 返回一个指定帧的范围的 Rectangle 实例。例如，一个 90 x 70 的帧，regX = 50 和 regY = 40，就会返回[x=-50, y=-40, width=90, height=70]。
+         * 
          * @method getFrameBounds
-         * @param {Number} frameIndex The index of the frame.
-         * @return {Rectangle} A Rectangle instance. Returns null if the frame does not exist, or the image is not fully loaded.
-         */
+         * @param {Number} frameIndex 帧的索引号。
+         * @return {Rectangle} 一个指定帧的范围的 Rectangle 实例，当帧不存在或图片没有加载完全的时候，返回 null。
+         **/
         getFrameBounds: function(frameIndex) {
             var frame = this.getFrame(frameIndex);
             return frame ? new Rectangle(-frame.regX, -frame.regY, frame.rect.width, frame.rect.height) : null;
         },
 
         /**
-         * Returns a string representation of this object.
-         *
+         * 返回该对象的字符串表示形式。
+         * 
          * @method toString
-         * @return {String} a string representation of the instance.
-         */
+         * @return {String} 该对象的字符串表示形式。
+         **/
         toString: function() {
             return "[SpriteSheet]";
         },
 
         /**
-         * Returns a clone of the SpriteSheet instance.
-         *
+         * 返回克隆后的 SpriteSheet 实例。
+         * 
          * @method clone
-         * @return {SpriteSheet} a clone of the SpriteSheet instance.
-         */
+         * @return {Bitmap} 克隆后的 SpriteSheet 实例。
+         **/
         clone: function() {
             // TODO: there isn't really any reason to clone SpriteSheet instances, because they can be reused.
             var o = new SpriteSheet();
@@ -372,19 +390,25 @@ xc.module.define("xc.createjs.SpriteSheet", function(exports) {
          * @protected
          */
         _calculateFrames: function() {
-            if (this._frames || this._frameWidth == 0) { return; }
+            if (this._frames || this._frameWidth == 0) {
+                return;
+            }
             this._frames = [];
             var ttlFrames = 0;
             var fw = this._frameWidth;
             var fh = this._frameHeight;
-            for (var i = 0, imgs = this._images; i < imgs.length; i++) {
+            for ( var i = 0, imgs = this._images; i < imgs.length; i++) {
                 var img = imgs[i];
                 var cols = (img.width + 1) / fw | 0;
                 var rows = (img.height + 1) / fh | 0;
                 var ttl = this._numFrames > 0 ? Math.min(this._numFrames - ttlFrames, cols * rows) : cols * rows;
-                for (var j = 0; j < ttl; j++) {
-                    this._frames.push({image: img, rect: new Rectangle(j % cols * fw, (j / cols | 0) * fh, fw,
-                            fh), regX: this._regX, regY: this._regY });
+                for ( var j = 0; j < ttl; j++) {
+                    this._frames.push({
+                        image: img,
+                        rect: new Rectangle(j % cols * fw, (j / cols | 0) * fh, fw, fh),
+                        regX: this._regX,
+                        regY: this._regY
+                    });
                 }
                 ttlFrames += ttl;
             }

@@ -3,26 +3,23 @@ xc.module.define("xc.createjs.Filter", function(exports) {
     var Rectangle = xc.module.require("xc.createjs.Rectangle");
 
     /**
-     * Base class that all filters should inherit from. Filters need to be applied to objects that have been cached using
-     * the {{#crossLink "DisplayObject/cache"}}{{/crossLink}} method. If an object changes, please cache it again, or use
-     * {{#crossLink "DisplayObject/updateCache"}}{{/crossLink}}.
-     *
-     * <h4>Example</h4>
-     *     myInstance.cache(0,0, 100, 100);
-     *     myInstance.filters = [
-     *         new ColorFilter(0, 0, 0, 1, 255, 0, 0),
-     *         new BoxBlurFilter(5, 5, 10)
-     *     ];
-     *
-     * <h4>EaselJS Filters</h4>
-     * EaselJS comes with a number of pre-built filters. Note that individual filters are not compiled into the minified
-     * version of EaselJS. To use them, you must include them manually in the HTML.
-     * <ul>
-     *  <li>AlphaMapFilter: Map a greyscale image to the alpha channel of a display object</li>
-     *  <li>{{#crossLink "AlphaMapFilter"}}{{/crossLink}}: Map an image's alpha channel to the alpha channel of a display object</li>
-     *  <li>{{#crossLink "BoxBlurFilter"}}{{/crossLink}}: Apply vertical and horizontal blur to a display object</li>
-     *  <li>{{#crossLink "ColorFilter"}}{{/crossLink}}: Color transform a display object</li>
-     *  <li>{{#crossLink "ColorMatrixFilter"}}{{/crossLink}}: Transform an image using a {{#crossLink "ColorMatrix"}}{{/crossLink}}</li>
+     * 所有滤镜需要继承的基类。滤镜需要应用在那些已经使用了{{#crossLink "DisplayObject/cache"}}{{/crossLink}}方法缓存的对象上。如果一个对象改变了，请再缓存一次，
+     * 或者使用{{#crossLink "DisplayObject/updateCache"}}{{/crossLink}}来更新缓存。
+     * 
+     * <h4>样例</h4>
+     *      myInstance.cache(0,0, 100, 100);
+     *      myInstance.filters = [
+     *          new createjs.ColorFilter(0, 0, 0, 1, 255, 0, 0),
+     *          new createjs.BoxBlurFilter(5, 5, 10)
+     *      ];
+     *      
+     * <h4>EaselJS 滤镜</h4>
+     * EaselJS带来了一些预制的滤镜。注：独立的滤镜没有压缩在EaselJS的压缩版里面。想使用它们，你必须手动在HTML里加载它们。
+     * <ul><li>{{#crossLink "AlphaMapFilter"}}{{/crossLink}}: 把一张灰度图片映射到一个显示对象的alpha通道上。</li>
+     *      <li>{{#crossLink "AlphaMaskFilter"}}{{/crossLink}}: 把一张图片的alpha通道映射到一个显示对象的alpha通道上。</li>
+     *      <li>{{#crossLink "BoxBlurFilter"}}{{/crossLink}}: 在一个显示对象上应用横向和纵向的快速均值模糊滤镜。</li>
+     *      <li>{{#crossLink "ColorFilter"}}{{/crossLink}}: 转换一个显示对象的颜色。</li>
+     *      <li>{{#crossLink "ColorMatrixFilter"}}{{/crossLink}}: 通过{{#crossLink "ColorMatrix"}}{{/crossLink}}转换一张图片。</li>
      * </ul>
      *
      * @class Filter
@@ -31,48 +28,47 @@ xc.module.define("xc.createjs.Filter", function(exports) {
     var Filter = xc.class.create({
 
         /**
-         * Returns a rectangle with values indicating the margins required to draw the filter.
-         * For example, a filter that will extend the drawing area 4 pixels to the left, and 7 pixels to the right
-         * (but no pixels up or down) would return a rectangle with (x=-4, y=0, width=11, height=0).
+         * 返回一个绘制滤镜所需的边框宽度的长方形。例如，一个滤镜会向外扩展绘图区域左4个像素，右7个像素（上下不扩展），那么会返回一个（x=-4, y=0, width=11, height=0）的长方形。
          *
          * @method getBounds
-         * @return {Rectangle} a rectangle object indicating the margins required to draw the filter.
+         * @return {Rectangle} 一个绘制滤镜所需的边框宽度的长方形。
          */
         getBounds: function() {
             return new Rectangle(0, 0, 0, 0);
         },
 
         /**
-         * Applies the filter to the specified context.
+         * 把滤镜应用到指定的上下文。
          *
          * @method applyFilter
-         * @param {CanvasRenderingContext2D} ctx The 2D context to use as the source.
-         * @param {Number} x The x position to use for the source rect.
-         * @param {Number} y The y position to use for the source rect.
-         * @param {Number} width The width to use for the source rect.
-         * @param {Number} height The height to use for the source rect.
-         * @param {CanvasRenderingContext2D} targetCtx Optional. The 2D context to draw the result to. Defaults to the context passed to ctx.
-         * @param {Number} targetX Optional. The x position to draw the result to. Defaults to the value passed to x.
-         * @param {Number} targetY Optional. The y position to draw the result to. Defaults to the value passed to y.
+         * @param {CanvasRenderingContext2D} ctx 用作资源的2D上下文。
+         * @param {Number} x 应用到资源矩阵的x坐标值。
+         * @param {Number} y 应用到资源矩阵的y坐标值。
+         * @param {Number} width 应用到资源矩阵的宽度。
+         * @param {Number} height 应用到资源矩阵的高度。
+         * @param {CanvasRenderingContext2D} targetCtx 可选。绘制结果的2D上下文。默认为ctx代表的上下文。
+         * @param {Number} targetX 可选。绘制结果的x坐标值。默认为x传递的坐标值。
+         * @param {Number} targetY 可选。绘制结果的y坐标值。默认为y传递的坐标值。
          * @return {Boolean}
          */
-        applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {},
+        applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
+        },
 
         /**
-         * Returns a string representation of this object.
+         * 返回一个表示当前对象的字符串。
          *
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 一个表示当前对象的字符串。
          */
         toString: function() {
             return "[Filter]";
         },
 
         /**
-         * Returns a clone of this Filter instance.
+         * 返回当前Filter实例的克隆。
          *
          * @method clone
-         * @return {Filter} A clone of the current Filter instance.
+         * @return {Filter} 当前Filter实例的克隆。
          */
         clone: function() {
             return new Filter();

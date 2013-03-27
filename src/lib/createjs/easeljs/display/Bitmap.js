@@ -1,71 +1,67 @@
 /**
- * The EaselJS Javascript library provides a retained graphics mode for canvas including a full hierarchical display
- * list, a core interaction model, and helper classes to make working with 2D graphics in Canvas much easier.
- * EaselJS provides straight forward solutions for working with rich graphics and interactivity with HTML5 Canvas...
+ * EaselJS 是一个 Javascript 库，该库提供了一个图像模型，可以让 canvas 拥有一个分层展示列表，一个核心交互模式，以及一个辅助类。
+ * 这样可以更容易地在 Canvas 上处理 2D 图像。
+ * EaselJS 提供一个关于 HTML5 Canvas 处理丰富和交互图像的解决方案。
  *
- * <h4>Getting Started</h4>
- * To get started with Easel, create a {{#crossLink "Stage"}}{{/crossLink}} that wraps a CANVAS element, and add
- * {{#crossLink "DisplayObject"}}{{/crossLink}} instances as children.
- *
- * EaselJS supports:
+ * <h4>开始</h4> 
+ * 开始使用 Easel，首先创建一个包含 CANVAS 元素的 {{#crossLink "Stage"}}{{/crossLink}}，以及添加一个
+ * {{#crossLink "DisplayObject"}}{{/crossLink}} 实例作为其子对象。EaselJS 支持：
  * <ul>
- *  <li>Images using {{#crossLink "Bitmap"}}{{/crossLink}}</li>
- *  <li>Vector graphics using {{#crossLink "Shape"}}{{/crossLink}} and {{#crossLink "Graphics"}}{{/crossLink}}</li>
- *  <li>Animated bitmaps using {{#crossLink "SpriteSheet"}}{{/crossLink}} and {{#crossLink "BitmapAnimation"}}{{/crossLink}}
- *  <li>Simple text instances using {{#crossLink "Text"}}{{/crossLink}}</li>
- *  <li>Containers that hold other DisplayObjects using {{#crossLink "Container"}}{{/crossLink}}</li>
+ *      <li>处理图片使用 {{#crossLink "Bitmap"}}{{/crossLink}}</li>
+ *      <li>处理矢量图使用 {{#crossLink "Shape"}}{{/crossLink}} 和 {{#crossLink "Graphics"}}{{/crossLink}}</li>
+ *      <li>处理动画使用 {{#crossLink "SpriteSheet"}}{{/crossLink}} 和 {{#crossLink "BitmapAnimation"}}{{/crossLink}}
+ *      <li>简单 text 实例 {{#crossLink "Text"}}{{/crossLink}}</li>
+ *      <li>作为容器装载其他显示对象使用 {{#crossLink "Container"}}{{/crossLink}}</li>
+ *      <li>控制 HTML 元素使用 {{#crossLink "DOMElement"}}{{/crossLink}}</li>
  * </ul>
  *
- * All display objects can be added to the stage as children, or drawn to a canvas directly.
+ * 所有的显示对象都可以作为儿子添加到舞台里面，或直接绘制到 canvas 上。
  *
- * <b>User Interactions</b><br/>
- * All display objects on stage will dispatch events when interacted with using a mouse or touch.
- * EaselJS supports hover, press, and release events, as well as an easy-to-use drag-and-drop model. Check out
- * {{#crossLink "MouseEvent"}}{{/crossLink}} for more information.
+ * <b>用户交互</b><br/>
+ * 所有 Stage 里面的显示对象（除了 DOM 元素），当用户有交互的时候（如鼠标点击或触碰），都将调度事件。
+ * EaselJS 支持 hover, press, 和 release 事件，也有 easy-to-use drag-and-drop 模式。
+ * 参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 获取更多信息。
  *
- * <h4>Simple Example</h4>
- * This example illustrates how to create and position a {{#crossLink "Shape"}}{{/crossLink}} on the {{#crossLink "Stage"}}{{/crossLink}}
- * using EaselJS' drawing API.
+ * <h4>简单例子</h4>
+ * 这个例子阐述了如何去创建和定位一个 {{#crossLink "Shape"}}{{/crossLink}} 到 {{#crossLink "Stage"}}{{/crossLink}} 里。
  *
- *     // Create a stage by getting a reference to the canvas
- *     var stage = new Stage("demoCanvas");
- *     // Create a Shape DisplayObject.
- *     var circle = new Shape();
- *     circle.graphics.beginFill("red").drawCircle(0, 0, 40);
- *     // Set position of Shape instance.
- *     circle.x = circle.y = 50;
- *     // Add Shape instance to stage display list.
- *     stage.addChild(circle);
- *     // Update stage will render next frame
- *     stage.update();
+ *      //通过 canvas 的引用创建一个 stage。
+ *      stage = new createjs.Stage("demoCanvas");
+ *      //创建一个 Shape 显示对象。
+ *      circle = new createjs.Shape();
+ *      circle.graphics.beginFill("red").drawCircle(0, 0, 40);
+ *      //设置 Shape 的位置。
+ *      circle.x = circle.y = 50;
+ *      //添加 Shape 实例到 Stage 的显示列表。
+ *      stage.addChild(circle);
+ *      //更新 Stage 将会在下一帧渲染。
+ *      stage.update();
  *
- * <b>Simple Animation Example</b><br/>
- * This example moves the shape created in the previous demo across the screen.
+ * <b>简单动画例子</b><br />
+ * 这个例子让上一个例子创建的 Shape 实例移动起来。横跨屏幕。
  *
- *     // Update stage will render next frame
- *     Ticker.addEventListener("tick", handleTick);
+ *      //更新 stage 将会在下一帧渲染。
+ *      createjs.Ticker.addEventListener("tick", handleTick);
  *
- *     function handleTick() {
- *         // Circle will move 10 units to the right.
- *         circle.x += 10;
- *         // Will cause the circle to wrap back
- *         if (circle.x > stage.canvas.width) { circle.x = 0; }
- *         stage.update();
- *     }
+ *      function handleTick() {
+ *        //Circle 将会向右移动 10 个单位。
+ *        circle.x += 10;
+ *        //当去到边界，则循环开始。
+ *        if (circle.x > stage.canvas.width) { circle.x = 0; }
+ *        stage.update();
+ *      }
  *
- * <h4>Other Features</h4>
- * EaselJS also has built in support for
+ * <h4>其他特征</h4>
+ * EaselJS 还内置了许多支持：
  * <ul>
- *  <li>Canvas features such as {{#crossLink "Shadow"}}{{/crossLink}} and CompositeOperation</li>
- *  <li>{{#crossLink "Ticker"}}{{/crossLink}}, a global heartbeat that objects can subscribe to</li>
- *  <li>Filters, including a provided {{#crossLink "ColorMatrixFilter"}}{{/crossLink}},
- *      {{#crossLink "AlphaMaskFilter"}}{{/crossLink}},
- *      {{#crossLink "AlphaMapFilter"}}{{/crossLink}},
- *      and {{#crossLink "BoxBlurFilter"}}{{/crossLink}}.
- *      See {{#crossLink "Filter"}}{{/crossLink}} for more information</li>
- *  <li>A {{#crossLink "ButtonHelper"}}{{/crossLink}} utility, to easily create interactive buttons</li>
- *  <li>{{#crossLink "SpriteSheetUtils"}}{{/crossLink}} and a {{#crossLink "SpriteSheetBuilder"}}{{/crossLink}} to help
- *      build and manage {{#crossLink "SpriteSheet"}}{{/crossLink}} functionality at run-time.</li>
+ *     <li>Canvas 特征，例如： {{#crossLink "Shadow"}}{{/crossLink}} 和 CompositeOperation</li>
+ *     <li>{{#crossLink "Ticker"}}{{/crossLink}}, 一个全局心跳对象。</li>
+ *     <li>过滤器, 包括 {{#crossLink "ColorMatrixFilter"}}{{/crossLink}}, {{#crossLink "AlphaMaskFilter"}}{{/crossLink}},
+ *     {{#crossLink "AlphaMapFilter"}}{{/crossLink}}, 和 {{#crossLink "BoxBlurFilter"}}{{/crossLink}}。 看 {{#crossLink "Filter"}}{{/crossLink}}
+ *         获取更多信息。</li>
+ *     <li>一个 {{#crossLink "ButtonHelper"}}{{/crossLink}} 辅助类，使得创建按钮更加容易。</li>
+ *     <li>运行时有 {{#crossLink "SpriteSheetUtils"}}{{/crossLink}} 和一个 {{#crossLink "SpriteSheetBuilder"}}{{/crossLink}} 用于
+ *         辅助构建和管理 {{#crossLink "SpriteSheet"}}{{/crossLink}} 功能 。</li>
  * </ul>
  *
  * @module xc.createjs.easeljs
@@ -76,24 +72,21 @@ xc.module.define("xc.createjs.Bitmap", function(exports) {
     var DisplayObject = xc.module.require("xc.createjs.DisplayObject");
 
     /**
-     * A Bitmap represents an Image, Canvas, or Video in the display list.
-     * A Bitmap can be instantiated using an existing HTML element, or a string.
+     * 一个 Bitmap 可以是展示列表里的一张图片，Canvas, 或 Video。
+     * 也可以是一个现有的 HTML 元素实例，或者是字符串实例。
      *
-     * <h4>Example</h4>
-     *     var bitmap = new Bitmap("imagePath.jpg");
+     * <h4>例子</h4>
+     *      var bitmap = new createjs.Bitmap("imagePath.jpg");
      *
-     * Note: When a string path or image tag that is not yet loaded is used, the stage may need to be redrawn before it
-     * will be displayed.
+     * 注：如果字符串路径或图片标签还未加载，则 stage 在显示之前需要重新绘制。
      *
      * @class Bitmap
      * @extends DisplayObject
      * @constructor
-     * @param {Image | HTMLCanvasElement | HTMLVideoElement | String} imageOrUri The source object or URI to an image to
-     *  display. This can be either an Image, Canvas, or Video object, or a string URI to an image file to load and use.
-     *  If it is a URI, a new Image object will be constructed and assigned to the .image property.
+     * @param {Image | HTMLCanvasElement | HTMLVideoElement | String} imageOrUri 所显示图片的源对象或 URI。可以是 Image, Canvas,Video 对象, 或是待加载使用图片文件的 URI 字符串。如果是 URI，将构造一个新的图片对象并赋予图片属性。
      */
     var Bitmap = DisplayObject.extend({
-        _init: function(imageOrUri) {
+        initialize: function(imageOrUri) {
             this._super();
             if (typeof imageOrUri == "string") {
                 this.image = new Image();
@@ -104,7 +97,7 @@ xc.module.define("xc.createjs.Bitmap", function(exports) {
         },
 
         /**
-         * The image to render. This can be an Image, a Canvas, or a Video.
+         * 将要渲染的 Image 对象。这里可以是 Image, Canvas, Video。
          *
          * @property image
          * @type Image | HTMLCanvasElement | HTMLVideoElement
@@ -112,7 +105,7 @@ xc.module.define("xc.createjs.Bitmap", function(exports) {
         image: null,
 
         /**
-         * Whether or not the Bitmap should be draw to the canvas at whole pixel coordinates.
+         * Bitmap 是否需要根据全像素坐标绘制。
          *
          * @property snapToPixel
          * @type Boolean
@@ -121,7 +114,7 @@ xc.module.define("xc.createjs.Bitmap", function(exports) {
         snapToPixel: true,
 
         /**
-         * Specifies an area of the source image to draw. If omitted, the whole image will be drawn.
+         * 指定源图像绘制的区域。如果缺省，则整个图片都将重新绘制。
          *
          * @property sourceRect
          * @type Rectangle
@@ -130,33 +123,33 @@ xc.module.define("xc.createjs.Bitmap", function(exports) {
         sourceRect: null,
 
         /**
-         * Returns true or false indicating whether the display object would be visible if drawn to a canvas.
-         * This does not account for whether it would be visible within the boundaries of the stage.
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
+         * 通过返回 true 或 false 去表示该显示对象画在 Canvas 上时，是否被显示。
+         * 并不是通过该显示对象是否在 Stage 可视范围内进行判断的。
+         * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          *
          * @method isVisible
-         * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas.
+         * @return {Boolean} Boolean 表示该显示对象画在 Canvas 上时，是否被显示。
          */
         isVisible: function() {
-            var hasContent = this.cacheCanvas ||
-                    (this.image && (this.image.complete || this.image.getContext || this.image.readyState >= 2));
+            var hasContent = this.cacheCanvas
+                    || (this.image && (this.image.complete || this.image.getContext || this.image.readyState >= 2));
             return !!(this.visible && this.alpha > 0 && this.scaleX != 0 && this.scaleY != 0 && hasContent);
         },
 
         /**
-         * Draws the display object into the specified context ignoring it's visible, alpha, shadow, and transform.
-         * Returns true if the draw was handled (useful for overriding functionality).
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
+         * 绘制显示对象到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
+         * 当绘制动作正在处理，将返回 true （用于覆盖功能）。
+         * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          *
          * @method draw
-         * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
-         * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache.
-         *  For example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
+         * @param {CanvasRenderingContext2D} ctx canvas 2D 上下文对象将渲染到这里。
+         * @param {Boolean} ignoreCache 表示这个绘制行为是否忽略当前所有缓存。
+         * 例如，用来画 cache （以防止它简单地绘制到自身现有的 cache 上）。
          */
         draw: function(ctx, ignoreCache) {
-            if (this._super(ctx, ignoreCache)) { return true; }
+            if (this._super(ctx, ignoreCache)) {
+                return true;
+            }
             var rect = this.sourceRect;
             if (rect) {
                 ctx.drawImage(this.image, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
@@ -167,23 +160,25 @@ xc.module.define("xc.createjs.Bitmap", function(exports) {
         },
 
         /**
-         * Returns a clone of the Bitmap instance.
+         * 返回克隆后的 Bitmap 实例。
          *
          * @method clone
-         * @return {Bitmap} a clone of the Bitmap instance.
+         * @return {Bitmap} 克隆后的 Bitmap 实例。
          */
         clone: function() {
             var o = new Bitmap(this.image);
-            if (this.sourceRect) { o.sourceRect = this.sourceRect.clone(); }
+            if (this.sourceRect) {
+                o.sourceRect = this.sourceRect.clone();
+            }
             this.cloneProps(o);
             return o;
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回该对象的字符串表示形式。
          *
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 该对象的字符串表示形式。
          */
         toString: function() {
             return "[Bitmap (name=" + this.name + ")]";

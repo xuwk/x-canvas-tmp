@@ -3,41 +3,46 @@ xc.module.define("xc.createjs.ColorMatrixFilter", function(exports) {
     var Filter = xc.module.require("xc.createjs.Filter");
 
     /**
-     * Allows you to carry out complex color operations such as modifying saturation, brightness, or inverting. See the
-     * {{#crossLink "ColorMatrix"}}{{/crossLink}} for more information on changing colors.
+     * 允许你抛开复杂的颜色操作如：修改饱和度、亮度或反转颜色。
+     * 
+     * 查看{{#crossLink "ColorMatrix"}}{{/crossLink}}了解更多颜色转换的信息。
      *
-     * See {{#crossLink "Filter"}}{{/crossLink}} for an example of how to apply filters.
+     * 想了解滤镜的使用，请查看{{#crossLink "Filter"}}{{/crossLink}}。
      *
      * @class ColorMatrixFilter
      * @constructor
      * @extends Filter
-     * @param {Array} matrix A 4x5 matrix describing the color operation to perform. See also the ColorMatrix class.
+     * @param {Array} matrix 一个待转换颜色的4×5矩阵。请查看ColorMatrix类。
      */
     var ColorMatrixFilter = Filter.extend({
-        _init: function(matrix) {
+        initialize: function(matrix) {
             this.matrix = matrix;
         },
 
         matrix: null,
 
         /**
-         * Applies the filter to the specified context.
+         * 把滤镜应用到指定的上下文。
          *
          * @method applyFilter
-         * @param {CanvasRenderingContext2D} ctx The 2D context to use as the source.
-         * @param {Number} x The x position to use for the source rect.
-         * @param {Number} y The y position to use for the source rect.
-         * @param {Number} width The width to use for the source rect.
-         * @param {Number} height The height to use for the source rect.
-         * @param {CanvasRenderingContext2D} targetCtx Optional. The 2D context to draw the result to. Defaults to the context passed to ctx.
-         * @param {Number} targetX Optional. The x position to draw the result to. Defaults to the value passed to x.
-         * @param {Number} targetY Optional. The y position to draw the result to. Defaults to the value passed to y.
+         * @param {CanvasRenderingContext2D} ctx 用作资源的2D上下文。
+         * @param {Number} x 应用到资源矩阵的x坐标值。
+         * @param {Number} y 应用到资源矩阵的y坐标值。
+         * @param {Number} width 应用到资源矩阵的宽度。
+         * @param {Number} height 应用到资源矩阵的高度。
+         * @param {CanvasRenderingContext2D} targetCtx 可选。绘制结果的2D上下文。默认为ctx代表的上下文。
+         * @param {Number} targetX 可选。绘制结果的x坐标值。默认为x传递的坐标值。
+         * @param {Number} targetY 可选。绘制结果的y坐标值。默认为y传递的坐标值。
          * @return {Boolean}
          */
         applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
             targetCtx = targetCtx || ctx;
-            if (targetX == null) { targetX = x; }
-            if (targetY == null) { targetY = y; }
+            if (targetX == null) {
+                targetX = x;
+            }
+            if (targetY == null) {
+                targetY = y;
+            }
             try {
                 var imageData = ctx.getImageData(x, y, width, height);
             } catch (e) {
@@ -52,7 +57,7 @@ xc.module.define("xc.createjs.ColorMatrixFilter", function(exports) {
             var m5 = mtx[5], m6 = mtx[6], m7 = mtx[7], m8 = mtx[8], m9 = mtx[9];
             var m10 = mtx[10], m11 = mtx[11], m12 = mtx[12], m13 = mtx[13], m14 = mtx[14];
             var m15 = mtx[15], m16 = mtx[16], m17 = mtx[17], m18 = mtx[18], m19 = mtx[19];
-            for (var i = 0; i < l; i += 4) {
+            for ( var i = 0; i < l; i += 4) {
                 r = data[i];
                 g = data[i + 1];
                 b = data[i + 2];
@@ -68,20 +73,20 @@ xc.module.define("xc.createjs.ColorMatrixFilter", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回当前对象的字符串表示。
          *
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 当前对象的字符串表示。
          */
         toString: function() {
             return "[ColorMatrixFilter]";
         },
 
         /**
-         * Returns a clone of this ColorMatrixFilter instance.
+         * 返回当前ColorMatrixFilter实例的克隆。
          *
          * @method clone
-         * @return {ColorMatrixFilter} A clone of the current ColorMatrixFilter instance.
+         * @return {ColorMatrixFilter} 当前ColorMatrixFilter实例的克隆。
          */
         clone: function() {
             return new ColorMatrixFilter(this.matrix);

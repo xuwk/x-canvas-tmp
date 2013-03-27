@@ -1,81 +1,64 @@
 xc.module.define("xc.createjs.DisplayObject", function(exports) {
-
     var UID = xc.module.require("xc.createjs.UID");
     var Matrix2D = xc.module.require("xc.createjs.Matrix2D");
     var Point = xc.module.require("xc.createjs.Point");
     var EventDispatcher = xc.module.require("xc.createjs.EventDispatcher");
 
     /**
-     * DisplayObject is an abstract class that should not be constructed directly. Instead construct subclasses such as
-     * {{#crossLink "Container"}}{{/crossLink}}, {{#crossLink "Bitmap"}}{{/crossLink}}, and {{#crossLink "Shape"}}{{/crossLink}}.
-     * DisplayObject is the base class for all display classes in the EaselJS library. It defines the core properties and
-     * methods that are shared between all display objects, such as transformation properties (x, y, scaleX, scaleY, etc),
-     * caching, and mouse handlers.
-     *
+     * DisplayObject 作为一个抽象类，不能直接构造。但能构造子类，比如 Container，Bitmap，Shape。
+     * 在 EaselJS 库里，DisplayObject 是所有显示对象的基类。他定义了许多显示对象共有的属性和方法。
+     * 比如 transformation 属性 (x, y, scaleX, scaleY 等等), 缓存, 和鼠标事件。
      * @class DisplayObject
      * @extends EventDispatcher
      * @constructor
      */
     var DisplayObject = EventDispatcher.extend({
-        _init: function() {
+        initialize: function() {
             this.id = UID.get();
             this._matrix = new Matrix2D();
         },
 
         /**
-         * Dispatched when the user presses their left mouse button over the display object.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
+         * 当用户在显示对象上按下鼠标左键时触发该事件。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * @event mousedown
          */
-
+         
         /**
-         * Dispatched when the user presses their left mouse button and then releases it while over the display object.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
+         * 当用户在显示对象上按下鼠标左键再放开左键时触发该事件。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * @event click
          */
-
+         
         /**
-         * Dispatched when the user double clicks their left mouse button over this display object.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
-         * @event dblclick
+         * 当用户在显示对象上双击鼠标左键时触发该事件。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
+         * @event dblClick
          */
-
+         
         /**
-         * Dispatched when the user's mouse rolls over this display object. This event must be enabled using
-         * {{#crossLink "Stage.enableMouseOver"}}{{/crossLink}}.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
+         * 当用户鼠标在显示对象上滑过时触发该事件。必须调用了 Stage.enableMouseOver 该事件才能生效。
+         * 事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * @event mouseover
          */
-
+         
+        
         /**
-         * Dispatched when the user's mouse rolls out of this display object.
-         * This event must be enabled using {{#crossLink "Stage/enableMouseOver"}}{{/crossLink}}.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
-         *
+         * 当用户鼠标在显示对象上滑出时触发该事件。必须调用了 Stage.enableMouseOver 该事件才能生效。
+         * 事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * @event mouseout
          */
-
+         
         /**
-         * Dispatched on each display object on a stage whenever the stage updates.
-         * This occurs immediately before the rendering (draw) pass. When {{#crossLink "Stage/update"}}{{/crossLink}} is
-         * called, first all display objects on the stage dispatch the tick event, then all of the display objects are drawn
-         * to stage. Children will have their tick event dispatched in order of their depth prior to the event being
-         * dispatched on their parent.
-         *
+         * 每当 Stage 执行 updates 时，stage 上的每个显示对象都会触发该方法。
+         * 通常在渲染之前执行。当 Stage 执行 update 的时候，Stage 上的所有显示对象优先执行 tick 方法，再绘制到 Stage 上。
+         * 子对象将会根据他们的深度来执行按顺序执行各自的 tick 方法。
          * @event tick
-         * @param {Object} target The object that dispatched the event.
-         * @param {String} type The event type.
-         * @param {Array} params An array containing any arguments that were passed to the Stage.update() method.
-         *  For example if you called stage.update("hello"), then the params would be ["hello"].
+         * @param {Object} target 调用该事件的object。
+         * @param {String} type 事件类型。
+         * @param {Array} params 一个包含所有传递到 stage update 的参数。
+         * 例如 如果执行 stage.update("hello"), 那参数就会是 ["hello"]。
          */
 
         /**
-         * The alpha (transparency) for this display object. 0 is fully transparent, 1 is fully opaque.
-         *
+         * 描述该显示对象的透明度. 0 表示完全透明, 1 表示完全不透明。
          * @property alpha
          * @type {Number}
          * @default 1
@@ -83,9 +66,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         alpha: 1,
 
         /**
-         * If a cache is active, this returns the canvas that holds the cached version of this display object. See cache()
-         * for more information. READ-ONLY.
-         *
+         * 如果缓存是可用的，返回持有该显示对象缓存版本的 canvas。
+         * 只读。
          * @property cacheCanvas
          * @type {HTMLCanvasElement | Object}
          * @default null
@@ -93,8 +75,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         cacheCanvas: null,
 
         /**
-         * Unique ID for this display object. Makes display objects easier for some uses.
-         *
+         * 显示对象特有的 id， 使显示对象使用起来更方便。
          * @property id
          * @type {Number}
          * @default -1
@@ -102,10 +83,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         id: -1,
 
         /**
-         * Indicates whether to include this object when running Stage.getObjectsUnderPoint(), and thus for mouse
-         * interactions. Setting this to true for Containers will cause the Container to be returned (not its children)
-         * regardless of whether it's mouseChildren property is true.
-         *
+         * 当执行 Stage.getObjectsUnderPoint() 时，通过该属性判断是否应该包含当前显示对象，从而影响鼠标行为。
+         * 当为 Containers 设定该值为 true 时，无论该 Containers 的孩子该值是否为 true，该 Container 都会被返回。
          * @property mouseEnabled
          * @type {Boolean}
          * @default true
@@ -113,8 +92,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         mouseEnabled: true,
 
         /**
-         * An optional name for this display object. Included in toString(). Useful for debugging.
-         *
+         * 该显示对象一个可选的名字，当执行 toString() 方法时，会包含在里面，主要用于调试。
          * @property name
          * @type {String}
          * @default null
@@ -122,9 +100,9 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         name: null,
 
         /**
-         * A reference to the Container or Stage object that contains this display object, or null if it has not been added
-         * to one. READ-ONLY.
-         *
+         * 包含此显示对象的 Container 或 Stage 对象。
+         * 当该显示对象未曾添加到对应的 Container 或 Stage 对象，该值为空。
+         * 只读。
          * @property parent
          * @final
          * @type {Container}
@@ -133,9 +111,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         parent: null,
 
         /**
-         * The x offset for this display object's registration point. For example, to make a 100x100px Bitmap rotate around
-         * it's center, you would set regX and regY to 50.
-         *
+         * 用于定位该显示对象的 x 坐标。
+         * 比如：当需要一个 100x100px 的 Bitmap 围绕其中心旋转，应该设置 regX = regY = 50。
          * @property regX
          * @type {Number}
          * @default 0
@@ -143,9 +120,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         regX: 0,
 
         /**
-         * The y offset for this display object's registration point. For example, to make a 100x100px Bitmap rotate around
-         * it's center, you would set regX and regY to 50.
-         *
+         * 用于定位该显示对象的 y 坐标。
+         * 比如：当需要一个 100x100px 的 Bitmap 围绕其中心旋转，应该设置 regX = regY = 50。
          * @property regY
          * @type {Number}
          * @default 0
@@ -153,8 +129,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         regY: 0,
 
         /**
-         * The rotation in degrees for this display object.
-         *
+         * 该显示对象旋转的角度。
          * @property rotation
          * @type {Number}
          * @default 0
@@ -162,9 +137,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         rotation: 0,
 
         /**
-         * The factor to stretch this display object horizontally. For example, setting scaleX to 2 will stretch the display
-         * object to twice it's nominal width.
-         *
+         * 该显示对象的水平放大倍数。
+         * 比如, 设置 scaleX 为 2，该显示对象的宽度将变为正常宽度的 2 倍。
          * @property scaleX
          * @type {Number}
          * @default 1
@@ -172,9 +146,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         scaleX: 1,
 
         /**
-         * The factor to stretch this display object vertically. For example, setting scaleY to 0.5 will stretch the display
-         * object to half it's nominal height.
-         *
+         * 该显示对象的垂直放大倍数。
+         * 比如, 设置 scaleY 为 2，该显示对象的高度将变为正常高度的 2 倍。
          * @property scaleY
          * @type {Number}
          * @default 1
@@ -182,8 +155,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         scaleY: 1,
 
         /**
-         * The factor to skew this display object horizontally.
-         *
+         * 该显示对象的水平倾斜度。
          * @property skewX
          * @type {Number}
          * @default 0
@@ -191,8 +163,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         skewX: 0,
 
         /**
-         * The factor to skew this display object vertically.
-         *
+         * 该显示对象的垂直倾斜度。
          * @property skewY
          * @type {Number}
          * @default 0
@@ -200,9 +171,9 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         skewY: 0,
 
         /**
-         * A shadow object that defines the shadow to render on this display object. Set to null to remove a shadow. If
-         * null, this property is inherited from the parent container.
-         *
+         * 渲染在该显示对象上的的阴影对象。
+         * 设置为 null 可除去阴影。
+         * 当该值为 null 时，该属性的值从父容器继承。
          * @property shadow
          * @type {Shadow}
          * @default null
@@ -210,9 +181,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         shadow: null,
 
         /**
-         * Indicates whether this display object should be rendered to the canvas and included when running
-         * Stage.getObjectsUnderPoint().
-         *
+         * 指出该显示对象是否应该被渲染到 canvas 里，以及在运行 Stage.getObjectsUnderPoint() 时是否应该被包含。 
          * @property visible
          * @type {Boolean}
          * @default true
@@ -220,15 +189,15 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         visible: true,
 
         /**
-         * The x (horizontal) position of the display object, relative to its parent.
-         *
+         * 该显示对象相对于其父容器的 x 坐标。
          * @property x
          * @type {Number}
          * @default 0
          */
         x: 0,
 
-        /** The y (vertical) position of the display object, relative to its parent.
+        /**
+         * 该显示对象相对于其父容器的 y 坐标。
          * @property y
          * @type {Number}
          * @default 0
@@ -236,10 +205,10 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         y: 0,
 
         /**
-         * The composite operation indicates how the pixels of this display object will be composited with the elements
-         * behind it. If null, this property is inherited from the parent container. For more information, read the
-         * <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#compositing">whatwg spec on compositing</a>.
-         *
+         * 用于指出该显示对象的像素如何与它背后的元素合成。
+         * 如果该值为 null，该属性的值从父容器继承。
+         * 点击获取更多信息 <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#compositing">
+         * whatwg spec on compositing</a>。
          * @property compositeOperation
          * @type {String}
          * @default null
@@ -247,9 +216,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         compositeOperation: null,
 
         /**
-         * An array of Filter objects to apply to this display object. Filters are only applied / updated when cache() or
-         * updateCache() is called on the display object, and only apply to the area that is cached.
-         *
+         * 用于该显示对象的过滤器对象的数组。仅当显示对象执行 cache() 或 updateCache(), 
+         * Filters 才能作用或更新，且仅适用于缓存区域。
          * @property filters
          * @type {Array}
          * @default null
@@ -257,9 +225,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         filters: null,
 
         /**
-         * Returns an ID number that uniquely identifies the current cache for this display object.
-         * This can be used to determine if the cache has changed since a previous check.
-         *
+         * 返回该显示对象当前的缓存的特有的 ID。
+         * 该属性有助于分析缓存是否已经改变。
          * @property cacheID
          * @type {Number}
          * @default 0
@@ -267,9 +234,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         cacheID: 0,
 
         /**
-         * A Shape instance that defines a vector mask (clipping path) for this display object. The shape's transformation
-         * will be applied relative to the display object's parent coordinates (as if it were a child of the parent).
-         *
+         * Shape 实例为显示对象定义了一个矢量蒙层（剪贴路径）。
+         * Shape 的改造是相对于显示对象的父坐标的（当它作为一个子对象时）。
          * @property mask
          * @type {Shape}
          * @default null
@@ -277,14 +243,12 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         mask: null,
 
         /**
-         * A display object that will be tested when checking mouse interactions or testing getObjectsUnderPoint. The hit
-         * area will have its transformation applied relative to this display object's coordinate space (as though the hit
-         * test object were a child of this display object and relative to its regX/Y). The hitArea will be tested using
-         * only its own alpha value regardless of the alpha value on the target display object, or the target's ancestors
-         * (parents). hitArea is NOT currently used by the hitTest() method.
-         *
-         * Note: hitArea is not supported for Stage.
-         *
+         * 一个用于检测鼠标事件或 getObjectsUnderPoint 方法的显示对象。
+         * 该区域会相对于当前的显示对象进行坐标转换
+         *（该对象甚至可以是当前显示对象的子对象，坐标相对于它的 regX/Y），
+         * hitArea 只根据自己的 alpha 值去运作，和目标对象以及目标对象父对象的alpha 值无关。
+         * hitArea 目前不在 hitTest() 方法中使用。
+         * 注： hitArea 在 stage 中不支持。
          * @property hitArea
          * @type {DisplayObject}
          * @default null
@@ -292,10 +256,9 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         hitArea: null,
 
         /**
-         * A CSS cursor (ex. "pointer", "help", "text", etc) that will be displayed when the user hovers over this display
-         * object. You must enable mouseover events using the stage.enableMouseOver() method to use this property.
-         * If null it will use the default cursor.
-         *
+         * 一个 CSS 光标（例如“指针”，“帮助器”，“文本”等），将在用户悬停在该显示对象时显示。
+         * 必须当 mouseover 事件可用时，这个属性才能生效，可以通过 stage.enableMouseOver() 方法去激活 mouseover 事件。
+         * 如果该值为 null，将使用默认光标。
          * @property cursor
          * @type {String}
          * @default null
@@ -351,44 +314,41 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         _matrix: null,
 
         /**
-         * Returns true or false indicating whether the display object would be visible if drawn to a canvas.
-         * This does not account for whether it would be visible within the boundaries of the stage.
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
-         *
+         * 通过返回 true 或 false 去表示该显示对象画在 Canvas 上时，是否被显示。
+         * 并不是通过该显示对象是否在 stage 可视范围内进行判断的。
+         * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          * @method isVisible
-         * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas.
+         * @return {Boolean} Boolean 表示该显示对象画在 Canvas 上时，是否被显示。
          */
         isVisible: function() {
             return !!(this.visible && this.alpha > 0 && this.scaleX != 0 && this.scaleY != 0);
         },
 
         /**
-         * Draws the display object into the specified context ignoring it's visible, alpha, shadow, and transform.
-         * Returns true if the draw was handled (useful for overriding functionality).
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
-         *
+         * 绘制显示对象到指定的上下文，忽略 visible, alpha, shadow, 和 transform 属性。
+         * 当绘制动作正在处理，将返回 true （用于覆盖功能）。
+         * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          * @method draw
-         * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
-         * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache.
-         *  For example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
+         * @param {CanvasRenderingContext2D} ctx canvas 2D 上下文对象将渲染到这里。
+         * @param {Boolean} ignoreCache 表示这个绘制行为是否忽略当前所有缓存。
+         * 例如，用来画 cache （以防止它简单地绘制到自身现有的 cache 上）。
          */
         draw: function(ctx, ignoreCache) {
             var cacheCanvas = this.cacheCanvas;
-            if (ignoreCache || !cacheCanvas) { return false; }
+            if (ignoreCache || !cacheCanvas) {
+                return false;
+            }
             var scale = this._cacheScale;
-            ctx.drawImage(cacheCanvas, this._cacheOffsetX, this._cacheOffsetY,
-                    cacheCanvas.width / scale, cacheCanvas.height / scale);
+            ctx.drawImage(cacheCanvas, this._cacheOffsetX, this._cacheOffsetY
+                            , cacheCanvas.width / scale, cacheCanvas.height / scale);
             return true;
         },
 
         /**
-         * Applies this display object's transformation, alpha, globalCompositeOperation, clipping path (mask), and shadow
-         * to the specified context. This is typically called prior to draw.
-         *
+         * 适用于显示对象的转型, 例如 globalCompositeOperation, clipping path (mask), 和 shadow 到指定上下文。
+         * 该方法通常在 draw 方法执行前执行。
          * @method setupContext
-         * @param {CanvasRenderingContext2D} ctx The canvas 2D to update.
+         * @param {CanvasRenderingContext2D} ctx 用于更新的 canvas 2D。
          */
         updateContext: function(ctx) {
             var mtx, mask = this.mask, o = this;
@@ -400,7 +360,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
                 mtx.invert();
                 ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
             }
-            mtx = o._matrix.identity().appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation, o.skewX, o.skewY, o.regX, o.regY);
+            mtx = o._matrix.identity()
+                    .appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation, o.skewX, o.skewY, o.regX, o.regY);
             // TODO: should be a better way to manage this setting. For now, using dynamic access to avoid circular dependencies:
             if (o.snapToPixel) {
                 ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx + 0.5 | 0, mtx.ty + 0.5 | 0);
@@ -408,33 +369,37 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
                 ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
             }
             ctx.globalAlpha *= o.alpha;
-            if (o.compositeOperation) { ctx.globalCompositeOperation = o.compositeOperation; }
-            if (o.shadow) { this._applyShadow(ctx, o.shadow); }
+            if (o.compositeOperation) {
+                ctx.globalCompositeOperation = o.compositeOperation;
+            }
+            if (o.shadow) {
+                this._applyShadow(ctx, o.shadow);
+            }
         },
 
         /**
-         * Draws the display object into a new canvas, which is then used for subsequent draws. For complex content
-         * that does not change frequently (ex. a Container with many children that do not move, or a complex vector Shape),
-         * this can provide for much faster rendering because the content does not need to be re-rendered each tick. The
-         * cached display object can be moved, rotated, faded, etc freely, however if it's content changes, you must
-         * manually update the cache by calling updateCache() or cache() again. You must specify the cache area via the x,
-         * y, w, and h parameters. This defines the rectangle that will be rendered and cached using this display object's
-         * coordinates. For example if you defined a Shape that drew a circle at 0, 0 with a radius of 25, you could call
-         * myShape.cache(-25, -25, 50, 50) to cache the full shape.
-         *
+         * 将显示对象绘制到一个后续使用的新 Canvas 上。
+         * 这样已经合成的内容就不必每次更改（如一个包含许多不移动子对象的 Container，或者一个合成的矢量模型），
+         * 由于不需要在每一个 tick 里面重新渲染，渲染速度会快很多。缓存对象可以自由移动、翻转、消失等等。
+         * 当它的内容改变，必须通过 updateCache() 或 cache() 来更新 cache 里面的内容。
+         * 必须通过 x, y, w, 和 h 参数来指定缓存区域，这样定义的矩形区域，将根据显示对象的坐标来渲染。
+         * 例如 如果定义一个 Shape 来画一个以（0,0）为圆心，25为半径的圆，将调用 myShape.cache(-25, -25, 50, 50) 去缓存整个 shape。
          * @method cache
-         * @param {Number} x The x coordinate origin for the cache region.
-         * @param {Number} y The y coordinate origin for the cache region.
-         * @param {Number} width The width of the cache region.
-         * @param {Number} height The height of the cache region.
-         * @param {Number} scale Optional. The scale at which the cache will be created. For example, if you cache a vector
-         *  shape using myShape.cache(0, 0, 100, 100, 2) then the resulting cacheCanvas will be 200x200 px. This lets you
-         *  scale and rotate cached elements with greater fidelity. Default is 1.
+         * @param {Number} x 缓存区域的 x 坐标原点。
+         * @param {Number} y 缓存区域的 y 坐标原点。
+         * @param {Number} width 缓存区域的宽度。
+         * @param {Number} height 缓存区域的高度。
+         * @param {Number} scale 可选. 放大倍数。
+         * 例如，如果用缓存画一个矢量图 myShape.cache(0,0,100,100,2) 它将产生一个 200*200 px 的缓存 Canvas。
+         * 这可以通过缩放和旋转缓存使得元素有更高的保真度。
+         * 默认值 1。
          */
         cache: function(x, y, width, height, scale) {
-            // draw to canvas.
+            // 绘制到 canvas.
             scale = scale || 1;
-            if (!this.cacheCanvas) { this.cacheCanvas = document.createElement("canvas"); }
+            if (!this.cacheCanvas) {
+                this.cacheCanvas = document.createElement("canvas");
+            }
             this.cacheCanvas.width = Math.ceil(width * scale);
             this.cacheCanvas.height = Math.ceil(height * scale);
             this._cacheOffsetX = x;
@@ -444,21 +409,26 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         },
 
         /**
-         * Redraws the display object to its cache. Calling updateCache without an active cache will throw an error.
-         * If compositeOperation is null the current cache will be cleared prior to drawing. Otherwise the display object
-         * will be drawn over the existing cache using the specified compositeOperation.
-         *
+         * 在 cache 重新绘制显示对象。
+         * 调用 updateCache 时没有可用，将抛出一个错误。
+         * 如果 compositeOperation 为 null，则当前 cache 将在 cleared 后再进行绘制。
+         * 否则，显示对象将通过指定的 compositeOperation 绘制在现有的 cache 上。
          * @method updateCache
-         * @param {String} compositeOperation The compositeOperation to use, or null to clear the cache and redraw it.
-         *  <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#compositing">whatwg spec on compositing</a>.
+         * @param {String} compositeOperation compositeOperation 将被使用，或为 null 在绘制之前先清空 cache。
+         * <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html#compositing">whatwg
+         * spec on compositing</a>.
          */
         updateCache: function(compositeOperation) {
-            var cacheCanvas = this.cacheCanvas, scale = this._cacheScale,
-                    offX = this._cacheOffsetX * scale, offY = this._cacheOffsetY * scale;
-            if (!cacheCanvas) { throw "cache() must be called before updateCache()"; }
+            var cacheCanvas = this.cacheCanvas, scale = this._cacheScale, offX = this._cacheOffsetX * scale, 
+                offY = this._cacheOffsetY * scale;
+            if (!cacheCanvas) {
+                throw "cache() must be called before updateCache()";
+            }
             var ctx = cacheCanvas.getContext("2d");
             ctx.save();
-            if (!compositeOperation) { ctx.clearRect(0, 0, cacheCanvas.width, cacheCanvas.height); }
+            if (!compositeOperation) {
+                ctx.clearRect(0, 0, cacheCanvas.width, cacheCanvas.height);
+            }
             ctx.globalCompositeOperation = compositeOperation;
             ctx.setTransform(scale, 0, 0, scale, -offX, -offY);
             this.draw(ctx, true);
@@ -468,8 +438,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         },
 
         /**
-         * Clears the current cache. See cache() for more information.
-         *
+         * 清空当前 cache，看 cache() 获取更多信息。
          * @method uncache
          */
         uncache: function() {
@@ -479,85 +448,84 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         },
 
         /**
-         * Returns a data URL for the cache, or null if this display object is not cached.
-         * Uses cacheID to ensure a new data URL is not generated if the cache has not changed.
-         *
+         * 返回 cache 的数据 URL，如果该显示对象没有 cache 则返回 null。
+         * 通过 cacheID 确保当 cache 没有改变时，不会产生新的 data URL。
          * @method getCacheDataURL.
          */
         getCacheDataURL: function() {
-            if (!this.cacheCanvas) { return null; }
-            if (this.cacheID != this._cacheDataURLID) { this._cacheDataURL = this.cacheCanvas.toDataURL(); }
+            if (!this.cacheCanvas) {
+                return null;
+            }
+            if (this.cacheID != this._cacheDataURLID) {
+                this._cacheDataURL = this.cacheCanvas.toDataURL();
+            }
             return this._cacheDataURL;
         },
 
         /**
-         * Returns the stage that this display object will be rendered on, or null if it has not been added to one.
-         *
+         * 返回渲染该显示对象的 Stage，如果该显示对象没有渲染到 stage 里，则返回 null。
          * @method getStage
-         * @return {Stage} The Stage instance that the display object is a descendent of. null if the DisplayObject has not
-         *  been added to a Stage.
+         * @return {Stage} 渲染该显示对象的 stage，如果该显示对象没有渲染到 stage 里，则返回 null。
          */
         getStage: function() {
             var o = this;
             while (o.parent) {
                 o = o.parent;
             }
-            // using dynamic access to avoid circular dependencies;
+            // 使用动态的访问，以避免循环依赖关系。
             var Stage = xc.module.require("xc.createjs.Stage");
-            if (o instanceof Stage) { return o; }
+            if (o instanceof Stage) {
+                return o;
+            }
             return null;
         },
 
         /**
-         * Transforms the specified x and y position from the coordinate space of the display object to the global (stage)
-         * coordinate space. For example, this could be used to position an HTML label over a specific point on a nested
-         * display object. Returns a Point instance with x and y properties correlating to the transformed coordinates on
-         * the stage.
-         *
+         * 将相对于显示对象坐标系的 x，y 坐标，转换为全局（Stage）坐标系的 x，y 坐标。
+         * 例如，这个可以用来定位一个 HTML 标签，该标签嵌套在一个显示对象里面。
+         * 返回一个 Point 实例，该实例包括转换后 Stage 坐标系的 x ，y 坐标。
          * @method localToGlobal
-         * @param {Number} x The x position in the source display object to transform.
-         * @param {Number} y The y position in the source display object to transform.
-         * @return {Point} A Point instance with x and y properties correlating to the transformed coordinates on the stage.
+         * @param {Number} x 将用来转换的显示对象的 x 坐标。
+         * @param {Number} y 将用来转换的显示对象的 y 坐标。
+         * @return {Point} 一个 Point 实例，该实例包括转换后 Stage 坐标系的 x ，y 坐标。
          */
         localToGlobal: function(x, y) {
             var mtx = this.getConcatenatedMatrix(this._matrix);
-            if (mtx == null) { return null; }
+            if (mtx == null) {
+                return null;
+            }
             mtx.append(1, 0, 0, 1, x, y);
             return new Point(mtx.tx, mtx.ty);
         },
 
         /**
-         * Transforms the specified x and y position from the global (stage) coordinate space to the
-         * coordinate space of the display object. For example, this could be used to determine
-         * the current mouse position within the display object. Returns a Point instance with x and y properties
-         * correlating to the transformed position in the display object's coordinate space.
-         *
+         * 将相对于全局（Stage）坐标系的 x，y 坐标，转换为显示对象坐标系的 x，y 坐标。
+         * 例如，确定鼠标是否在显示对象内。
+         * 返回一个 Point 实例，该实例包括转换后相对于显示对象坐标系的 x ，y 坐标。
          * @method globalToLocal
-         * @param {Number} x The x position on the stage to transform.
-         * @param {Number} y The y position on the stage to transform.
-         * @return {Point} A Point instance with x and y properties correlating to the transformed position in the display
-         *  object's coordinate space.
+         * @param {Number} x 用于转换的全局坐标系的 x 坐标。
+         * @param {Number} y 用于转换的全局坐标系的 y 坐标。
+         * @return {Point} 一个 Point 实例，该实例包括转换后相对于显示对象坐标系的 x ，y 坐标。
          */
         globalToLocal: function(x, y) {
             var mtx = this.getConcatenatedMatrix(this._matrix);
-            if (mtx == null) { return null; }
+            if (mtx == null) {
+                return null;
+            }
             mtx.invert();
             mtx.append(1, 0, 0, 1, x, y);
             return new Point(mtx.tx, mtx.ty);
         },
 
         /**
-         * Transforms the specified x and y position from the coordinate space of this display object to the
-         * coordinate space of the target display object. Returns a Point instance with x and y properties
-         * correlating to the transformed position in the target's coordinate space. Effectively the same as calling
-         * var pt = this.localToGlobal(x, y); pt = target.globalToLocal(pt.x, pt.y);
-         *
+         * 将相对于显示对象坐标系的 x，y 坐标，转换为另一个显示对象坐标系的 x，y 坐标。
+         * 返回一个 Point 实例，该实例包括转换后相对于显示对象坐标系的 x ，y 坐标。
+         * 相当于执行了 var pt = this.localToGlobal(x, y); pt = target.globalToLocal(pt.x, pt.y);
          * @method localToLocal
-         * @param {Number} x The x position in the source display object to transform.
-         * @param {Number} y The y position on the stage to transform.
-         * @param {DisplayObject} target The target display object to which the coordinates will be transformed.
-         * @return {Point} Returns a Point instance with x and y properties correlating to the transformed position in the
-         *  target's coordinate space.
+         * @param {Number} x 用于转换的显示对象坐标系的 x 坐标。
+         * @param {Number} y 用于转换的显示对象坐标系的 y 坐标。
+         * @param {DisplayObject} target 将要转换坐标的目标显示对象。
+         * @return {Point} Returns 一个 Point 实例，该实例包括转换后相对于显示对象坐标系的 x ，y 坐标。
          */
         localToLocal: function(x, y, target) {
             var pt = this.localToGlobal(x, y);
@@ -565,9 +533,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         },
 
         /**
-         * Shortcut method to quickly set the transform properties on the display object. All parameters are optional.
-         * Omitted parameters will have the default value set (ex. 0 for x/y, 1 for scaleX/Y).
-         *
+         * 快捷方法用于快速设置显示对象的 transform 属性。所有属性都是可选。
+         * 省略的参数有默认值设置 (例如 0 for x/y, 1 for scaleX/Y)。
          * @method setTransform
          * @param {Number} x
          * @param {Number} y
@@ -578,7 +545,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          * @param {Number} skewY
          * @param {Number} regX
          * @param {Number} regY
-         * @return {DisplayObject} Returns this instance. Useful for chaining commands.
+         * @return {DisplayObject} 返回当前实例，有助于链接命令。
          */
         setTransform: function(x, y, scaleX, scaleY, rotation, skewX, skewY, regX, regY) {
             this.x = x || 0;
@@ -594,50 +561,47 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         },
 
         /**
-         * Returns a matrix based on this object's transform.
-         *
+         * 返回基于此显示对象的变换矩阵
          * @method getMatrix
-         * @param {Matrix2D} matrix Optional. A Matrix2D object to populate with the calculated values. If null, a new
-         *  Matrix object is returned.
-         * @return {Matrix2D} A matrix representing this display object's transform.
+         * @param {Matrix2D} matrix 可选。一个根据计算值填充好的 Matrix2D 对象，如果为 null，则返回一个新的 Matrix2D 对象。
+         * @return {Matrix2D} 代表此对象的变换矩阵。
          */
         getMatrix: function(matrix) {
             var o = this;
-            return (matrix ? matrix.identity() : new Matrix2D()).appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation,
-                    o.skewX, o.skewY, o.regX, o.regY).appendProperties(o.alpha, o.shadow, o.compositeOperation);
+            return (matrix ? matrix.identity() : new Matrix2D()).
+                    appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation, o.skewX, o.skewY, o.regX, o.regY).
+                    appendProperties(o.alpha, o.shadow, o.compositeOperation);
         },
 
         /**
-         * Generates a concatenated Matrix2D object representing the combined transform of the display object and all of its
-         * parent Containers up to the highest level ancestor (usually the stage). This can be used to transform positions
-         * between coordinate spaces, such as with localToGlobal and globalToLocal.
-         *
+         * 生成一个级联的 Matrix2D 对象，该对象代表该显示对象的结合变换，以及它所有的父对象（通常是 stage ）的结合变换。
+         * 这可以用于变换坐标系之间的位置。例如 localToGlobal 和 globalToLocal。
          * @method getConcatenatedMatrix
-         * @param {Matrix2D} matrix Optional. A Matrix2D object to populate with the calculated values. If null, a new
-         *  Matrix object is returned.
-         * @return {Matrix2D} a concatenated Matrix2D object representing the combined transform of the display object and
-         *  all of its parent Containers up to the highest level ancestor (usually the stage).
+         * @param {Matrix2D} matrix 可选。一个根据计算值填充好的 Matrix2D 对象，该对象代表该显示对象的结合变换，如果为 null，则返回一个新的 Matrix2D 对象
+         * @return {Matrix2D} 一个级联的 Matrix2D 对象代表该显示对象的结合变换，以及它所有的父对象（通常是 stage ）的结合变换。
          */
         getConcatenatedMatrix: function(matrix) {
-            if (matrix) { matrix.identity(); } else { matrix = new Matrix2D(); }
+            if (matrix) {
+                matrix.identity();
+            } else {
+                matrix = new Matrix2D();
+            }
             var o = this;
             while (o != null) {
-                matrix.prependTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation,
-                        o.skewX, o.skewY, o.regX, o.regY).prependProperties(o.alpha, o.shadow, o.compositeOperation);
+                matrix.prependTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation, o.skewX, o.skewY, o.regX, o.regY)
+                .prependProperties(o.alpha, o.shadow, o.compositeOperation);
                 o = o.parent;
             }
             return matrix;
         },
 
         /**
-         * Tests whether the display object intersects the specified local point (ie. draws a pixel with alpha > 0 at the
-         * specified position). This ignores the alpha, shadow and compositeOperation of the display object, and all
-         * transform properties including regX/Y.
-         *
+         * 测试显示对象是否与本地特定的位置相交（例如： 在特定的位置绘制一个 alpha > 0 的像素）
+         * 该方法执行时不受显示对象的 alpha, shadow 和 compositeOperation, 和所有的 transform 属性，包括 regX/Y 影响。
          * @method hitTest
-         * @param {Number} x The x position to check in the display object's local coordinates.
-         * @param {Number} y The y position to check in the display object's local coordinates.
-         * @return {Boolean} A Boolean indicting whether a visible portion of the DisplayObject intersect the specified local Point.
+         * @param {Number} x显示对象坐标系的 x 坐标，将用于检测。
+         * @param {Number} y显示对象坐标系的 y 坐标，将用于检测。
+         * @return {Boolean} 一个 Boolean 值指出显示对象是否相交于某个特定的位置。
          */
         hitTest: function(x, y) {
             var ctx = DisplayObject._hitTestContext;
@@ -651,26 +615,24 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         },
 
         /**
-         * Provides a chainable shortcut method for setting a number of properties on a DisplayObject instance.
-         *
-         * <h4>Example</h4>
-         *     var shape = stage.addChild(new Shape()).set({graphics:myGraphics, x:100, y:100, alpha:0.5});
-         *
+         * 提供了一个可链接的快捷方法用于设置显示对象实例上一系列属性，
+         * 例子.<br/>
+         * var shape = stage.addChild( new Shape() ).set({graphics:myGraphics, x:100, y:100, alpha:0.5});
          * @method set
-         * @param {Object} props A generic object containing properties to copy to the DisplayObject instance.
-         * @return {DisplayObject} Returns The DisplayObject instance the method is called on (useful for chaining calls).
+         * @param {Object} props 一个包含属性的对象将复制到显示对象实例。
+         * @return {DisplayObject} 返回调用该方法的显示对象(链式调用时很有用)。
          */
         set: function(props) {
-            for (var n in props) { this[n] = props[n]; }
+            for ( var n in props) {
+                this[n] = props[n];
+            }
             return this;
         },
 
         /**
-         * Returns a clone of this DisplayObject. Some properties that are specific to this instance's current context are
-         * reverted to their defaults (for example .parent).
-         *
+         * 返回克隆后的显示对象。一些在当前背景下的特定属性值将还原为默认值（例如 .parent）。
          * @method clone
-         * @return {DisplayObject} A clone of the current DisplayObject instance.
+         * @return {DisplayObject} 克隆后的显示对象实例。
          */
         clone: function() {
             var o = new DisplayObject();
@@ -679,10 +641,9 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
-         *
+         * 返回该对象的字符串表示形式。
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 该对象的字符串表示形式。
          */
         toString: function() {
             return "[DisplayObject (name=" + this.name + ")]";
@@ -691,8 +652,7 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
         /**
          * @method cloneProps
          * @protected
-         * @param {DisplayObject} o The DisplayObject instance which will have properties from the current DisplayObject
-         *  instance copied into.
+         * @param {DisplayObject} o 显示对象实例，包含从当前对象复制的所有属性。
          */
         cloneProps: function(o) {
             o.alpha = this.alpha;
@@ -712,8 +672,8 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
             o.compositeOperation = this.compositeOperation;
             if (this.cacheCanvas) {
                 o.cacheCanvas = this.cacheCanvas.cloneNode(true);
-                o.cacheCanvas.getContext("2d").putImageData(this.cacheCanvas.getContext("2d").getImageData(0, 0,
-                        this.cacheCanvas.width, this.cacheCanvas.height), 0, 0);
+                o.cacheCanvas.getContext("2d").putImageData(this.cacheCanvas.getContext("2d")
+                .getImageData(0, 0, this.cacheCanvas.width, this.cacheCanvas.height), 0, 0);
             }
         },
 
@@ -736,10 +696,15 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          * @protected
          */
         _tick: function(params) {
-            // because onTick can be really performance sensitive, we'll inline some of the dispatchEvent work.
-            // this can probably go away at some point. It only has a noticeable impact with thousands of objects in modern browsers.
+            // 因为 onTick 性能是很敏感，所以将内联一些 dispatchEvent 工作。
+            // 这或许可以在某些时候能解决某些问题。这对现今有成千上万的对象的浏览器有显著的影响。
             var ls = this._listeners;
-            if (ls && ls["tick"]) { this.dispatchEvent({type: "tick", params: params}); }
+            if (ls && ls["tick"]) {
+                this.dispatchEvent({
+                    type: "tick",
+                    params: params
+                });
+            }
         },
 
         /**
@@ -764,35 +729,36 @@ xc.module.define("xc.createjs.DisplayObject", function(exports) {
          * @protected
          */
         _applyFilters: function() {
-            if (!this.filters || this.filters.length == 0 || !this.cacheCanvas) { return; }
+            if (!this.filters || this.filters.length == 0 || !this.cacheCanvas) {
+                return;
+            }
             var l = this.filters.length;
             var ctx = this.cacheCanvas.getContext("2d");
             var w = this.cacheCanvas.width;
             var h = this.cacheCanvas.height;
-            for (var i = 0; i < l; i++) {
+            for ( var i = 0; i < l; i++) {
                 this.filters[i].applyFilter(ctx, 0, 0, w, h);
             }
         },
 
         /**
-         * Indicates whether the display object has a listener of the corresponding event types.
-         *
+         * 指出对象是否有对应类型的监听器。
          * @method _hasMouseHandler
-         * @param {Number} typeMask A bitmask indicating which event types to look for. Bit 1 specifies press & click &
-         *  double click, bit 2 specifies it should look for mouse over and mouse out. This implementation may change.
+         * @param {Number} typeMask 一个位掩码，表示事件类型来。第 1 位指定 press 和 click 和 double click，第2位，指定它应该是 mouse over 和 mouse out。此实现可能会改变。
          * @return {Boolean}
          * @protected
          */
         _hasMouseHandler: function(typeMask) {
             var ls = this._listeners;
-            return !!((typeMask & 1 && (ls && (this.hasEventListener("mousedown") || this.hasEventListener("click") || this.hasEventListener("dblclick")))) ||
-                    (typeMask & 2 && (ls && (this.hasEventListener("mouseover") || this.hasEventListener("mouseout")))));
+            return !!((typeMask & 1 && (ls && (this.hasEventListener("mousedown") 
+                        || this.hasEventListener("click") || this.hasEventListener("dblclick")))) 
+                        || (typeMask & 2 && (ls && (this.hasEventListener("mouseover") 
+                        || this.hasEventListener("mouseout")))));
         }
     });
 
     /**
-     * Suppresses errors generated when using features like hitTest, mouse events, and getObjectsUnderPoint with cross domain content
-     *
+     * 当使用类似：hitTest，鼠标事件，或 getObjectsUnderPoint 出现跨域问题时产生的错误。
      * @property suppressCrossDomainErrors
      * @static
      * @type {Boolean}

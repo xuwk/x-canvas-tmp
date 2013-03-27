@@ -3,14 +3,12 @@ xc.module.define("xc.createjs.AlphaMaskFilter", function(exports) {
     var Filter = xc.module.require("xc.createjs.Filter");
 
     /**
-     * Applies the alpha from the mask image (or canvas) to the target, such that the alpha channel of the result will
-     * be derived from the mask, and the RGB channels will be copied from the target. This can be used, for example, to
-     * apply an alpha mask to a display object. This can also be used to combine a JPG compressed RGB image with a PNG32
-     * alpha mask, which can result in a much smaller file size than a single PNG32 containing ARGB.
-     *
-     * <b>IMPORTANT NOTE: This filter currently does not support the targetCtx, or targetX/Y parameters correctly.</b>
-     *
-     * See {{#crossLink "Filter"}}{{/crossLink}} for an example of how to apply filters.
+     * 想了解滤镜的使用，请查看{{#crossLink "Filter"}}{{/crossLink}}。
+     * 把遮罩图片（或canvas）的alpha通道应用到目标上，这样就可以从遮罩图片中导出结果的alpha通道，当前目标的RGB通道也会复制到结果的对应通道上。例如，可以用来给一个显示对象加蒙层。
+     * 这个也可以用来合并一张压缩的带RGB通道的JPG图片和一张带alpha遮罩的PNG32图片，这样生成图片体积会比一张带ARGB通道的PNG32图片小得多。 
+     * 
+     * <b>重要提示: 这个滤镜现在还没法准确地支持targetCtx或targetX/Y参数。</b>
+     * 想了解滤镜的使用，请查看{{#crossLink "Filter"}}{{/crossLink}}。
      *
      * @class AlphaMaskFilter
      * @extends Filter
@@ -18,12 +16,12 @@ xc.module.define("xc.createjs.AlphaMaskFilter", function(exports) {
      * @param {Image} mask
      */
     var AlphaMaskFilter = Filter.extend({
-        _init: function(mask) {
+        initialize: function(mask) {
             this.mask = mask;
         },
 
         /**
-         * The image (or canvas) to use as the mask.
+         * 作为遮罩使用的图片（或canvas）。
          *
          * @property mask
          * @type Image
@@ -31,29 +29,33 @@ xc.module.define("xc.createjs.AlphaMaskFilter", function(exports) {
         mask: null,
 
         /**
-         * Applies the filter to the specified context. IMPORTANT NOTE: This filter currently does not support the targetCtx,
-         * or targetX/Y parameters correctly.
+         * 把滤镜应用到指定的上下文。<b>重要信息：<b>这个滤镜暂时无法准确地支持targetCtx或targetX/Y参数。
          *
          * @method applyFilter
-         * @param {CanvasRenderingContext2D} ctx The 2D context to use as the source.
-         * @param {Number} x The x position to use for the source rect.
-         * @param {Number} y The y position to use for the source rect.
-         * @param {Number} width The width to use for the source rect.
-         * @param {Number} height The height to use for the source rect.
-         * @param {CanvasRenderingContext2D} targetCtx Optional. The 2D context to draw the result to. Defaults to the context passed to ctx.
-         * @param {Number} targetX Optional. The x position to draw the result to. Defaults to the value passed to x.
-         * @param {Number} targetY Optional. The y position to draw the result to. Defaults to the value passed to y.
+         * @param {CanvasRenderingContext2D} ctx 用作资源的2D上下文。
+         * @param {Number} x 应用到资源矩阵的x坐标值。
+         * @param {Number} y 应用到资源矩阵的y坐标值。
+         * @param {Number} width 应用到资源矩阵的宽度。
+         * @param {Number} height 应用到资源矩阵的高度。
+         * @param {CanvasRenderingContext2D} targetCtx 可选。绘制结果的2D上下文。默认为ctx代表的上下文。
+         * @param {Number} targetX 可选。绘制结果的x坐标值。默认为x传递的坐标值。
+         * @param {Number} targetY 可选。绘制结果的y坐标值。默认为y传递的坐标值。
          * @return {Boolean}
          */
         applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
-            if (!this.mask) { return true; }
+            if (!this.mask) {
+                return true;
+            }
             targetCtx = targetCtx || ctx;
-            if (targetX == null) { targetX = x; }
-            if (targetY == null) { targetY = y; }
+            if (targetX == null) {
+                targetX = x;
+            }
+            if (targetY == null) {
+                targetY = y;
+            }
             targetCtx.save();
             if (ctx != targetCtx) {
-                // TODO: support targetCtx and targetX/Y
-                // clearRect, then draw the ctx in?
+                // TODO: 支持targetCtx和targetX/Y的清空矩阵，然后把ctx画进去？
             }
             targetCtx.globalCompositeOperation = "destination-in";
             targetCtx.drawImage(this.mask, targetX, targetY);
@@ -62,7 +64,7 @@ xc.module.define("xc.createjs.AlphaMaskFilter", function(exports) {
         },
 
         /**
-         * Returns a clone of this object.
+         * 返回当前对象的克隆。
          *
          * @return {AlphaMaskFilter}
          */
@@ -71,9 +73,9 @@ xc.module.define("xc.createjs.AlphaMaskFilter", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回一个当前对象的字符串表示。
          *
-         * @return {String} a string representation of the instance.
+         * @return {String} 一个当前对象的字符串表示。
          */
         toString: function() {
             return "[AlphaMaskFilter]";

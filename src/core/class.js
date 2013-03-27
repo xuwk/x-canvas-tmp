@@ -90,17 +90,16 @@
         var prototype = new this();
         initializing = false;
         for (var name in prop) {
-            prototype[name] =
-                    typeof prop[name] == "function" && typeof base[name] == "function" && fnTest.test(prop[name]) ?
-                            (function(name, fn) {
-                                return function() {
-                                    var tmp = this._super;
-                                    this._super = base[name];
-                                    var ret = fn.apply(this, arguments);
-                                    this._super = tmp;
-                                    return ret;
-                                };
-                            })(name, prop[name]) : prop[name];
+            prototype[name] = typeof prop[name] == "function" 
+                && typeof base[name] == "function" && fnTest.test(prop[name]) ? (function(name, fn) {
+                    return function() {
+                        var tmp = this._super;
+                        this._super = base[name];
+                        var ret = fn.apply(this, arguments);
+                        this._super = tmp;
+                        return ret;
+                    };
+                })(name, prop[name]) : prop[name];
         }
         var Class = function() {
             if (!initializing && this._init) {

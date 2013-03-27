@@ -3,43 +3,42 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
     var DisplayObject = xc.module.require("xc.createjs.DisplayObject");
 
     /**
-     * Displays frames or sequences of frames (ie. animations) from a sprite sheet image. A sprite sheet is a series of
-     * images (usually animation frames) combined into a single image. For example, an animation consisting of 8 100x100
-     * images could be combined into a 400x200 sprite sheet (4 frames across by 2 high). You can display individual
-     * frames, play frames as an animation, and even sequence animations together.
+     * 图片精灵的帧或帧序列（即动画）。一个图片精灵就是一系列的图片（通常是动画帧）
+     * 组合到一张大图片中（或许多张图片）。例如，一个动画由 8 张 100x100 的图片组成，就会组合成一个 400 x 200 的图片精灵。
+     * 可以单独将一个帧作为动画播放，也可以将多个动画组合在一起播放。
      *
-     * See the {{#crossLink "SpriteSheet"}}{{/crossLink}} class for more information on setting up frames and animations.
+     * 看 {{#crossLink "SpriteSheet"}}{{/crossLink}} 类获取更多关于构建帧和动画的信息。
      *
-     * <h4>Example</h4>
-     *     var instance = new BitmapAnimation(spriteSheet);
-     *     instance.gotoAndStop("frameName");
+     * <h4>例子</h4>
+     *      var instance = new createjs.BitmapAnimation(spriteSheet);
+     *      instance.gotoAndStop("frameName");
      *
      * @class BitmapAnimation
      * @extends DisplayObject
      * @constructor
-     * @param {SpriteSheet} spriteSheet The SpriteSheet instance to play back. This includes the source image(s), frame
-     *  dimensions, and frame data. See {{#crossLink "SpriteSheet"}}{{/crossLink}} for more information.
+     * @param {SpriteSheet} spriteSheet 待播放的SpriteSheet实例。
+     * 这里包括图片资源，帧尺寸，和帧数据。看 {{#crossLink "SpriteSheet"}}{{/crossLink}} 获取更多信息。
      */
     var BitmapAnimation = DisplayObject.extend({
-        _init: function(spriteSheet) {
+        initialize: function(spriteSheet) {
             this._super();
             this.spriteSheet = spriteSheet;
         },
 
         /**
-         * Dispatched when an animation reaches its ends.
+         * 当动画播放到尾之后触发。
          *
          * @event animationend
-         * @param {Object} target The object that dispatched the event.
-         * @param {String} type The event type.
-         * @param {String} name The name of the animation that just ended.
-         * @param {String} next The name of the next animation that will be played, or null.
-         *  This will be the same as name if the animation is looping.
+         * @param {Object} target 监听该事件的目标对象。
+         * @param {String} type 事件类型。
+         * @param {String} name 刚播放完的动画的名称。
+         * @param {String} next 下一个要播放的动画，或为 null，如果动画在循环，则这个值和 name 属性的值相同。
          */
 
         /**
-         * The frame that will be drawn when draw is called. Note that with some SpriteSheet data, this will advance
-         * non-sequentially. READ-ONLY.
+         * 当 draw 方法在执行时，将要被渲染的帧。
+         * 注：有一些 SpriteSheet 数据是不按顺序前进的。
+         * 只读。
          *
          * @property currentFrame
          * @type {Number}
@@ -48,17 +47,17 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         currentFrame: -1,
 
         /**
-         * Returns the currently playing animation. READ-ONLY.
+         * 返回正在播放的动画。只读。
          *
          * @property currentAnimation
          * @type {String}
          * @final
          */
-        currentAnimation: null, // READ-ONLY
+        currentAnimation: null, // 只读
 
         /**
-         * Prevents the animation from advancing each tick automatically. For example, you could create a sprite sheet of
-         * icons, set paused to true, and display the appropriate icon by setting <code>currentFrame</code>.
+         * 阻止动画前进。例如，可以创建一个图片精灵，然后设置 paused 属性 为 true，
+         * 而通过改变 <code>currentFrame</code> 的值来达到播放效果。
          *
          * @property paused
          * @type {Boolean}
@@ -67,8 +66,8 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         paused: true,
 
         /**
-         * The SpriteSheet instance to play back. This includes the source image, frame dimensions, and frame data.
-         * See {{#crossLink "SpriteSheet"}}{{/crossLink}} for more information.
+         * 当前实例正在播放的 SpriteSheet。这里包括图片资源，帧尺寸，和帧数据。
+         * 看 {{#crossLink "SpriteSheet"}}{{/crossLink}} 获取更多信息。
          *
          * @property spriteSheet
          * @type {SpriteSheet}
@@ -76,7 +75,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         spriteSheet: null,
 
         /**
-         * Whether or not the image should be draw to the canvas at whole pixel coordinates.
+         * 是否需要根据全像素坐标绘制。
          *
          * @property snapToPixel
          * @type {Boolean}
@@ -85,10 +84,9 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         snapToPixel: true,
 
         /**
-         * When used in conjunction with animations having an frequency greater than 1, this lets you offset which tick the
-         * playhead will advance on. For example, you could create two BitmapAnimations, both playing an animation with a
-         * frequency of 2, but one having offset set to 1. Both instances would advance every second tick, but they would
-         * advance on alternating ticks (effectively, one instance would advance on odd ticks, the other on even ticks).
+         * 当使用多个交替的动画的时候，这个能决定哪个 tick 才是播放头。
+         * 举例，可以创建 2 个 BitmapAnimation 对象，大家的频率都是 2，但其中有一个的 offset 属性设置为 1。两个实例都会在每一
+         * 个 tick 往前移，但它们会交替向前。（属性所影响到的地方就是，其中一个将会在奇数 tick 的时候前进，另外一个则会在偶数 tick 的时候前进）。
          *
          * @property offset
          * @type {Number}
@@ -97,8 +95,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         offset: 0,
 
         /**
-         * Specifies the current frame index within the current playing animation. When playing normally, this will increase
-         * successively from 0 to n-1, where n is the number of frames in the current animation.
+         * 指定当前正在播放的动画的帧的索引号。当播放是正常的时候，这里会返回当前动画的帧的索引号。
          *
          * @property currentAnimationFrame
          * @type {Number}
@@ -123,13 +120,12 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         _animation: null,
 
         /**
-         * Returns true or false indicating whether the display object would be visible if drawn to a canvas.
-         * This does not account for whether it would be visible within the boundaries of the stage.
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
+         * 通过返回 true 或 false 去表示该显示对象画在 Canvas 上时，是否被显示。
+         * 并不是通过该显示对象是否在 Stage 可视范围内进行判断的。
+         * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          *
          * @method isVisible
-         * @return {Boolean} Boolean indicating whether the display object would be visible if drawn to a canvas
+         * @return {Boolean} Boolean 表示该显示对象画在 Canvas 上时，是否被显示。
          */
         isVisible: function() {
             var hasContent = this.cacheCanvas || (this.spriteSheet.complete && this.currentFrame >= 0);
@@ -137,31 +133,34 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * Draws the display object into the specified context ignoring it's visible, alpha, shadow, and transform.
-         * Returns true if the draw was handled (useful for overriding functionality).
-         *
-         * Note: This method is mainly for internal use, though it may be useful for advanced uses.
+         * 绘制显示对象到指定的上下文，忽略 visible, alpha, shadow, and transform 属性。
+         * 当绘制动作正在处理，将返回 true （用于覆盖功能）。
+         * 注：这种方法主要是供内部使用，即使它可能有高级用法。
          *
          * @method draw
-         * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
-         * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache.
-         *  For example, used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
+         * @param {CanvasRenderingContext2D} ctx canvas 2D 上下文对象将渲染到这里。
+         * @param {Boolean} ignoreCache 表示这个绘制行为是否忽略当前所有缓存。
+         * 例如，用来画 cache （以防止它简单地绘制到自身现有的 cache 上）。
          */
         draw: function(ctx, ignoreCache) {
-            if (this._super(ctx, ignoreCache)) { return true; }
+            if (this._super(ctx, ignoreCache)) {
+                return true;
+            }
             this._normalizeFrame();
             var o = this.spriteSheet.getFrame(this.currentFrame);
-            if (!o) { return false; }
+            if (!o) {
+                return false;
+            }
             var rect = o.rect;
             ctx.drawImage(o.image, rect.x, rect.y, rect.width, rect.height, -o.regX, -o.regY, rect.width, rect.height);
             return true;
         },
 
         /**
-         * Begin playing a paused animation.
-         * The BitmapAnimation will be paused if either {{#crossLink "BitmapAnimation/stop"}}{{/crossLink}}
-         * or {{#crossLink "BitmapAnimation/gotoAndStop"}}{{/crossLink}} is called.
-         * Single frame animations will remain unchanged.
+         * 播放正在暂停的动画。
+         * 当调用 {{#crossLink "BitmapAnimation/stop"}}{{/crossLink}} 或 {{#crossLink "BitmapAnimation/gotoAndStop"}}{{/crossLink}} 时，
+         * BitmapAnimation 就会暂停。
+         * 单格动画将保持不变。
          *
          * @method play
          */
@@ -170,10 +169,9 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * Stop playing a running animation.
-         * The BitmapAnimation will be playing if {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}} is called.
-         * Note that calling {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}}
-         * or {{#crossLink "BitmapAnimation/play"}}{{/crossLink}} will resume playback.
+         * 停止正在播放的动画。
+         * 当调用 {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}} 时，动画就会播放。
+         * 注：当调用 {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}} 或 {{#crossLink "BitmapAnimation/play"}}{{/crossLink}} 的时候会恢复播放。
          *
          * @method stop
          */
@@ -182,11 +180,10 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * Sets paused to false and plays the specified animation name, named frame, or frame number.
+         * 设置 paused 属性为 false 以及跳到特定的帧或帧号，播放特定的动画。
          *
          * @method gotoAndPlay
-         * @param {String|Number} frameOrAnimation The frame number or animation name that the playhead should move to and
-         *  begin playing.
+         * @param {String|Number} frameOrAnimation 将要播放的帧号或动画名称。
          */
         gotoAndPlay: function(frameOrAnimation) {
             this.paused = false;
@@ -194,11 +191,10 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * Sets paused to true and seeks to the specified animation name, named frame, or frame number.
+         * 设置 paused 属性为 true 以及跳到特定的帧或帧号，停止播放特定的动画。
          *
          * @method gotoAndStop
-         * @param {String|Number} frameOrAnimation The frame number or animation name that the playhead should move to and
-         *  stop.
+         * @param {String|Number} frameOrAnimation 将要到那里停止播放的帧号或动画名称。
          */
         gotoAndStop: function(frameOrAnimation) {
             this.paused = true;
@@ -206,34 +202,37 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * Advances the playhead. This occurs automatically each tick by default.
+         * 推进正在播放的动画。在每一个 tick 都会自动调用。
          *
          * @method advance
          */
         advance: function() {
-            if (this._animation) { this.currentAnimationFrame++; } else { this.currentFrame++; }
+            if (this._animation) {
+                this.currentAnimationFrame++;
+            } else {
+                this.currentFrame++;
+            }
             this._normalizeFrame();
         },
 
         /**
-         * Returns a {{#crossLink "Rectangle"}}{{/crossLink}} instance defining the bounds of the current frame relative to
-         * the origin. For example, a 90 x 70 frame with <code>regX=50</code> and <code>regY=40</code> would return a
-         * rectangle with [x=-50, y=-40, width=90, height=70].
+         * 返回一个描述当前帧相对于帧原点的 {{#crossLink "Rectangle"}}{{/crossLink}} 实例。
+         * 举例，一个 90 x 70 的帧，<code>regX=50</code> 和 <code>regY=40</code> 将会返回 [x=-50, y=-40, width=90, height=70]
          *
-         * Also see the SpriteSheet {{#crossLink "SpriteSheet/getFrameBounds"}}{{/crossLink}} method.
+         * 也可以看 SpriteSheet 的 {{#crossLink "SpriteSheet/getFrameBounds"}}{{/crossLink}} 方法获取更多信息。
          *
          * @method getBounds
-         * @return {Rectangle} A Rectangle instance. Returns null if the frame does not exist, or the image is not fully loaded.
+         * @return {Rectangle} 一个 Rectangle 实例. 当帧不存在或图片没有加载完全的时候，返回 null。
          */
         getBounds: function() {
             return this.spriteSheet.getFrameBounds(this.currentFrame);
         },
 
         /**
-         * Returns a clone of the BitmapAnimation instance. Note that the same SpriteSheet is shared between cloned instances.
+         * 返回克隆后的 BitmapAnimation 实例。注：克隆出来的 BitmapAnimation 实例与原来的 BitmapAnimation 共用一个 SpriteSheet。
          *
          * @method clone
-         * @return {BitmapAnimation} a clone of the BitmapAnimation instance.
+         * @return {BitmapAnimation} 克隆后的 BitmapAnimation 实例。
          */
         clone: function() {
             var o = new BitmapAnimation(this.spriteSheet);
@@ -242,30 +241,31 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回该对象的字符串表示形式。
          *
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 该对象的字符串表示形式。
          */
         toString: function() {
             return "[BitmapAnimation (name=" + this.name + ")]";
         },
 
         /**
-         * Advances the <code>currentFrame</code> if paused is not true. This is called automatically when the
-         * {{#crossLink "Stage"}}{{/crossLink}} ticks.
+         * 如果 paused = true，推进 <code>currentFrame</code> 。每当 {{#crossLink "Stage"}}{{/crossLink}} 调用 tick 的时候，这个方法就会自动执行。
          *
          * @protected
          * @method _tick
          */
         _tick: function(params) {
             var f = this._animation ? this._animation.frequency : 1;
-            if (!this.paused && ((++this._advanceCount) + this.offset) % f == 0) { this.advance(); }
+            if (!this.paused && ((++this._advanceCount) + this.offset) % f == 0) {
+                this.advance();
+            }
             this._super(params);
         },
 
         /**
-         * Normalizes the current frame, advancing animations and dispatching callbacks as appropriate.
+         * 标准化的当前帧，推进动画和调度适当的回调。
          *
          * @protected
          * @method _normalizeCurrentFrame
@@ -280,7 +280,7 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
                 if (this.currentAnimationFrame >= l) {
                     var next = animation.next;
                     if (this._dispatchAnimationEnd(animation, frame, paused, next, l - 1)) {
-                        // do nothing, something changed in the event stack.
+                        // 当事件栈改变的时候做出的相关处理。
                     } else if (next) {
                         this._goto(next);
                     } else {
@@ -294,15 +294,16 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
             } else {
                 l = this.spriteSheet.getNumFrames();
                 if (frame >= l) {
-                    if (!this._dispatchAnimationEnd(animation, frame, paused, l - 1)) { this.currentFrame = 0; }
+                    if (!this._dispatchAnimationEnd(animation, frame, paused, l - 1)) {
+                        this.currentFrame = 0;
+                    }
                 }
             }
         },
 
         /**
-         * Dispatches the "animationend" event. Returns true if a handler changed the animation
-         * (ex. calling {{#crossLink "BitmapAnimation/stop"}}{{/crossLink}},
-         * {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}}, etc.)
+         * 调用 animationend 事件。当动画发生了改变的时候返回 true。
+         * (例如，调用 {{#crossLink "BitmapAnimation/stop"}}{{/crossLink}}, {{#crossLink "BitmapAnimation/gotoAndPlay"}}{{/crossLink}}等等.)
          *
          * @property _dispatchAnimationEnd
          * @private
@@ -310,8 +311,14 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
          */
         _dispatchAnimationEnd: function(animation, frame, paused, next, end) {
             var name = animation ? animation.name : null;
-            this.dispatchEvent({type: "animationend", name: name, next: next});
-            if (!paused && this.paused) { this.currentAnimationFrame = end; }
+            this.dispatchEvent({
+                type: "animationend",
+                name: name,
+                next: next
+            });
+            if (!paused && this.paused) {
+                this.currentAnimationFrame = end;
+            }
             return (this.paused != paused || this._animation != animation || this.currentFrame != frame);
         },
 
@@ -331,10 +338,10 @@ xc.module.define("xc.createjs.BitmapAnimation", function(exports) {
         },
 
         /**
-         * Moves the playhead to the specified frame number or animation.
+         * 将播放头移动到指定的帧号或动画。
          *
          * @method _goto
-         * @param {String|Number} frameOrAnimation The frame number or animation that the playhead should move to.
+         * @param {String|Number} frameOrAnimation 将要移动到的帧号或动画。
          * @protected
          */
         _goto: function(frameOrAnimation) {

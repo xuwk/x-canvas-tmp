@@ -1,4 +1,4 @@
 xc.depends([
-    "ButtonHelper.js",
-    "Touch.js"
+  "ButtonHelper.js",
+  "Touch.js"
 ]);
