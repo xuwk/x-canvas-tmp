@@ -30,12 +30,11 @@ xc.depends([
             document.getElementById("header").style.display = "none";
         }
 
-        // create a new stage and point it at our canvas:
+        // 创建一个 stage 对象并指向 canvas:
         canvas = document.getElementById("testCanvas");
         stage = new Stage(canvas);
 
-        // create a large number of slightly complex vector shapes, and give them random positions and velocities:
-
+        // 创造了大量的复杂矢量图形，并给设置随机位置和速度
         var colors = ["#828b20", "#b0ac31", "#cbc53d", "#fad779", "#f9e4ad", "#faf2db", "#563512", "#9b4a0b", "#d36600", "#fe8a00", "#f9a71f"];
 
         for (var i=0; i<200; i++) {
@@ -48,20 +47,20 @@ xc.depends([
             shape.velX = Math.random()*10-5;
             shape.velY = Math.random()*10-5;
 
-            // turn snapToPixel on for all shapes - it's set to false by default on Shape.
-            // it won't do anything until stage.snapToPixelEnabled is set to true.
+            // 设置所有 shape 对象的 snapToPixel 属性为 true，所有 Shape 对象该属性的默认为 false。
+            // 当 stage.snapToPixelEnabled 为 true 时才有效。
             shape.snapToPixel = true;
 
             stage.addChild(shape);
         }
 
-        // add a text object to output the current FPS:
+        // 添加一个 text 对象由于出去当前帧数。
         fpsLabel = new Text("-- fps","bold 18px Arial","#FFF");
         stage.addChild(fpsLabel);
         fpsLabel.x = 10;
         fpsLabel.y = 20;
 
-        // start the tick and point it at the window so we can do some work before updating the stage:
+        // 开始执行 tick 并将其指向 window，因此可以再更新 stage 之前进行一系列相关操作。
         Ticker.addEventListener("tick", tick);
         Ticker.setFPS(50);
     }
@@ -72,7 +71,7 @@ xc.depends([
         var h = canvas.height;
         var l = stage.getNumChildren()-1;
 
-        // iterate through all the children and move them according to their velocity:
+        // 迭代所有子对象，以及根据它们的 velocity 属性移动它们。
         for (var i=1; i<l; i++) {
             var shape = stage.getChildAt(i);
             shape.x = (shape.x+shape.velX+w)%w;
@@ -81,12 +80,12 @@ xc.depends([
 
         fpsLabel.text = Math.round(Ticker.getMeasuredFPS())+" fps";
 
-        // draw the updates to stage:
+        // 更新 stage。
         stage.update();
     }
 
     toggleCache = function(value) {
-        // iterate all the children except the fpsLabel, and set up the cache:
+        // 除了帧数标签以外，迭代所有的子对象，并且设置缓存。
         var l = stage.getNumChildren()-1;
 
         for (var i=0; i<l; i++) {
@@ -111,15 +110,15 @@ xc.depends([
 </head>
 	
 <body>
-
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Cache as Bitmap Example</h1>
-	    <p>This example demonstrates the effect of <strong>DisplayObject.cache()</strong> and <strong>snapToPixel</strong> on performance. Caching can provide performance benefits for some types of content because the complex vector shapes do not have to be rerendered each tick. Different browsers have different thresholds for when caching makes sense. The results for snapToPixel vary between browsers, but in general it will have no effect on the uncached shapes, but a significant effect when cached.</p>
-	</header>
-
-	<div class="controls">
-		<input type="checkbox" onClick="toggleCache(this.checked);" id="toggleCache"/><label for="toggleCache">cache enabled</label>
-	</div>
+    <center>
+    	<header id="header" class="EaselJS">
+    	    <h1><span class="text-product">Easel<strong>JS</strong></span> Cache Bitmap 例子</h1>
+    	    <p>该例子演示了<strong>DisplayObject.cache()</strong> 和 <strong>snapToPixel</strong>的效果。缓存可以提供极大性能上的优势，因某些类型的内容，如复杂的矢量形状不必在每个 tick 都重新描绘。不同的浏览器对缓存的支持程度是有所区别的，原因是 snapToPixel 属性在不同浏览器之前支持程度不同，但总体上来时，有缓存的性能必然比没缓存的性能要好的</p>
+    	</header>
+    	<div class="controls">
+    		<input type="checkbox" onClick="toggleCache(this.checked);" id="toggleCache"/><label for="toggleCache">启用缓存</label>
+    	</div>
 		<canvas id="testCanvas" width="960" height="350"></canvas>
+    </center>
 </body>
 </html>
