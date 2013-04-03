@@ -91,8 +91,7 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
     * @constructor
     * @for Graphics
     **/
-    var Graphics =
-    xc.class.create({
+    var Graphics = xc.class.create({
         initialize: function() {
             this.clear();
             this._ctx = Graphics._ctx;
@@ -395,11 +394,12 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
             if (this._active) {
                 this._newPath();
             }
-            var o = this._ctx.createLinearGradient(x0, y0, x1, y1);
+            // X-Canvas暂时不兼容
+            /*var o = this._ctx.createLinearGradient(x0, y0, x1, y1);
             for ( var i = 0, l = colors.length; i < l; i++) {
                 o.addColorStop(ratios[i], colors[i]);
-            }
-            this._fillInstructions = [new Command(this._setProp, ["fillStyle", o], false), Graphics.fillCmd];
+            }*/
+            this._fillInstructions = [new Command(this._setProp, ["fillStyle", colors[colors.length - 1]], false), Graphics.fillCmd];
             return this;
         },
 
@@ -422,11 +422,12 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
             if (this._active) {
                 this._newPath();
             }
-            var o = this._ctx.createRadialGradient(x0, y0, r0, x1, y1, r1);
+            // X-Canvas暂时不兼容
+            /*var o = this._ctx.createRadialGradient(x0, y0, r0, x1, y1, r1);
             for ( var i = 0, l = colors.length; i < l; i++) {
                 o.addColorStop(ratios[i], colors[i]);
-            }
-            this._fillInstructions = [new Command(this._setProp, ["fillStyle", o], false), Graphics.fillCmd];
+            }*/
+            this._fillInstructions = [new Command(this._setProp, ["fillStyle", colors[colors.length - 1]], false), Graphics.fillCmd];
             return this;
         },
 
@@ -448,8 +449,9 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
             var cmd = new Command(this._setProp, ["fillStyle", o], false);
             var arr;
             if (matrix) {
-                arr =
-                [cmd, new Command(this._ctx.save, [], false), new Command(this._ctx.transform, [matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty], false), Graphics.fillCmd,
+                arr = [cmd, new Command(this._ctx.save, [], false), 
+                       new Command(this._ctx.transform, [matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty], 
+                       false), Graphics.fillCmd,
                 new Command(this._ctx.restore, [], false)];
             } else {
                 arr = [cmd, Graphics.fillCmd];
@@ -708,8 +710,11 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
             var ye = y + h;
             var xm = x + w / 2;
             var ym = y + h / 2;
-            this._activeInstructions.push(new Command(this._ctx.moveTo, [x, ym]), new Command(this._ctx.bezierCurveTo, [x, ym - oy, xm - ox, y, xm, y]), new Command(this._ctx.bezierCurveTo, [xm + ox,
-            y, xe, ym - oy, xe, ym]), new Command(this._ctx.bezierCurveTo, [xe, ym + oy, xm + ox, ye, xm, ye]), new Command(this._ctx.bezierCurveTo, [xm - ox, ye, x, ym + oy, x, ym]));
+            this._activeInstructions.push(new Command(this._ctx.moveTo, [x, ym]), 
+                                        new Command(this._ctx.bezierCurveTo, [x, ym - oy, xm - ox, y, xm, y]), 
+                                        new Command(this._ctx.bezierCurveTo, [xm + ox, y, xe, ym - oy, xe, ym]), 
+                                        new Command(this._ctx.bezierCurveTo, [xe, ym + oy, xm + ox, ye, xm, ye]), 
+                                        new Command(this._ctx.bezierCurveTo, [xm - ox, ye, x, ym + oy, x, ym]));
             return this;
         },
 
@@ -740,14 +745,17 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
                 angle /= 180 / Math.PI;
             }
             var a = Math.PI / sides;
-            this._activeInstructions.push(new Command(this._ctx.moveTo, [x + Math.cos(angle) * radius, y + Math.sin(angle) * radius]));
+            this._activeInstructions.push(new Command(this._ctx.moveTo, 
+                                            [x + Math.cos(angle) * radius, y + Math.sin(angle) * radius]));
             for ( var i = 0; i < sides; i++) {
                 angle += a;
                 if (pointSize != 1) {
-                    this._activeInstructions.push(new Command(this._ctx.lineTo, [x + Math.cos(angle) * radius * pointSize, y + Math.sin(angle) * radius * pointSize]));
+                    this._activeInstructions.push(new Command(this._ctx.lineTo, 
+                    [x + Math.cos(angle) * radius * pointSize, y + Math.sin(angle) * radius * pointSize]));
                 }
                 angle += a;
-                this._activeInstructions.push(new Command(this._ctx.lineTo, [x + Math.cos(angle) * radius, y + Math.sin(angle) * radius]));
+                this._activeInstructions.push(new Command(this._ctx.lineTo, 
+                                                [x + Math.cos(angle) * radius, y + Math.sin(angle) * radius]));
             }
             return this;
         },
@@ -870,7 +878,9 @@ xc.module.define("xc.createjs.Graphics", function(exports) {
                 }
                 this._instructions.push.apply(this._instructions, this._strokeInstructions);
                 if (this._ignoreScaleStroke) {
-                    this._instructions.push(new Command(this._ctx.save, [], false), new Command(this._ctx.setTransform, [1, 0, 0, 1, 0, 0], false), Graphics.strokeCmd, new Command(this._ctx.restore,
+                    this._instructions.push(new Command(this._ctx.save, [], false), 
+                                            new Command(this._ctx.setTransform, [1, 0, 0, 1, 0, 0], false), 
+                                            Graphics.strokeCmd, new Command(this._ctx.restore,
                         [], false));
                 } else {
                     this._instructions.push(Graphics.strokeCmd);

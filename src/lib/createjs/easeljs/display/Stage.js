@@ -35,19 +35,19 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         },
 
         /**
-    　 　* 当用户鼠标在 canvas 上滑过时触发。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
+        * 当用户鼠标在 canvas 上滑过时触发。事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * 事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * 
          * @event stagemousemove
          */
-    
+
         /**
          * 当用户在可检测范围松开鼠标时触发。（这在不同的浏览器之间有微小的差别）。
          * 事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
          * 
          * @event stagemouseup
          */
-    
+
         /**
          * 当用户在可检测范内按下鼠标时触发。（这在不同的浏览器之间有微小的差别）。
          * 事件属性的列表，请参阅 {{#crossLink "MouseEvent"}}{{/crossLink}} 类。
@@ -198,7 +198,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
                 this.update(evt);
             }
         },
-        
+
         /**
          * 清空目标 canvas。如果 <code>autoClear</code> 设置为 false 的时候用到。
          * @method clear
@@ -247,7 +247,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
             var dataURL = this.canvas.toDataURL(mimeType);
             if (backgroundColor) {
                 //清空 canvas
-                ctx.clearRect (0, 0, w, h);
+                ctx.clearRect(0, 0, w, h);
 
                 //恢复原来的设置
                 ctx.putImageData(data, 0, 0);
@@ -468,31 +468,40 @@ xc.module.define("xc.createjs.Stage", function(exports) {
          * @param {HTMLElement} e
          */
         _getElementRect: function(e) {
-            var bounds;
-            try {
-                bounds = e.getBoundingClientRect();
-            } // this can fail on disconnected DOM elements in IE9
-            catch (err) {
-                bounds = {
-                    top: e.offsetTop,
-                    left: e.offsetLeft,
-                    width: e.offsetWidth,
-                    height: e.offsetHeight
+            if(typeof Canvas != "undefined") {
+                return {
+                    left : 0,
+                    right : e.width,
+                    top : 0,
+                    bottom : e.height
                 };
-            }
-            var offX = (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || document.body.clientLeft || 0);
-            var offY = (window.pageYOffset || document.scrollTop || 0) - (document.clientTop || document.body.clientTop || 0);
-            var styles = window.getComputedStyle ? getComputedStyle(e) : e.currentStyle; // IE <9 compatibility.
-            var padL = parseInt(styles.paddingLeft) + parseInt(styles.borderLeftWidth);
-            var padT = parseInt(styles.paddingTop) + parseInt(styles.borderTopWidth);
-            var padR = parseInt(styles.paddingRight) + parseInt(styles.borderRightWidth);
-            var padB = parseInt(styles.paddingBottom) + parseInt(styles.borderBottomWidth);
-            // note: in some browsers bounds properties are read only.
-            return {
-                left: bounds.left + offX + padL,
-                right: bounds.right + offX - padR,
-                top: bounds.top + offY + padT,
-                bottom: bounds.bottom + offY - padB
+            } else {
+                var bounds;
+                try {
+                    bounds = e.getBoundingClientRect();
+                } // this can fail on disconnected DOM elements in IE9
+                catch (err) {
+                    bounds = {
+                        top: e.offsetTop,
+                        left: e.offsetLeft,
+                        width: e.offsetWidth,
+                        height: e.offsetHeight
+                    };
+                }
+                var offX = (window.pageXOffset || document.scrollLeft || 0) - (document.clientLeft || document.body.clientLeft || 0);
+                var offY = (window.pageYOffset || document.scrollTop || 0) - (document.clientTop || document.body.clientTop || 0);
+                var styles = window.getComputedStyle ? getComputedStyle(e) : e.currentStyle; // IE <9 compatibility.
+                var padL = parseInt(styles.paddingLeft) + parseInt(styles.borderLeftWidth);
+                var padT = parseInt(styles.paddingTop) + parseInt(styles.borderTopWidth);
+                var padR = parseInt(styles.paddingRight) + parseInt(styles.borderRightWidth);
+                var padB = parseInt(styles.paddingBottom) + parseInt(styles.borderBottomWidth);
+                // note: in some browsers bounds properties are read only.
+                return {
+                    left: bounds.left + offX + padL,
+                    right: bounds.right + offX - padR,
+                    top: bounds.top + offY + padT,
+                    bottom: bounds.bottom + offY - padB
+                }
             }
         },
 
@@ -525,7 +534,8 @@ xc.module.define("xc.createjs.Stage", function(exports) {
                 oEvt.dispatchEvent(evt, oEvt.target);
             }
             var oTarget = o.target;
-            if (oTarget && oTarget.hasEventListener("click") && this._getObjectsUnderPoint(o.x, o.y, null, true, (this._mouseOverIntervalID ? 3 : 1)) == oTarget) {
+            if (oTarget && oTarget.hasEventListener("click") && 
+                this._getObjectsUnderPoint(o.x, o.y, null, true, (this._mouseOverIntervalID ? 3 : 1)) == oTarget) {
                 evt = new MouseEvent("click", o.x, o.y, oTarget, e, id, id == this._primaryPointerID, o.rawX, o.rawY);
                 oTarget.dispatchEvent(evt);
             }
@@ -625,12 +635,12 @@ xc.module.define("xc.createjs.Stage", function(exports) {
         _testTouchOver: function() {
             for (var i in this.touchs) {
                 if (i == -1) {
-                    continue ;
+                    continue;
                 }
                 var touch = this.touchs[i];
                 var _touchOver = this._touchOver[i];
                 if (touch && _touchOver && _touchOver.x == touch.x && _touchOver.y == touch.y && touch.inBounds) {
-                    continue ;
+                    continue;
                 };
 
                 var target = null;
@@ -645,21 +655,25 @@ xc.module.define("xc.createjs.Stage", function(exports) {
                 var mouseOverTarget = this.mouseOverTargets[i];
                 if (mouseOverTarget != target) {
                     var o = this._getPointerData(i);
-                    if (mouseOverTarget && (mouseOverTarget.onMouseOut ||  mouseOverTarget.hasEventListener("mouseout"))) {
+                    if (mouseOverTarget && (mouseOverTarget.onMouseOut || mouseOverTarget.hasEventListener("mouseout"))) {
                         var evt = new createjs.MouseEvent("mouseout", o.x, o.y, mouseOverTarget, null, -1, o.rawX, o.rawY);
-                        mouseOverTarget.onMouseOut&&mouseOverTarget.onMouseOut(evt);
+                        mouseOverTarget.onMouseOut && mouseOverTarget.onMouseOut(evt);
                         mouseOverTarget.dispatchEvent(evt);
                         this.touchs[i] = undefined;
                     }
-                    if (mouseOverTarget) { this.canvas.style.cursor = ""; }
-                    
+                    if (mouseOverTarget) {
+                        this.canvas.style.cursor = "";
+                    }
+
                     if (target && (target.onMouseOver || target.hasEventListener("mouseover"))) {
                         evt = new createjs.MouseEvent("mouseover", o.x, o.y, target, null, -1, o.rawX, o.rawY);
-                        target.onMouseOver&&target.onMouseOver(evt);
+                        target.onMouseOver && target.onMouseOver(evt);
                         target.dispatchEvent(evt);
                     }
-                    if (target) { this.canvas.style.cursor = target.cursor||""; }
-                    
+                    if (target) {
+                        this.canvas.style.cursor = target.cursor || "";
+                    }
+
                     this.mouseOverTargets[i] = target;
                 }
             }
@@ -679,7 +693,7 @@ xc.module.define("xc.createjs.Stage", function(exports) {
             }
         }
     });
-    
+
     return Stage;
 
 });

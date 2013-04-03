@@ -193,6 +193,7 @@ xc.module.define("xc.createjs.Container", function(exports) {
             if (child) {
                 child.parent = null;
             }
+            
             this.children.splice(index, 1);
             return true;
         },

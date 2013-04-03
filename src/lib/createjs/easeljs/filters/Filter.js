@@ -15,8 +15,8 @@ xc.module.define("xc.createjs.Filter", function(exports) {
      *      
      * <h4>EaselJS 滤镜</h4>
      * EaselJS带来了一些预制的滤镜。注：独立的滤镜没有压缩在EaselJS的压缩版里面。想使用它们，你必须手动在HTML里加载它们。
-     * <ul><li>AlphaMapFilter: 把一张灰度图片映射到一个显示对象的alpha通道上。</li>
-     *      <li>{{#crossLink "AlphaMapFilter"}}{{/crossLink}}: 把一张图片的alpha通道映射到一个显示对象的alpha通道上。</li>
+     * <ul><li>{{#crossLink "AlphaMapFilter"}}{{/crossLink}}: 把一张灰度图片映射到一个显示对象的alpha通道上。</li>
+     *      <li>{{#crossLink "AlphaMaskFilter"}}{{/crossLink}}: 把一张图片的alpha通道映射到一个显示对象的alpha通道上。</li>
      *      <li>{{#crossLink "BoxBlurFilter"}}{{/crossLink}}: 在一个显示对象上应用横向和纵向的快速均值模糊滤镜。</li>
      *      <li>{{#crossLink "ColorFilter"}}{{/crossLink}}: 转换一个显示对象的颜色。</li>
      *      <li>{{#crossLink "ColorMatrixFilter"}}{{/crossLink}}: 通过{{#crossLink "ColorMatrix"}}{{/crossLink}}转换一张图片。</li>
