@@ -102,8 +102,8 @@
                 })(name, prop[name]) : prop[name];
         }
         var Class = function() {
-            if (!initializing && this._init) {
-                this._init.apply(this, arguments);
+            if (!initializing && this.initialize) {
+                this.initialize.apply(this, arguments);
             }
         };
         Class.prototype = prototype;
