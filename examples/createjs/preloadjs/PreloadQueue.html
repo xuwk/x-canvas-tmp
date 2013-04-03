@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>PreloadJS: Queue Example</title>
-
+	<title>PreloadJS: 队列示例</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" type="text/css" href="./assets/demoStyles.css" />
 	<style type="text/css">
 		#template {
@@ -40,51 +40,46 @@
 		.complete DIV, .error DIV { display: none; }
 	</style>
 </head>
-<body onload="init()">
+<body>
 
 	<header id="header" class="PreloadJS">
-	    <h1><span class="text-product">Preload<strong>JS</strong></span> Preload Queue</h1>
-	    <p>Click "load another" to add another image the the overall queue. As images are added, the preload progress reflects
-		    the overall loaded progress. Click "load all" to queue everything at once.
-		    Note that when loading images and sounds locally, you need to ensure that PreloadJS uses tag loading to avoid
-		    cross-origin errors.</p>
+	    <h1><span class="text-product">Preload<strong>JS</strong></span>加载文件队列</h1>
+	    <p>通过点击“加载下一个”把下一张图片加载到全局队列。当图片被添加后，当前的加载进度
+	    会反映到全局加载进度上。点击“加载所有”可以一次性把所有图片添加到队列。
+	    注：当加载本地的图片时，确保PreloadJS是使用标签加载，这样可以避免跨域的错误。</p>
 	</header>
 
 	<div id="container" class="content">
-		<input type="button" id="loadAnotherBtn" value="Load Another" disabled="disabled" />
-		<input type="button" id="loadAllBtn" value="Load All" disabled="disabled" />
-		<input type="button" id="reloadBtn" value="Reset" />
+		<input type="button" id="loadAnotherBtn" value="加载下一个" disabled="disabled" />
+		<input type="button" id="loadAllBtn" value="加载所有" disabled="disabled" />
+		<input type="button" id="reloadBtn" value="重置" />
 		<div id="mainProgress" class="item">
-			<label>Overall Progress</label><div class="progress"></div>
+			<label>加载进度</label><div class="progress"></div>
 		</div>
 		<hr />
-		<!-- New items will get placed here -->
+		<!-- 加载后的图片会放在这里 -->
 	</div>
 
-	<!-- Item Template. This is cloned whenever we want a new one. -->
+	<!-- 图片项的模板，当我们想增加一个项，就会在这里克隆一份出来 -->
 	<div id="template" class="item">
 		<div class="progress"></div>
 	</div>
 
-    <script type="text/javascript" src="../src/easeljs/events/EventDispatcher.js"></script>
-    <script type="text/javascript" src="../src/preloadjs/AbstractLoader.js"></script>
-    <script type="text/javascript" src="../src/preloadjs/LoadQueue.js"></script>
-    <script type="text/javascript" src="../src/preloadjs/TagLoader.js"></script>
-    <script type="text/javascript" src="../src/preloadjs/XHRLoader.js"></script>
-
-    <!-- We also provide hosted minified versions of all CreateJS libraries.
-      http://code.createjs.com -->
+    <script type="text/javascript" src="../../../src/xc.js"></script>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
     <script type="text/javascript">
-
+	xc.depends([
+	    "../../../src/core",
+	    "../../../src/lib/createjs"
+	], function() {
         var map = {};
         var preload;
         var loader;
         var manifest;
-        var w = 238; // Item width
-        var h = 170; // Item height
+        var w = 238; // 加载项的宽度
+        var h = 170; // 加载项的高度
 
         function init() {
             if (window.top != window) {
@@ -98,12 +93,12 @@
             reload();
         }
 
-        // Reset everything
+        // 重置所有项
         function reload() {
-            // If there is an open preload queue, close it.
+            // 如果有一个已打开的加载队列，把它关闭掉。
             if (preload != null) { preload.close(); }
 
-            // Reset the UI
+            // 重置页面
             $("#reloadBtn").css("display", "none");
             $(".box").remove();
             $("#mainProgress .progress").width(0);
@@ -111,7 +106,7 @@
             $("#loadAnotherBtn").attr("disabled", null);
             $("#loadAllBtn").attr("disabled", null);
 
-            // Push each item into our manifest
+            // 加载的文件清单
             manifest = [
                 "assets/image0.jpg",
                 "assets/image1.jpg",
@@ -123,10 +118,10 @@
                 "assets/Texas.jpg"
             ];
 
-            // Create a preloader. There is no manifest added to it up-front, we will add items on-demand.
+            // 创建一个加载器。我们不在这个地方加载任何内容，仅仅在需要时添加。
             preload = new createjs.LoadQueue();
 
-            // Use this instead to use tag loading
+            // 换成这个会改为使用标签加载的方式
             //preload = new createjs.LoadQueue(false);
 
             preload.addEventListener("fileload", handleFileLoad);
@@ -147,34 +142,34 @@
         }
 
         function loadAnother() {
-            // Get the next manifest item, and load it
+            // 获取下一个加载项，并加载之
             var item = manifest.shift();
             preload.loadFile(item);
 
-            // If we have no more items, disable the UI.
+            // 如果所有都已经加载完了，就把按钮禁止掉
             if (manifest.length == 0) {
                 $("#loadAnotherBtn").attr("disabled", "disabled");
                 $("#loadAllBtn").attr("disabled", "disabled");
                 $("#reloadBtn").css("display","inline");
             }
 
-            // Create a new loader display item
+            // 创建一个显示加载项的容器
             var div = $("#template").clone();
-            div.attr("id", ""); // Wipe out the ID
+            div.attr("id", ""); // 把ID清空
             div.addClass("box")
             $("#container").append(div);
-            map[item] = div; // Store a reference to each item by its src
+            map[item] = div; // 以加载项的地址为下标把引用保存起来
         }
 
-        // File complete handler
+        // 加载完毕的事件处理
         function handleFileLoad(event) {
             var div = map[event.item.src];
             div.addClass("complete");
 
-            // Get a reference to the loaded image (<img/>)
+            // 获取已加载项的引用（<img />）
             var img = event.result;
 
-            // Resize it to fit inside the item
+            // 重置图片的大小使它可以适应显示位置的大小
             var r = img.width/img.height;
             var ir = w/h
             if (r > ir) {
@@ -184,26 +179,28 @@
                 img.height = h;
                 img.width = h;
             }
-            div.append(img); // Add it to the DOM
+            div.append(img); // 把它添加到DOM里面
         }
 
-        // File progress handler
+        // 文件加载进度事件处理
         function handleFileProgress(event) {
-            var div = map[event.item.src]; // Lookup the related item
-            div.children("DIV").width(event.progress*div.width()); // Set the width the progress.
+            var div = map[event.item.src]; // 查找关联项
+            div.children("DIV").width(event.progress*div.width()); // 调整进度条宽度
         }
 
-        // Overall progress handler
+        // 全局进度事件处理
         function handleOverallProgress(event) {
             $("#mainProgress > .progress").width(preload.progress * $("#mainProgress").width());
         }
 
-        // An error happened on a file
+        // 加载文件失败事件处理
         function handleFileError(event) {
             var div = map[event.item.src];
             div.addClass("error");
         }
-
+        
+        init();
+	});
     </script>
 
 </body>
