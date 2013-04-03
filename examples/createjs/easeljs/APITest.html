@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>EaselJS: API Test</title>
 
 <link href="assets/tricolore.css" rel="stylesheet" type="text/css"/>
@@ -111,7 +111,7 @@ xc.depends([
     }
 
     function mouseDemo(stage) {
-        //Click one of the shapes.
+        //点击其中一个 shape 对象。
         var sprite = new Shape();
         sprite.graphics.beginFill(FILL_COLOR).drawCircle(30, 30, 20).moveTo(50, 50).drawRect(50, 50, 25, 25);
         sprite.onClick = function (event) {
@@ -149,8 +149,7 @@ xc.depends([
         var margins = blurFilter.getBounds();
         var image = new Bitmap(img);
         image.filters = [blurFilter];
-        // filters are only displayed when the display object is cached
-        // later, you can call updateCache() to update changes to your filters
+        // 过滤器只会在显示对象在缓存里的时候呈现，可以通过调用 updateCache() 改变过滤器 
         image.cache(margins.x, margins.y, img.width + margins.width, img.height + margins.height);
         image.x += image.x + image.width;
         stage.addChild(image);
@@ -257,21 +256,15 @@ xc.depends([
 </script>
 </head>
 <body>
-
-<header id="header" class="EaselJS">
-    <h1><span class="text-product">Easel<strong>JS</strong></span> API Test</h1>
-
-    <p>This demo shows the usage of many of the visual APIs.</p>
-</header>
-
-<div style="width: 960px; height: 400px; overflow: scroll; position: relative;"
-     id="wrap">
+    <center>
+        <header id="header" class="EaselJS">
+            <h1><span class="text-product">Easel<strong>JS</strong></span> API 展示</h1>
+            <p> 这个例子展示了许多 API 的用法 </p>
+        </header>
+    </center>
     <div id="toc"></div>
-
     <div class="canvasHolder"
          style=" padding-left:25px; float: left; height: 150px">
     </div>
-</div>
-
 </body>
 </html>
