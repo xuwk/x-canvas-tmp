@@ -30,11 +30,11 @@ xc.depends([
             document.getElementById("header").style.display = "none";
         }
 
-        // 创建一个 stage 对象并指向 canvas:
+        // 创建一个 stage 对象并指向 canvas。
         canvas = document.getElementById("testCanvas");
         stage = new Stage(canvas);
 
-        // 创造了大量的复杂矢量图形，并给设置随机位置和速度
+        // 创造了大量的复杂矢量图形，并给设置随机位置和速度。
         var colors = ["#828b20", "#b0ac31", "#cbc53d", "#fad779", "#f9e4ad", "#faf2db", "#563512", "#9b4a0b", "#d36600", "#fe8a00", "#f9a71f"];
 
         for (var i=0; i<200; i++) {
@@ -60,7 +60,7 @@ xc.depends([
         fpsLabel.x = 10;
         fpsLabel.y = 20;
 
-        // 开始执行 tick 并将其指向 window，因此可以再更新 stage 之前进行一系列相关操作。
+        // 开始执行 tick 并将其指向 window，因此可以在更新 stage 之前进行一系列相关操作。
         Ticker.addEventListener("tick", tick);
         Ticker.setFPS(50);
     }

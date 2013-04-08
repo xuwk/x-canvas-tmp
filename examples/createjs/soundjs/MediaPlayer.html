@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>SoundJS: Media Player Example</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>SoundJS: Media Player 例子</title>
 
 	<link rel="stylesheet" href="assets/demoStyles.css"/>
 	<style type="text/css">
@@ -90,22 +91,21 @@
 	</style>
 </head>
 <body>
-
 	<div id="loader"></div>
-
-	<header id="header" class="SoundJS">
-	    <h1><span class="text-product">Sound<strong>JS</strong></span> Media Player</h1>
-		<p>A Simple Media Player using SoundJS.</p>
-	</header>
-
+    <center>
+    	<header id="header" class="SoundJS">
+    	    <h1><span class="text-product">Sound<strong>JS</strong></span> Media Player 例子</h1>
+    		<p>该例子演示了 Media Player 如何使用 SoundJS。</p>
+    	</header>
+    </center>
 	<div id="content" class="content">
 		<div id="player">
 			<div id="playBtn" class="button playBtn"></div>
 			<div id="stopBtn" class="button stopBtn"></div>
 			<div id="labels">
-				<label id="song">Song: <strong>Pirates Love Daisies</strong></label><br />
-				<label id="artist">Artist: <strong>Washingtron</strong></label><br /><br />
-				<label id="loading">Waiting...</label>
+				<label id="song">曲目: <strong>Pirates Love Daisies</strong></label><br />
+				<label id="artist">歌手: <strong>Washingtron</strong></label><br /><br />
+				<label id="loading">等待...</label>
 			</div>
 			<div id="track">
 				<div id="progress"></div>
@@ -115,10 +115,8 @@
 	</div>
 
     <div id="error">
-        <h1>Sorry!</h1>
-        <p>SoundJS is not currently supported in your browser.</p>
-        <p>Please <a href="http://github.com/CreateJS/SoundJS/issues" target="_blank">log a bug</a>
-            with the device and browser you are using.  Thank you.</p>
+        <h1>对不起！</h1>
+        <p>当前浏览器不支持 SoundJS</p>
     </div>
 
     <script type="text/javascript" src="../../../src/xc.js"></script>
@@ -154,7 +152,7 @@
             var assetPath = "assets/";
             var src = assetPath+"M-GameBG.mp3|"+assetPath+"M-GameBG.ogg";
 
-            Sound.addEventListener("loadComplete", Sound.proxy(handleLoadComplete,this)); // add an event listener for when load is completed
+            Sound.addEventListener("loadComplete", Sound.proxy(handleLoadComplete,this)); // 添加一个监听器，监听资源是否加载完成。
             Sound.registerSound(src, "music");
         }
 
@@ -172,7 +170,6 @@
 
             instance = Sound.play("music");
             instance.onComplete = function() {
-                //console.log("onComplete");
                 clearInterval(positionInterval);
                 $("#playBtn").removeClass("pauseBtn").addClass("playBtn")
                 $("#stopBtn").attr("disabled", true);
@@ -197,7 +194,6 @@
             });
             $("#stopBtn").click(function(event){
                 instance.stop();
-                //console.log("stop");
                 clearInterval(positionInterval);
                 $("#playBtn").removeClass("pauseBtn").addClass("playBtn");
                 $("#thumb").css("left", 0);
@@ -206,23 +202,18 @@
 
             trackTime();
 
-            // http://forums.mozillazine.org/viewtopic.php?f=25&t=2329667
             $("#thumb").mousedown(function(event) {
-                //console.log("mousedown");
                 var div = $();
                 $("#player").append($("<div id='blocker'></div>"));
                 seeking = true;
                 $("#player").mousemove(function(event){
-                    // event.offsetX is not supported by FF, hence the following from http://bugs.jquery.com/ticket/8523
-                    if(typeof event.offsetX === "undefined") { // || typeof event.offsetY === "undefined") {
+                    if(typeof event.offsetX === "undefined") {
                         var targetOffset = $(event.target).offset();
                         event.offsetX = event.pageX - targetOffset.left;
-                        //event.offsetY = event.pageY - targetOffset.top;
                     }
                     $("#thumb").css("left", Math.max(0, Math.min($("#track").width()-$("#thumb").width(), event.offsetX-$("#track").position().left)));
                 })
                 $("#player").mouseup(function(event){
-                    //console.log("mouseup");
                     seeking = false;
                     $(this).unbind("mouseup mousemove");
                     var pos = $("#thumb").position().left/$("#track").width();

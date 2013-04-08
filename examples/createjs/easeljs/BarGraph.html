@@ -34,7 +34,7 @@ xc.depends([
 			document.getElementById("header").style.display = "none";
 		}
 
-		// 创建一个 stage 对象并指向 canvas:
+		// 创建一个 stage 对象并指向 canvas。
 		canvas = document.getElementById("testCanvas");
 		stage = new createjs.Stage(canvas);
 
@@ -153,7 +153,7 @@ xc.depends([
 		// 基于条形数量设立动画计数器。
 		count = numBars*10;
 
-		// 开始执行 tick 并将其指向 window，因此可以再更新 stage 之前进行一系列相关操作。
+		// 开始执行 tick 并将其指向 window，因此可以在更新 stage 之前进行一系列相关操作。
 		createjs.Ticker.useRAF = true;
 		// 如果使用 requestAnimationFrame, 则必须把 FPS 设置成 60。
 		createjs.Ticker.setFPS(30);
