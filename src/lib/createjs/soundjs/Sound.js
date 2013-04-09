@@ -952,6 +952,34 @@ xc.module.define("xc.createjs.Sound", function(exports) {
             return method.apply(scope, Array.prototype.slice.call(arguments, 0).concat(aArgs));
         };
     }
+
+    /**
+     * 一个额外的模块，以确定当前浏览器，版本，操作系统，和其他环境变量。这不是公开说明的。
+     * #class BrowserDetect
+     * @param {Boolean} isFirefox 如果是 firefox 返回 true。
+     * @param {Boolean} isOpera 如果是 opera 返回 true。
+     * @param {Boolean} isChrome 如果是 chrome 返回 true。注意 android 的 chrome 会返回 true，但不同的浏览器有不同的能力。
+     * @param {Boolean} isIOS 如果是 iOS 设备 (iPad, iPhone, and iPad) 的 safari，返回 true。
+     * @param {Boolean} isAndroid 如果是 Aandroid 的 浏览器，返回 true。
+     * @param {Boolean} isBlackberry 如果是 Blackberry 的浏览器。
+     * @constructor
+     * @static
+     */
+    function BrowserDetect() {}
+
+    BrowserDetect.init = function () {
+        var agent = navigator.userAgent;
+        BrowserDetect.isFirefox = (agent.indexOf("Firefox") > -1);
+        BrowserDetect.isOpera = (window.opera != null);
+        BrowserDetect.isChrome = (agent.indexOf("Chrome") > -1);  // NOTE that Chrome on Android returns true but is a completely different browser with different abilities
+        BrowserDetect.isIOS = agent.indexOf("iPod") > -1 || agent.indexOf("iPhone") > -1 || agent.indexOf("iPad") > -1;
+        BrowserDetect.isAndroid = (agent.indexOf("Android") > -1);
+        BrowserDetect.isBlackberry = (agent.indexOf("Blackberry") > -1);
+    }
+
+    BrowserDetect.init();
+
+    Sound.BrowserDetect = BrowserDetect;
     
     // 不往 SoundChannel 添加命名空间。
 

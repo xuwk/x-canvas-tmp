@@ -20,11 +20,11 @@ xc.depends([
     var Text = xc.module.require("xc.createjs.Text");
 
 	function init() {
-		//find canvas and load images, wait for last image to load
+        // 找到 canvas 并加载图片，等待最后一张图片加载完成。
 		var canvas = document.getElementById("testCanvas");
 		var stage = new Stage(canvas);
 
-		// Create a new Text object and a rectangle Shape object, and position them inside a container:
+        // 创建一个 Text 对象和一个矩形的 shape 对象，并把他们添加到 container 中。
 		var container = new Container();
 		container.x = 100;
 		container.y = 80;
@@ -50,13 +50,14 @@ xc.depends([
 </head>
 	
 <body>
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Double Click Example</h1>
-	    <p>An example to show how to use the <strong>dblclick</strong> event.</p>
-	</header>
-
-	<div class="canvasHolder">
-		<canvas id="testCanvas" width="960" height="400"></canvas>
-	</div>
+    <center>
+    	<header id="header" class="EaselJS">
+    	    <h1><span class="text-product">Easel<strong>JS</strong></span> Double Click 例子</h1>
+            <p>一个演示了如何使用 <strong>dblclick</strong> 事件的例子</p>
+    	</header>
+    	<div class="canvasHolder">
+    		<canvas id="testCanvas" width="960" height="400"></canvas>
+    	</div>
+    </center>
 </body>
 </html>

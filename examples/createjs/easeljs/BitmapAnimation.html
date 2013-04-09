@@ -27,10 +27,10 @@ xc.depends([
     var bmpAnimList;
 
     function init() {
-        //find canvas and load images, wait for last image to load
+        // 找到 canvas 并且加载图片，等待直到最后一张图片完成加载。
         canvas = document.getElementById("testCanvas");
 
-        // create a new stage and point it at our canvas:
+        // 创建 stage 并指向 canvas。
         stage = new Stage(canvas);
 
         img = new Image();
@@ -39,11 +39,11 @@ xc.depends([
     }
 
     function handleImageLoad(event) {
-        // grab canvas width and height for later calculations:
+        // 记录 canvas 的宽度和高度，用于之后的计算。
         var w = canvas.width;
         var h = canvas.height;
 
-        // create spritesheet and assign the associated data.
+        // 创建 spriteSheet 类，并分配相关数据。
         var spriteSheet  = new SpriteSheet({
             images: [img],
             frames: {width:64, height:68, regX:32, regY:34},
@@ -54,14 +54,14 @@ xc.depends([
             }
         });
 
-        // to save file size, the loaded sprite sheet only includes right facing animations
-        // we could flip the display objects with scaleX=-1, but this is expensive in some browsers
-        // instead, we append flipped versions of the frames to our sprite sheet
-        // this adds only horizontally flipped frames:
+        // 保存文件大小，仅保存精灵向右运动的动画。
+        // 可以通过设置 scaleX = -1 翻动精灵，但该操作对于某些浏览器非常消耗性能。
+        // 取而代之的，我们增加了一个翻转版本框架到精灵表。
+        // 但只增加了水平翻转。
         SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);
 
-        // we could rewire the "next" sequences to make them work like so:
-        // but instead we will use code in the angleChange function.
+        // 我们可以通过 “next” 属性链接下一个序列，像以下代码：
+        // 而我们更希望使用 angleChange 方法。
         /*
          spriteSheet.getAnimation("walkDnRt").next = "walkDnRt_h";
          spriteSheet.getAnimation("walkDnRt_h").next = "walkRt_h";
@@ -69,19 +69,18 @@ xc.depends([
          spriteSheet.getAnimation("walkUpRt_h").next = "walkUpRt";
          */
 
-        // create a BitmapAnimation instance to display and play back the sprite sheet:
+        // 创建 BitmapAnimation 实例，用于播放精灵。
         var bmpAnim = new BitmapAnimation(spriteSheet);
 
-        // start playing the first sequence:
-        bmpAnim.gotoAndPlay("walkRt");		//animate
+        // 开始播放第一个序列图。
+        bmpAnim.gotoAndPlay("walkRt"); //动画
 
-        // the callback is called each time a sequence completes:
-        bmpAnim.onAnimationEnd = angleChange;
-
-        // create a bunch of rats based on the first one, and place them on stage, and in our collection.
+        // 基于第一个精灵创建一组老鼠，再把它们添加到 stage 上，以及添加到集合中。
         var l = 50;
         bmpAnimList = [];
         for (var i=0; i<l; i++) {
+            // 每当序列图播放完成的时候，都将执行 angleChange 回调方法。
+            bmpAnim.addEventListener("animationend", angleChange);
             bmpAnim.name = "rat"+i;
             bmpAnim.speed = Math.random()*6+2;
             bmpAnim.direction = 90;
@@ -90,28 +89,26 @@ xc.depends([
             bmpAnim.x = Math.random()*(w-220)+60|0;
             bmpAnim.y = Math.random()*(h-220)+0|0;
 
-            // have each rat start on a random frame in the "walkRt" animation:
+            // "walkRt" 动画从随机一帧开始。
             bmpAnim.currentAnimationFrame = Math.random()*spriteSheet.getNumFrames("walkRt")|0;
             stage.addChild(bmpAnim);
             bmpAnimList.push(bmpAnim);
 
-            // rather than creating a brand new instance each time, and setting every property, we
-            // can just clone the current one and overwrite the properties we want to change:
+            // 比起每次都创建一个新的实例，再设置属性，我们更希望只是复制当前的实例然后覆盖需要重写的属性。
             if (i < l-1) { bmpAnim = bmpAnim.clone(); }
         }
 
-        // we want to do some work before we update the canvas,
-        // otherwise we could use Ticker.addEventListener("tick", stage);
+        // 在更新 canvas 前需要进行某些操作，可以调用一下方法。
         Ticker.addEventListener("tick", tick);
     }
 
-    //called if there is an error loading the image (usually due to a 404)
+    // 一旦加载图片失败时，调用该方法。
     function handleImageError(e) {
         //console.log("Error Loading Image : " + e.target.src);
     }
 
     function tick() {
-        // move all the rats according to their vX/vY properties:
+        // 根据所有 vX/vY 属性移动所有老鼠。
         var l = bmpAnimList.length;
         for (var i=0; i<l; i++) {
             var bmpAnim = bmpAnimList[i];
@@ -119,18 +116,19 @@ xc.depends([
             bmpAnim.y += bmpAnim.vY;
         }
 
-        // update the stage:
+        // 更新 stage
         stage.update();
     }
 
-    function angleChange(bmpAnim,animation) {
-        //after each sequence ends update the rat's heading and adjust velocities to match
+    function angleChange(o) {
+        bmpAnim = o.target;
+        //当所有序列都完成，更新老鼠的头部动画以及匹配对应的速度。
         bmpAnim.direction -= 60;
         var angle = bmpAnim.direction * (Math.PI/180);
         bmpAnim.vX = Math.sin(angle) * bmpAnim.speed;
         bmpAnim.vY = Math.cos(angle) * bmpAnim.speed;
         var nextMap = {walkRt:"walkDnRt",walkDnRt:"walkDnRt_h",walkDnRt_h:"walkRt_h",walkRt_h:"walkUpRt_h",walkUpRt_h:"walkUpRt",walkUpRt:"walkRt"};
-        bmpAnim.gotoAndPlay(nextMap[animation]);
+        bmpAnim.gotoAndPlay(nextMap[o.name]);
     }
 
     init();
@@ -139,17 +137,16 @@ xc.depends([
 </head>
 
 <body>
-
-<header id="header" class="EaselJS">
-    <h1><span class="text-product">Easel<strong>JS</strong></span> Bitmap Animation</h1>
-    <p>Dev sample showing how to use <strong>SpriteSheet</strong>, <strong>BitmapAnimation</strong>,
-        and <strong>SpriteSheetUtils.addFlippedFrames()</strong>.</p>
-    <p>Some browsers can not load images or access pixel data when running local files, and may throw a security error or not
-        work unless the content is running on a server.</p>
-</header>
-
-<div class="canvasHolder">
-    <canvas id="testCanvas" width="960" height="400"></canvas>
-</div>
+    <center>
+        <header id="header" class="EaselJS">
+            <h1><span class="text-product">Easel<strong>JS</strong></span> Bitmap Animation</h1>
+            <p>该例子展示如何使用 <strong>SpriteSheet</strong>, <strong>BitmapAnimation</strong>,
+                和 <strong>SpriteSheetUtils.addFlippedFrames()</strong>.</p>
+            <p>某些浏览器不支持在本地环境加载图片，或获取图片数据，或抛出安全性错误，遇到这种情况在服务器下运行该文件即可</p>
+        </header>
+        <div class="canvasHolder">
+            <canvas id="testCanvas" width="960" height="400"></canvas>
+        </div>
+    </center>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Curve To</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
@@ -38,7 +39,7 @@
             index = 0;
             colors = ["#828b20", "#b0ac31", "#cbc53d", "#fad779", "#f9e4ad", "#faf2db", "#563512", "#9b4a0b", "#d36600", "#fe8a00", "#f9a71f"];
 
-            //check to see if we are running in a browser with touch support
+            // 检查当前浏览器是否支持 touch 事件。
             stage = new Stage(canvas);
             stage.autoClear = false;
             stage.enableDOMEvents(true);
@@ -96,12 +97,12 @@
 </script>
 </head>
 <body>
-
-<header id="header" class="EaselJS">
-    <h1><span class="text-product">Easel<strong>JS</strong></span> CurveTo</h1>
-    <p>This example demonstrates painting to the canvas using the vector drawing API in EaselJS</p>
-</header>
-
-<canvas id="myCanvas" width="960" height="400"></canvas>
+    <center>
+        <header id="header" class="EaselJS">
+            <h1><span class="text-product">Easel<strong>JS</strong></span> CurveTo</h1>
+            <p>该例子演示了如何利用 EaselJS 的矢量图 API 在 canvas 上绘制矢量图。</p>
+        </header>
+        <canvas id="myCanvas" width="960" height="400"></canvas>
+    </center>
 </body>
 </html>

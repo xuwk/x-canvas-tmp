@@ -41,7 +41,7 @@ xc.depends([
 		captureContainers = [];
 		captureIndex = 0;
 
-		// create a large number of slightly complex vector shapes, and give them random positions and velocities:
+		// 创造了大量的复杂矢量图形，并给设置随机位置和速度
 		for (var i=0; i<50; i++) {
 			var heart = new Shape();
 			heart.graphics.beginFill(Graphics.getHSL(Math.random()*30-45, 100, 50+Math.random()*30));
@@ -64,7 +64,7 @@ xc.depends([
 			captureContainers.push(captureContainer);
 		}
 
-		// start the tick and point it at the window so we can do some work before updating the stage:
+		// 开始执行 tick 并将其指向 window，因此可以在更新 stage 之前进行一系列相关操作。
 		Ticker.addEventListener("tick", tick);
 		Ticker.setFPS(30);
 	}
@@ -80,7 +80,7 @@ xc.depends([
 		stage.addChildAt(captureContainer,0);
 		captureContainer.addChild(container);
 
-		// iterate through all the children and move them according to their velocity:
+		// 遍历所有子对象，并根据它们的速度属性移动它们。
 		for (var i=0; i<l; i++) {
 			var heart = container.getChildAt(i);
 			if (heart.y < -50) {
@@ -100,7 +100,7 @@ xc.depends([
 
 		captureContainer.updateCache("source-over");
 
-		// draw the updates to stage:
+		// 更新 stage。
 		stage.update();
 	}
 
@@ -110,16 +110,14 @@ xc.depends([
 </head>
 	
 <body>
-
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Infinte Hearts</h1>
-	    <p>Infinte hearts: code poetry for Valentine's day.
-	    </p>
-	</header>
-	<!-- background isn't set to black to demonstrate how the darkening applies -->
-
-	<div class="canvasHolder">
-		<canvas id="testCanvas" width="960" height="400" style="background-color:#312"></canvas>
-	</div>
+	<center>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> 情人节</h1>
+		    <p>心形: 庆祝情人节</p>
+		</header>
+		<div class="canvasHolder">
+			<canvas id="testCanvas" width="960" height="400" style="background-color:#312"></canvas>
+		</div>
+	</center>
 </body>
 </html>

@@ -23,8 +23,8 @@ xc.depends([
 
 	var canvas, stage;
 
-	var mouseTarget;	// the display object currently under the mouse, or being dragged
-	var dragStarted;	// indicates whether we are currently in a drag operation
+	var mouseTarget;	// 标识在鼠标下或正在被拖动的显示对象。
+	var dragStarted;	// 指出我们当前是否正在进行拖动操作。
 	var offset;
 	var update = true;
 
@@ -33,20 +33,20 @@ xc.depends([
 			document.getElementById("header").style.display = "none";
 		}
 		document.getElementById("loader").className = "loader";
-		// create stage and point it to the canvas:
+		// 创建一个 stage 对象并指向 canvas。
 		canvas = document.getElementById("testCanvas");
 
-		//check to see if we are running in a browser with touch support
+		// 检查当前浏览器是否支持 touch 事件。
 		stage = new Stage(canvas);
 
-		// enable touch interactions if supported on the current device:
+		// 如果当前设备支持 touch 事件，将其启用。
 		Touch.enable(stage);
 
-        stage.mouseMoveOutside = true; // keep tracking the mouse even when it leaves the canvas
-		// enabled mouse over / out events
+        stage.mouseMoveOutside = true; // 设置当鼠标离开 canvas 时，仍跟踪鼠标。
+		// 启用 mouseover 事件。
 		stage.enableMouseOver(10);
 
-		// load the source image:
+		// 加载资源图片。
 		var image = new Image();
 		image.src = "assets/daisy.png";
 		image.onload = handleImageLoad;
@@ -64,14 +64,14 @@ xc.depends([
 		var container = new Container();
 		stage.addChild(container);
 		
-		// create a shape that represents the center of the daisy image:
+	    // 创建一个代表雏菊图片中心的 shape 对象。
 		var hitArea = new Shape();
 		hitArea.graphics.beginFill("#FFF").drawEllipse(-11,-14,24,18);
-		// position hitArea relative to the internal coordinate system of the target (bitmap instances):
+		// 设置目标对象的 hitArea 坐标，该坐标系相对于目标对象（bitmap 实例）。
 		hitArea.x = imgW/2;
 		hitArea.y = imgH/2;
 
-		// create and populate the screen with random daisies:
+		// 创建随机位置的雏菊图片，并填充满整个屏幕。
 		for(var i = 0; i < 100; i++){
 			bitmap = new Bitmap(image);
 			container.addChild(bitmap);
@@ -85,33 +85,33 @@ xc.depends([
 
             bitmap.cursor = "pointer";
 			
-			// assign the hitArea to each bitmap to use it for hit tests:
+			// 分配 hitArea 区域到没一个 bitmap 实例。
 			bitmap.hitArea = hitArea;
 
-			// wrapper function to provide scope for the event handlers:
+			// 封装用于提供事件处理的方法。
 			(function(target) {
-				bitmap.onPress = function(evt) {
-					// bump the target in front of it's siblings:
+				bitmap.addEventListener("mousedown", function(evt) {
+					// 调整目标对象到所有子对象的最前面。
 					container.addChild(target);
 					var offset = {x:target.x-evt.stageX, y:target.y-evt.stageY};
 
-					// add a handler to the event object's onMouseMove callback
-					// this will be active until the user releases the mouse button:
-					evt.onMouseMove = function(ev) {
+					// 对目标对象监听 mousemove 事件。
+				    // 这将在用户松开鼠标按钮之前都是有效的。
+					evt.addEventListener("mousemove", function(ev) {
 						target.x = ev.stageX+offset.x;
 						target.y = ev.stageY+offset.y;
-						// indicate that the stage should be updated on the next tick:
+						// 设置 stage 在下一个 tick 里需要更新。
 						update = true;
-					}
-				}
-				bitmap.onMouseOver = function() {
+					});
+				});
+				bitmap.addEventListener("mouseover", function() {
 					target.scaleX = target.scaleY = target.scale*1.2;
 					update = true;
-				}
-				bitmap.onMouseOut = function() {
+				});
+				bitmap.addEventListener("mouseuut", function() {
 					target.scaleX = target.scaleY = target.scale;
 					update = true;
-				}
+				});
 			})(bitmap);
 		}
 
@@ -120,9 +120,9 @@ xc.depends([
 	}
 
 	function tick() {
-		// this set makes it so the stage only re-renders when an event handler indicates a change has happened.
+		// 这里通过 update 属性控制 stage 只在有子对象绑定了事件的时候才需要更新。
 		if (update) {
-			update = false; // only update once
+			update = false; // 设置只更新一次
 			stage.update();
 		}
 	}
@@ -133,16 +133,15 @@ xc.depends([
 </head>
 
 <body>
-
-	<div id="loader"></div>
-
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Drag &amp; Drop Example With Custom Hit Areas</h1>
-	    <p>This example is the same as the DragAndDrop example, except it uses <strong>hitArea</strong> to make only the center part of the daisy respond to mouse interactions.</p>
-	</header>
-
-	<div class="canvasHolder">
-		<canvas id="testCanvas" width="960" height="400"></canvas>
-	</div>
+	<center>
+		<div id="loader"></div>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> 实现带有点击区域的拖动效果</h1>
+		    <p>该例子与拖动效果的例子是相似的，只是额外添加了 <strong>hitArea</strong> 属性，使得只有雏菊图像的中间才能响应鼠标事件，从而拖动图像。</p>
+		</header>
+		<div class="canvasHolder">
+			<canvas id="testCanvas" width="960" height="400"></canvas>
+		</div>
+	</center>
 </body>
 </html>

@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>TweenJS: Simple Motion Guide Demo</title>
 
 	<link rel="stylesheet" href="assets/demoStyles.css" />
-	<script type="text/javascript" src="./assets/easeljs-0.6.0.min.js"></script>
-
-    <script type="text/javascript" src="../src/easeljs/events/EventDispatcher.js"></script>
-	<script type="text/javascript" src="../src/tweenjs/Tween.js"></script>
-	<script type="text/javascript" src="../src/tweenjs/Ease.js"></script>
-	<script type="text/javascript" src="../src/tweenjs/MotionGuidePlugin.js"></script>
-
-	<!-- We also provide hosted minified versions of all CreateJS libraries.
-	  http://code.createjs.com -->
+	<script type="text/javascript" src="../../../src/xc.js"></script>
 
 	<script>
+	xc.depends([
+	    "../../../src/core",
+	    "../../../src/lib/createjs"
+	], function() {
 		var canvas;
 		var stage;
 
@@ -58,21 +55,20 @@
 
 		}
 
+		init();
+	});
 	</script>
 	<link rel="stylesheet" href="assets/demoStyles.css"/>
 </head>
-<body onload="init();" >
-
-<div class="canvasHolder">
-
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Tween<strong>JS</strong></span> Simple Tween Demo</h1>
-	    <p>This example shows a simple use of the MotionGuidePlugin.</p>
-	</header>
-
-	<canvas id="testCanvas" width="960" height="400"></canvas>
-
-</div>
-
+<body>
+	<center>
+		<div class="canvasHolder">
+			<header id="header" class="EaselJS">
+			    <h1><span class="text-product">Tween<strong>JS</strong></span> 简单的 TweenJS 例子</h1>
+			    <p>该例子演示了 MotionGuidePlugin 的简单使用。</p>
+			</header>
+			<canvas id="testCanvas" width="960" height="400" style="border: 5px white solid;"></canvas>
+		</div>
+	</center>
 </body>
 </html>
