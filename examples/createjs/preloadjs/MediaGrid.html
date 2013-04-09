@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>PreloadJS: 多媒体加载样例</title>
+	<title>PreloadJS: 多媒体加载示例</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<link rel="stylesheet" type="text/css" href="./assets/demoStyles.css" />
+	<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+	<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
 	<style>
 	   .gridBox {
 			float: left;
@@ -30,7 +32,7 @@
 <body>
 
 	<header id="header" class="PreloadJS">
-		<h1><span class="text-product">Preload<strong>JS</strong></span> 样例：媒体块</h1>
+		<h1><span class="text-product">Preload<strong>JS</strong></span> 示例：媒体块</h1>
 		<p>PreloadJS可以加载多种媒体。在这个例子里面，点击每个块可以加载相关的项。图片或SVG被加载时，它会显示出来；声音被加载时，
 		它会播放；样式被加载时，它会对页面进行渲染；脚本被加载时，它会弹出信息。注：当加载本地的图片、音频、样式、脚本或SVG时，
 		确保PreloadJS是使用标签加载，这样可以避免跨域的错误。其他的媒体类型不会进行本地加载。</p>
@@ -80,6 +82,9 @@
 	</div>
 
     <script type="text/javascript" src="../../../src/xc.js"></script>
+    <script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+	<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
 
 	<script type="text/javascript">
 	var main = {};
@@ -95,7 +100,7 @@
             }
 
             preload = new createjs.LoadQueue(true);
-            createjs.Sound.registerPlugin(createjs.HTMLAudioPlugin);  // need this so it doesn't default to Web Audio
+            createjs.Sound.registerPlugin(createjs.HTMLAudioPlugin);  // 设置这个参数的意义在于防止它使用WebAudio方式加载
             preload.installPlugin(createjs.Sound);
             preload.addEventListener("fileload", main.handleFileLoaded);
             preload.addEventListener("error", main.handleFileError);
@@ -164,5 +169,35 @@
         init();
 	});
     </script>
+    <section id="header" class="EaselJS">
+		<center>
+			 <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+		</center>
+		<div class="tutorialBody">
+			<div class="tutorialTitle">步骤一: 创建一个PreloadJS的实例</div><br />
+	            <textarea class="tutorialCode" name="code">
+var main = {};
+var preload = new createjs.LoadQueue(true); // 远程服务器上加载内容，我们可以使用XHR的方式（把参数设为true），
+											// 本地加载，我们不建议使用XHR，这会导致跨域问题（把参数设为false）
+</textarea>
+			<div class="tutorialTitle">步骤二: 加载音频，需要引入音频插件</div><br />
+	            <textarea class="tutorialCode" name="code">
+createjs.Sound.registerPlugin(createjs.HTMLAudioPlugin);  // 设置这个参数的意义在于防止它使用WebAudio方式加载
+preload.installPlugin(createjs.Sound);
+</textarea>
+			<div class="tutorialTitle">步骤三：</div><br />
+                <textarea class="tutorialCode" name="code">
+		</div>
+	</section>
+<script type="text/javascript">
+var codes = document.querySelectorAll(".tutorialCode");
+for(var i = codes.length - 1;i >= 0;i--) {
+	var editor = CodeMirror.fromTextArea(codes[i], {
+	    lineNumbers: true,
+	    readOnly: true
+	});
+	editor.setOption("theme", "ambiance");
+}
+</script>
 </body>
 </html>
