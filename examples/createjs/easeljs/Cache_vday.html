@@ -2,18 +2,17 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>EaselJS Example: Infinite Hearts</title>
+
+<title>心形: 情人节</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
     var Stage = xc.module.require("xc.createjs.Stage");
     var Ticker = xc.module.require("xc.createjs.Ticker");
     var Shape = xc.module.require("xc.createjs.Shape");
@@ -28,7 +27,7 @@ xc.depends([
 	var captureIndex;
 
 	function init() {
-		// create a new stage and point it at our canvas:
+		// 创建一个 Stage 对象并指向 Canvas。
 		canvas = document.getElementById("testCanvas");
 		stage = new Stage(canvas);
 
@@ -41,7 +40,7 @@ xc.depends([
 		captureContainers = [];
 		captureIndex = 0;
 
-		// 创造了大量的复杂矢量图形，并给设置随机位置和速度
+		// 创造了大量的复杂矢量图形，并设置随机位置和速度。
 		for (var i=0; i<50; i++) {
 			var heart = new Shape();
 			heart.graphics.beginFill(Graphics.getHSL(Math.random()*30-45, 100, 50+Math.random()*30));
@@ -64,7 +63,7 @@ xc.depends([
 			captureContainers.push(captureContainer);
 		}
 
-		// 开始执行 tick 并将其指向 window，因此可以在更新 stage 之前进行一系列相关操作。
+		// 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
 		Ticker.addEventListener("tick", tick);
 		Ticker.setFPS(30);
 	}
@@ -80,7 +79,7 @@ xc.depends([
 		stage.addChildAt(captureContainer,0);
 		captureContainer.addChild(container);
 
-		// 遍历所有子对象，并根据它们的速度属性移动它们。
+		// 遍历所有子对象，并根据它们的 velocity 属性移动它们。
 		for (var i=0; i<l; i++) {
 			var heart = container.getChildAt(i);
 			if (heart.y < -50) {
@@ -100,7 +99,7 @@ xc.depends([
 
 		captureContainer.updateCache("source-over");
 
-		// 更新 stage。
+		// 更新 Stage。
 		stage.update();
 	}
 
@@ -110,14 +109,12 @@ xc.depends([
 </head>
 	
 <body>
-	<center>
-		<header id="header" class="EaselJS">
-		    <h1><span class="text-product">Easel<strong>JS</strong></span> 情人节</h1>
-		    <p>心形: 庆祝情人节</p>
-		</header>
-		<div class="canvasHolder">
-			<canvas id="testCanvas" width="960" height="400" style="background-color:#312"></canvas>
-		</div>
-	</center>
+	<header id="header" class="EaselJS">
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> 情人节</h1>
+	    <p>心形: 情人节</p>
+	</header>
+	<div class="canvasHolder">
+		<canvas id="testCanvas" width="960" height="400" style="background-color:#312"></canvas>
+	</div>
 </body>
 </html>

@@ -2,18 +2,17 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>TweenJS: Simple Tween Demo</title>
+
+<title>TweenJS：简单的 TweenJS 例子</title>
 
 <link rel="stylesheet" href="assets/demoStyles.css" />
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
     var Stage = xc.module.require("xc.createjs.Stage");
     var Shape = xc.module.require("xc.createjs.Shape");
     var Tween = xc.module.require("xc.createjs.Tween");
@@ -58,19 +57,15 @@ xc.depends([
     init();
 });
 </script>
-<link rel="stylesheet" href="assets/demoStyles.css"/>
 </head>
-<body>
 
-<div class="canvasHolder">
-    <center>
+<body>
+    <div class="canvasHolder">
     	<header id="header" class="EaselJS">
     	    <h1><span class="text-product">Tween<strong>JS</strong></span> 简单的 TweenJS 例子</h1>
-    	    <p>该例子演示了 tweenjs 的具体操作。</p>
+    	    <p>该例子演示了 TweenJS 的具体操作。</p>
     	</header>
     	<canvas id="testCanvas" width="960" height="400" style="border: 5px white solid;"></canvas>
-    </centr>
-</div>
-
+    </div>
 </body>
 </html>

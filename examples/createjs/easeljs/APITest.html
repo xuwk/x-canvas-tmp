@@ -2,25 +2,23 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>EaselJS: API Test</title>
+
+<title>EaselJS：API 使用例子</title>
 
 <link href="assets/tricolore.css" rel="stylesheet" type="text/css"/>
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css"/>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script src="http://samaxesjs.googlecode.com/files/jquery.toc-1.1.4.min.js"></script>
 <script src="assets/rainbow-custom.min.js"></script>
-
 <script type="text/javascript" src="assets/StringUtils.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
 <script type="text/javascript">
-
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
     var Graphics = xc.module.require("xc.createjs.Graphics");
     var Bitmap = xc.module.require("xc.createjs.Bitmap");
     var BitmapAnimation = xc.module.require("xc.createjs.BitmapAnimation");
@@ -111,13 +109,11 @@ xc.depends([
     }
 
     function mouseDemo(stage) {
-        //点击其中一个 shape 对象。
-        var sprite = new Shape();
+        var sprite = new Shape(); // 点击其中一个 Shape 对象。
         sprite.graphics.beginFill(FILL_COLOR).drawCircle(30, 30, 20).moveTo(50, 50).drawRect(50, 50, 25, 25);
         sprite.onClick = function (event) {
             alert('Click!');
         };
-
         stage.addChild(sprite);
     }
 
@@ -126,18 +122,16 @@ xc.depends([
         shape.graphics = new Graphics().beginStroke(STROKE_COLOR).beginBitmapFill(img).drawCircle(35, 25, 20).endStroke();
         var image = new Bitmap(img);
         image.mask = shape;
-
         stage.addChild(image);
     }
 
     function colorMatrixFilter(stage) {
         var greyScaleFilter = new ColorMatrixFilter([
-            0.33, 0.33, 0.33, 0, 0, // red
-            0.33, 0.33, 0.33, 0, 0, // green
-            0.33, 0.33, 0.33, 0, 0, // blue
-            0, 0, 0, 1, 0  // alpha
+            0.33, 0.33, 0.33, 0, 0, // 红
+            0.33, 0.33, 0.33, 0, 0, // 绿
+            0.33, 0.33, 0.33, 0, 0, // 蓝
+            0, 0, 0, 1, 0  // 透明度
         ]);
-
         var image = new Bitmap(img);
         image.filters = [greyScaleFilter];
         image.cache(0, 0, img.width, img.height);
@@ -149,7 +143,7 @@ xc.depends([
         var margins = blurFilter.getBounds();
         var image = new Bitmap(img);
         image.filters = [blurFilter];
-        // 过滤器只会在显示对象在缓存里的时候呈现，可以通过调用 updateCache() 改变过滤器 
+        // 过滤器只会在显示对象在缓存时呈现，可以通过调用 updateCache() 改变过滤器。 
         image.cache(margins.x, margins.y, img.width + margins.width, img.height + margins.height);
         image.x += image.x + image.width;
         stage.addChild(image);
@@ -251,17 +245,15 @@ xc.depends([
     }
 
     $(init);
-
 });
 </script>
 </head>
+
 <body>
-    <center>
-        <header id="header" class="EaselJS">
-            <h1><span class="text-product">Easel<strong>JS</strong></span> API 展示</h1>
-            <p> 这个例子展示了许多 API 的用法 </p>
-        </header>
-    </center>
+    <header id="header" class="EaselJS">
+        <h1><span class="text-product">Easel<strong>JS</strong></span> API 展示</h1>
+        <p> 该例子展示了许多 API 的用法 </p>
+    </header>
     <div id="toc"></div>
     <div class="canvasHolder"
          style=" padding-left:25px; float: left; height: 150px">

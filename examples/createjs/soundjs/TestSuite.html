@@ -1,60 +1,422 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>SoundJS: Test Suite</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <link type="text/css" href="assets/css/jquery-ui-1.8.18.custom.css" rel="stylesheet" />  <!-- update to http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css? -->
-    <style type="text/css">
-        /* define a width for the sliders by styling the wrapping div */
-        .panSlider,
-        .volumeSlider,
-        .posSlider,
-        .offsetSlider,
-        .delaySlider,
-        .masterVolumeSlider,
-        .loopSlider { width:200px; }
-    </style>
+<title>SoundJS: Test Suite</title>
 
-    <link rel="stylesheet" type="text/css" href="assets/demoStyles.css"/>
-    <style>
-        FORM {
-            text-align:left;
-            width: 450px;
-            padding: 5px;
-            float:left;
+<link type="text/css" href="assets/css/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
+<style type="text/css">
+    .panSlider,
+    .volumeSlider,
+    .posSlider,
+    .offsetSlider,
+    .delaySlider,
+    .masterVolumeSlider,
+    .loopSlider { width:200px; }
+</style>
+<link rel="stylesheet" type="text/css" href="assets/demoStyles.css"/>
+<style>
+    FORM {
+        text-align:left;
+        width: 450px;
+        padding: 5px;
+        float:left;
+    }
+    FORM P {
+        margin: 0 0 10px 0;
+    }
+    #instanceControls {
+    }
+    .select {
+        width: 100%;
+        height: 80px;
+    }
+    .disabled {
+        color: #333;
+        font-style: italic;
+    }
+    .disabled p, .disabled .nodisable {
+        color: #333;
+        font-style: normal;
+    }
+    .plugin {
+        font-size: 16px;
+        font-weight: bold;
+    }
+</style>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script>
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    // 读取 URL 参数，该参数用于决定播放插件类型。
+    var params = {};
+    var pieces = window.location.search.slice(1).split("&");
+    for (var i=0, l=pieces.length; i<l; i++) {
+        var parts = pieces[i].split("=");
+        params[parts[0]] = parts[1];
+    }
+
+    var instanceHash = {};  //保存创建的实例
+
+    var audioInterval = null;
+    var intervalTime = 100;
+
+    function init() {
+        if (window.top != window) {
+            document.getElementById("header").style.display = "none";
         }
-        FORM P {
-            margin: 0 0 10px 0;
+
+        if (params.type == "html5") {
+            createjs.Sound.registerPlugins([createjs.HTMLAudioPlugin]);
+        } else {
+            createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.HTMLAudioPlugin]);
         }
-        #instanceControls {
+
+        if (!createjs.Sound.isReady()) {
+            document.getElementById("error").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            return;
         }
-        .select {
-            width: 100%;
-            height: 80px;
+
+        var pluginStatus = document.getElementById("activePlugin");
+        pluginStatus.innerHTML = "可用插件是： " + createjs.Sound.activePlugin.toString();  // FF 不支持 innerText 
+
+        $(".offsetSlider").slider({value: 0,
+            min: 0,
+            max: 10,
+            disabled:false,
+            change:handleSliderChange
+        });
+        $(".offsetSlider").data("units", "second");
+
+        $(".delaySlider").slider({value: 0,
+            min: 0,
+            max: 10,
+            disabled:false,
+            change:handleSliderChange
+        });
+        $(".delaySlider").data("units", "second");
+
+        $(".masterVolumeSlider").slider({value: 100,
+            min: 0,
+            max: 100,
+            disabled:false,
+            change:handleSliderChange
+        });
+
+        $(".loopSlider").slider({value: 0,
+            min: -1,
+            max: 5,
+            disabled:false,
+            change:handleSliderChange
+        });
+
+        $("#library").change(selectItem);
+        $("#playSoundBtn").click(playSound);
+        $("#stopAllSoundsBtn").click(function(event) {
+            clearInterval(audioInterval);
+            createjs.Sound.stop();
+            removeSound("all");
+        });
+        $("#muteAllSoundsBtn").click(function(event){
+            var muted = !createjs.Sound.getMute();
+            createjs.Sound.setMute(muted);
+            $("#muteAllSoundsBtn").attr("value", muted ? "Unmute All Sounds" : "Mute All Sounds");
+        });
+
+        $(".masterVolumeSlider").on('slidestop',function(event){
+            var value = $(this).slider("option", "value");
+            createjs.Sound.setVolume(value/100);
+        });
+
+        // 实例控制
+        $(".panSlider").slider({value: 0,
+            min: -1,
+            max: 1,
+            step: 0.1,  // 提供一个更好的声调控制
+            disabled:true,
+            change:handleSliderChange
+        });
+
+        $(".volumeSlider").slider({value: 100,
+            min: 0,
+            max: 100,
+            disabled:true,
+            change:handleSliderChange
+        });
+
+        $(".posSlider").slider({value: 0,
+            min: 0,
+            max: 100,
+            disabled:true,
+            change:handleSliderChange
+        });
+
+        $("#nowPlaying").change(selectInstance);
+        $("#stopBtn").click(function(event){
+            var instance = getInstance()
+            if (instance == null) { return; }
+            instance.stop();
+            removeSound(instance);
+        });
+        $("#pauseBtn").click(function(event){
+            var instance = getInstance();
+            if (instance == null) { return; }
+            instance.paused ? instance.resume() : instance.pause();
+            $("#pauseBtn").attr("value", instance.paused ? "Resume" : "Pause");
+        });
+        $("#muteBtn").click(function(event){
+            var instance = getInstance();
+            if (instance == null) { return; }
+            var muted = !instance.getMute();
+            instance.setMute(muted);
+            $("#muteBtn").attr("value", muted ? "Unmute" : "Mute");
+        });
+
+        $(".volumeSlider").on('slidestop',function(event){
+            var instance = getInstance();
+            if (instance == null) { return; }
+            var value = $(this).slider("option", "value");
+            instance.setVolume(value/100);
+        });
+
+        $(".panSlider").on('slidestop',function(event){
+            var instance = getInstance();
+            var value = $(this).slider("option", "value");
+            instance.setPan(value);
+        });
+
+        $(".posSlider").on('slidestop',function(event){
+            var instance = getInstance();
+            var value = $(this).slider("option", "value");
+            instance.setPosition(value/100 * instance.getDuration());
+            audioInterval = setInterval(setPosSlider, intervalTime);
+        });
+        $(".posSlider").on('slidestart',function(event){
+            clearInterval(audioInterval);
+        });
+
+        enableSet("sound", false);
+        enableSet("instance", false);
+
+        var assetsPath = "./assets/";
+        var manifest = [
+            {id:"Music", src:assetsPath + "M-GameBG.mp3", data:2},
+            {id:"Humm (mp3)", src:assetsPath + "Humm.mp3"},
+            {id:"Humm (ogg)", src:assetsPath + "Humm.ogg"},
+            {id:"Thunder", src:assetsPath + "Thunder1.mp3|"+assetsPath + "Thunder1.ogg", data:3},
+            {id:"Tone wobble", src:assetsPath + "ToneWobble.mp3|"+assetsPath + "ToneWobble.ogg", type:"sound", data:1},
+            {id:"Rat Damage", src:assetsPath + "R-Damage.mp3", type:"sound"},
+            {id:"Seagull Damage", src:assetsPath + "S-Damage.mp3", type:"sound"},
+            {id:"Cabin Boy", src:assetsPath + "U-CabinBoy3.mp3", type:"sound", data:1}
+        ];
+
+        createjs.Sound.addEventListener("loadComplete", createjs.proxy(addSoundToList,this)); // 添加一个监听器，监听资源是否加载完成。
+        createjs.Sound.registerManifest(manifest);
+    }
+
+    function addSoundToList(event) {
+        var list = $("#library").get(0);
+        list.options.add(new Option((event.id || event.src) + " ("+(event.data||"unknown")+")", event.id));  //event.data 不能是未定义的，SoundJS 因为它被设置成 SoundJS 的最大限制。
+    }
+
+    function handleSliderChange(evt) {
+        var units = $("." + this.id + "Slider").data("units");
+        var value = $(this).slider("option", "value");
+        $("#"+this.id+"Value").text(value + (units ? " " + units + (value==1?"":"s"):""));
+    }
+
+    function playSound(event) {
+        var list = $("#library").get(0);
+        if (list.selectedIndex == -1) { return; }
+
+        // 选项
+        var interrupt = $("#interrupt").get(0);
+        var interruptValue = interrupt.options[interrupt.selectedIndex].value;
+        var loop = $(".loopSlider").slider("option", "value");
+        var delay = $(".delaySlider").slider("option", "value") *1000;
+        var offset = $(".offsetSlider").slider("option", "value")*1000;
+
+        for (var i=0, l=list.options.length; i<l; i++) {
+            if (!list.options[i].selected) { continue; }
+            var item = list.options[i];
+
+            var instance = createjs.Sound.createInstance(item.value);
+            instance.addEventListener("succeeded", createjs.proxy(handlePlaySuccess,instance));
+            instance.addEventListener("interrupted", createjs.proxy(handlePlayFailed,instance));
+            instance.addEventListener("failed", createjs.proxy(handlePlayFailed,instance));
+            instance.addEventListener("complete", createjs.proxy(handleSoundComplete,instance));
+
+            instance.play(interruptValue, delay, offset, loop);
         }
-        .disabled {
-            color: #333;
-            font-style: italic;
+    }
+
+    // 创建 sound 实例，添加监听器，并尝试播放。
+    function handlePlaySuccess(event) {
+        instance = event.target;
+        instanceHash[instance.uniqueId] = instance;
+        instance.removeEventListener("succeeded", handlePlaySuccess, instance);  // 一旦播放成功，触发该事件。
+
+        var nowPlaying = $("#nowPlaying").get(0);
+
+        // 添加到正在播放列表。
+        if (nowPlaying.options[0].value == "-1") {
+            nowPlaying.remove(0);
+            nowPlaying.disabled = false;
+        } else {
+            for (var j=nowPlaying.options.length-1; j>=0; j--) {
+                if (nowPlaying.options[j].value == instance.uniqueId) {
+                    if (nowPlaying.options.remove) {
+                        nowPlaying.options.remove(j);
+                    } else if (nowPlaying.remove) {
+                        nowPlaying.remove(j);
+                    }
+                }
+            }
         }
-        .disabled p, .disabled .nodisable {
-            color: #333;
-            font-style: normal;
+
+        nowPlaying.options.add(new Option(instance.src + "("+instance.uniqueId + ")", instance.uniqueId));
+    }
+
+    // 音频播放完成。从列表删除。
+    function handleSoundComplete(event) {
+        removeSound(event.target);
+    }
+
+    // 播放失败（通常是中断错误）
+    function handlePlayFailed(event) {
+        removeSound(event.target);
+    }
+
+    // 将音频从列表移除。
+    function removeSound(instance) {
+        var currentInstance = getInstance();
+        if (currentInstance && currentInstance.uniqueId == instance.uniqueId) {
+            clearInterval(audioInterval);
         }
-        .plugin {
-            font-size: 16px;
-            font-weight: bold;
+        delete(instanceHash[instance.uniqueId]);
+        var list = $("#nowPlaying").get(0);
+        for (var i=list.options.length-1; i>=0; i--) {
+            if (instance == "all" || list.options[i].value == instance.uniqueId) {
+                if (list.selectedIndex == i) {
+                    enableSet("instance", false);
+                }
+                if (list.options.remove) { list.options.remove(i); }
+                else if (list.remove) { list.remove(i); }
+                if (instance != "all") { break; }
+            }
         }
-    </style>
+        if (list.options.length == 0) {
+            list.options.add(new Option("-- No Audio Playing --", -1));
+            list.disabled = true;
+            enableSet("instance", false);
+        } else if (list.selectedIndex > -1) {
+            var item = list.options[list.selectedIndex];
+        }
+
+    }
+
+    // 从正在播放列表中获取当前选中的音频。
+    function getInstance() {
+        var list = $("#nowPlaying").get(0);
+        if (list.selectedIndex == -1) { return null;}
+
+        var item = list.options[list.selectedIndex];
+        if (item==null) {return null;}
+
+        var instance = instanceHash[item.value];
+        return instance;
+    }
+
+    // 一个库选项被选中。
+    function selectItem(event) {
+        var list = $("#library").get(0);
+        if (list.selectedIndex != -1) {
+            enableSet("sound", true)
+        } else {
+            enableSet("sound", false)
+        }
+    }
+
+    // 被选中的播放实例。
+    function selectInstance(event) {
+        clearInterval(audioInterval);
+        var list = $("#nowPlaying").get(0);
+        if (list.selectedIndex > -1) {
+            enableSet("instance", true);
+            var instance = getInstance();
+            var value = instance.getVolume()*100|0;
+            $(".volumeSlider").slider("value", value);
+            $("#volumeValue").text(value);
+
+            value = instance.getPan()|0;
+            $(".panSlider").slider("value", value);
+            $("#panValue").text(value);
+
+            setPosSlider();
+            audioInterval = setInterval(setPosSlider, intervalTime);
+
+            $("#pauseBtn").attr("value", instance.paused ? "Resume" : "Pause");
+            $("#muteBtn").attr("value", instance.getMute() ? "Unmute" : "Mute");
+        } else {
+            enableSet("instance", false);
+        }
+    }
+
+    function setPosSlider() {
+        var instance = getInstance();
+        value = instance.getPosition()/instance.getDuration()*100|0;
+        $(".posSlider").slider("value", value);
+        $("#posValue").text(instance.getPosition()/instance.getDuration()*100|0);
+    }
+
+    // 切换表单中的可用组件名称。
+    function enableSet(name, enabled) {
+        switch (name) {
+            case "sound":
+                enableItems("playControls", enabled, ["playSoundBtn", "interrupt", "loop", "delay", "offset"]);
+                break;
+            case "instance":
+                enableItems("instanceControls", enabled, ["pause", "volume", "stop", "pan", , "pos", "mute"]);
+                break;
+        }
+    }
+
+    // 切换表单中的可用元素数量。
+    function enableItems(formName, value, items) {
+        var form = $("#" + formName);
+        var element = form.get(0);
+        if (element == null) { return; }
+        value ? form.removeClass("disabled") : form.addClass("disabled");
+        for (var i=0, l=items.length; i<l; i++) {
+            var item = element[items[i]];
+
+            if ($('.'+items[i]+'Slider')) {
+                $('.'+items[i]+'Slider').slider('option', 'disabled', !value);
+            }
+
+            if (item == null) { continue; }
+            item.disabled = !value;
+        }
+    }
+
+    init();
+});
+
+</script>
 </head>
 
 <body>
-
     <header id="header" class="SoundJS">
         <h1><span class="text-product">Sound<strong>JS</strong></span> Test Suite 例子</h1>
         <p>该测试例子加载并播放多段定义好的音频，在播放过程中可以对音频进行控制。</p>
     </header>
-
     <div class="content" id="content">
         <div>
             <a href="?type=normal">Web Audio, HTML Audio</a> | <a href="?type=html5">HTML Audio</a>
@@ -137,380 +499,10 @@
             <input id="stopBtn" name="stop" type="button" value="Stop" />
             <input id="muteBtn" name="mute" type="button" value="Mute" />
         </form>
-
     </div>
-
     <div id="error">
         <h1>对不起！</h1>
         <p>当前浏览器不支持 SoundJS</p>
     </div>
-
-    <script type="text/javascript" src="../../../src/xc.js"></script>
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-        // 读取 URL 参数，该参数用于决定播放插件类型。
-        var params = {};
-        var pieces = window.location.search.slice(1).split("&");
-        for (var i=0, l=pieces.length; i<l; i++) {
-            var parts = pieces[i].split("=");
-            params[parts[0]] = parts[1];
-        }
-
-        var instanceHash = {};  //保存创建的实例
-
-        var audioInterval = null;
-        var intervalTime = 100;
-
-        function init() {
-            if (window.top != window) {
-                document.getElementById("header").style.display = "none";
-            }
-
-            if (params.type == "html5") {
-                createjs.Sound.registerPlugins([createjs.HTMLAudioPlugin]);
-            } else {
-                createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.HTMLAudioPlugin]);
-            }
-
-            if (!createjs.Sound.isReady()) {
-                document.getElementById("error").style.display = "block";
-                document.getElementById("content").style.display = "none";
-                return;
-            }
-
-            var pluginStatus = document.getElementById("activePlugin");
-            pluginStatus.innerHTML = "可用插件是： " + createjs.Sound.activePlugin.toString();  // FF 不支持 innerText 
-
-            $(".offsetSlider").slider({value: 0,
-                min: 0,
-                max: 10,
-                disabled:false,
-                change:handleSliderChange
-            });
-            $(".offsetSlider").data("units", "second");
-
-            $(".delaySlider").slider({value: 0,
-                min: 0,
-                max: 10,
-                disabled:false,
-                change:handleSliderChange
-            });
-            $(".delaySlider").data("units", "second");
-
-            $(".masterVolumeSlider").slider({value: 100,
-                min: 0,
-                max: 100,
-                disabled:false,
-                change:handleSliderChange
-            });
-
-            $(".loopSlider").slider({value: 0,
-                min: -1,
-                max: 5,
-                disabled:false,
-                change:handleSliderChange
-            });
-
-            $("#library").change(selectItem);
-            $("#playSoundBtn").click(playSound);
-            $("#stopAllSoundsBtn").click(function(event) {
-                clearInterval(audioInterval);
-                createjs.Sound.stop();
-                removeSound("all");
-            });
-            $("#muteAllSoundsBtn").click(function(event){
-                var muted = !createjs.Sound.getMute();
-                createjs.Sound.setMute(muted);
-                $("#muteAllSoundsBtn").attr("value", muted ? "Unmute All Sounds" : "Mute All Sounds");
-            });
-
-            $(".masterVolumeSlider").on('slidestop',function(event){
-                var value = $(this).slider("option", "value");
-                createjs.Sound.setVolume(value/100);
-            });
-
-            // instance controls
-            $(".panSlider").slider({value: 0,
-                min: -1,
-                max: 1,
-                step: 0.1,  // 提供一个更好的声调控制
-                disabled:true,
-                change:handleSliderChange
-            });
-
-            $(".volumeSlider").slider({value: 100,
-                min: 0,
-                max: 100,
-                disabled:true,
-                change:handleSliderChange
-            });
-
-            $(".posSlider").slider({value: 0,
-                min: 0,
-                max: 100,
-                disabled:true,
-                change:handleSliderChange
-            });
-
-            $("#nowPlaying").change(selectInstance);
-            $("#stopBtn").click(function(event){
-                var instance = getInstance()
-                if (instance == null) { return; }
-                instance.stop();
-                removeSound(instance);
-            });
-            $("#pauseBtn").click(function(event){
-                var instance = getInstance();
-                if (instance == null) { return; }
-                instance.paused ? instance.resume() : instance.pause();
-                $("#pauseBtn").attr("value", instance.paused ? "Resume" : "Pause");
-            });
-            $("#muteBtn").click(function(event){
-                var instance = getInstance();
-                if (instance == null) { return; }
-                var muted = !instance.getMute();
-                instance.setMute(muted);
-                $("#muteBtn").attr("value", muted ? "Unmute" : "Mute");
-            });
-
-            $(".volumeSlider").on('slidestop',function(event){
-                var instance = getInstance();
-                if (instance == null) { return; }
-                var value = $(this).slider("option", "value");
-                instance.setVolume(value/100);
-            });
-
-            $(".panSlider").on('slidestop',function(event){
-                var instance = getInstance();
-                var value = $(this).slider("option", "value");
-                instance.setPan(value);
-            });
-
-            $(".posSlider").on('slidestop',function(event){
-                var instance = getInstance();
-                var value = $(this).slider("option", "value");
-                instance.setPosition(value/100 * instance.getDuration());
-                audioInterval = setInterval(setPosSlider, intervalTime);
-            });
-            $(".posSlider").on('slidestart',function(event){
-                clearInterval(audioInterval);
-            });
-
-            enableSet("sound", false);
-            enableSet("instance", false);
-
-            var assetsPath = "./assets/";
-            var manifest = [
-                {id:"Music", src:assetsPath + "M-GameBG.mp3", data:2},
-                {id:"Humm (mp3)", src:assetsPath + "Humm.mp3"},
-                {id:"Humm (ogg)", src:assetsPath + "Humm.ogg"},
-                {id:"Thunder", src:assetsPath + "Thunder1.mp3|"+assetsPath + "Thunder1.ogg", data:3},
-                {id:"Tone wobble", src:assetsPath + "ToneWobble.mp3|"+assetsPath + "ToneWobble.ogg", type:"sound", data:1},
-                {id:"Rat Damage", src:assetsPath + "R-Damage.mp3", type:"sound"},
-                {id:"Seagull Damage", src:assetsPath + "S-Damage.mp3", type:"sound"},
-                {id:"Cabin Boy", src:assetsPath + "U-CabinBoy3.mp3", type:"sound", data:1}
-            ];
-
-            createjs.Sound.addEventListener("loadComplete", createjs.proxy(addSoundToList,this)); // 添加一个监听器，监听资源是否加载完成。
-            createjs.Sound.registerManifest(manifest);
-        }
-
-        function addSoundToList(event) {
-            var list = $("#library").get(0);
-            list.options.add(new Option((event.id || event.src) + " ("+(event.data||"unknown")+")", event.id));  //event.data 不能是未定义的，SoundJS 因为它被设置成 SoundJS 的最大限制。
-        }
-
-        function handleSliderChange(evt) {
-            var units = $("." + this.id + "Slider").data("units");
-            var value = $(this).slider("option", "value");
-            $("#"+this.id+"Value").text(value + (units ? " " + units + (value==1?"":"s"):""));
-        }
-
-        function playSound(event) {
-            var list = $("#library").get(0);
-            if (list.selectedIndex == -1) { return; }
-
-            // 选项
-            var interrupt = $("#interrupt").get(0);
-            var interruptValue = interrupt.options[interrupt.selectedIndex].value;
-            var loop = $(".loopSlider").slider("option", "value");
-            var delay = $(".delaySlider").slider("option", "value") *1000;
-            var offset = $(".offsetSlider").slider("option", "value")*1000;
-
-            for (var i=0, l=list.options.length; i<l; i++) {
-                if (!list.options[i].selected) { continue; }
-                var item = list.options[i];
-
-                var instance = createjs.Sound.createInstance(item.value);
-                instance.addEventListener("succeeded", createjs.proxy(handlePlaySuccess,instance));
-                instance.addEventListener("interrupted", createjs.proxy(handlePlayFailed,instance));
-                instance.addEventListener("failed", createjs.proxy(handlePlayFailed,instance));
-                instance.addEventListener("complete", createjs.proxy(handleSoundComplete,instance));
-
-                instance.play(interruptValue, delay, offset, loop);
-            }
-        }
-
-        // 创建 sound 实例，添加监听器，并尝试播放。
-        function handlePlaySuccess(event) {
-            instance = event.target;
-            instanceHash[instance.uniqueId] = instance;
-            instance.removeEventListener("succeeded", handlePlaySuccess, instance);  // 一旦播放成功，触发该事件。
-
-            var nowPlaying = $("#nowPlaying").get(0);
-
-            // 添加到正在播放列表。
-            if (nowPlaying.options[0].value == "-1") {
-                nowPlaying.remove(0);
-                nowPlaying.disabled = false;
-            } else {
-                for (var j=nowPlaying.options.length-1; j>=0; j--) {
-                    if (nowPlaying.options[j].value == instance.uniqueId) {
-                        if (nowPlaying.options.remove) {
-                            nowPlaying.options.remove(j);
-                        } else if (nowPlaying.remove) {
-                            nowPlaying.remove(j);
-                        }
-                    }
-                }
-            }
-
-            nowPlaying.options.add(new Option(instance.src + "("+instance.uniqueId + ")", instance.uniqueId));
-        }
-
-        // 音频播放完成。从列表删除。
-        function handleSoundComplete(event) {
-            removeSound(event.target);
-        }
-
-        // 播放失败（通常是中断错误）
-        function handlePlayFailed(event) {
-            removeSound(event.target);
-        }
-
-        // 将音频从列表移除。
-        function removeSound(instance) {
-            var currentInstance = getInstance();
-            if (currentInstance && currentInstance.uniqueId == instance.uniqueId) {
-                clearInterval(audioInterval);
-            }
-            delete(instanceHash[instance.uniqueId]);
-            var list = $("#nowPlaying").get(0);
-            for (var i=list.options.length-1; i>=0; i--) {
-                if (instance == "all" || list.options[i].value == instance.uniqueId) {
-                    if (list.selectedIndex == i) {
-                        enableSet("instance", false);
-                    }
-                    if (list.options.remove) { list.options.remove(i); }
-                    else if (list.remove) { list.remove(i); }
-                    if (instance != "all") { break; }
-                }
-            }
-            if (list.options.length == 0) {
-                list.options.add(new Option("-- No Audio Playing --", -1));
-                list.disabled = true;
-                enableSet("instance", false);
-            } else if (list.selectedIndex > -1) {
-                var item = list.options[list.selectedIndex];
-            }
-
-        }
-
-        // 从正在播放列表中获取当前选中的音频。
-        function getInstance() {
-            var list = $("#nowPlaying").get(0);
-            if (list.selectedIndex == -1) { return null;}
-
-            var item = list.options[list.selectedIndex];
-            if (item==null) {return null;}
-
-            var instance = instanceHash[item.value];
-            return instance;
-        }
-
-        // 一个库选项被选中。
-        function selectItem(event) {
-            var list = $("#library").get(0);
-            if (list.selectedIndex != -1) {
-                enableSet("sound", true)
-            } else {
-                enableSet("sound", false)
-            }
-        }
-
-        // 被选中的播放实例。
-        function selectInstance(event) {
-            clearInterval(audioInterval);
-            var list = $("#nowPlaying").get(0);
-            if (list.selectedIndex > -1) {
-                enableSet("instance", true);
-                var instance = getInstance();
-                var value = instance.getVolume()*100|0;
-                $(".volumeSlider").slider("value", value);
-                $("#volumeValue").text(value);
-
-                value = instance.getPan()|0;
-                $(".panSlider").slider("value", value);
-                $("#panValue").text(value);
-
-                setPosSlider();
-                audioInterval = setInterval(setPosSlider, intervalTime);
-
-                $("#pauseBtn").attr("value", instance.paused ? "Resume" : "Pause");
-                $("#muteBtn").attr("value", instance.getMute() ? "Unmute" : "Mute");
-            } else {
-                enableSet("instance", false);
-            }
-        }
-
-        function setPosSlider() {
-            var instance = getInstance();
-            value = instance.getPosition()/instance.getDuration()*100|0;
-            $(".posSlider").slider("value", value);
-            $("#posValue").text(instance.getPosition()/instance.getDuration()*100|0);
-        }
-
-        // 切换表单中的可用组件名称。
-        function enableSet(name, enabled) {
-            switch (name) {
-                case "sound":
-                    enableItems("playControls", enabled, ["playSoundBtn", "interrupt", "loop", "delay", "offset"]);
-                    break;
-                case "instance":
-                    enableItems("instanceControls", enabled, ["pause", "volume", "stop", "pan", , "pos", "mute"]);
-                    break;
-            }
-        }
-
-        // 切换表单中的可用元素数量。
-        function enableItems(formName, value, items) {
-            var form = $("#" + formName);
-            var element = form.get(0);
-            if (element == null) { return; }
-            value ? form.removeClass("disabled") : form.addClass("disabled");
-            for (var i=0, l=items.length; i<l; i++) {
-                var item = element[items[i]];
-
-                if ($('.'+items[i]+'Slider')) {
-                    $('.'+items[i]+'Slider').slider('option', 'disabled', !value);
-                }
-
-                if (item == null) { continue; }
-                item.disabled = !value;
-            }
-        }
-
-        init();
-    });
-
-    </script>
-
 </body>
 </html>

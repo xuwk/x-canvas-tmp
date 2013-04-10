@@ -1,83 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>SoundJS: Just Play</title>
-	<link rel="stylesheet" type="text/css" href="assets/demoStyles.css" />
-</head>
-<body onload="init()">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+<title>SoundJS：播放例子</title>
+
+<link rel="stylesheet" type="text/css" href="assets/demoStyles.css" />
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var src;            // 准备播放的音频资源。
+    var soundInstance;  // 当创建或播放音频时，SoundJS 返回的音频实例。
+    var displayStatus;  // 一个用于显示播放信息的 HTML 元素。
+
+    function init() {
+        if (window.top != window) {
+            document.getElementById("header").style.display = "none";
+        }
+
+        // 这里做了两件事，初始化了默认插件，一旦失败将显示错误信息。
+        if (!createjs.Sound.initializeDefaultPlugins()) {
+            document.getElementById("error").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            return;
+        }
+
+        // 检测是否在移动设备中运行，移动设备中只支持在用户事件中播放音频。
+        if (createjs.Sound.BrowserDetect.isIOS || createjs.Sound.BrowserDetect.isAndroid) {
+            document.getElementById("mobile").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            return;
+        }
+
+        // 记录 DOM 元素，避免每次查找。
+        displayStatus = document.getElementById("status");
+
+        // 创建一个加载项。
+        var assetsPath = "assets/";
+        src = assetsPath+"18-machinae_supremacy-lord_krutors_dominion.mp3|"+assetsPath+"18-machinae_supremacy-lord_krutors_dominion.ogg";
+        // 注意 “|” 分隔符是用于区分多个音频资源路径。
+
+        createjs.Sound.addEventListener("loadComplete", createjs.proxy(playSound,this)); // 添加一个监听器，监听资源是否加载完成。
+        createjs.Sound.registerSound(src);  // 注册音频。
+
+        displayStatus.innerText = "加载中...";  // 让用户了解加载情况。
+    }
+
+    function playSound(evt) {
+        if (evt.src == src) {
+            soundInstance = createjs.Sound.play(src);  // 开始播放加载完成的音频，并保存音频实例。
+            displayStatus.innerText = "Playing source: " + evt.src;  // 显示正在播放的音频路径。
+        }
+    }
+
+    init();
+});
+</script>
+</head>
+
+<body>
 	<header id="header" class="SoundJS">
-	    <h1><span class="text-product">Sound<strong>JS</strong></span> 纯播放例子</h1>
+	    <h1><span class="text-product">Sound<strong>JS</strong></span> 纯放例子</h1>
         <p>该例子注册一个音频然后用 SoundJS 播放</p>
 	</header>
-
 	<div class="content" id="content">
 		<h1 id="status">开始</h1>
 	</div>
-	
 	<div id="error">
 		<h1>对不起！</h1>
         <p>当前浏览器不支持 SoundJS</p>
 	</div>
-
     <div id="mobile">
         <h1>对不起！</h1>
         <p>移动设备只支持在用户事件内部播放音频，并不支持该例子。</p>
     </div>
-    <script type="text/javascript" src="../../../src/xc.js"></script>
-
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-        var src;            // 准备播放的音频资源
-        var soundInstance;  // 当创建或播放音频时，SoundJS 返回的音频实例。
-        var displayStatus;  // 一个用于显示播放信息的 HTML 元素。
-
-        function init() {
-            if (window.top != window) {
-                document.getElementById("header").style.display = "none";
-            }
-
-            // 这里做了 2 件事，初始化了默认插件，一旦失败将显示错误信息。
-            if (!createjs.Sound.initializeDefaultPlugins()) {
-                document.getElementById("error").style.display = "block";
-                document.getElementById("content").style.display = "none";
-                return;
-            }
-
-            // 检测是否在移动设备中运行，移动设备中只支持在用户事件中播放音频。
-            if (createjs.Sound.BrowserDetect.isIOS || createjs.Sound.BrowserDetect.isAndroid) {
-                document.getElementById("mobile").style.display = "block";
-                document.getElementById("content").style.display = "none";
-                return;
-            }
-
-            // 记录 DOM 元素，不用每次查找。
-            displayStatus = document.getElementById("status");
-
-            // 创建一个加载项。
-            var assetsPath = "assets/";
-            src = assetsPath+"18-machinae_supremacy-lord_krutors_dominion.mp3|"+assetsPath+"18-machinae_supremacy-lord_krutors_dominion.ogg";
-            // 注意 “|” 分隔符是用于区分多个音频资源路径。
-
-            createjs.Sound.addEventListener("loadComplete", createjs.proxy(playSound,this)); // 添加一个监听器，监听资源是否加载完成。
-            createjs.Sound.registerSound(src);  // 注册音频。
-
-            displayStatus.innerText = "Waiting for load to complete.";  // 让用户了解加载情况。
-        }
-
-        function playSound(evt) {
-            if (evt.src == src) {
-                soundInstance = createjs.Sound.play(src);  // 开始播放加载完成的音频，并保存音频实例。
-                displayStatus.innerText = "Playing source: " + evt.src;  // 显示正在播放的音频路径。
-            }
-        }
-
-        init();
-    });
-    </script>
 </body>
 </html>

@@ -2,18 +2,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>EaselJS Example: Animation sequences & sprite sheets</title>
+
+<title>EaselJS：动画序列和精灵表例子</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
     var BitmapAnimation = xc.module.require("xc.createjs.BitmapAnimation");
     var Stage = xc.module.require("xc.createjs.Stage");
     var Ticker = xc.module.require("xc.createjs.Ticker");
@@ -27,23 +26,21 @@ xc.depends([
     var bmpAnimList;
 
     function init() {
-        // 找到 canvas 并且加载图片，等待直到最后一张图片完成加载。
+        // 找到 Canvas 并且加载图片，等待最后一张图片完成加载。
         canvas = document.getElementById("testCanvas");
-
-        // 创建 stage 并指向 canvas。
+        // 创建 Stage 并指向 Canvas。
         stage = new Stage(canvas);
-
         img = new Image();
         img.src = "assets/testSeq.png";
         img.onload = handleImageLoad;
     }
 
     function handleImageLoad(event) {
-        // 记录 canvas 的宽度和高度，用于之后的计算。
+        // 记录 Canvas 的宽度和高度，用于后面的计算。
         var w = canvas.width;
         var h = canvas.height;
 
-        // 创建 spriteSheet 类，并分配相关数据。
+        // 创建 SpriteSheet 类，并分配相关数据。
         var spriteSheet  = new SpriteSheet({
             images: [img],
             frames: {width:64, height:68, regX:32, regY:34},
@@ -56,7 +53,7 @@ xc.depends([
 
         // 保存文件大小，仅保存精灵向右运动的动画。
         // 可以通过设置 scaleX = -1 翻动精灵，但该操作对于某些浏览器非常消耗性能。
-        // 取而代之的，我们增加了一个翻转版本框架到精灵表。
+        // 取而代之的，我们增加了一个有翻转操作的版本到精灵表。
         // 但只增加了水平翻转。
         SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);
 
@@ -75,7 +72,7 @@ xc.depends([
         // 开始播放第一个序列图。
         bmpAnim.gotoAndPlay("walkRt"); //动画
 
-        // 基于第一个精灵创建一组老鼠，再把它们添加到 stage 上，以及添加到集合中。
+        // 基于第一个精灵创建一组老鼠对象，再把它们添加到 Stage 上，以及添加到集合中。
         var l = 50;
         bmpAnimList = [];
         for (var i=0; i<l; i++) {
@@ -94,11 +91,11 @@ xc.depends([
             stage.addChild(bmpAnim);
             bmpAnimList.push(bmpAnim);
 
-            // 比起每次都创建一个新的实例，再设置属性，我们更希望只是复制当前的实例然后覆盖需要重写的属性。
+            // 比起每次都创建一个新的实例，继而设置属性，复制当前的实例然后覆盖需要重写的属性效果更佳。
             if (i < l-1) { bmpAnim = bmpAnim.clone(); }
         }
 
-        // 在更新 canvas 前需要进行某些操作，可以调用一下方法。
+        // 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
         Ticker.addEventListener("tick", tick);
     }
 
@@ -108,21 +105,20 @@ xc.depends([
     }
 
     function tick() {
-        // 根据所有 vX/vY 属性移动所有老鼠。
+        // 根据所有 vX/vY 属性移动所有老鼠对象。
         var l = bmpAnimList.length;
         for (var i=0; i<l; i++) {
             var bmpAnim = bmpAnimList[i];
             bmpAnim.x += bmpAnim.vX;
             bmpAnim.y += bmpAnim.vY;
         }
-
-        // 更新 stage
+        // 更新 Stage
         stage.update();
     }
 
     function angleChange(o) {
         bmpAnim = o.target;
-        //当所有序列都完成，更新老鼠的头部动画以及匹配对应的速度。
+        //当所有序列都完成，更新老鼠对象的头部动画以及匹配对应的速度。
         bmpAnim.direction -= 60;
         var angle = bmpAnim.direction * (Math.PI/180);
         bmpAnim.vX = Math.sin(angle) * bmpAnim.speed;
@@ -137,16 +133,14 @@ xc.depends([
 </head>
 
 <body>
-    <center>
-        <header id="header" class="EaselJS">
-            <h1><span class="text-product">Easel<strong>JS</strong></span> Bitmap Animation</h1>
-            <p>该例子展示如何使用 <strong>SpriteSheet</strong>, <strong>BitmapAnimation</strong>,
-                和 <strong>SpriteSheetUtils.addFlippedFrames()</strong>.</p>
-            <p>某些浏览器不支持在本地环境加载图片，或获取图片数据，或抛出安全性错误，遇到这种情况在服务器下运行该文件即可</p>
-        </header>
-        <div class="canvasHolder">
-            <canvas id="testCanvas" width="960" height="400"></canvas>
-        </div>
-    </center>
+    <header id="header" class="EaselJS">
+        <h1><span class="text-product">Easel<strong>JS</strong></span> Bitmap Animation 例子</h1>
+        <p>该例子展示如何使用 <strong>SpriteSheet</strong>，<strong>BitmapAnimation</strong>，
+            和 <strong>SpriteSheetUtils.addFlippedFrames()</strong>。</p>
+        <p>某些浏览器不支持在本地环境加载图片，或获取图片数据，可能抛出安全性错误，遇到这种情况在服务器下运行该文件即可。</p>
+    </header>
+    <div class="canvasHolder">
+        <canvas id="testCanvas" width="960" height="400"></canvas>
+    </div>
 </body>
 </html>

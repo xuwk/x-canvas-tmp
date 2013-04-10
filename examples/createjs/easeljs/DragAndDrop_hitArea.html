@@ -2,18 +2,16 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>EaselJS Example: Rollovers and Drag & Drop</title>
+<title>EaselJS：Rollovers，Drag & Drop 例子</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
     var Stage = xc.module.require("xc.createjs.Stage");
     var Shape = xc.module.require("xc.createjs.Shape");
     var Bitmap = xc.module.require("xc.createjs.Bitmap");
@@ -22,9 +20,8 @@ xc.depends([
     var Touch = xc.module.require("xc.createjs.Touch");
 
 	var canvas, stage;
-
-	var mouseTarget;	// 标识在鼠标下或正在被拖动的显示对象。
-	var dragStarted;	// 指出我们当前是否正在进行拖动操作。
+	var mouseTarget;   // 标识在鼠标下或正在被拖动的显示对象。
+	var dragStarted;   // 标识当前是否正在进行拖动操作。
 	var offset;
 	var update = true;
 
@@ -33,18 +30,14 @@ xc.depends([
 			document.getElementById("header").style.display = "none";
 		}
 		document.getElementById("loader").className = "loader";
-		// 创建一个 stage 对象并指向 canvas。
-		canvas = document.getElementById("testCanvas");
 
-		// 检查当前浏览器是否支持 touch 事件。
-		stage = new Stage(canvas);
+		canvas = document.getElementById("testCanvas"); // 创建一个 Stage 对象并指向 Canvas。
 
-		// 如果当前设备支持 touch 事件，将其启用。
-		Touch.enable(stage);
+		stage = new Stage(canvas); // 检查当前浏览器是否支持 Touch 事件。		
+		Touch.enable(stage); // 如果当前设备支持 Touch 事件，将其启用。
 
-        stage.mouseMoveOutside = true; // 设置当鼠标离开 canvas 时，仍跟踪鼠标。
-		// 启用 mouseover 事件。
-		stage.enableMouseOver(10);
+        stage.mouseMoveOutside = true; // 设置当鼠标离开 Canvas 时，仍跟踪鼠标。
+		stage.enableMouseOver(10); // 启用 mouseover 事件。
 
 		// 加载资源图片。
 		var image = new Image();
@@ -64,10 +57,11 @@ xc.depends([
 		var container = new Container();
 		stage.addChild(container);
 		
-	    // 创建一个代表雏菊图片中心的 shape 对象。
+	    // 创建一个指定雏菊图片中心的 Shape 对象。
 		var hitArea = new Shape();
 		hitArea.graphics.beginFill("#FFF").drawEllipse(-11,-14,24,18);
-		// 设置目标对象的 hitArea 坐标，该坐标系相对于目标对象（bitmap 实例）。
+
+		// 设置目标对象的 hitArea 坐标，该坐标系建立于目标对象（bitmap 实例）。
 		hitArea.x = imgW/2;
 		hitArea.y = imgH/2;
 
@@ -85,7 +79,7 @@ xc.depends([
 
             bitmap.cursor = "pointer";
 			
-			// 分配 hitArea 区域到没一个 bitmap 实例。
+			// 分配 hitArea 区域到每一个 Bitmap 实例。
 			bitmap.hitArea = hitArea;
 
 			// 封装用于提供事件处理的方法。
@@ -96,11 +90,11 @@ xc.depends([
 					var offset = {x:target.x-evt.stageX, y:target.y-evt.stageY};
 
 					// 对目标对象监听 mousemove 事件。
-				    // 这将在用户松开鼠标按钮之前都是有效的。
+				    // 在用户松开鼠标按钮之前都是有效的。
 					evt.addEventListener("mousemove", function(ev) {
 						target.x = ev.stageX+offset.x;
 						target.y = ev.stageY+offset.y;
-						// 设置 stage 在下一个 tick 里需要更新。
+						// 设置 Stage 在下一个 tick 里需要更新。
 						update = true;
 					});
 				});
@@ -120,7 +114,7 @@ xc.depends([
 	}
 
 	function tick() {
-		// 这里通过 update 属性控制 stage 只在有子对象绑定了事件的时候才需要更新。
+		// 通过 update 属性控制 Stage 只在有子对象绑定事件的情况下才更新。
 		if (update) {
 			update = false; // 设置只更新一次
 			stage.update();
@@ -133,15 +127,13 @@ xc.depends([
 </head>
 
 <body>
-	<center>
-		<div id="loader"></div>
-		<header id="header" class="EaselJS">
-		    <h1><span class="text-product">Easel<strong>JS</strong></span> 实现带有点击区域的拖动效果</h1>
-		    <p>该例子与拖动效果的例子是相似的，只是额外添加了 <strong>hitArea</strong> 属性，使得只有雏菊图像的中间才能响应鼠标事件，从而拖动图像。</p>
-		</header>
-		<div class="canvasHolder">
-			<canvas id="testCanvas" width="960" height="400"></canvas>
-		</div>
-	</center>
+	<div id="loader"></div>
+	<header id="header" class="EaselJS">
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> 实现带有点击区域的拖拽效果</h1>
+	    <p>该例子与拖拽效果的例子是相似的，只是额外添加了 <strong>hitArea</strong> 属性，使得只有雏菊图像的中间才能响应鼠标事件，从而拖拽图像。</p>
+	</header>
+	<div class="canvasHolder">
+		<canvas id="testCanvas" width="960" height="400"></canvas>
+	</div>
 </body>
 </html>

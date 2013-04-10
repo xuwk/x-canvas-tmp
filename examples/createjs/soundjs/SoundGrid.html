@@ -1,139 +1,131 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>SoundJS: Sound Grid</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>SoundJS: Sound Grid 例子</title>
     
-	<link rel="stylesheet" type="text/css" href="assets/demoStyles.css"/>
-	<style>
-	   body {
-	       font-family: sans-serif;
-	       font-size: 11px;
-	   }
+<link rel="stylesheet" type="text/css" href="assets/demoStyles.css"/>
+<style>
+    body {
+       font-family: sans-serif;
+       font-size: 11px;
+    }
+    #content {
+       width: 1000px;
+    }
+    .gridBox {
+    	float: left;
+    	background-repeat: no-repeat;
+    	background-position: 0 0px;
+    	background-color: #222;
+        background-size: 320px 300px;
+    	border: 0px solid #666;
+    	width: 320px;
+    	height: 100px;
+    }
+    .gridBox:hover {
+       background-position: 0 -100px;
+       background-color: #322;
+       cursor: pointer;
+    }
+    .gridBox.active, .gridbox.active:hover {
+       background-position: 0 -200px;
+       cursor: auto;
+    }
+</style>
 
-	   #content {
-		   width: 1000px;
-	   }
-	   .gridBox {
-			float: left;
-			background-repeat: no-repeat;
-			background-position: 0 0px;
-			background-color: #222;
-		    background-size: 320px 300px;
-			border: 0px solid #666;
-			width: 320px;
-			height: 100px;
-	    }
-	   .gridBox:hover {
-		   background-position: 0 -100px;
-		   background-color: #322;
-		   cursor: pointer;
-	   }
-	   .gridBox.active, .gridbox.active:hover {
-		   background-position: 0 -200px;
-		   cursor: auto;
-	   }
-	 </style>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var preload;
 
+    function init() {
+        if (window.top != window) {
+            document.getElementById("header").style.display = "none";
+        }
+
+        if (!createjs.Sound.initializeDefaultPlugins()) {
+            document.getElementById("error").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            return;
+        }
+
+        document.getElementById("loader").className = "loader";
+        var assetsPath = "assets/";
+        var manifest = [
+            {src:assetsPath+"Game-Break.mp3|"+assetsPath+"Game-Break.ogg", id:1},
+            {src:assetsPath+"Game-Spawn.mp3|"+assetsPath+"Game-Spawn.ogg", id:2},
+            {src:assetsPath+"Game-Shot.mp3|"+assetsPath+"Game-Shot.ogg", id:3},
+
+            {src:assetsPath+"GU-StealDaisy.mp3|"+assetsPath+"GU-StealDaisy.ogg", id:4},
+            {src:assetsPath+"Humm.mp3|"+assetsPath+"Humm.ogg", id:5},
+            {src:assetsPath+"R-Damage.mp3|"+assetsPath+"R-Damage.ogg", id:6},
+
+            {src:assetsPath+"Thunder1.mp3|"+assetsPath+"Thunder1.ogg", id:7},
+            {src:assetsPath+"S-Damage.mp3|"+assetsPath+"S-Damage.ogg", id:8},
+            {src:assetsPath+"U-CabinBoy3.mp3|"+assetsPath+"U-CabinBoy3.ogg", id:9},
+
+            {src:assetsPath+"ToneWobble.mp3|"+assetsPath+"ToneWobble.ogg", id:10},
+            {src:assetsPath+"Game-Death.mp3|"+assetsPath+"Game-Death.ogg", id:11},
+            {src:assetsPath+"Game-Break.mp3|"+assetsPath+"Game-Break.ogg", id:12}  
+        ];
+
+        createjs.Sound.addEventListener("loadComplete", createjs.proxy(soundLoaded, this)); // 添加一个监听器，监听资源是否加载完成。
+        createjs.Sound.registerManifest(manifest);
+    }
+
+    function soundLoaded(event) {
+        document.getElementById("loader").className = "";
+        var div = document.getElementById(event.id);
+        div.style.backgroundImage = "url('assets/audioButtonSheet.png')";
+    }
+
+    function stop() {
+        if (preload != null) { preload.close(); }
+        createjs.Sound.stop();
+    }
+
+    init();
+});
+
+function playSound(target) {
+    var instance = createjs.Sound.play(target.id, createjs.Sound.INTERRUPT_NONE, 0, 0, false, 1);
+    if (instance == null || instance.playState == createjs.Sound.PLAY_FAILED) { return; }
+    target.className = "gridBox active";
+    instance.onComplete = function(instance) {
+        target.className = "gridBox";
+    }
+}
+</script>
 </head>
 
 <body>
-    <center>
-    	<div id="loader"></div>
-
-    	<header id="header" class="SoundJS">
-    	    <h1><span class="text-product">Sound<strong>JS</strong></span> Sound Grid 例子</h1>
-            <p>点击格子中的音频实例去播放对应的音频。</p>
-    	</header>
-    	
-    	<div id="content">
-    	    <div id="1" onclick="playSound(this)" class="gridBox"></div>
-    	    <div id="2" onclick="playSound(this)" class="gridBox"></div>
-    	    <div id="3" onclick="playSound(this)" class="gridBox"></div>
-    	    <div id="4" onclick="playSound(this)" class="gridBox"></div>
-    	    <div id="5" onclick="playSound(this)" class="gridBox"></div>
-    	    <div id="6" onclick="playSound(this)" class="gridBox"></div>
-    	    <div id="7" onclick="playSound(this)" class="gridBox"></div>
-    	    <div id="8" onclick="playSound(this)" class="gridBox"></div>
-    	    <div id="9" onclick="playSound(this)" class="gridBox"></div>
-    	    <div id="10" onclick="playSound(this)" class="gridBox"></div>
-    	    <div id="11" onclick="playSound(this)" class="gridBox"></div>
-    	    <div id="12" onclick="playSound(this)" class="gridBox"></div>
-    	</div>
-
-        <div id="error">
-            <h1>对不起！</h1>
-            <p>当前浏览器不支持 SoundJS</p>
-        </div>
-    </center>
-    <script type="text/javascript" src="../../../src/xc.js"></script>
-
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-        var preload;
-
-        function init() {
-            if (window.top != window) {
-                document.getElementById("header").style.display = "none";
-            }
-
-            if (!createjs.Sound.initializeDefaultPlugins()) {
-                document.getElementById("error").style.display = "block";
-                document.getElementById("content").style.display = "none";
-                return;
-            }
-
-            document.getElementById("loader").className = "loader";
-            var assetsPath = "assets/";
-            var manifest = [
-                {src:assetsPath+"Game-Break.mp3|"+assetsPath+"Game-Break.ogg", id:1},
-                {src:assetsPath+"Game-Spawn.mp3|"+assetsPath+"Game-Spawn.ogg", id:2},
-                {src:assetsPath+"Game-Shot.mp3|"+assetsPath+"Game-Shot.ogg", id:3},
-
-                {src:assetsPath+"GU-StealDaisy.mp3|"+assetsPath+"GU-StealDaisy.ogg", id:4},
-                {src:assetsPath+"Humm.mp3|"+assetsPath+"Humm.ogg", id:5},
-                {src:assetsPath+"R-Damage.mp3|"+assetsPath+"R-Damage.ogg", id:6},
-
-                {src:assetsPath+"Thunder1.mp3|"+assetsPath+"Thunder1.ogg", id:7},
-                {src:assetsPath+"S-Damage.mp3|"+assetsPath+"S-Damage.ogg", id:8},
-                {src:assetsPath+"U-CabinBoy3.mp3|"+assetsPath+"U-CabinBoy3.ogg", id:9},
-
-                {src:assetsPath+"ToneWobble.mp3|"+assetsPath+"ToneWobble.ogg", id:10},
-                {src:assetsPath+"Game-Death.mp3|"+assetsPath+"Game-Death.ogg", id:11},
-                {src:assetsPath+"Game-Break.mp3|"+assetsPath+"Game-Break.ogg", id:12}  
-            ];
-
-            createjs.Sound.addEventListener("loadComplete", createjs.proxy(soundLoaded, this)); // 添加一个监听器，监听资源是否加载完成。
-            createjs.Sound.registerManifest(manifest);
-        }
-
-        function soundLoaded(event) {
-            document.getElementById("loader").className = "";
-            var div = document.getElementById(event.id);
-            div.style.backgroundImage = "url('assets/audioButtonSheet.png')";
-        }
-
-        function stop() {
-            if (preload != null) { preload.close(); }
-            createjs.Sound.stop();
-        }
-
-        init();
-    });
-    
-    function playSound(target) {
-        var instance = createjs.Sound.play(target.id, createjs.Sound.INTERRUPT_NONE, 0, 0, false, 1);
-        if (instance == null || instance.playState == createjs.Sound.PLAY_FAILED) { return; }
-        target.className = "gridBox active";
-        instance.onComplete = function(instance) {
-            target.className = "gridBox";
-        }
-    }
-
-    </script>
-
+	<div id="loader"></div>
+	<header id="header" class="SoundJS">
+	    <h1><span class="text-product">Sound<strong>JS</strong></span> Sound Grid 例子</h1>
+        <p>点击格子中的音频实例去播放对应的音频。</p>
+	</header>
+	<div id="content">
+	    <div id="1" onclick="playSound(this)" class="gridBox"></div>
+	    <div id="2" onclick="playSound(this)" class="gridBox"></div>
+	    <div id="3" onclick="playSound(this)" class="gridBox"></div>
+	    <div id="4" onclick="playSound(this)" class="gridBox"></div>
+	    <div id="5" onclick="playSound(this)" class="gridBox"></div>
+	    <div id="6" onclick="playSound(this)" class="gridBox"></div>
+	    <div id="7" onclick="playSound(this)" class="gridBox"></div>
+	    <div id="8" onclick="playSound(this)" class="gridBox"></div>
+	    <div id="9" onclick="playSound(this)" class="gridBox"></div>
+	    <div id="10" onclick="playSound(this)" class="gridBox"></div>
+	    <div id="11" onclick="playSound(this)" class="gridBox"></div>
+	    <div id="12" onclick="playSound(this)" class="gridBox"></div>
+	</div>
+    <div id="error">
+        <h1>对不起！</h1>
+        <p>当前浏览器不支持 SoundJS</p>
+    </div>
 </body>
 </html>

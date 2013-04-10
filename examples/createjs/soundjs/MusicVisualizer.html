@@ -1,241 +1,236 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>SoundJS: Web Audio Music Visualizer</title>
-	<link rel="stylesheet" type="text/css" href="assets/demoStyles.css" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>SoundJS：网络音频可视化例子</title>
+
+<link rel="stylesheet" type="text/css" href="assets/demoStyles.css" />
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    // 全局常量
+    var FFTSIZE = 256;      // 分析仪节点数量。
+    var TICK_FREQ = 20;     // 执行 tick 的时间间隔（以毫秒为单位）。
+    var CIRCLES = 8;        // 圆圈的数量。
+    var RADIUS_FACTOR = 60; // 圆的半径，环的属性。
+    var MIN_RADIUS = 1;     // 所有圆的最小半径。
+    var HUE_VARIANCE = 30;  // 色调变化。
+    var COLOR_CHANGE_THRESHOLD = 30;  // 改变颜色之前音频的有效改变次数。
+    var WAVE_EMIT_THRESHOLD = 10;   // 发出波纹之前音频的有效改变次数。
+    var WAVE_SCALE = 0.03;  // 每个 tick 改变波纹的大小比例。
+
+    // 全局变量
+    var stage;              
+    var h, w;               // Canvas 的高度和宽度。
+    var centerX, centerY;   // 中心坐标。
+    var messageField;       // 用于显示信息的文本区域。
+    var assetsPath = "assets/"; // 创建一个独立加载项。
+    var src = assetsPath + "05-Binrpilot-Underground.mp3";  // 设定资源。
+    var soundInstance;      // 音频对象。
+    var analyserNode;       // 用于显示音频的音频分析仪节点。
+    var freqFloatData, freqByteData, timeByteData;  // 音频分析仪节点的数据数组。
+    var circles = {};       // Circles Shape 对象集合。
+    var circleHue = 180;   // 用于画圆的基本色调，可以改变。
+    var waves = new createjs.Container();   // Container 用于储存波的圈子。
+    var circleFreqChunk;    // freqByteData 数组，用于计算每个圆圈。
+    var dataAverage = [42,42,42,42];   // 最后 4 个 tick 的数据。
+
+    function init() {
+        if (window.top != window) {
+            document.getElementById("header").style.display = "none";
+        }
+
+        // 该例子只支持 web audio，所以只注册 WebAudioPlugin，如果失败，则直接显示错误信息。
+        if (!createjs.Sound.registerPlugin(createjs.WebAudioPlugin)) {
+            document.getElementById("error").style.display = "block";
+            return;
+        }
+
+        // 创建一个 stage 对象并指向 canvas。
+        var canvas = document.getElementById("testCanvas");
+        stage = new createjs.Stage(canvas);
+
+        // 记录 canvas 的宽度和高度来提高性能。
+        h = canvas.height;
+        w = canvas.width;
+        // 计算中心坐标。
+        centerX = w >> 1;
+        centerY = h >> 1;
+
+        // 用于显示音频资源加载情况的消息区域，主要用于预加载的时候显示加载进度。
+        messageField = new createjs.Text("Loading Audio", "bold 24px Arial", "#FFFFFF");
+        messageField.maxWidth = w;
+        messageField.textAlign = "center"; // 注: 设置消息的文本显示在中心位置。
+        messageField.x = centerX;
+        messageField.y = centerY;
+        stage.addChild(messageField);
+        stage.update(); // 更新 Stage
+
+        createjs.Sound.addEventListener("loadComplete", createjs.proxy(handleLoad,this)); // 添加一个监听器，监听资源是否加载完成。
+        createjs.Sound.registerSound(src);  // 注册音频。
+    }
+
+    function handleLoad(evt) {
+        // 获得上下文。
+        var context = createjs.WebAudioPlugin.context;
+
+        // 创建一个分析仪节点。
+        analyserNode = context.createAnalyser();
+        analyserNode.fftSize = FFTSIZE;  // 用于频域分析的 FFT 大小，必须是一个冥。
+        analyserNode.smoothingTimeConstant = 0.85;  // 介于 0 到 1 的一个数，当该值为 0 时，表示与最后一个分析节点没有相隔时间。
+        analyserNode.connect(context.destination);  // 链接到用于输出音频的 context.destination。
+
+        // 链接可视化节点到我们现有的分析仪节点。
+        var dynamicsNode = createjs.WebAudioPlugin.dynamicsCompressorNode;
+        dynamicsNode.disconnect();  // 从远程断开链接。
+        dynamicsNode.connect(analyserNode);
+
+        // 设置用于检索分析仪节点数据的数组。
+        freqFloatData = new Float32Array(analyserNode.frequencyBinCount);
+        freqByteData = new Uint8Array(analyserNode.frequencyBinCount);
+        timeByteData = new Uint8Array(analyserNode.frequencyBinCount);
+
+        // 计算数组中每组用于绘制圆的数据。
+        circleFreqChunk = analyserNode.frequencyBinCount / CIRCLES;
+
+        // 如果设备支持 Touch 事件，启用 Touch 事件，并显示信息。
+        if (createjs.Touch.enable(stage)) {
+            messageField.text = "Touch to start";
+        } else {
+            messageField.text = "Click to start";
+        }
+        stage.update(); // 更新 Stage 事件。
+
+        // 将播放行为封装在 Click 事件里，这样可以在移动设备中播放。
+        stage.addEventListener("stagemousedown", startPlayback);
+    }
+
+    // 将播放行为封装在 Click 事件里，这样可以在移动设备中播放。
+    function startPlayback(evt) {
+        // 只启动一次，所以可以移除 Click/Touch 监听器。
+        stage.removeEventListener("stagemousedown", startPlayback);
+
+        if(soundInstance) {return;} // 如果存在音频实例，则已经开始播放了。但发生这个的可能性很小。
+
+        // 开始播放，移除消息。
+        stage.removeChild(messageField);
+
+        // 开始播放已加载完成的音频。
+        soundInstance = createjs.Sound.play(src, null, null, 0, -1);
+
+        // 设置符合操作，所以可以合成图像颜色。
+        stage.compositeOperation = "lighter";
+
+        // 创建圆圈对象。
+        for(var i=0; i<CIRCLES; i++) {
+            circles[i] = new createjs.Shape();
+            stage.addChild(circles[i]);
+        }
+        // 添加波纹对象到 Stage。
+        stage.addChild(waves);
+
+        // 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
+        createjs.Ticker.addEventListener("tick", tick);
+        createjs.Ticker.setInterval(TICK_FREQ);
+    }
+
+    function tick(evt) {
+        analyserNode.getFloatFrequencyData(freqFloatData);  // 获取分贝
+        analyserNode.getByteFrequencyData(freqByteData);    // 获取频率
+        analyserNode.getByteTimeDomainData(timeByteData);   // 获取波形
+
+        var lastRadius = 0;  // 记录最后圆圈对象的半径。
+
+        // 从最后到最前遍历数组。
+        for(var i=0; i<CIRCLES; i++) {
+            var freqSum = 0;
+            var timeSum = 0;
+            for(var x = circleFreqChunk; x; x--) {
+                var index = (CIRCLES-i)*circleFreqChunk-x;
+                freqSum += freqByteData[index];
+                timeSum += timeByteData[index];
+            }
+            freqSum = freqSum / circleFreqChunk / 255;  // 提供一个可取数值范围在总数值范围内的百分比。
+            timeSum = timeSum / circleFreqChunk / 255;  // 提供一个可取数值范围在总数值范围内的百分比。
+
+            // 绘制圆
+            lastRadius += freqSum*RADIUS_FACTOR + MIN_RADIUS;
+            var g = new createjs.Graphics().beginFill("hsl("+(timeSum/255*HUE_VARIANCE+circleHue)+",85%,50%)")
+                .drawCircle(centerX,centerY, lastRadius).endFill();
+            circles[i].graphics = g;
+        }
+
+        // 更新 dataAverage，从最前抽走一个元素，同时从最后添加一个元素。
+        dataAverage.shift();
+        dataAverage.push(lastRadius);
+
+        // 获取最后 3 个 tick 的 averagedata 数据。
+        var dataSum = 0;
+        for(var i = dataAverage.length-1; i; i--) {
+            dataSum += dataAverage[i-1];
+        }
+        dataSum = dataSum / (dataAverage.length-1);
+
+        // 计算最后的改变。
+        var dataDiff = dataAverage[dataAverage.length-1] - dataSum;
+
+        // 基于音频足够大的变化改变颜色。
+        if(dataDiff>COLOR_CHANGE_THRESHOLD || dataDiff<COLOR_CHANGE_THRESHOLD) {circleHue = circleHue + dataDiff;}
+
+        // 发出足够大的波纹。
+        if(dataDiff > WAVE_EMIT_THRESHOLD){
+            // 绘制波纹。
+            var waveShape = new createjs.Shape();
+            // 设置波纹对象位置为中点。
+            waveShape.x = centerX;
+            waveShape.y = centerY;
+            var g = waveShape.graphics.beginStroke ("hsl("+circleHue+",85%,90%)").drawCircle(0,0, lastRadius<<1).endStroke();
+            // 先缩小一半，这样当增大的时候更流畅。
+            waveShape.scaleX = waveShape.scaleY = 0.5;
+
+            waveShape.radius = lastRadius+dataDiff;  // 用于检测是否已经超出 Stage。
+            waveShape.cache((-lastRadius<<1)-1, -(lastRadius<<1)-1, (lastRadius<<2)+2, (lastRadius<<2)+2);  // 缓存 Shape 对象，显示时更流畅。
+
+            // 往 Wave 容器添加新的 Wave 对象。
+            waves.addChild(waveShape);
+        }
+
+        // 根据一个常量，改变所有波纹对象的大小比例。
+        for(var i = waves.getNumChildren()-1; i>-1; i--) {
+            wave = waves.getChildAt(i);
+            wave.scaleX = wave.scaleY = wave.scaleX+WAVE_SCALE;
+
+            // 若超出 Stage 或 超出可视范围。则删除该波纹子对象。
+            if(wave.scaleX*wave.radius > w) {
+                waves.removeChild(wave);
+            }
+        }
+
+        // 更新 Stage。
+        stage.update();
+    }
+
+    init();
+});
+</script>
 </head>
 
 <body>
-
 	<header id="header" class="SoundJS">
 	    <h1><span class="text-product">Sound<strong>JS</strong></span> 网络音频可视化例子</h1>
-        <p>该例子演示了如何解析网络音频数据，再显示成图像。</p>
+        <p>该例子演示了如何解析网络音频数据，继而显示成图像。</p>
 	</header>
-
 	<div id="error">
         <h1>对不起！</h1>
         <p>当前浏览器不支持 SoundJS</p>
     </div>
-
     <div class="canvasHolder">
         <canvas id="testCanvas" width="960" height="400"></canvas>
     </div>
-
-    <script type="text/javascript" src="../../../src/xc.js"></script>
-
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-        // 全局常量
-        var FFTSIZE = 256;      // 分析仪节点数量。
-        var TICK_FREQ = 20;     // 执行 tick 的时间间隔（以毫秒为单位）。
-        var CIRCLES = 8;        // 圆圈的数量。这也是里面的文件数，所以 FFTSIZE/2 需要除以这个数。
-        var RADIUS_FACTOR = 60; // 圆的半径，我们正在绘制的环的属性。
-        var MIN_RADIUS = 1;     // 所有圆的最小半径。
-        var HUE_VARIANCE = 30;  // 色调变化。
-        var COLOR_CHANGE_THRESHOLD = 30;    // 改变颜色之前的改变次数。
-        var WAVE_EMIT_THRESHOLD = 10;   // 发出波之前的有效变化次数。
-        var WAVE_SCALE = 0.03;  // 每个 tick 改变波的大小比例。
-
-        // 全局变量
-        var stage;              
-        var h, w;               // canvas 的高度和宽度。
-        var centerX, centerY;   // 中心坐标，用于提高 tick 的速度。
-        var messageField;       // 显示信息文本区域。
-        var assetsPath = "assets/"; // 创建一个独立加载项。
-        var src = assetsPath + "05-Binrpilot-Underground.mp3";  // 设置资源。
-        var soundInstance;      // 创建的音频对象。
-        var analyserNode;       // 用于显示音频的音频分析仪节点。
-        var freqFloatData, freqByteData, timeByteData;  // analyserNode 获取的数据数组。
-        var circles = {};       // circles shape 对象集合。
-        var circleHue = 180;   // 用于画圆的基本色调，它可以改变。
-        var waves = new createjs.Container();   // container 用于储存波的圈子。
-        var circleFreqChunk;    // freqByteData 数组，用于计算每个圈。
-        var dataAverage = [42,42,42,42];   // 最后 4 个 tick 的数据。
-
-        function init() {
-            if (window.top != window) {
-                document.getElementById("header").style.display = "none";
-            }
-
-            // 该例子只支持 web audio，所以只注册 WebAudioPlugin，如果失败，则直接显示错误信息。
-            if (!createjs.Sound.registerPlugin(createjs.WebAudioPlugin)) {
-                document.getElementById("error").style.display = "block";
-                return;
-            }
-
-            // 创建一个 stage 对象并指向 canvas。
-            var canvas = document.getElementById("testCanvas");
-            stage = new createjs.Stage(canvas);
-
-            // 记录 canvas 的宽度和高度来提高性能。
-            h = canvas.height;
-            w = canvas.width;
-            // 计算中心坐标。
-            centerX = w >> 1;
-            centerY = h >> 1;
-
-            // 用于显示音频资源加载情况的消息区域，主要用于预加载的时候显示加载进度。
-            messageField = new createjs.Text("Loading Audio", "bold 24px Arial", "#FFFFFF");
-            messageField.maxWidth = w;
-            messageField.textAlign = "center"; // 注: 设置消息的文本显示在中心位置。
-            messageField.x = centerX;
-            messageField.y = centerY;
-            stage.addChild(messageField);
-            stage.update(); // 更新 stage
-
-            createjs.Sound.addEventListener("loadComplete", createjs.proxy(handleLoad,this)); // 添加一个监听器，监听资源是否加载完成。
-            createjs.Sound.registerSound(src);  // 注册音频。
-        }
-
-        function handleLoad(evt) {
-            // 获得上下文。注：连接到现有的节点，我们需要在同样的上下文中工作。
-            var context = createjs.WebAudioPlugin.context;
-
-            // 创建一个分析仪节点。
-            analyserNode = context.createAnalyser();
-            analyserNode.fftSize = FFTSIZE;  // 用于频域分析的 FFT 大小，必须是一个冥。
-            用于频域分析的FFT的大小。这必须是一个幂
-            analyserNode.smoothingTimeConstant = 0.85;  // 介于 0 到 1 的一个数，当该值为 0 时，表示与最后一个分析节点没有相隔时间。
-            analyserNode.connect(context.destination);  // 链接到用于输出音频的 context.destination。
-
-            // 链接可视化节点到我们现有的用于链接到 context.destination 的 dynamicsCompressorNode。
-            var dynamicsNode = createjs.WebAudioPlugin.dynamicsCompressorNode;
-            dynamicsNode.disconnect();  // 从远程断开链接。
-            dynamicsNode.connect(analyserNode);
-
-            // 设置用于检索 analyserNode 数据的数组。
-            freqFloatData = new Float32Array(analyserNode.frequencyBinCount);
-            freqByteData = new Uint8Array(analyserNode.frequencyBinCount);
-            timeByteData = new Uint8Array(analyserNode.frequencyBinCount);
-
-            // 计算数组中每组用于绘制圆的数据。
-            circleFreqChunk = analyserNode.frequencyBinCount / CIRCLES;
-
-            // 如果设备支持 touch 事件，启用 touch 事件，并显示信息。
-            if (createjs.Touch.enable(stage)) {
-                messageField.text = "Touch to start";
-            } else {
-                messageField.text = "Click to start";
-            }
-            stage.update(); // 更新 stage 事件。
-
-            // 将播放行为封装在 click 事件里，这样可以在移动设备中播放。
-            stage.addEventListener("stagemousedown", startPlayback);
-        }
-
-        // 将播放行为封装在 click 事件里，这样可以在移动设备中播放。
-        function startPlayback(evt) {
-            // 只启动一次，所以可以移除 click/touch 监听器。
-            stage.removeEventListener("stagemousedown", startPlayback);
-
-            if(soundInstance) {return;} // 如果存在 soundInstance，则已经开始播放了。但发生这个的可能性很小。
-
-            // 开始播放，移除消息。
-            stage.removeChild(messageField);
-
-            // 开始播放已加载完成的音频。
-            soundInstance = createjs.Sound.play(src, null, null, 0, -1);
-
-            // 设置符合操作，所以可以合成图像颜色。
-            stage.compositeOperation = "lighter";
-
-            // 创建圆圈对象。
-            for(var i=0; i<CIRCLES; i++) {
-                circles[i] = new createjs.Shape();
-                stage.addChild(circles[i]);
-            }
-            // 添加波纹对象到 stage。
-            stage.addChild(waves);
-
-            // 开始执行 tick 并将其指向 window，因此可以在更新 stage 之前进行一系列相关操作。
-            createjs.Ticker.addEventListener("tick", tick);
-            createjs.Ticker.setInterval(TICK_FREQ);
-        }
-
-        function tick(evt) {
-            analyserNode.getFloatFrequencyData(freqFloatData);  // this gives us the dBs
-            analyserNode.getByteFrequencyData(freqByteData);  // this gives us the frequency
-            analyserNode.getByteTimeDomainData(timeByteData);  // this gives us the waveform
-
-            var lastRadius = 0;  // 记录最后圆圈对象的半径。
-
-            // 从最后到最前遍历数组。
-            for(var i=0; i<CIRCLES; i++) {
-                var freqSum = 0;
-                var timeSum = 0;
-                for(var x = circleFreqChunk; x; x--) {
-                    var index = (CIRCLES-i)*circleFreqChunk-x;
-                    freqSum += freqByteData[index];
-                    timeSum += timeByteData[index];
-                }
-                freqSum = freqSum / circleFreqChunk / 255;  // 提供一个可取数值范围在总数值范围内的百分比。
-                timeSum = timeSum / circleFreqChunk / 255;  // 提供一个可取数值范围在总数值范围内的百分比。
-
-                // 绘制圆
-                lastRadius += freqSum*RADIUS_FACTOR + MIN_RADIUS;
-                var g = new createjs.Graphics().beginFill("hsl("+(timeSum/255*HUE_VARIANCE+circleHue)+",85%,50%)")
-                    .drawCircle(centerX,centerY, lastRadius).endFill();
-                circles[i].graphics = g;
-            }
-
-            // 更新 dataAverage，从最前抽走一个元素，同时从最后添加一个元素。
-            dataAverage.shift();
-            dataAverage.push(lastRadius);
-
-            // 获取最后 3 个 tick 的 average data 数据。
-            var dataSum = 0;
-            for(var i = dataAverage.length-1; i; i--) {
-                dataSum += dataAverage[i-1];
-            }
-            dataSum = dataSum / (dataAverage.length-1);
-
-            // 计算最后的改变。
-            var dataDiff = dataAverage[dataAverage.length-1] - dataSum;
-
-            // 基于足够大变化改变颜色。
-            if(dataDiff>COLOR_CHANGE_THRESHOLD || dataDiff<COLOR_CHANGE_THRESHOLD) {circleHue = circleHue + dataDiff;}
-
-            // 发出足够大的波纹。
-            if(dataDiff > WAVE_EMIT_THRESHOLD){
-                // 绘制波纹。
-                var waveShape = new createjs.Shape();
-                // 设置波纹对象位置为中点。
-                waveShape.x = centerX;
-                waveShape.y = centerY;
-                var g = waveShape.graphics.beginStroke ("hsl("+circleHue+",85%,90%)").drawCircle(0,0, lastRadius<<1).endStroke();
-                // 先缩小一半，这样当增大的时候更流畅。
-                waveShape.scaleX = waveShape.scaleY = 0.5;
-
-                waveShape.radius = lastRadius+dataDiff;  // 用于检测是否已经超出 stage。
-                waveShape.cache((-lastRadius<<1)-1, -(lastRadius<<1)-1, (lastRadius<<2)+2, (lastRadius<<2)+2);  // 缓存 shape 对象，显示时更流畅。
-
-                // 往 wave 容器添加新的 wave 对象。
-                waves.addChild(waveShape);
-            }
-
-            // 根据一个常量，改变所有波纹对象的大小比例。
-            for(var i = waves.getNumChildren()-1; i>-1; i--) {
-                wave = waves.getChildAt(i);
-                wave.scaleX = wave.scaleY = wave.scaleX+WAVE_SCALE;
-
-                // 若超出 stage 或 超出可视范围。则删除该波纹子对象。
-                if(wave.scaleX*wave.radius > w) {
-                    waves.removeChild(wave);
-                }
-            }
-
-            // 更新 stage。
-            stage.update();
-        }
-
-        init();
-    });
-
-    </script>
-
 </body>
 </html>

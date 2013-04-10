@@ -2,18 +2,17 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>EaselJS Example: Extracting a frame from a sprite sheet</title>
+
+<title>EaselJS：Extract Frame 例子</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
     var Bitmap = xc.module.require("xc.createjs.Bitmap");
     var SpriteSheet = xc.module.require("xc.createjs.SpriteSheet");
     var SpriteSheetUtils = xc.module.require("xc.createjs.SpriteSheetUtils");
@@ -43,7 +42,7 @@ xc.depends([
 		// 可以交替地使用帧号。 
 		img = SpriteSheetUtils.extractFrame(spriteSheet, "walkRight");
 
-	    // 注：可以将该图像作为 bitmap 对象，但在更多情况下，使用 BitmapAnimation 会更好。
+	    // 注：可以将该图像作为 Bitmap 对象，但在更多情况下，使用 BitmapAnimation 会更好。
 	    // var bmp = new Bitmap(img);
 
 		// 创建一个新图像添加到 document 的底部。
@@ -56,16 +55,14 @@ xc.depends([
 </head>
 
 <body>
-	<center>
-		<header id="header" class="EaselJS">
-		    <h1><span class="text-product">Easel<strong>JS</strong></span> Extract Frame 例子</h1>
-		    <p>演示了利用 <strong>SpriteSheetUtils.extractFrame()</strong> 方法从已经加载好的精灵数据中获取单独的一帧作为图片对象。</p>
-		</header>
-		<div id="content">
-			原始精灵表：<br/>
-			<img src="assets/testSeq.png"><br/><br/><br/>
-			获取的一帧：<br/>
-		</div>
-	</center>
+	<header id="header" class="EaselJS">
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> Extract Frame 例子</h1>
+	    <p>演示了利用 <strong>SpriteSheetUtils.extractFrame()</strong> 方法从已经加载好的精灵表数据中获取单独的一帧作为图片对象。</p>
+	</header>
+	<div id="content">
+		原始精灵表：<br/>
+		<img src="assets/testSeq.png"><br/><br/><br/>
+		获取的一帧：<br/>
+	</div>
 </body>
 </html>

@@ -1,93 +1,94 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>EaselJS Example: Rollovers and Drag & Drop</title>
-	<link rel="stylesheet" href="assets/demoStyles.css" />
-    <script type="text/javascript" src="../../../src/xc.js"></script>
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-        var canvas;
-        var stage;
-        var tweens;
-        var activeCount;
-        var circleCount = 25;
-        var text;
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-        function init() {
-	        if (window.top != window) {
-                document.getElementById("header").style.display = "none";
-            }
+<title>TweenJS：TweenJS 例子</title>
 
-            canvas = document.getElementById("testCanvas");
-            stage = new createjs.Stage(canvas);
-			stage.enableDOMEvents(true);
-            tweens = [];
-            stage.enableMouseOver(10);
-			createjs.Touch.enable(stage);
-			
-            for (var i=0; i<circleCount; i++) {
-                // 绘制一个圆，并添加到 stage 中。
-                var circle = new createjs.Shape();
-                circle.graphics.setStrokeStyle(15);
-                circle.graphics.beginStroke("#113355");
-                circle.graphics.drawCircle(0,0,(i+1)*4);
-                circle.alpha = 1-i*0.02;
-                circle.x = Math.random()*550;
-                circle.y = Math.random()*400;
-                circle.compositeOperation = "lighter";
+<link rel="stylesheet" href="assets/demoStyles.css" />
 
-                var tween = createjs.Tween.get(circle).to({x:275,y:200}, (0.5+i*0.04)*1500, createjs.Ease.bounceOut).call(tweenComplete);
-                tweens.push({tween:tween, ref:circle});
-                stage.addChild(circle);
-            }
-            activeCount = circleCount;
-            stage.addEventListener("stagemouseup", handleMouseUp);
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var canvas;
+    var stage;
+    var tweens;
+    var activeCount;
+    var circleCount = 25;
+    var text;
 
-	        text = new createjs.Text("Click Anywhere to Tween", "36px Arial", "#777");
-	        text.x = 350;
-	        text.y = 200;
-	        stage.addChild(text);
-			
-			createjs.Ticker.addEventListener("tick", tick);
+    function init() {
+        if (window.top != window) {
+            document.getElementById("header").style.display = "none";
         }
 
-        function handleMouseUp(event) {
-	        if (text) {
-	        	stage.removeChild(text);
-	        	text = null;
-	        }
-            for (var i=0; i<circleCount; i++) {
-                var ref = tweens[i].ref;
-                var tween = tweens[i].tween;
-				createjs.Tween.get(ref,{override:true}).to({x:stage.mouseX,y:stage.mouseY}, (0.5+i*0.04)*1500, createjs.Ease.bounceOut).call(tweenComplete);
-            }
-            activeCount = circleCount;
+        canvas = document.getElementById("testCanvas");
+        stage = new createjs.Stage(canvas);
+		stage.enableDOMEvents(true);
+        tweens = [];
+        stage.enableMouseOver(10);
+		createjs.Touch.enable(stage);
+		
+        for (var i=0; i<circleCount; i++) {
+            // 绘制一个圆，并添加到 Stage 中。
+            var circle = new createjs.Shape();
+            circle.graphics.setStrokeStyle(15);
+            circle.graphics.beginStroke("#113355");
+            circle.graphics.drawCircle(0,0,(i+1)*4);
+            circle.alpha = 1-i*0.02;
+            circle.x = Math.random()*550;
+            circle.y = Math.random()*400;
+            circle.compositeOperation = "lighter";
+
+            var tween = createjs.Tween.get(circle).to({x:275,y:200}, (0.5+i*0.04)*1500, createjs.Ease.bounceOut).call(tweenComplete);
+            tweens.push({tween:tween, ref:circle});
+            stage.addChild(circle);
         }
+        activeCount = circleCount;
+        stage.addEventListener("stagemouseup", handleMouseUp);
 
-        function tweenComplete() {
-            activeCount--;
+        text = new createjs.Text("Click Anywhere to Tween", "36px Arial", "#777");
+        text.x = 350;
+        text.y = 200;
+        stage.addChild(text);
+		
+		createjs.Ticker.addEventListener("tick", tick);
+    }
+
+    function handleMouseUp(event) {
+        if (text) {
+        	stage.removeChild(text);
+        	text = null;
         }
-
-        function tick() {
-            if (activeCount) { stage.update(); }
+        for (var i=0; i<circleCount; i++) {
+            var ref = tweens[i].ref;
+            var tween = tweens[i].tween;
+			createjs.Tween.get(ref,{override:true}).to({x:stage.mouseX,y:stage.mouseY}, (0.5+i*0.04)*1500, createjs.Ease.bounceOut).call(tweenComplete);
         }
+        activeCount = circleCount;
+    }
 
-        init();
-    });
+    function tweenComplete() {
+        activeCount--;
+    }
 
-    </script>
+    function tick() {
+        if (activeCount) { stage.update(); }
+    }
+
+    init();
+});
+</script>
 </head>
+
 <body>
-    <center>
-    	<header id="header" class="TweenJS">
-    	    <h1><span class="text-product">Tween<strong>JS</strong></span> CSS 插件 例子</h1>
-    	    <p>该例子演示了一个插件如何去修改 TweenJS 的值。CSSPlugin 确保 CSS 的位置和大小属性都是以 “px” 作为后缀的。</p>
-    	</header>
-        <canvas id="testCanvas" width="960" height="400" style="border: 5px white solid;"></canvas>
-    </center>
+	<header id="header" class="TweenJS">
+	    <h1><span class="text-product">Tween<strong>JS</strong></span> TweenJS 例子</h1>
+	    <p>该例子演示了如何用 TweenJS 制作动画。</p>
+	</header>
+    <canvas id="testCanvas" width="960" height="400" style="border: 5px white solid;"></canvas>
 </body>
 </html>

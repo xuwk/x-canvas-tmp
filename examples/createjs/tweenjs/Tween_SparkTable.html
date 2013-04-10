@@ -1,21 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>TweenJS Example: Spark Demo</title>
+
+<title>TweenJS：Spark 例子</title>
 
 <link rel="stylesheet" href="assets/demoStyles.css"/>
+<style type="text/css">
+    #eases {
+        width: 200px;
+        height: 400px;
+        padding: 5px;
+        border-left: 2px solid #777;
+        position: absolute;
+        left: 755px;
+    }
+    #eases SPAN {
+        font-weight: bold;
+        clear: left;
+        display: block;
+        padding-top: 10px;
+    }
+    #eases A {
+        float:left;
+        padding: 1px 3px;
+    }
+    #eases A:after {
+        content: ", ";
+    }
+    #eases A:last-child:after {
+        content: "";
+    }
+    #eases A.selected {
+        background-color: #f90;
+        color: #333;
+    }
+</style>
+
 <script type="text/javascript" src="./assets/easeljs-0.6.0.min.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
-<script>
-
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
     var Graphics = xc.module.require("xc.createjs.Graphics");
     var Stage = xc.module.require("xc.createjs.Stage");
     var Shape = xc.module.require("xc.createjs.Shape");
@@ -177,7 +207,6 @@ xc.depends([
         update = true;
         oldX = 0;
         prevPoint.x = prevPoint.y = 0;
-
         Tween.get(bar, {override:true}).to({x:700}, 1500, easeType);
     }
 
@@ -186,7 +215,6 @@ xc.depends([
         bar.x = 0;
         resetRuninng = false;
         currentClip = null;
-
         run(selectedFunction);
     }
 
@@ -237,39 +265,8 @@ xc.depends([
     init();
 });
 </script>
-
-<style type="text/css">
-    #eases {
-        width: 200px;
-        height: 400px;
-        padding: 5px;
-        border-left: 2px solid #777;
-        position: absolute;
-        left: 755px;
-    }
-    #eases SPAN {
-        font-weight: bold;
-        clear: left;
-        display: block;
-        padding-top: 10px;
-    }
-    #eases A {
-        float:left;
-        padding: 1px 3px;
-    }
-    #eases A:after {
-        content: ", ";
-    }
-    #eases A:last-child:after {
-        content: "";
-    }
-    #eases A.selected {
-        background-color: #f90;
-        color: #333;
-    }
-</style>
-
 </head>
+
 <body bgcolor="#000000" >
 	<header id="header" class="TweenJS">
 		<h1><span class="text-product">Tween<strong>JS</strong></span> Spark Table</h1>
@@ -277,8 +274,5 @@ xc.depends([
 	</header>
 	<div id="eases"></div>
 	<canvas id="testCanvas" width="960" height="400" style="border: 5px white solid;"></canvas>
-	<!--<select id="library" size="20" multiple="multiple" onchange="selectItem(this)" class="select">
-			<option value="-1">-- Eases--</option>
-	</select>-->
 </body>
 </html>
