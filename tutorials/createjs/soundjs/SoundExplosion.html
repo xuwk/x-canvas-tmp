@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>SoundJS：Firework 例子</title>
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var canvas, stage;              
+    var sparklePool = [];           // 火花对象池
+    var h, w;                       // Canvas 的高度和宽度
+    var messageField;               // 消息显示区域
+    var sparkleShape;               // 缓存矢量图实例
+    var sparksPerClick = 100;       // 每个 tick 产生火花的总数。该变量能调整以适应低端移动设备。
+
+    function init() {
+        if (window.top != window) {
+            document.getElementById("header").style.display = "none";
+        }
+
+        // 设定声音的默认插件。默认是 WebAudioPlugin，其次是 HTMLAudioPlugin。         
+        if (!createjs.Sound.initializeDefaultPlugins()) {
+            document.getElementById("error").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            return;
+        }
+
+        // 如果当前运行该例子的是移动设备，将要减少火花对象的数量以提高性能。
+        if (createjs.Sound.BrowserDetect.isIOS || createjs.Sound.BrowserDetect.isAndroid || createjs.Sound.BrowserDetect.isBlackberry){
+            sparksPerClick = sparksPerClick >> 1;
+        }
+
+        // 创建一个 Stage 对象并指向 Canvas。
+        canvas = document.getElementById("testCanvas");
+        stage = new createjs.Stage(canvas);
+
+        // 记录 Canvas 的宽度和高度来提高性能。
+        h = canvas.height;
+        w = canvas.width;
+
+        // 如果设备支持 Touch 事件，启用 Touch 事件。
+        createjs.Touch.enable(stage);
+
+        // 用于显示音频资源加载情况的消息区域，主要用于预加载的时候显示加载进度。
+        messageField = new createjs.Text("Loading", "bold 24px Arial", "#FFFFFF");
+        messageField.maxWidth = 1000;
+        messageField.textAlign = "center";  // 注: 设置消息的文本显示在中心位置。
+        messageField.x = canvas.width / 2;
+        messageField.y = canvas.height / 2;
+        stage.addChild(messageField);
+        stage.update(); // 更新 Stage
+
+        var soundInstanceLimit = sparksPerClick;    // 设置 sound 实例的最大值。
+        // 检查是否利用 HTMLAudioPlugin 插件，如果是，MAX_INSTANCES 属性则用 soundInstanceLimit 的值。
+        if (createjs.Sound.activePlugin.toString() == "[HTMLAudioPlugin]") {
+            soundInstanceLimit = createjs.HTMLAudioPlugin.MAX_INSTANCES - 5;
+        }
+
+        // 设置加载清单。
+        var assetsPath = "assets/";
+        var manifest = [
+            {src:assetsPath+"Game-Break.mp3|"+assetsPath+"Game-Break.ogg", id:"0"},
+            {src:assetsPath+"Game-Spawn.mp3|"+assetsPath+"Game-Spawn.ogg", id:"1"},
+            {src:assetsPath+"Game-Shot.mp3|"+assetsPath+"Game-Shot.ogg", id:"2"},
+            {src:assetsPath+"Thunder1.mp3|"+assetsPath+"Thunder1.ogg", id:"3"},
+            {src:assetsPath+"Game-Death.mp3|"+assetsPath+"Game-Death.ogg", id:"4"},
+            {src:assetsPath+"GU-StealDaisy.mp3|"+assetsPath+"GU-StealDaisy.ogg", id:"bounce", data:soundInstanceLimit}
+        ]
+
+        // 实例化一个预加载队列。
+        queue = new createjs.LoadQueue();
+        queue.installPlugin(createjs.Sound);
+        queue.addEventListener("complete", loadComplete);
+        queue.addEventListener("error",handleFileError);
+        queue.addEventListener("progress",handleProgress);
+        queue.loadManifest(manifest);
+    }
+
+    // 显示加载进度
+    function handleProgress(evt) {
+        messageField.text += ".";
+        stage.update();
+    }
+
+    function handleFileError(evt) {
+        // 报出一个错误
+        messageField.text = "Error :("
+        stage.update();
+    }
+
+    function loadComplete() {
+        stage.removeChild(messageField); // 加载完成，移除消息框
+
+        // 直接绑定事件到 Stage 上，比起直接绑定到 Canvas 标签上更好，因为直接绑定到 Canvas 上可能有浏览器兼容性问题。
+        stage.addEventListener("stagemousemove", moveCanvas);
+        stage.addEventListener("stagemousedown", clickCanvas);
+
+        // 创建一个半透明的黑色矩形覆盖整个 Stage。
+        // 在每个 tick 里渲染该矩形将使得 Canvas 变为黑色。
+        var shape = new createjs.Shape(new createjs.Graphics().beginFill('#333').drawRect(0,0,canvas.width+1,canvas.height));
+        shape.alpha = 0.35;
+        shape.cache(0, 0, canvas.width+1, canvas.height);
+        stage.addChild(shape);
+
+        // 创建火花对象的缓存，以提高渲染速度。
+        makeSparkle();
+
+        // 确保 Stage 在每个 tick 都会自动更新。
+        stage.autoClear = false;
+
+        // 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
+        createjs.Ticker.addEventListener("tick", tick);
+    }
+
+    function tick() {
+        // 遍历 Stage 中所有可用的火花对象。
+        var l = stage.getNumChildren();
+        for (var i=l-1; i>0; i--) {
+            var sparkle = stage.getChildAt(i);
+
+            // 设置重力和摩擦力
+            sparkle.vY += 2;
+            sparkle.vX *= 0.98;
+
+            // 更新位置，大小，和透明度。
+            sparkle.x += sparkle.vX;
+            sparkle.y += sparkle.vY;
+            sparkle.alpha += sparkle.vA;
+
+            // 当火花对象不可见或不再移动时，将其从 Stage 移除。
+            if (sparkle.alpha <= 0 || sparkle.y>=h && sparkle.vY < 10) {
+                stage.removeChildAt(i);
+                sparklePool.push(sparkle);
+                continue;
+            }
+
+            // 从底部反弹火花。
+            if (sparkle.y > h) {
+                sparkle.bounceSound.play();
+                sparkle.vY *= -(Math.random()*0.4+0.4);
+                sparkle.y -= sparkle.y%h;
+            }
+            if (sparkle.x >= w || sparkle.x <= 0) {
+                sparkle.vX *= -1;
+            }
+        }
+
+        // 更新 Stage
+        stage.update();
+    }
+
+    // 火花爆炸。
+    function clickCanvas(evt) {
+        var id = Math.round(Math.random() * 4);  // 用于随机匹配资源清单中的音频。
+        createjs.Sound.play(id.toString());
+        addSparkles(Math.random()*sparksPerClick+sparksPerClick|0, evt.stageX, evt.stageY, 2, 0);
+    }
+
+    // 跟踪火花对象。
+    function moveCanvas(evt) {
+        addSparkles(Math.random()*2+1|0, evt.stageX, evt.stageY, 0.5, 0.5);
+    }
+
+    function addSparkles(count, x, y, speed, velX) {
+        // 创建指定数目的火花对象。
+        for (var i=0; i<count; i++) {
+            // 复制原来的火花对象，所以不需要为火花对象设置共享属性。
+            var sparkle = getSparkle();
+
+            // 设置显示属性。
+            sparkle.x = x;
+            sparkle.y = y;
+            sparkle.alpha = Math.random()*0.5+0.5;
+            sparkle.scaleX = sparkle.scaleY = Math.random()+0.3;
+            sparkle.rotation = Math.random()*360;
+
+            // 设置速度。
+            var a = Math.PI*2*Math.random();
+            var v = (Math.random()-0.5)*30*speed;
+            sparkle.vX = Math.cos(a)*v+velX;
+            sparkle.vY = Math.sin(a)*v;
+            sparkle.vA = -Math.random()*0.05-0.01; // alpha
+
+            // 添加到 Stage。
+            stage.addChild(sparkle);
+        }
+    }
+
+    // 对象池接入，该方法会返回一个已存在的对象或创建一个新的对象。
+    // 对象池目的在于避免创建对象时的事件消耗，以及垃圾回收的时间消耗。
+    function getSparkle() {
+        var s;
+        if(sparklePool.length > 0) {
+            s = sparklePool.pop(); // 若池里有对象，将其移除，并返回。
+        } else {
+            // 池里没有对象，则我们需要利用缓存图片去创建一个新的 Shape 对象。
+            s = new createjs.Bitmap(sparkleShape.cacheCanvas);
+            // 添加一个声音，一旦添加成功，将不能再改变。
+            s.bounceSound = createjs.Sound.createInstance("bounce");  // 根据 id 创建
+            s.bounceSound.setVolume(Math.random()*0.01 + 0.01);
+        }
+        return s;
+    }
+
+    // 设置缓存对象，用于快速绘制火花对象。
+    function makeSparkle() {
+        sparkleShape = new createjs.Shape();
+        var g = sparkleShape.graphics;
+
+        g.beginFill("#FFF");
+        g.drawPolyStar(0, 0, 5, 5, 0.7, -90);
+        g.endFill();
+
+        // 设置缓存。
+        sparkleShape.cache(-3,-3,10,10);
+    }
+
+    init();
+});
+</script>
+</head>
+
+<body>
+	<header id="header" class="SoundJS">
+	    <h1><span class="text-product">Sound<strong>JS</strong></span> Firework 例子</h1>
+        <p>该例子展示了在播放动画的同时播放多个音频实例。</p>
+	</header>
+    <div id="error">
+       <h1>对不起！</h1>
+       <p>当前浏览器不支持 SoundJS</p>
+    </div>
+    <div class="canvasHolder">
+		<canvas id="testCanvas" width="960" height="400"></canvas>
+	</div>
+</body>
+</html>

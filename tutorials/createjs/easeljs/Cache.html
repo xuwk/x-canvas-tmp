@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>EaselJS Example：使用缓存和 snapToPixel 例子</title>
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<style>
+    .controls {
+        padding: 10px;
+    }
+</style>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var Stage = xc.module.require("xc.createjs.Stage");
+    var Ticker = xc.module.require("xc.createjs.Ticker");
+    var Shape = xc.module.require("xc.createjs.Shape");
+    var Text = xc.module.require("xc.createjs.Text");
+
+    var canvas;
+    var stage;
+    var shape;
+    var circleRadius=30;
+    var rings = 30;
+
+    function init() {
+        if (window.top != window) {
+            document.getElementById("header").style.display = "none";
+        }
+
+        // 创建一个 Stage 对象并指向 Canvas。
+        canvas = document.getElementById("testCanvas");
+        stage = new Stage(canvas);
+
+        // 创造了大量复杂的矢量图形，并设置随机位置和速度。
+        var colors = ["#828b20", "#b0ac31", "#cbc53d", "#fad779", "#f9e4ad", "#faf2db", "#563512", "#9b4a0b", "#d36600", "#fe8a00", "#f9a71f"];
+
+        for (var i=0; i<200; i++) {
+            shape = new Shape();
+            for (var j=rings; j>0; j--) {
+                shape.graphics.beginFill(colors[Math.random()*colors.length |0]).drawCircle(0,0,circleRadius*j/rings);
+            }
+            shape.x = Math.random()*canvas.width;
+            shape.y = Math.random()*canvas.height;
+            shape.velX = Math.random()*10-5;
+            shape.velY = Math.random()*10-5;
+
+            // 设置所有 Shape 对象的 snapToPixel 属性为 true，所有 Shape 对象该属性默认都为 false。
+            // 当 stage.snapToPixelEnabled 为 true 时 snapToPixel 属性才有效。
+            shape.snapToPixel = true;
+            stage.addChild(shape);
+        }
+
+        // 添加一个 Text 对象用于显示当前帧数。
+        fpsLabel = new Text("-- fps","bold 18px Arial","#FFF");
+        stage.addChild(fpsLabel);
+        fpsLabel.x = 10;
+        fpsLabel.y = 20;
+
+        // 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
+        Ticker.addEventListener("tick", tick);
+        Ticker.setFPS(50);
+    }
+
+    function tick() {
+        var w = canvas.width;
+        var h = canvas.height;
+        var l = stage.getNumChildren()-1;
+
+        // 迭代所有子对象，以及根据它们的 velocity 属性移动它们。
+        for (var i=1; i<l; i++) {
+            var shape = stage.getChildAt(i);
+            shape.x = (shape.x+shape.velX+w)%w;
+            shape.y = (shape.y+shape.velY+h)%h;
+        }
+
+        fpsLabel.text = Math.round(Ticker.getMeasuredFPS())+" fps";
+
+        // 更新 Stage。
+        stage.update();
+    }
+
+    toggleCache = function(value) {
+        // 除了帧数标签以外，迭代所有的子对象，并且设置对应的缓存。
+        var l = stage.getNumChildren()-1;
+        for (var i=0; i<l; i++) {
+            var shape = stage.getChildAt(i);
+            if (value) {
+                shape.cache(-circleRadius, -circleRadius, circleRadius*2, circleRadius*2);
+            } else {
+                shape.uncache();
+            }
+        }
+    }
+
+    init();
+});
+</script>
+</head>
+	
+<body>
+	<header id="header" class="EaselJS">
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> Cache Bitmap 例子</h1>
+	    <p>该例子演示了<strong>DisplayObject.cache()</strong> 和 <strong>snapToPixel</strong>的效果。缓存可以对性能提供极大的优势，因为缓存起像复杂的矢量图形这类子对象，便不必在每个 tick 都重新描绘，从而提高渲染速度，优化性能。但因为 snapToPixel 属性在不同浏览器之前支持程度不同，因此不同的浏览器对缓存的支持程度也不同，但总体上来时，有缓存的性能必然比没缓存的性能要好。</p>
+	</header>
+	<div class="controls">
+		<input type="checkbox" onClick="toggleCache(this.checked);" id="toggleCache"/><label for="toggleCache">启用缓存</label>
+	</div>
+	<canvas id="testCanvas" width="960" height="350"></canvas>
+</body>
+</html>

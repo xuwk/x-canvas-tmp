@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>EaselJS：Extract Frame 例子</title>
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var Bitmap = xc.module.require("xc.createjs.Bitmap");
+    var SpriteSheet = xc.module.require("xc.createjs.SpriteSheet");
+    var SpriteSheetUtils = xc.module.require("xc.createjs.SpriteSheetUtils");
+
+	var imgSeq; // 图片精灵。
+
+	function init() {
+		// 等待图片加载。
+		imgSeq = new Image();
+		imgSeq.onload = handleImageLoad;
+		imgSeq.src = "assets/testSeq.png";
+	}
+
+	function handleImageLoad() {
+	    // 利用加载的图片数据创建精灵，并且定义动画序列。
+	    // 举例，{walkUpRight:[0,19]} 定义了一个名为 “walkUpRight” 的动画，该动画包含了 0 到 19 帧。
+		var data = {
+			images: [imgSeq],
+			frames: {width:64,height:68},
+			animations: {walkUpRight:[0,19], walkDownRight:[20,40], walkRight:[41,59]}
+		};
+
+		// 利用 data 创建精灵。
+		var spriteSheet = new SpriteSheet(data);
+
+		// 提取 walkRight 序列的第一帧，作为一张新的图像。
+		// 可以交替地使用帧号。 
+		img = SpriteSheetUtils.extractFrame(spriteSheet, "walkRight");
+
+	    // 注：可以将该图像作为 Bitmap 对象，但在更多情况下，使用 BitmapAnimation 会更好。
+	    // var bmp = new Bitmap(img);
+
+		// 创建一个新图像添加到 document 的底部。
+		document.getElementById("content").appendChild(img);
+	}
+
+    init();
+});
+</script>
+</head>
+
+<body>
+	<header id="header" class="EaselJS">
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> Extract Frame 例子</h1>
+	    <p>演示了利用 <strong>SpriteSheetUtils.extractFrame()</strong> 方法从已经加载好的精灵表数据中获取单独的一帧作为图片对象。</p>
+	</header>
+	<div id="content">
+		原始精灵表：<br/>
+		<img src="assets/testSeq.png"><br/><br/><br/>
+		获取的一帧：<br/>
+	</div>
+</body>
+</html>
