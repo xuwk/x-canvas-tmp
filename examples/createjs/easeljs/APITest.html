@@ -1,39 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<title>EaselJS: API Test</title>
+<title>EaselJS：API 的使用</title>
 
 <link href="assets/tricolore.css" rel="stylesheet" type="text/css"/>
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css"/>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script src="http://samaxesjs.googlecode.com/files/jquery.toc-1.1.4.min.js"></script>
 <script src="assets/rainbow-custom.min.js"></script>
-
 <script type="text/javascript" src="assets/StringUtils.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
 <script type="text/javascript">
-
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
-    var Graphics = xc.module.require("xc.createjs.Graphics");
-    var Bitmap = xc.module.require("xc.createjs.Bitmap");
-    var BitmapAnimation = xc.module.require("xc.createjs.BitmapAnimation");
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var Shape = xc.module.require("xc.createjs.Shape");
-    var Text = xc.module.require("xc.createjs.Text");
-    var Point = xc.module.require("xc.createjs.Point");
-    var ColorMatrixFilter = xc.module.require("xc.createjs.ColorMatrixFilter");
-    var BoxBlurFilter = xc.module.require("xc.createjs.BoxBlurFilter");
-    var ColorFilter = xc.module.require("xc.createjs.ColorFilter");
-    var SpriteSheet = xc.module.require("xc.createjs.SpriteSheet");
-
     var canvas;
     var img;
     var demos;
@@ -53,52 +38,52 @@ xc.depends([
 
         demos = [
             {label:'lineTo();', graphics:function () {
-                return new Graphics().beginStroke(STROKE_COLOR).moveTo(5, 35).lineTo(110, 75).endStroke();
+                return new createjs.Graphics().beginStroke(STROKE_COLOR).moveTo(5, 35).lineTo(110, 75).endStroke();
             }},
             {label:'arcTo();', graphics:function () {
-                return new Graphics().beginStroke(STROKE_COLOR).moveTo(50, 20).arcTo(150, 20, 150, 70, 50).endStroke();
+                return new createjs.Graphics().beginStroke(STROKE_COLOR).moveTo(50, 20).arcTo(150, 20, 150, 70, 50).endStroke();
             }},
             {label:'quadraticCurveTo();', graphics:function () {
-                return new Graphics().beginStroke(STROKE_COLOR).moveTo(0, 25).quadraticCurveTo(45, 50, 35, 25).endStroke();
+                return new createjs.Graphics().beginStroke(STROKE_COLOR).moveTo(0, 25).quadraticCurveTo(45, 50, 35, 25).endStroke();
             }},
             {label:'bezierCurveTo();', graphics:function () {
-                return new Graphics().beginStroke(STROKE_COLOR).moveTo(5, 75).bezierCurveTo(45, 90, 75, 75, -25, -25).endStroke();
+                return new createjs.Graphics().beginStroke(STROKE_COLOR).moveTo(5, 75).bezierCurveTo(45, 90, 75, 75, -25, -25).endStroke();
             }},
             {label:'beginLinearGradientStroke();', graphics:function () {
-                return new Graphics().beginLinearGradientStroke([STROKE_COLOR, "rgba(50, 50, 50, 1)"], [0, .4], 0, 0, 70, 140).moveTo(5, 25).lineTo(110, 25).endStroke();
+                return new createjs.Graphics().beginLinearGradientStroke([STROKE_COLOR, "rgba(50, 50, 50, 1)"], [0, .4], 0, 0, 70, 140).moveTo(5, 25).lineTo(110, 25).endStroke();
             }},
             {label:'drawRect();', graphics:function () {
-                return new Graphics().beginFill(FILL_COLOR).rect(5, 5, 80, 80);
+                return new createjs.Graphics().beginFill(FILL_COLOR).rect(5, 5, 80, 80);
             }},
             {label:'drawRoundRect();', graphics:function () {
-                return new Graphics().beginFill(FILL_COLOR).drawRoundRect(0, 0, 120, 120, 5);
+                return new createjs.Graphics().beginFill(FILL_COLOR).drawRoundRect(0, 0, 120, 120, 5);
             }},
             {label:'beginLinearGradientFill() with drawRoundRect();', graphics:function () {
-                return new Graphics().beginLinearGradientFill([FILL_COLOR, "rgba(0,0,0,1)"], [0, 1], 0, 0, 0, 130).drawRoundRect(0, 0, 120, 120, 5);
+                return new createjs.Graphics().beginLinearGradientFill([FILL_COLOR, "rgba(0,0,0,1)"], [0, 1], 0, 0, 0, 130).drawRoundRect(0, 0, 120, 120, 5);
             }},
             {label:'drawCircle();', graphics:function () {
-                return new Graphics().beginFill(FILL_COLOR).drawCircle(40, 40, 40);
+                return new createjs.Graphics().beginFill(FILL_COLOR).drawCircle(40, 40, 40);
             }},
             {label:'beginRadialGradientFill() with drawCircle();', graphics:function () {
-                return new Graphics().beginRadialGradientFill([FILL_COLOR, "rgba(0,0,0,1)"], [0, 1], 0, 0, 0, 0, 0, 60).drawCircle(40, 40, 40);
+                return new createjs.Graphics().beginRadialGradientFill([FILL_COLOR, "rgba(0,0,0,1)"], [0, 1], 0, 0, 0, 0, 0, 60).drawCircle(40, 40, 40);
             }},
             {label:'drawEllipse();', graphics:function () {
-                return new Graphics().beginFill(FILL_COLOR).drawEllipse(5, 5, 60, 120);
+                return new createjs.Graphics().beginFill(FILL_COLOR).drawEllipse(5, 5, 60, 120);
             }},
             {label:'Draw Hexagon using drawPolyStar();', graphics:function () {
-                return new Graphics().beginFill(FILL_COLOR).drawPolyStar(60, 60, 60, 6, 0, 45);
+                return new createjs.Graphics().beginFill(FILL_COLOR).drawPolyStar(60, 60, 60, 6, 0, 45);
             }},
             {label:'Draw a star using drawPolyStar();', graphics:function () {
-                return new Graphics().beginFill(FILL_COLOR).drawPolyStar(80, 80, 70, 5, 0.6, -90);
+                return new createjs.Graphics().beginFill(FILL_COLOR).drawPolyStar(80, 80, 70, 5, 0.6, -90);
             }},
             {label:'beginBitmapStroke() with drawRect();', graphics:function () {
-                return new Graphics().setStrokeStyle(25).beginBitmapStroke(img).rect(5, 5, 100, 100);
+                return new createjs.Graphics().setStrokeStyle(25).beginBitmapStroke(img).rect(5, 5, 100, 100);
             }},
             {label:'drawRoundRectComplex();', graphics:function () {
-                return new Graphics().beginFill(FILL_COLOR).drawRoundRectComplex(5, 5, 70, 70, 5, 10, 15, 25);
+                return new createjs.Graphics().beginFill(FILL_COLOR).drawRoundRectComplex(5, 5, 70, 70, 5, 10, 15, 25);
             }},
             {label:'drawCircle(); with beginBitmapFill();', graphics:function () {
-                return new Graphics().beginStroke(STROKE_COLOR).beginBitmapFill(img).drawCircle(30, 30, 30).endStroke();
+                return new createjs.Graphics().beginStroke(STROKE_COLOR).beginBitmapFill(img).drawCircle(30, 30, 30).endStroke();
             }},
             {label:'Text', code:textDemo },
             {label:'BitmapAnimation', code:bitmapAnimationDemo },
@@ -111,67 +96,62 @@ xc.depends([
     }
 
     function mouseDemo(stage) {
-        //Click one of the shapes.
-        var sprite = new Shape();
+        var sprite = new createjs.Shape(); // 点击其中一个 Shape 对象。
         sprite.graphics.beginFill(FILL_COLOR).drawCircle(30, 30, 20).moveTo(50, 50).drawRect(50, 50, 25, 25);
         sprite.onClick = function (event) {
             alert('Click!');
         };
-
         stage.addChild(sprite);
     }
 
     function maskDemo(stage) {
-        var shape = new Shape();
-        shape.graphics = new Graphics().beginStroke(STROKE_COLOR).beginBitmapFill(img).drawCircle(35, 25, 20).endStroke();
-        var image = new Bitmap(img);
+        var shape = new createjs.Shape();
+        shape.graphics = new createjs.Graphics().beginStroke(STROKE_COLOR).beginBitmapFill(img).drawCircle(35, 25, 20).endStroke();
+        var image = new createjs.Bitmap(img);
         image.mask = shape;
-
         stage.addChild(image);
     }
 
     function colorMatrixFilter(stage) {
-        var greyScaleFilter = new ColorMatrixFilter([
-            0.33, 0.33, 0.33, 0, 0, // red
-            0.33, 0.33, 0.33, 0, 0, // green
-            0.33, 0.33, 0.33, 0, 0, // blue
-            0, 0, 0, 1, 0  // alpha
+        var greyScaleFilter = new createjs.ColorMatrixFilter([
+            0.33, 0.33, 0.33, 0, 0, // 红
+            0.33, 0.33, 0.33, 0, 0, // 绿
+            0.33, 0.33, 0.33, 0, 0, // 蓝
+            0, 0, 0, 1, 0  // 透明度
         ]);
-
-        var image = new Bitmap(img);
+        var image = new createjs.Bitmap(img);
         image.filters = [greyScaleFilter];
         image.cache(0, 0, img.width, img.height);
         stage.addChild(image);
     }
 
     function blurFilter(stage) {
-        var blurFilter = new BoxBlurFilter(5, 2, 2);
+        var blurFilter = new createjs.BoxBlurFilter(5, 2, 2);
         var margins = blurFilter.getBounds();
-        var image = new Bitmap(img);
+        var image = new createjs.Bitmap(img);
         image.filters = [blurFilter];
-        // filters are only displayed when the display object is cached
-        // later, you can call updateCache() to update changes to your filters
+        // 过滤器只会在显示对象在缓存时呈现，可以通过调用 updateCache() 改变过滤器。 
         image.cache(margins.x, margins.y, img.width + margins.width, img.height + margins.height);
         image.x += image.x + image.width;
         stage.addChild(image);
     }
 
     function colorFilter(stage) {
-        var removeRedFilter = new ColorFilter(0, 1, 1, 1);
-        var image = new Bitmap(img);
+        var removeRedFilter = new createjs.ColorFilter(0, 1, 1, 1);
+        var image = new createjs.Bitmap(img);
         image.filters = [removeRedFilter];
         image.cache(0, 0, img.width, img.height);
         stage.addChild(image);
     }
 
     function textDemo(stage) {
-        var txt = new Text("Hello CreateJS!", "15px Arial", "#FFF");
+        var txt = new createjs.Text("Hello CreateJS!", "15px Arial", "#FFF");
         txt.y = 45;
         stage.addChild(txt);
     }
 
     function bitmapAnimationDemo(stage) {
-        var ss = new SpriteSheet({ "animations":{
+        var ss = new createjs.SpriteSheet({ "animations":{
             "run":[0, 25],
             "jump":[26, 63]},
             "images":["assets/runningGrant.png"],
@@ -188,13 +168,13 @@ xc.depends([
         ss.getAnimation("run").next = "jump";
         ss.getAnimation("jump").next = "run";
 
-        var bitmapAnimation = new BitmapAnimation(ss);
+        var bitmapAnimation = new createjs.BitmapAnimation(ss);
         bitmapAnimation.scaleY = bitmapAnimation.scaleX = .4;
 
         bitmapAnimation.gotoAndPlay("run");
 
-        Ticker.setFPS(60);
-        Ticker.addEventListener("tick", stage);
+        createjs.Ticker.setFPS(60);
+        createjs.Ticker.addEventListener("tick", stage);
         stage.addChild(bitmapAnimation);
     }
 
@@ -239,10 +219,10 @@ xc.depends([
     }
 
     function drawToCanvas(canvas, data) {
-        var stage = new Stage(canvas.get(0));
+        var stage = new createjs.Stage(canvas.get(0));
 
         if (data.graphics) {
-            var shape = new Shape(data.graphics());
+            var shape = new createjs.Shape(data.graphics());
             stage.addChild(shape);
         } else {
             data.code(stage, canvas.get(0));
@@ -252,26 +232,18 @@ xc.depends([
     }
 
     $(init);
-
 });
 </script>
 </head>
+
 <body>
-
-<header id="header" class="EaselJS">
-    <h1><span class="text-product">Easel<strong>JS</strong></span> API Test</h1>
-
-    <p>This demo shows the usage of many of the visual APIs.</p>
-</header>
-
-<div style="width: 960px; height: 400px; overflow: scroll; position: relative;"
-     id="wrap">
+    <header id="header" class="EaselJS">
+        <h1><span class="text-product">Easel<strong>JS</strong></span> API 的使用</h1>
+        <p> 该例子展示了许多 API 的用法 </p>
+    </header>
     <div id="toc"></div>
-
     <div class="canvasHolder"
          style=" padding-left:25px; float: left; height: 150px">
     </div>
-</div>
-
 </body>
 </html>
