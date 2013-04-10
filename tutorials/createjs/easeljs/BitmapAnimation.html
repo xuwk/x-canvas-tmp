@@ -3,9 +3,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<title>EaselJS：动画序列和精灵表例子</title>
+<title>EaselJS：动画序列和精灵表</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
 <script type="text/javascript">
@@ -13,12 +18,6 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-    var BitmapAnimation = xc.module.require("xc.createjs.BitmapAnimation");
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var SpriteSheet = xc.module.require("xc.createjs.SpriteSheet");
-    var SpriteSheetUtils = xc.module.require("xc.createjs.SpriteSheetUtils");
-
     var canvas;
     var stage;
 
@@ -29,7 +28,7 @@ xc.depends([
         // 找到 Canvas 并且加载图片，等待最后一张图片完成加载。
         canvas = document.getElementById("testCanvas");
         // 创建 Stage 并指向 Canvas。
-        stage = new Stage(canvas);
+        stage = new createjs.Stage(canvas);
         img = new Image();
         img.src = "assets/testSeq.png";
         img.onload = handleImageLoad;
@@ -41,7 +40,7 @@ xc.depends([
         var h = canvas.height;
 
         // 创建 SpriteSheet 类，并分配相关数据。
-        var spriteSheet  = new SpriteSheet({
+        var spriteSheet  = new createjs.SpriteSheet({
             images: [img],
             frames: {width:64, height:68, regX:32, regY:34},
             animations: {
@@ -55,7 +54,7 @@ xc.depends([
         // 可以通过设置 scaleX = -1 翻动精灵，但该操作对于某些浏览器非常消耗性能。
         // 取而代之的，我们增加了一个有翻转操作的版本到精灵表。
         // 但只增加了水平翻转。
-        SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);
+        createjs.SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);
 
         // 我们可以通过 “next” 属性链接下一个序列，像以下代码：
         // 而我们更希望使用 angleChange 方法。
@@ -67,7 +66,7 @@ xc.depends([
          */
 
         // 创建 BitmapAnimation 实例，用于播放精灵。
-        var bmpAnim = new BitmapAnimation(spriteSheet);
+        var bmpAnim = new createjs.BitmapAnimation(spriteSheet);
 
         // 开始播放第一个序列图。
         bmpAnim.gotoAndPlay("walkRt"); //动画
@@ -96,7 +95,7 @@ xc.depends([
         }
 
         // 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
-        Ticker.addEventListener("tick", tick);
+        createjs.Ticker.addEventListener("tick", tick);
     }
 
     // 一旦加载图片失败时，调用该方法。
@@ -133,14 +132,139 @@ xc.depends([
 </head>
 
 <body>
-    <header id="header" class="EaselJS">
-        <h1><span class="text-product">Easel<strong>JS</strong></span> Bitmap Animation 例子</h1>
-        <p>该例子展示如何使用 <strong>SpriteSheet</strong>，<strong>BitmapAnimation</strong>，
-            和 <strong>SpriteSheetUtils.addFlippedFrames()</strong>。</p>
-        <p>某些浏览器不支持在本地环境加载图片，或获取图片数据，可能抛出安全性错误，遇到这种情况在服务器下运行该文件即可。</p>
-    </header>
-    <div class="canvasHolder">
-        <canvas id="testCanvas" width="960" height="400"></canvas>
-    </div>
+    <center>
+        <header id="header" class="EaselJS">
+            <h1><span class="text-product">Easel<strong>JS</strong></span> 动画序列和精灵表</h1>
+            <p>该例子展示如何使用 <strong>SpriteSheet</strong>，<strong>BitmapAnimation</strong>，
+                和 <strong>SpriteSheetUtils.addFlippedFrames()</strong>。</p>
+            <p>某些浏览器不支持在本地环境加载图片，或获取图片数据，可能抛出安全性错误，遇到这种情况在服务器下运行该文件即可。</p>
+        </header>
+        <div class="canvasHolder">
+            <canvas id="testCanvas" width="960" height="400"></canvas>
+        </div>
+    </center>
+    <section id="header" class="EaselJS">
+        <center>
+             <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一: 定义变量</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas;
+var stage;
+var img = new Image();
+var bmpAnimList;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二: 初始化变量。并为图片绑定 handleImageLoad 方法，作为加载完成时的回调方法</div><br />
+                <textarea class="tutorialCode" name="code">
+function init() {
+    // 找到 Canvas 并且加载图片，等待最后一张图片完成加载。
+    canvas = document.getElementById("testCanvas");
+    // 创建 Stage 并指向 Canvas。
+    stage = new createjs.Stage(canvas);
+    img = new Image();
+    img.src = "assets/testSeq.png";
+    img.onload = handleImageLoad;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三: 编写 handleImageLoad 方法</div><br />
+                <textarea class="tutorialCode" name="code">
+function handleImageLoad(event) {
+    // 记录 Canvas 的宽度和高度，用于后面的计算。
+    var w = canvas.width;
+    var h = canvas.height;
+
+    // 创建 SpriteSheet 类，并分配相关数据。
+    var spriteSheet  = new createjs.SpriteSheet({
+        images: [img],
+        frames: {width:64, height:68, regX:32, regY:34},
+        animations: {
+            walkUpRt:[0,19,"walkRt"],
+            walkDnRt:[20,39,"walkUpRt"],
+            walkRt:[41,59,"walkDnRt"]
+        }
+    });
+
+    // 保存文件大小，仅保存精灵向右运动的动画。
+    // 可以通过设置 scaleX = -1 翻动精灵，但该操作对于某些浏览器非常消耗性能。
+    // 取而代之的，我们增加了一个有翻转操作的版本到精灵表。
+    // 但只增加了水平翻转。
+    createjs.SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);
+
+    // 我们可以通过 “next” 属性链接下一个序列，像以下代码：
+    // 而我们更希望使用 angleChange 方法。
+    /*
+     spriteSheet.getAnimation("walkDnRt").next = "walkDnRt_h";
+     spriteSheet.getAnimation("walkDnRt_h").next = "walkRt_h";
+     spriteSheet.getAnimation("walkRt_h").next = "walkUpRt_h";
+     spriteSheet.getAnimation("walkUpRt_h").next = "walkUpRt";
+     */
+
+    // 创建 BitmapAnimation 实例，用于播放精灵。
+    var bmpAnim = new createjs.BitmapAnimation(spriteSheet);
+
+    // 开始播放第一个序列图。
+    bmpAnim.gotoAndPlay("walkRt"); //动画
+
+    // 基于第一个精灵创建一组老鼠对象，再把它们添加到 Stage 上，以及添加到集合中。
+    var l = 50;
+    bmpAnimList = [];
+    for (var i=0; i < l; i++) {
+        // 每当序列图播放完成的时候，都将执行 angleChange 回调方法。
+        bmpAnim.addEventListener("animationend", angleChange);
+        bmpAnim.name = "rat"+i;
+        bmpAnim.speed = Math.random()*6+2;
+        bmpAnim.direction = 90;
+        bmpAnim.vX = bmpAnim.speed;
+        bmpAnim.vY = 0;
+        bmpAnim.x = Math.random()*(w-220)+60|0;
+        bmpAnim.y = Math.random()*(h-220)+0|0;
+
+        // "walkRt" 动画从随机一帧开始。
+        bmpAnim.currentAnimationFrame = Math.random()*spriteSheet.getNumFrames("walkRt")|0;
+        stage.addChild(bmpAnim);
+        bmpAnimList.push(bmpAnim);
+
+        // 比起每次都创建一个新的实例，继而设置属性，复制当前的实例然后覆盖需要重写的属性效果更佳。
+        if (i < l-1) { bmpAnim = bmpAnim.clone(); }
+    }
+
+    // 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
+    createjs.Ticker.addEventListener("tick", tick);
+}
+
+function angleChange(o) {
+    bmpAnim = o.target;
+    //当所有序列都完成，更新老鼠对象的头部动画以及匹配对应的速度。
+    bmpAnim.direction -= 60;
+    var angle = bmpAnim.direction * (Math.PI/180);
+    bmpAnim.vX = Math.sin(angle) * bmpAnim.speed;
+    bmpAnim.vY = Math.cos(angle) * bmpAnim.speed;
+    var nextMap = {walkRt:"walkDnRt",walkDnRt:"walkDnRt_h",walkDnRt_h:"walkRt_h",walkRt_h:"walkUpRt_h",walkUpRt_h:"walkUpRt",walkUpRt:"walkRt"};
+    bmpAnim.gotoAndPlay(nextMap[o.name]);
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：编写 tick 方法</div><br />
+                <textarea class="tutorialCode" name="code">
+function tick() {
+    // 根据所有 vX/vY 属性移动所有老鼠对象。
+    var l = bmpAnimList.length;
+    for (var i=0; i < l; i++) {
+        var bmpAnim = bmpAnimList[i];
+        bmpAnim.x += bmpAnim.vX;
+        bmpAnim.y += bmpAnim.vY;
+    }
+    // 更新 Stage
+    stage.update();
+}</textarea>
+        </div>
+    </section>
+<script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>

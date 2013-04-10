@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<title>EaselJS：动画序列和精灵表例子</title>
+<title>EaselJS：动画序列和精灵表</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
@@ -13,12 +13,6 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-    var BitmapAnimation = xc.module.require("xc.createjs.BitmapAnimation");
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var SpriteSheet = xc.module.require("xc.createjs.SpriteSheet");
-    var SpriteSheetUtils = xc.module.require("xc.createjs.SpriteSheetUtils");
-
     var canvas;
     var stage;
 
@@ -29,7 +23,7 @@ xc.depends([
         // 找到 Canvas 并且加载图片，等待最后一张图片完成加载。
         canvas = document.getElementById("testCanvas");
         // 创建 Stage 并指向 Canvas。
-        stage = new Stage(canvas);
+        stage = new createjs.Stage(canvas);
         img = new Image();
         img.src = "assets/testSeq.png";
         img.onload = handleImageLoad;
@@ -41,7 +35,7 @@ xc.depends([
         var h = canvas.height;
 
         // 创建 SpriteSheet 类，并分配相关数据。
-        var spriteSheet  = new SpriteSheet({
+        var spriteSheet  = new createjs.SpriteSheet({
             images: [img],
             frames: {width:64, height:68, regX:32, regY:34},
             animations: {
@@ -55,7 +49,7 @@ xc.depends([
         // 可以通过设置 scaleX = -1 翻动精灵，但该操作对于某些浏览器非常消耗性能。
         // 取而代之的，我们增加了一个有翻转操作的版本到精灵表。
         // 但只增加了水平翻转。
-        SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);
+        createjs.SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);
 
         // 我们可以通过 “next” 属性链接下一个序列，像以下代码：
         // 而我们更希望使用 angleChange 方法。
@@ -67,7 +61,7 @@ xc.depends([
          */
 
         // 创建 BitmapAnimation 实例，用于播放精灵。
-        var bmpAnim = new BitmapAnimation(spriteSheet);
+        var bmpAnim = new createjs.BitmapAnimation(spriteSheet);
 
         // 开始播放第一个序列图。
         bmpAnim.gotoAndPlay("walkRt"); //动画
@@ -96,7 +90,7 @@ xc.depends([
         }
 
         // 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
-        Ticker.addEventListener("tick", tick);
+        createjs.Ticker.addEventListener("tick", tick);
     }
 
     // 一旦加载图片失败时，调用该方法。
@@ -134,7 +128,7 @@ xc.depends([
 
 <body>
     <header id="header" class="EaselJS">
-        <h1><span class="text-product">Easel<strong>JS</strong></span> Bitmap Animation 例子</h1>
+        <h1><span class="text-product">Easel<strong>JS</strong></span> 动画序列和精灵表</h1>
         <p>该例子展示如何使用 <strong>SpriteSheet</strong>，<strong>BitmapAnimation</strong>，
             和 <strong>SpriteSheetUtils.addFlippedFrames()</strong>。</p>
         <p>某些浏览器不支持在本地环境加载图片，或获取图片数据，可能抛出安全性错误，遇到这种情况在服务器下运行该文件即可。</p>
