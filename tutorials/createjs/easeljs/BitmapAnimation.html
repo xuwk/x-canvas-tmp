@@ -145,96 +145,76 @@ xc.depends([
     </center>
     <section id="header" class="EaselJS">
         <center>
-             <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
         </center>
+        
         <div class="tutorialBody">
-            <div class="tutorialTitle">步骤一: 定义变量</div><br />
+            <div class="tutorialTitle">步骤一: 定义变量，以及创建一个 stage 对象并指向 canvas。</div><br />
                 <textarea class="tutorialCode" name="code">
 var canvas;
 var stage;
 var img = new Image();
-var bmpAnimList;</textarea>
+var bmpAnimList;
+
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);</textarea>
         </div>
 
         <div class="tutorialBody">
-            <div class="tutorialTitle">步骤二: 初始化变量。并为图片绑定 handleImageLoad 方法，作为加载完成时的回调方法</div><br />
+            <div class="tutorialTitle">步骤二: 加载图片资源。</div><br />
                 <textarea class="tutorialCode" name="code">
-function init() {
-    // 找到 Canvas 并且加载图片，等待最后一张图片完成加载。
-    canvas = document.getElementById("testCanvas");
-    // 创建 Stage 并指向 Canvas。
-    stage = new createjs.Stage(canvas);
-    img = new Image();
-    img.src = "assets/testSeq.png";
-    img.onload = handleImageLoad;
-}</textarea>
+img = new Image();
+img.src = "assets/testSeq.png";
+img.onload = handleImageLoad;</textarea>
         </div>
 
         <div class="tutorialBody">
-            <div class="tutorialTitle">步骤三: 编写 handleImageLoad 方法</div><br />
+            <div class="tutorialTitle">步骤三: 利用图片对象，创建老鼠 SpriteSheet 类，并分配相关数据。继而保存向右运动效果。</div><br />
                 <textarea class="tutorialCode" name="code">
-function handleImageLoad(event) {
-    // 记录 Canvas 的宽度和高度，用于后面的计算。
-    var w = canvas.width;
-    var h = canvas.height;
-
-    // 创建 SpriteSheet 类，并分配相关数据。
-    var spriteSheet  = new createjs.SpriteSheet({
-        images: [img],
-        frames: {width:64, height:68, regX:32, regY:34},
-        animations: {
-            walkUpRt:[0,19,"walkRt"],
-            walkDnRt:[20,39,"walkUpRt"],
-            walkRt:[41,59,"walkDnRt"]
-        }
-    });
-
-    // 保存文件大小，仅保存精灵向右运动的动画。
-    // 可以通过设置 scaleX = -1 翻动精灵，但该操作对于某些浏览器非常消耗性能。
-    // 取而代之的，我们增加了一个有翻转操作的版本到精灵表。
-    // 但只增加了水平翻转。
-    createjs.SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);
-
-    // 我们可以通过 “next” 属性链接下一个序列，像以下代码：
-    // 而我们更希望使用 angleChange 方法。
-    /*
-     spriteSheet.getAnimation("walkDnRt").next = "walkDnRt_h";
-     spriteSheet.getAnimation("walkDnRt_h").next = "walkRt_h";
-     spriteSheet.getAnimation("walkRt_h").next = "walkUpRt_h";
-     spriteSheet.getAnimation("walkUpRt_h").next = "walkUpRt";
-     */
-
-    // 创建 BitmapAnimation 实例，用于播放精灵。
-    var bmpAnim = new createjs.BitmapAnimation(spriteSheet);
-
-    // 开始播放第一个序列图。
-    bmpAnim.gotoAndPlay("walkRt"); //动画
-
-    // 基于第一个精灵创建一组老鼠对象，再把它们添加到 Stage 上，以及添加到集合中。
-    var l = 50;
-    bmpAnimList = [];
-    for (var i=0; i < l; i++) {
-        // 每当序列图播放完成的时候，都将执行 angleChange 回调方法。
-        bmpAnim.addEventListener("animationend", angleChange);
-        bmpAnim.name = "rat"+i;
-        bmpAnim.speed = Math.random()*6+2;
-        bmpAnim.direction = 90;
-        bmpAnim.vX = bmpAnim.speed;
-        bmpAnim.vY = 0;
-        bmpAnim.x = Math.random()*(w-220)+60|0;
-        bmpAnim.y = Math.random()*(h-220)+0|0;
-
-        // "walkRt" 动画从随机一帧开始。
-        bmpAnim.currentAnimationFrame = Math.random()*spriteSheet.getNumFrames("walkRt")|0;
-        stage.addChild(bmpAnim);
-        bmpAnimList.push(bmpAnim);
-
-        // 比起每次都创建一个新的实例，继而设置属性，复制当前的实例然后覆盖需要重写的属性效果更佳。
-        if (i < l-1) { bmpAnim = bmpAnim.clone(); }
+var spriteSheet  = new createjs.SpriteSheet({
+    images: [img],
+    frames: {width:64, height:68, regX:32, regY:34},
+    animations: {
+        walkUpRt:[0,19,"walkRt"],
+        walkDnRt:[20,39,"walkUpRt"],
+        walkRt:[41,59,"walkDnRt"]
     }
+});
 
-    // 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
-    createjs.Ticker.addEventListener("tick", tick);
+createjs.SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四: 创建一 BitmapAnimation 对象，并将其播放。</div><br />
+                <textarea class="tutorialCode" name="code">
+var bmpAnim = new createjs.BitmapAnimation(spriteSheet);
+bmpAnim.gotoAndPlay("walkRt"); </textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：基于第一个创建的精灵，复制多 50 个老鼠对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 基于第一个精灵创建一组老鼠对象，再把它们添加到 Stage 上，以及添加到集合中。
+var l = 50;
+bmpAnimList = [];
+for (var i=0; i < l; i++) {
+    // 每当序列图播放完成的时候，都将执行 angleChange 回调方法。
+    bmpAnim.addEventListener("animationend", angleChange);
+    bmpAnim.name = "rat"+i;
+    bmpAnim.speed = Math.random()*6+2;
+    bmpAnim.direction = 90;
+    bmpAnim.vX = bmpAnim.speed;
+    bmpAnim.vY = 0;
+    bmpAnim.x = Math.random()*(w-220)+60|0;
+    bmpAnim.y = Math.random()*(h-220)+0|0;
+
+    // "walkRt" 动画从随机一帧开始。
+    bmpAnim.currentAnimationFrame = Math.random()*spriteSheet.getNumFrames("walkRt")|0;
+    stage.addChild(bmpAnim);
+    bmpAnimList.push(bmpAnim);
+
+    // 比起每次都创建一个新的实例，继而设置属性，复制当前的实例然后覆盖需要重写的属性效果更佳。
+    if (i < l-1) { bmpAnim = bmpAnim.clone(); }
 }
 
 function angleChange(o) {
@@ -246,12 +226,15 @@ function angleChange(o) {
     bmpAnim.vY = Math.cos(angle) * bmpAnim.speed;
     var nextMap = {walkRt:"walkDnRt",walkDnRt:"walkDnRt_h",walkDnRt_h:"walkRt_h",walkRt_h:"walkUpRt_h",walkUpRt_h:"walkUpRt",walkUpRt:"walkRt"};
     bmpAnim.gotoAndPlay(nextMap[o.name]);
-}</textarea>
+} </textarea>
         </div>
 
         <div class="tutorialBody">
-            <div class="tutorialTitle">步骤四：编写 tick 方法</div><br />
+            <div class="tutorialTitle">步骤六：绑定并编写 tick 方法。使每个老鼠对象能按规定路线运动。</div><br />
                 <textarea class="tutorialCode" name="code">
+// 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
+createjs.Ticker.addEventListener("tick", tick);
+
 function tick() {
     // 根据所有 vX/vY 属性移动所有老鼠对象。
     var l = bmpAnimList.length;

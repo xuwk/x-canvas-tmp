@@ -12,13 +12,6 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Shape = xc.module.require("xc.createjs.Shape");
-    var Bitmap = xc.module.require("xc.createjs.Bitmap");
-    var Container = xc.module.require("xc.createjs.Container");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var Touch = xc.module.require("xc.createjs.Touch");
-
 	var canvas, stage;
 	var mouseTarget;   // 标识在鼠标下或正在被拖动的显示对象。
 	var dragStarted;   // 标识当前是否正在进行拖动操作。
@@ -33,8 +26,8 @@ xc.depends([
 
 		canvas = document.getElementById("testCanvas"); // 创建一个 Stage 对象并指向 Canvas。
 
-		stage = new Stage(canvas); // 检查当前浏览器是否支持 Touch 事件。		
-		Touch.enable(stage); // 如果当前设备支持 Touch 事件，将其启用。
+		stage = new createjs.Stage(canvas); // 检查当前浏览器是否支持 Touch 事件。		
+		createjs.Touch.enable(stage); // 如果当前设备支持 Touch 事件，将其启用。
 
         stage.mouseMoveOutside = true; // 设置当鼠标离开 Canvas 时，仍跟踪鼠标。
 		stage.enableMouseOver(10); // 启用 mouseover 事件。
@@ -46,7 +39,7 @@ xc.depends([
 	}
 
 	function stop() {
-		Ticker.removeEventListener("tick", tick);
+		createjs.Ticker.removeEventListener("tick", tick);
 	}
 
 	function handleImageLoad(event) {
@@ -54,11 +47,11 @@ xc.depends([
 		var imgW = image.width;
 		var imgH = image.height;
 		var bitmap;
-		var container = new Container();
+		var container = new createjs.Container();
 		stage.addChild(container);
 		
 	    // 创建一个指定雏菊图片中心的 Shape 对象。
-		var hitArea = new Shape();
+		var hitArea = new createjs.Shape();
 		hitArea.graphics.beginFill("#FFF").drawEllipse(-11,-14,24,18);
 
 		// 设置目标对象的 hitArea 坐标，该坐标系建立于目标对象（bitmap 实例）。
@@ -67,7 +60,7 @@ xc.depends([
 
 		// 创建随机位置的雏菊图片，并填充满整个屏幕。
 		for(var i = 0; i < 100; i++){
-			bitmap = new Bitmap(image);
+			bitmap = new createjs.Bitmap(image);
 			container.addChild(bitmap);
 			bitmap.x = canvas.width * Math.random()|0;
 			bitmap.y = canvas.height * Math.random()|0;
@@ -102,7 +95,7 @@ xc.depends([
 					target.scaleX = target.scaleY = target.scale*1.2;
 					update = true;
 				});
-				bitmap.addEventListener("mouseuut", function() {
+				bitmap.addEventListener("mouseout", function() {
 					target.scaleX = target.scaleY = target.scale;
 					update = true;
 				});
@@ -110,7 +103,7 @@ xc.depends([
 		}
 
 		document.getElementById("loader").className = "";
-		Ticker.addEventListener("tick", tick);
+		createjs.Ticker.addEventListener("tick", tick);
 	}
 
 	function tick() {

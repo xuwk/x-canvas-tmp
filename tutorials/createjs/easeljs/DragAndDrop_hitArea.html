@@ -5,6 +5,11 @@
 <title>EaselJS：带有点击区域拖拽效果的实现</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
 <script type="text/javascript">
@@ -12,13 +17,6 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Shape = xc.module.require("xc.createjs.Shape");
-    var Bitmap = xc.module.require("xc.createjs.Bitmap");
-    var Container = xc.module.require("xc.createjs.Container");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var Touch = xc.module.require("xc.createjs.Touch");
-
 	var canvas, stage;
 	var mouseTarget;   // 标识在鼠标下或正在被拖动的显示对象。
 	var dragStarted;   // 标识当前是否正在进行拖动操作。
@@ -26,15 +24,12 @@ xc.depends([
 	var update = true;
 
 	function init() {
-		if (window.top != window) {
-			document.getElementById("header").style.display = "none";
-		}
 		document.getElementById("loader").className = "loader";
 
 		canvas = document.getElementById("testCanvas"); // 创建一个 Stage 对象并指向 Canvas。
 
-		stage = new Stage(canvas); // 检查当前浏览器是否支持 Touch 事件。		
-		Touch.enable(stage); // 如果当前设备支持 Touch 事件，将其启用。
+		stage = new createjs.Stage(canvas); // 检查当前浏览器是否支持 Touch 事件。		
+		createjs.Touch.enable(stage); // 如果当前设备支持 Touch 事件，将其启用。
 
         stage.mouseMoveOutside = true; // 设置当鼠标离开 Canvas 时，仍跟踪鼠标。
 		stage.enableMouseOver(10); // 启用 mouseover 事件。
@@ -46,7 +41,7 @@ xc.depends([
 	}
 
 	function stop() {
-		Ticker.removeEventListener("tick", tick);
+		createjs.Ticker.removeEventListener("tick", tick);
 	}
 
 	function handleImageLoad(event) {
@@ -54,11 +49,11 @@ xc.depends([
 		var imgW = image.width;
 		var imgH = image.height;
 		var bitmap;
-		var container = new Container();
+		var container = new createjs.Container();
 		stage.addChild(container);
 		
 	    // 创建一个指定雏菊图片中心的 Shape 对象。
-		var hitArea = new Shape();
+		var hitArea = new createjs.Shape();
 		hitArea.graphics.beginFill("#FFF").drawEllipse(-11,-14,24,18);
 
 		// 设置目标对象的 hitArea 坐标，该坐标系建立于目标对象（bitmap 实例）。
@@ -67,7 +62,7 @@ xc.depends([
 
 		// 创建随机位置的雏菊图片，并填充满整个屏幕。
 		for(var i = 0; i < 100; i++){
-			bitmap = new Bitmap(image);
+			bitmap = new createjs.Bitmap(image);
 			container.addChild(bitmap);
 			bitmap.x = canvas.width * Math.random()|0;
 			bitmap.y = canvas.height * Math.random()|0;
@@ -102,7 +97,7 @@ xc.depends([
 					target.scaleX = target.scaleY = target.scale*1.2;
 					update = true;
 				});
-				bitmap.addEventListener("mouseuut", function() {
+				bitmap.addEventListener("mouseout", function() {
 					target.scaleX = target.scaleY = target.scale;
 					update = true;
 				});
@@ -110,7 +105,7 @@ xc.depends([
 		}
 
 		document.getElementById("loader").className = "";
-		Ticker.addEventListener("tick", tick);
+		createjs.Ticker.addEventListener("tick", tick);
 	}
 
 	function tick() {
@@ -127,13 +122,121 @@ xc.depends([
 </head>
 
 <body>
-	<div id="loader"></div>
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> 带有点击区域拖拽效果的实现</h1>
-	    <p>该例子与拖拽效果的例子是相似的，只是额外添加了 <strong>hitArea</strong> 属性，使得只有雏菊图像的中间才能响应鼠标事件，从而拖拽图像。</p>
-	</header>
-	<div class="canvasHolder">
-		<canvas id="testCanvas" width="960" height="400"></canvas>
-	</div>
+	<center>
+		<div id="loader"></div>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> 带有点击区域拖拽效果的实现</h1>
+		    <p>该例子与拖拽效果的例子是相似的，只是额外添加了 <strong>hitArea</strong> 属性，使得只有雏菊图像的中间才能响应鼠标事件，从而拖拽图像。</p>
+		</header>
+		<div class="canvasHolder">
+			<canvas id="testCanvas" width="960" height="400"></canvas>
+		</div>
+	</center>
+	<section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一: 定义变量，以及创建一个 stage 对象并指向 canvas。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas, stage;
+var mouseTarget;   // 标识在鼠标下或正在被拖动的显示对象。
+var dragStarted;   // 标识当前是否正在进行拖动操作。
+var offset;
+var update = true;
+
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：对 Stage 进行相关设置，1.启用 Touch 事件，2.设置当鼠标离开 Canvas 仍跟踪鼠标，3.启用 mouseover 事件。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Touch.enable(stage); // 如果当前设备支持 Touch 事件，将其启用。
+stage.mouseMoveOutside = true; // 设置当鼠标离开 Canvas 时，仍跟踪鼠标。
+stage.enableMouseOver(10); // 启用 mouseover 事件。</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：加载雏菊图片资源。</div><br />
+                <textarea class="tutorialCode" name="code">
+var image = new Image();
+image.src = "assets/daisy.png";
+image.onload = handleImageLoad;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：创建一个 Shape 对象，用作雏菊 Bitmap 对象的可点击区域。</div><br />
+                <textarea class="tutorialCode" name="code">
+var hitArea = new createjs.Shape();
+hitArea.graphics.beginFill("#FFF").drawEllipse(-11,-14,24,18);
+hitArea.x = imgW/2;
+hitArea.y = imgH/2;
+
+bitmap.hitArea = hitArea;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：创建多个雏菊的 bitmap 对象，并监听其 mousemove，mouseover，mouseout 事件</div><br />
+                <textarea class="tutorialCode" name="code">
+for(var i = 0; i < 100; i++){
+	bitmap = new createjs.Bitmap(image);
+	container.addChild(bitmap);
+	bitmap.x = canvas.width * Math.random()|0;
+	bitmap.y = canvas.height * Math.random()|0;
+	bitmap.rotation = 360 * Math.random()|0;
+	bitmap.regX = imgW/2|0;
+	bitmap.regY = imgH/2|0;
+	bitmap.scaleX = bitmap.scaleY = bitmap.scale = Math.random()*0.4+0.6;
+	bitmap.name = "bmp_"+i;
+
+	bitmap.cursor = "pointer";
+
+	// 分配 hitArea 区域到每一个 Bitmap 实例。
+	bitmap.hitArea = hitArea;
+
+	// 封装用于提供事件处理的方法。
+	(function(target) {
+		bitmap.addEventListener("mousedown", function(evt) {
+			// 调整目标对象到所有子对象的最前面。
+			container.addChild(target);
+			var offset = {x:target.x-evt.stageX, y:target.y-evt.stageY};
+
+			// 对目标对象监听 mousemove 事件。
+		    // 在用户松开鼠标按钮之前都是有效的。
+			evt.addEventListener("mousemove", function(ev) {
+				target.x = ev.stageX+offset.x;
+				target.y = ev.stageY+offset.y;
+				// 设置 Stage 在下一个 tick 里需要更新。
+				update = true;
+			});
+		});
+		bitmap.addEventListener("mouseover", function() {
+			target.scaleX = target.scaleY = target.scale*1.2;
+			update = true;
+		});
+		bitmap.addEventListener("mouseout", function() {
+			target.scaleX = target.scaleY = target.scale;
+			update = true;
+		});
+	})(bitmap);
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤六：绑定并编写 tick 方法。出于优化性能的考虑，使用 updata 变量，控制只有鼠标事件时才更新 Stage。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Ticker.addEventListener("tick", tick);
+
+function tick() {
+	if (update) {
+		update = false; // 设置只更新一次
+		stage.update();
+	}
+}</textarea>
+        </div>
+    </section>
+<script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>

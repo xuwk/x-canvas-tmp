@@ -3,9 +3,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<title>心形: 情人节</title>
+<title>Hearts</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
 <script type="text/javascript">
@@ -13,13 +18,6 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var Shape = xc.module.require("xc.createjs.Shape");
-    var Text = xc.module.require("xc.createjs.Text");
-    var Container = xc.module.require("xc.createjs.Container");
-    var Graphics = xc.module.require("xc.createjs.Graphics");
-
 	var canvas;
 	var stage;
 	var container;
@@ -29,21 +27,21 @@ xc.depends([
 	function init() {
 		// 创建一个 Stage 对象并指向 Canvas。
 		canvas = document.getElementById("testCanvas");
-		stage = new Stage(canvas);
+		stage = new createjs.Stage(canvas);
 
 		var w = canvas.width;
 		var h = canvas.height;
 
-		container = new Container();
+		container = new createjs.Container();
 		stage.addChild(container);
 
 		captureContainers = [];
 		captureIndex = 0;
 
 		// 创造了大量的复杂矢量图形，并设置随机位置和速度。
-		for (var i=0; i<50; i++) {
-			var heart = new Shape();
-			heart.graphics.beginFill(Graphics.getHSL(Math.random()*30-45, 100, 50+Math.random()*30));
+		for (var i=0; i<100; i++) {
+			var heart = new createjs.Shape();
+			heart.graphics.beginFill(createjs.Graphics.getHSL(Math.random()*30-45, 100, 50+Math.random()*30));
 			heart.graphics.moveTo(0,-9).curveTo(0,-20,8,-20).curveTo(16,-20,16,-10).curveTo(16,0,0,12);
 			heart.graphics.curveTo(-16,0,-16,-10).curveTo(-16,-20,-8,-20).curveTo(0,-20,0,-9);
 			heart.y = -100;
@@ -51,21 +49,21 @@ xc.depends([
 			container.addChild(heart);
 		}
 
-		var text = new Text("the longer I'm with you\nthe more I love you", "bold 24px Arial", "#312");
+		var text = new createjs.Text("M,M Y!\nthe longer I'm with you\nthe more I love you", "bold 24px Arial", "#312");
 		text.textAlign = "center";
 		text.x = w/2;
 		text.y = h/2;
 		stage.addChild(text);
 
 		for (i=0; i<100; i++) {
-			var captureContainer = new Container();
+			var captureContainer = new createjs.Container();
 			captureContainer.cache(0,0,w,h);
 			captureContainers.push(captureContainer);
 		}
 
 		// 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
-		Ticker.addEventListener("tick", tick);
-		Ticker.setFPS(30);
+		createjs.Ticker.addEventListener("tick", tick);
+		createjs.Ticker.setFPS(30);
 	}
 
 	function tick() {
@@ -109,12 +107,115 @@ xc.depends([
 </head>
 	
 <body>
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> 情人节</h1>
-	    <p>心形: 情人节</p>
-	</header>
-	<div class="canvasHolder">
-		<canvas id="testCanvas" width="960" height="400" style="background-color:#312"></canvas>
-	</div>
+	<center>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> Hearts</h1>
+		    <p>Hearts</p>
+		</header>
+		<div class="canvasHolder">
+			<canvas id="testCanvas" width="960" height="400" style="background-color:#312"></canvas>
+		</div>
+	</center>
+	<section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一: 定义变量，以及创建一个 stage 对象并指向 canvas。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas;
+var stage;
+var container;
+var captureContainers;
+var captureIndex;
+
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：创建多个 Shape 用于绘制心形，并创建 Text 对象用于显示中心文本信息。</div><br />
+                <textarea class="tutorialCode" name="code">
+for (var i=0; i < 100; i++) {
+	var heart = new createjs.Shape();
+	heart.graphics.beginFill(createjs.Graphics.getHSL(Math.random()*30-45, 100, 50+Math.random()*30));
+	heart.graphics.moveTo(0,-9).curveTo(0,-20,8,-20).curveTo(16,-20,16,-10).curveTo(16,0,0,12);
+	heart.graphics.curveTo(-16,0,-16,-10).curveTo(-16,-20,-8,-20).curveTo(0,-20,0,-9);
+	heart.y = -100;
+	container.addChild(heart);
+}
+
+var text = new createjs.Text("M,M Y!\nthe longer I'm with you\nthe more I love you", "bold 24px Arial", "#312");
+text.textAlign = "center";
+text.x = w/2;
+text.y = h/2;
+stage.addChild(text);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：创建多个 Container 对象，用作缓存。 </div><br />
+                <textarea class="tutorialCode" name="code">
+for (i=0; i < 100; i++) {
+	var captureContainer = new createjs.Container();
+	captureContainer.cache(0,0,w,h);
+	captureContainers.push(captureContainer);
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：把装载心形矢量图的 Container 对象添加到缓存中，并以 “source-over” 的方式更新当前缓存区域。同时把用作缓存的 Container 对象添加到 Stage 中。</div><br />
+                <textarea class="tutorialCode" name="code">
+var captureContainer = captureContainers[captureIndex];
+stage.addChildAt(captureContainer,0);
+captureContainer.addChild(container);
+
+captureContainer.updateCache("source-over");</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：绑定并编写 tick 方法。使星星矢量利用缓存实现不断移动的效果。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Ticker.addEventListener("tick", tick);
+createjs.Ticker.setFPS(30);
+
+function tick() {
+	var w = canvas.width;
+	var h = canvas.height;
+	var l = container.getNumChildren();
+
+	captureIndex = (captureIndex+1)%captureContainers.length;
+	stage.removeChildAt(0);
+	var captureContainer = captureContainers[captureIndex];
+	stage.addChildAt(captureContainer,0);
+	captureContainer.addChild(container);
+
+	// 遍历所有子对象，并根据它们的 velocity 属性移动它们。
+	for (var i=0; i < l; i++) {
+		var heart = container.getChildAt(i);
+		if (heart.y < -50) {
+			heart._x = Math.random()*w;
+			heart.y = h*(1+Math.random())+50;
+			heart.perX = (1+Math.random())*h;
+			heart.offX = Math.random()*h;
+			heart.ampX = heart.perX*0.1*(0.2+Math.random());
+			heart.velY = -Math.random()*2-2;
+			heart.scaleX = heart.scaleY = Math.random()+1;
+			heart.rotation = Math.random()*40-20;
+			heart.alpha = Math.random();
+		}
+		heart.y += heart.velY;
+		heart.x = heart._x + Math.cos((heart.offX+heart.y)/heart.perX*Math.PI*2)*heart.ampX;
+	}
+
+	captureContainer.updateCache("source-over");
+
+	// 更新 Stage。
+	stage.update();
+}</textarea>
+        </div>
+    </section>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>

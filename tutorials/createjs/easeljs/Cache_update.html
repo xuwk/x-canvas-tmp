@@ -2,9 +2,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>EaselJS：Stage.autoClear 的使用</title>
+<title>EaselJS：updateCache 的使用</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
 <script type="text/javascript">
@@ -12,11 +17,6 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var Shape = xc.module.require("xc.createjs.Shape");
-    var Graphics = xc.module.require("xc.createjs.Graphics");
-
 	var canvas;
 	var stage;
 	var starfield
@@ -24,46 +24,42 @@ xc.depends([
 	var sky;
 
 	function init() {
-		if (window.top != window) {
-			document.getElementById("header").style.display = "none";
-		}
-
 		// 创建一个 Stage 对象并指向 Canvas。
 		canvas = document.getElementById("testCanvas");
-		stage = new Stage(canvas);
+		stage = new createjs.Stage(canvas);
 
 		// 绘制天空对象。
-		sky = new Shape();
+		sky = new createjs.Shape();
 		sky.graphics.beginLinearGradientFill(["#204","#003","#000"], [0,0.15,0.6], 0, canvas.height, 0, 0);
 		sky.graphics.drawRect(0, 0, canvas.width, canvas.height);
 		stage.addChild(sky);
 
 		// 创建一个 Shape 对象用于绘制星星矢量图，并且添加到 Stage 中。
-		starfield = new Shape();
+		starfield = new createjs.Shape();
 		stage.addChild(starfield);
 
 		// 设置用于存放星星 Shape 对象的缓存区域，该区域与 Canvas 的大小相同。
 		starfield.cache(0,0,canvas.width,canvas.height);
 
 		// 在另外的一个 Shape 对象中绘制月亮，即月亮不是缓存的一部分。
-		moon = new Shape();
+		moon = new createjs.Shape();
 		moon.graphics.beginFill("#CCF").drawCircle(0,0,60);
 		moon.graphics.beginFill("#000").drawEllipse(-35,-57,96,114);
 		moon.rotation = -30;
 		stage.addChild(moon);
 
 		// 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
-		Ticker.addEventListener("tick", tick);
-		Ticker.setFPS(30);
+		createjs.Ticker.addEventListener("tick", tick);
+		createjs.Ticker.setFPS(30);
 	}
 
 	function stop() {
-		Ticker.removeEventListener("tick", tick);
+		createjs.Ticker.removeEventListener("tick", tick);
 	}
 
 	function tick() {
 		// 在随机位置绘制星星矢量。
-		starfield.graphics.beginFill(Graphics.getRGB(0xFFFFFF,Math.random())).drawPolyStar(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*4+1, 5, 0.93, Math.random()*360);
+		starfield.graphics.beginFill(createjs.Graphics.getRGB(0xFFFFFF,Math.random())).drawPolyStar(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*4+1, 5, 0.93, Math.random()*360);
 
 		// 设置以 “source-overlay” 的方式合成绘制到现有缓存上的新矢量图。
 		starfield.updateCache("source-overlay");
@@ -93,13 +89,98 @@ xc.depends([
 </head>
 	
 <body>
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Stage.autoClear 的使用</h1>
-	    <p>该例子在每个 tick 中绘制一颗星星，并为了提高每个 tick 的渲染性能，利用了 <strong>DisplayObject.updateCache()；</strong>合成到现有的缓存区域中。这样相当于设置了 <strong>stage.autoclear</strong> 为 false，而又可以基于每个实例单独管理。
-	    </p>
-	</header>
-	<div class="canvasHolder">
-		<canvas id="testCanvas" width="960" height="400" style="background-color:#000"></canvas>
-	</div>
+	<center>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> updateCache 的使用</h1>
+		    <p>该例子在每个 tick 中绘制一颗星星，并为了提高每个 tick 的渲染性能，利用了 <strong>DisplayObject.updateCache()；</strong>合成到现有的缓存区域中。这样相当于设置了 <strong>stage.autoclear</strong> 为 false，而又可以基于每个实例单独管理。
+		    </p>
+		</header>
+		<div class="canvasHolder">
+			<canvas id="testCanvas" width="960" height="400" style="background-color:#000"></canvas>
+		</div>
+	</center>
+	<section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一: 定义变量，以及创建一个 stage 对象并指向 canvas。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas;
+var stage;
+var shape;
+var circleRadius=30;
+var rings = 30;
+
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二: 创建两个 Shape 对象用于渲染天空和月亮。并对应添加到 Stage 中。</div><br />
+                <textarea class="tutorialCode" name="code">
+sky = new createjs.Shape();
+sky.graphics.beginLinearGradientFill(["#204","#003","#000"], [0,0.15,0.6], 0, canvas.height, 0, 0);
+sky.graphics.drawRect(0, 0, canvas.width, canvas.height);
+stage.addChild(sky);
+
+moon = new createjs.Shape();
+moon.graphics.beginFill("#CCF").drawCircle(0,0,60);
+moon.graphics.beginFill("#000").drawEllipse(-35,-57,96,114);
+moon.rotation = -30;
+stage.addChild(moon);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三: 创建一个名为 starfield 的 Shape 对象，并添加到 Stage 中，并设置该对象的缓存区域大小与 Canvas 的宽度与高度相同，该区域用于绘制星星对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+starfield = new createjs.Shape();
+stage.addChild(starfield);
+
+// 设置用于存放星星 Shape 对象的缓存区域，该区域与 Canvas 的大小相同。
+starfield.cache(0,0,canvas.width,canvas.height);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：渲染星星矢量，并使用 “source-overlay” 的方式在缓存上合成星星矢量图。</div><br />
+                <textarea class="tutorialCode" name="code">
+starfield.graphics.beginFill(createjs.Graphics.getRGB(0xFFFFFF,Math.random())).drawPolyStar(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*4+1, 5, 0.93, Math.random()*360);
+starfield.updateCache("source-overlay");
+starfield.graphics.clear();
+</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：绑定并编写 tick 方法。使月亮不断移动的同时，星星不断添加。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Ticker.addEventListener("tick", tick);
+createjs.Ticker.setFPS(30);
+
+function tick() {
+	// 在随机位置绘制星星矢量。
+	starfield.graphics.beginFill(createjs.Graphics.getRGB(0xFFFFFF,Math.random())).drawPolyStar(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*4+1, 5, 0.93, Math.random()*360);
+
+	// 设置以 “source-overlay” 的方式合成绘制到现有缓存上的新矢量图。
+	starfield.updateCache("source-overlay");
+
+	// 星星矢量已绘制到缓存上，可以通过以下方式清除。
+	starfield.graphics.clear();
+
+	// 渲染天空对象。
+	sky.alpha -= 0.0005;
+
+	// 移动月亮对象，使其跨越天空。
+	var w = canvas.width+200;
+	moon.x = (moon.x+100+1+w)%w-100;
+	moon.y = 250-Math.sin(moon.x/w*Math.PI)*150;
+
+	// 更新 Stage。
+	stage.update();
+}</textarea>
+        </div>
+    </section>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>

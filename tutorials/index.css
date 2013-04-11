@@ -63,6 +63,10 @@ li {
     font-weight: bold;
     font-size: 28px;
     float: right; 
-    margin-right: 50px;
+    margin-right: 20px;
     color: red;
+}
+.tutorials_box {
+    float: left;
+    margin: 0 10px;
 }
