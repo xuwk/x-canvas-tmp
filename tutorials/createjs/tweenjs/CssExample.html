@@ -6,6 +6,12 @@
 <title>TweenJS: CSS Tweening 插件使用</title>
 
 <link rel="stylesheet" href="assets/demoStyles.css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
 <script type="text/javascript">
@@ -13,20 +19,12 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-    var Tween = xc.module.require("xc.createjs.Tween");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var CSSPlugin = xc.module.require("xc.createjs.CSSPlugin");
-
 	var colorSeed = 0;
 
 	function init() {
-	    if (window.top != window) {
-			document.getElementById("header").style.display = "none";
-	    }
+		createjs.CSSPlugin.install(createjs.Tween);
 
-		CSSPlugin.install(Tween);
-
-		Ticker.setFPS(20);
+		createjs.Ticker.setFPS(20);
 		var count = 600;
 		while (--count >= 0) {
 			var box = document.createElement("div");
@@ -44,11 +42,11 @@ xc.depends([
 			d = (Math.min(window.innerWidth,window.innerHeight)-16)/2*(Math.random()*0.3+0.7);
 			var x = window.innerWidth/2+Math.cos(a)*d;
 			var y = window.innerHeight/2+Math.sin(a)*d;
-			Tween.get(box, {loop:true}, true).set({opacity:"0"},box.style).wait(Math.random()*1000+1|0).call(updateColor).to({top:y,left:x,width:16,height:4,opacity:1},Math.random()*1500+1000,easeIn);
+			createjs.Tween.get(box, {loop:true}, true).set({opacity:"0"},box.style).wait(Math.random()*1000+1|0).call(updateColor).to({top:y,left:x,width:16,height:4,opacity:1},Math.random()*1500+1000,easeIn);
 		}
 
 		// 补间颜色，该颜色在 div 开始移动的时候开始分配。
-		Tween.get(this,{loop:true}).to({colorSeed:360},5000);
+		createjs.Tween.get(this,{loop:true}).to({colorSeed:360},5000);
 	}
 
 	function updateColor(tween) {
@@ -71,5 +69,7 @@ xc.depends([
 	    <h1><span class="text-product">Tween<strong>JS</strong></span> CSS Tweening 插件使用</h1>
 	    <p>该例子演示了一个插件如何去修改 TweenJS 的值。CSSPlugin 确保 CSS 的位置和大小属性都是以 “px” 作为后缀的。</p>
 	</header>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>

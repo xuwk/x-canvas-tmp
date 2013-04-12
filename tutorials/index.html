@@ -3,12 +3,14 @@
 <head>
 <meta charset="utf-8">
 <title>CreateJS 教程</title>
-<link rel="stylesheet" href="./index.css"/>
+<link rel="stylesheet" href="./style.css"/>
 
 <script type="text/javascript">
     var tutorialsPath = './createjs/';
 
     var backToEditor = function () {
+         var contentFrame = document.getElementById('contentFrame');
+        contentFrame.src = "about:blank";
         msgBoxArea.style.display = 'none';
     };
 
@@ -69,10 +71,13 @@
             <li><a href="#" onclick="showTutorial('easeljs/Cache_update.html')"><font class="font">updateCache 的使用</font></a></li>
             <li><a href="#" onclick="showTutorial('easeljs/Cache_vday.html')"><font class="font">Hearts</font></a></li>
             <li><a href="#" onclick="showTutorial('easeljs/CurveTo.html')"><font class="font">Curve To 的使用</font></a></li>
-            <li><a href="#" onclick="showTutorial('easeljs/DoubleClickTest.html')"><font class="font">双击事件</font></a></li>
-            <li><a href="#" onclick="showTutorial('easeljs/DragAndDrop.html')"><font class="font">翻转，拖拽的实现</font></a></li>
             <li><a href="#" onclick="showTutorial('easeljs/DragAndDrop_hitArea.html')"><font class="font">带有点击区域拖拽效果的实现</font></a></li>
             <li><a href="#" onclick="showTutorial('easeljs/ExtractFrame.html')"><font class="font">Extract Frame</font></a></li>
+            
+            <br />
+            
+            <li><a href="#" onclick="showTutorial('easeljs/DoubleClickTest.html')"><font class="font">双击事件</font></a></li>
+            <li><a href="#" onclick="showTutorial('easeljs/DragAndDrop.html')"><font class="font">翻转，拖拽的实现</font></a></li>
         </ul>
     </div>
     <div class="tutorials_box">
@@ -96,14 +101,17 @@
     <div class="tutorials_box">
         <h3>TweenJS:</h3>
         <ul>
-            <li><a href="#" onclick="showTutorial('tweenjs/CssExample.html')"><font class="font">CSS Tweening 插件使用</font></a></li>
             <li><a href="#" onclick="showTutorial('tweenjs/Example.html')"><font class="font">Canvas 补间</font></a></li>
             <li><a href="#" onclick="showTutorial('tweenjs/MotionGuideBlitz.html')"><font class="font">MotionGuideBlitz</font></a></li>
             <li><a href="#" onclick="showTutorial('tweenjs/MotionGuideDemo.html')"><font class="font">MotionGuide</font></a></li>
-            <li><a href="#" onclick="showTutorial('tweenjs/MultiMotionDemo.html')"><font class="font">MultiMotion</font></a></li>
             <li><a href="#" onclick="showTutorial('tweenjs/SimpleTweenDemo.html')"><font class="font">简易 Tween</font></a></li>
-            <li><a href="#" onclick="showTutorial('tweenjs/SparkTable.html')"><font class="font">SparkTable</font></a></li>
             <li><a href="#" onclick="showTutorial('tweenjs/Tween_Circles.html')"><font class="font">Tween_Circles</font></a></li>
+
+            <br />
+            
+            <li><a href="#" onclick="showTutorial('tweenjs/CssExample.html')"><font class="font">CSS Tweening 插件使用</font></a></li>
+            <li><a href="#" onclick="showTutorial('tweenjs/MultiMotionDemo.html')"><font class="font">MultiMotion</font></a></li>
+            <li><a href="#" onclick="showTutorial('tweenjs/SparkTable.html')"><font class="font">SparkTable</font></a></li>
             <li><a href="#" onclick="showTutorial('tweenjs/Tween_SparkTable.html')"><font class="font">Tween_SparkTable</font></a></li>
         </ul>
     </div>
@@ -112,7 +120,7 @@
             <div id='msg' class="contentArea">
                 <img class="ui-back" src="./cancel.png" onclick="backToEditor()"></img>
                 <div class="content">
-                    <iframe src="./createjs/easeljs/BarGraph.html" id="contentFrame"></iframe>
+                    <iframe name="contentFrame" src="./createjs/easeljs/BarGraph.html" id="contentFrame"></iframe>
                 </div>
             </div>
         </div>

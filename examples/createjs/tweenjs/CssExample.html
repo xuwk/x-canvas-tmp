@@ -13,10 +13,6 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-    var Tween = xc.module.require("xc.createjs.Tween");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var CSSPlugin = xc.module.require("xc.createjs.CSSPlugin");
-
 	var colorSeed = 0;
 
 	function init() {
@@ -24,9 +20,9 @@ xc.depends([
 			document.getElementById("header").style.display = "none";
 	    }
 
-		CSSPlugin.install(Tween);
+		createjs.CSSPlugin.install(createjs.Tween);
 
-		Ticker.setFPS(20);
+		createjs.Ticker.setFPS(20);
 		var count = 600;
 		while (--count >= 0) {
 			var box = document.createElement("div");
@@ -44,11 +40,11 @@ xc.depends([
 			d = (Math.min(window.innerWidth,window.innerHeight)-16)/2*(Math.random()*0.3+0.7);
 			var x = window.innerWidth/2+Math.cos(a)*d;
 			var y = window.innerHeight/2+Math.sin(a)*d;
-			Tween.get(box, {loop:true}, true).set({opacity:"0"},box.style).wait(Math.random()*1000+1|0).call(updateColor).to({top:y,left:x,width:16,height:4,opacity:1},Math.random()*1500+1000,easeIn);
+			createjs.Tween.get(box, {loop:true}, true).set({opacity:"0"},box.style).wait(Math.random()*1000+1|0).call(updateColor).to({top:y,left:x,width:16,height:4,opacity:1},Math.random()*1500+1000,easeIn);
 		}
 
 		// 补间颜色，该颜色在 div 开始移动的时候开始分配。
-		Tween.get(this,{loop:true}).to({colorSeed:360},5000);
+		createjs.Tween.get(this,{loop:true}).to({colorSeed:360},5000);
 	}
 
 	function updateColor(tween) {

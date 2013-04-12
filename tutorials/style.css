@@ -5,7 +5,6 @@ body, html {
     color: #ccc;
 }
 h1 {
-  letter-spacing: -3px;
   font-weight: bold;
   margin: 0;
 }
@@ -68,5 +67,23 @@ li {
 }
 .tutorials_box {
     float: left;
-    margin: 0 10px;
+    margin: 10px;
+}
+
+.tutorialMainTitle {
+    font-size: 23px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+}
+
+.tutorialBody {
+    margin: 0 auto; 
+    width: 800px;
+}
+
+.tutorialTitle {
+    margin: 20px 0 5px 0;
+    font-size: 15px;
+    font-weight: bold;
 }
