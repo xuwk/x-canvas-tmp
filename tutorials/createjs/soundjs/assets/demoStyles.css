@@ -66,6 +66,17 @@ a:hover {
 	background-color:	#ccc;
 }
 
+.jp-content {
+	position: static;
+	width: 100%;
+	height: 100%;
+	margin-left: 0px;
+}
+
+.of-hid {
+	overflow: hidden;
+}
+
 #loader {
 	display: none;
 }

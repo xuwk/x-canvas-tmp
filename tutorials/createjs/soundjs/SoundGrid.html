@@ -3,9 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<title>SoundJS: Sound Grid</title>
+<title>SoundJS: 声音表单</title>
     
 <link rel="stylesheet" type="text/css" href="assets/demoStyles.css"/>
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
 <style>
     body {
        font-family: sans-serif;
@@ -35,6 +38,9 @@
     }
 </style>
 
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
 <script type="text/javascript" src="../../../src/xc.js"></script>
 <script type="text/javascript">
 xc.depends([
@@ -44,10 +50,6 @@ xc.depends([
     var preload;
 
     function init() {
-        if (window.top != window) {
-            document.getElementById("header").style.display = "none";
-        }
-
         if (!createjs.Sound.initializeDefaultPlugins()) {
             document.getElementById("error").style.display = "block";
             document.getElementById("content").style.display = "none";
@@ -104,28 +106,99 @@ function playSound(target) {
 </head>
 
 <body>
-	<div id="loader"></div>
-	<header id="header" class="SoundJS">
-	    <h1><span class="text-product">Sound<strong>JS</strong></span> Sound Grid</h1>
-        <p>点击格子中的音频实例去播放对应的音频。</p>
-	</header>
-	<div id="content">
-	    <div id="1" onclick="playSound(this)" class="gridBox"></div>
-	    <div id="2" onclick="playSound(this)" class="gridBox"></div>
-	    <div id="3" onclick="playSound(this)" class="gridBox"></div>
-	    <div id="4" onclick="playSound(this)" class="gridBox"></div>
-	    <div id="5" onclick="playSound(this)" class="gridBox"></div>
-	    <div id="6" onclick="playSound(this)" class="gridBox"></div>
-	    <div id="7" onclick="playSound(this)" class="gridBox"></div>
-	    <div id="8" onclick="playSound(this)" class="gridBox"></div>
-	    <div id="9" onclick="playSound(this)" class="gridBox"></div>
-	    <div id="10" onclick="playSound(this)" class="gridBox"></div>
-	    <div id="11" onclick="playSound(this)" class="gridBox"></div>
-	    <div id="12" onclick="playSound(this)" class="gridBox"></div>
-	</div>
-    <div id="error">
-        <h1>对不起！</h1>
-        <p>当前浏览器不支持 SoundJS</p>
-    </div>
+    <center>
+    	<div id="loader"></div>
+    	<header id="header" class="SoundJS">
+    	    <h1><span class="text-product">Sound<strong>JS</strong></span> 声音表单</h1>
+            <p>点击格子中的音频实例去播放对应的音频。</p>
+    	</header>
+    	<div id="content" class="of-hid">
+    	    <div id="1" onclick="playSound(this)" class="gridBox"></div>
+    	    <div id="2" onclick="playSound(this)" class="gridBox"></div>
+    	    <div id="3" onclick="playSound(this)" class="gridBox"></div>
+    	    <div id="4" onclick="playSound(this)" class="gridBox"></div>
+    	    <div id="5" onclick="playSound(this)" class="gridBox"></div>
+    	    <div id="6" onclick="playSound(this)" class="gridBox"></div>
+    	    <div id="7" onclick="playSound(this)" class="gridBox"></div>
+    	    <div id="8" onclick="playSound(this)" class="gridBox"></div>
+    	    <div id="9" onclick="playSound(this)" class="gridBox"></div>
+    	    <div id="10" onclick="playSound(this)" class="gridBox"></div>
+    	    <div id="11" onclick="playSound(this)" class="gridBox"></div>
+    	    <div id="12" onclick="playSound(this)" class="gridBox"></div>
+    	</div>
+        <div id="error">
+            <h1>对不起！</h1>
+            <p>当前浏览器不支持 SoundJS</p>
+        </div>
+    </center>
+
+    <section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：初始化插件，初始化失败则返回。</div><br />
+                <textarea class="tutorialCode" name="code">
+if (!createjs.Sound.initializeDefaultPlugins()) {
+    return;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：定义资源清单，并加载资源。</div><br />
+                <textarea class="tutorialCode" name="code">
+var assetsPath = "assets/";
+var manifest = [
+    {src:assetsPath+"Game-Break.mp3|"+assetsPath+"Game-Break.ogg", id:1},
+    {src:assetsPath+"Game-Spawn.mp3|"+assetsPath+"Game-Spawn.ogg", id:2},
+    {src:assetsPath+"Game-Shot.mp3|"+assetsPath+"Game-Shot.ogg", id:3},
+
+    {src:assetsPath+"GU-StealDaisy.mp3|"+assetsPath+"GU-StealDaisy.ogg", id:4},
+    {src:assetsPath+"Humm.mp3|"+assetsPath+"Humm.ogg", id:5},
+    {src:assetsPath+"R-Damage.mp3|"+assetsPath+"R-Damage.ogg", id:6},
+
+    {src:assetsPath+"Thunder1.mp3|"+assetsPath+"Thunder1.ogg", id:7},
+    {src:assetsPath+"S-Damage.mp3|"+assetsPath+"S-Damage.ogg", id:8},
+    {src:assetsPath+"U-CabinBoy3.mp3|"+assetsPath+"U-CabinBoy3.ogg", id:9},
+
+    {src:assetsPath+"ToneWobble.mp3|"+assetsPath+"ToneWobble.ogg", id:10},
+    {src:assetsPath+"Game-Death.mp3|"+assetsPath+"Game-Death.ogg", id:11},
+    {src:assetsPath+"Game-Break.mp3|"+assetsPath+"Game-Break.ogg", id:12}  
+];
+
+createjs.Sound.registerManifest(manifest);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：创建表单，并编写 playSound 方法。</div><br />
+                <textarea class="tutorialCode" name="code">
+function playSound(target) {
+    var instance = createjs.Sound.play(target.id, createjs.Sound.INTERRUPT_NONE, 0, 0, false, 1);
+    if (instance == null || instance.playState == createjs.Sound.PLAY_FAILED) { return; }
+    target.className = "gridBox active";
+    instance.onComplete = function(instance) {
+        target.className = "gridBox";
+    }
+}
+
+< div id="1" onclick="playSound(this)" class="gridBox"></div>
+< div id="2" onclick="playSound(this)" class="gridBox"></div>
+< div id="3" onclick="playSound(this)" class="gridBox"></div>
+< div id="4" onclick="playSound(this)" class="gridBox"></div>
+< div id="5" onclick="playSound(this)" class="gridBox"></div>
+< div id="6" onclick="playSound(this)" class="gridBox"></div>
+< div id="7" onclick="playSound(this)" class="gridBox"></div>
+< div id="8" onclick="playSound(this)" class="gridBox"></div>
+< div id="9" onclick="playSound(this)" class="gridBox"></div>
+< div id="10" onclick="playSound(this)" class="gridBox"></div>
+< div id="11" onclick="playSound(this)" class="gridBox"></div>
+< div id="12" onclick="playSound(this)" class="gridBox"></div></textarea>
+        </div>
+        
+
+    </section>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>

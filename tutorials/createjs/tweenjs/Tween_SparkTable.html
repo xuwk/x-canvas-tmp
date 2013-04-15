@@ -4,7 +4,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<title>TweenJS：Tween_SparkTable</title>
+<title>TweenJS：Tween Ease 运动效果演示</title>
 
 <link rel="stylesheet" href="assets/demoStyles.css"/>
 <style type="text/css">
@@ -73,10 +73,6 @@ xc.depends([
     var clips = [];
 
     function init() {
-        if (window.top != window) {
-            document.getElementById("header").style.display = "none";
-        }
-
         canvas = document.getElementById("testCanvas");
         stage = new Stage(canvas);
 
@@ -268,10 +264,12 @@ xc.depends([
 </head>
 
 <body bgcolor="#000000" >
-	<header id="header" class="TweenJS">
-		<h1><span class="text-product">Tween<strong>JS</strong></span> Tween_SparkTable</h1>
-        <p>预览不同的 ease 方法。</p>
-	</header>
+    <center>
+    	<header id="header" class="TweenJS">
+    		<h1><span class="text-product">Tween<strong>JS</strong></span> Tween Ease 运动效果演示</h1>
+            <p>预览不同的 ease 方法。</p>
+    	</header>
+     </center>
 	<div id="eases"></div>
 	<canvas id="testCanvas" width="960" height="400" style="border: 5px white solid;"></canvas>
 </body>

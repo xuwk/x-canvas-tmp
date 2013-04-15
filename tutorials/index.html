@@ -8,13 +8,13 @@
 <script type="text/javascript">
     var tutorialsPath = './createjs/';
 
-    var backToEditor = function () {
-         var contentFrame = document.getElementById('contentFrame');
+    var backToPage = function() {
+        var contentFrame = document.getElementById('contentFrame');
         contentFrame.src = "about:blank";
         msgBoxArea.style.display = 'none';
     };
 
-    var showTutorial = function (path) {
+    var showTutorial = function(path) {
         var w = parseInt(window.innerWidth);
         var h = parseInt(window.innerHeight);
         
@@ -35,7 +35,7 @@
         contentFrame.src = tutorialsPath + path;
     };
 
-    var getStyle = function (elem, styleName) {
+    var getStyle = function(elem, styleName) {
         if(elem.style[styleName]){
             return elem.style[styleName];
         }
@@ -51,76 +51,85 @@
             return null;
         }
     };
+
+    var init = function() {
+        var winWidth = window.innerWidth;
+        var easeljsDiv = document.getElementById("EaselJS");
+        var preloadjsDiv = document.getElementById("PreloadJS");
+        var soundjsDiv = document.getElementById("SoundJS");
+        var tweenjsDiv = document.getElementById("TweenJS");
+
+        easeljsDiv.style.width = preloadjsDiv.style.width 
+                               = soundjsDiv.style.width 
+                               = tweenjsDiv.style.width
+                               = (winWidth - 300) / 4 + "px";
+        
+    }
 </script>
 
 </head>
-<body>
+<body class="body" onload="init()">
     <center>
         <header id="header" class="header">
             <h1>CreateJS 教程</h1>
             <p> CreateJS 教程，包括 EaselJS, TweenJS, PreloadJS, 和 SoundJS 的相关使用方法，通过各个例子讲解 CreateJS 的详细使用步骤。</p>
         </header>
     </center>
-    <div class="tutorials_box">
-        <h3>EaselJS:</h3>
-        <ul>
-            <li><a href="#" onclick="showTutorial('easeljs/APITest.html')"><font class="font">API 的使用</font></a></li>
-            <li><a href="#" onclick="showTutorial('easeljs/BarGraph.html')"><font class="font">绘制动态条形图</font></a></li>
-            <li><a href="#" onclick="showTutorial('easeljs/BitmapAnimation.html')"><font class="font">动画序列和精灵表</font></a></li>
-            <li><a href="#" onclick="showTutorial('easeljs/Cache.html')"><font class="font">缓存和 snapToPixel 的使用</font></a></li>
-            <li><a href="#" onclick="showTutorial('easeljs/Cache_update.html')"><font class="font">updateCache 的使用</font></a></li>
-            <li><a href="#" onclick="showTutorial('easeljs/Cache_vday.html')"><font class="font">Hearts</font></a></li>
-            <li><a href="#" onclick="showTutorial('easeljs/CurveTo.html')"><font class="font">Curve To 的使用</font></a></li>
-            <li><a href="#" onclick="showTutorial('easeljs/DragAndDrop_hitArea.html')"><font class="font">带有点击区域拖拽效果的实现</font></a></li>
-            <li><a href="#" onclick="showTutorial('easeljs/ExtractFrame.html')"><font class="font">Extract Frame</font></a></li>
-            
-            <br />
-            
-            <li><a href="#" onclick="showTutorial('easeljs/DoubleClickTest.html')"><font class="font">双击事件</font></a></li>
-            <li><a href="#" onclick="showTutorial('easeljs/DragAndDrop.html')"><font class="font">翻转，拖拽的实现</font></a></li>
-        </ul>
-    </div>
-    <div class="tutorials_box">
-        <h3>PreloadJS:</h3>
-        <ul>
-            <li><a href="#" onclick="showTutorial('xxxxxxx')"><font class="font">xxxxxxxxxxxx</font></a></li>
-        </ul>
-    </div>
-    <div class="tutorials_box">
-        <h3>SoundJS:</h3>
-        <ul>
-            <li><a href="#" onclick="showTutorial('soundjs/JustPlay.html')"><font class="font">音频播放</font></a></li>
-            <li><a href="#" onclick="showTutorial('soundjs/MediaPlayer.html')"><font class="font">Media Player</font></a></li>
-            <li><a href="#" onclick="showTutorial('soundjs/MusicVisualizer.html')"><font class="font">网络音频可视化</font></a></li>
-            <li><a href="#" onclick="showTutorial('soundjs/PreloadAndPlay.html')"><font class="font">预加载及播放</font></a></li>
-            <li><a href="#" onclick="showTutorial('soundjs/SoundExplosion.html')"><font class="font">SoundExplosion</font></a></li>
-            <li><a href="#" onclick="showTutorial('soundjs/SoundGrid.html')"><font class="font">Sound Grid</font></a></li>
-            <li><a href="#" onclick="showTutorial('soundjs/SoundGrid.html')"><font class="font">Test Suite</font></a></li>
-        </ul>
-    </div>
-    <div class="tutorials_box">
-        <h3>TweenJS:</h3>
-        <ul>
-            <li><a href="#" onclick="showTutorial('tweenjs/Example.html')"><font class="font">Canvas 补间</font></a></li>
-            <li><a href="#" onclick="showTutorial('tweenjs/MotionGuideBlitz.html')"><font class="font">MotionGuideBlitz</font></a></li>
-            <li><a href="#" onclick="showTutorial('tweenjs/MotionGuideDemo.html')"><font class="font">MotionGuide</font></a></li>
-            <li><a href="#" onclick="showTutorial('tweenjs/SimpleTweenDemo.html')"><font class="font">简易 Tween</font></a></li>
-            <li><a href="#" onclick="showTutorial('tweenjs/Tween_Circles.html')"><font class="font">Tween_Circles</font></a></li>
+    <div>
+        <div id="EaselJS" class="tutorials_box">
+            <h3>EaselJS:</h3>
+            <ul>
+                <li><a href="#" onclick="showTutorial('easeljs/APITest.html')"><font class="font">API 的使用</font></a></li>
+                <li><a href="#" onclick="showTutorial('easeljs/BarGraph.html')"><font class="font">绘制动态条形图</font></a></li>
+                <li><a href="#" onclick="showTutorial('easeljs/BitmapAnimation.html')"><font class="font">动画序列和精灵表</font></a></li>
+                <li><a href="#" onclick="showTutorial('easeljs/Cache.html')"><font class="font">缓存和 snapToPixel 的使用</font></a></li>
+                <li><a href="#" onclick="showTutorial('easeljs/Cache_update.html')"><font class="font">updateCache 的使用</font></a></li>
+                <li><a href="#" onclick="showTutorial('easeljs/Cache_vday.html')"><font class="font">Hearts</font></a></li>
+                <li><a href="#" onclick="showTutorial('easeljs/CurveTo.html')"><font class="font">Curve To 的使用</font></a></li>
+                <li><a href="#" onclick="showTutorial('easeljs/DragAndDrop_hitArea.html')"><font class="font">带有点击区域拖拽效果的实现</font></a></li>
+                <li><a href="#" onclick="showTutorial('easeljs/ExtractFrame.html')"><font class="font">提取指定帧</font></a></li>
+            </ul>
+        </div>
+        <div id="PreloadJS" class="tutorials_box">
+            <h3>PreloadJS:</h3>
+            <ul>
+                <li><a href="#" onclick="showTutorial('xxxxxxx')"><font class="font">xxxxxxxxxxxx</font></a></li>
+            </ul>
+        </div>
+        <div id="SoundJS" class="tutorials_box">
+            <h3>SoundJS:</h3>
+            <ul>
+                <li><a href="#" onclick="showTutorial('soundjs/JustPlay.html')"><font class="font">音频播放</font></a></li>
+                <li><a href="#" onclick="showTutorial('soundjs/PreloadAndPlay.html')"><font class="font">预加载及播放</font></a></li>
+                <li><a href="#" onclick="showTutorial('soundjs/SoundExplosion.html')"><font class="font">Tween & Sound 结合</font></a></li>
+                <li><a href="#" onclick="showTutorial('soundjs/SoundGrid.html')"><font class="font">声音表单</font></a></li>
+                
+                <br />
 
-            <br />
-            
-            <li><a href="#" onclick="showTutorial('tweenjs/CssExample.html')"><font class="font">CSS Tweening 插件使用</font></a></li>
-            <li><a href="#" onclick="showTutorial('tweenjs/MultiMotionDemo.html')"><font class="font">MultiMotion</font></a></li>
-            <li><a href="#" onclick="showTutorial('tweenjs/SparkTable.html')"><font class="font">SparkTable</font></a></li>
-            <li><a href="#" onclick="showTutorial('tweenjs/Tween_SparkTable.html')"><font class="font">Tween_SparkTable</font></a></li>
-        </ul>
-    </div>
-    <div id="msgBoxArea" class="messageArea">
-        <div id="choiceBox" class="msgBox">
-            <div id='msg' class="contentArea">
-                <img class="ui-back" src="./cancel.png" onclick="backToEditor()"></img>
-                <div class="content">
-                    <iframe name="contentFrame" id="contentFrame"></iframe>
+                <li><a href="#" onclick="showTutorial('soundjs/TestSuite.html')"><font class="font">Sound 测试套件</font></a></li>
+            </ul>
+        </div>
+        <div id="TweenJS" class="tutorials_box">
+            <h3>TweenJS:</h3>
+            <ul>
+                <li><a href="#" onclick="showTutorial('tweenjs/Example.html')"><font class="font">Canvas 补间制作</font></a></li>
+                <li><a href="#" onclick="showTutorial('tweenjs/MotionGuideBlitz.html')"><font class="font">MotionGuidePlugin 使用（A）</font></a></li>
+                <li><a href="#" onclick="showTutorial('tweenjs/MotionGuideDemo.html')"><font class="font">MotionGuidePlugin 使用（B）</font></a></li>
+                <li><a href="#" onclick="showTutorial('tweenjs/SimpleTweenDemo.html')"><font class="font">简易 Tween 制作</font></a></li>
+                <li><a href="#" onclick="showTutorial('tweenjs/Tween_Circles.html')"><font class="font">Tween_Circles</font></a></li>
+
+                <br />
+                
+                <li><a href="#" onclick="showTutorial('tweenjs/Tween_SparkTable.html')"><font class="font">Tween Ease 运动效果演示</font></a></li>
+            </ul>
+        </div>
+        <div id="msgBoxArea" class="messageArea">
+            <div id="choiceBox" class="msgBox">
+                <div id='msg' class="contentArea">
+                    <img class="ui-back" src="./resources/cancel.png" onclick="backToPage()"></img>
+                    <div class="content">
+                        <iframe name="contentFrame" id="contentFrame"></iframe>
+                    </div>
                 </div>
             </div>
         </div>
