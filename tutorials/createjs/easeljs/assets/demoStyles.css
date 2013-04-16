@@ -86,21 +86,3 @@ a:hover {
 	text-align: left;
 	padding: 10px;
 }
-
-.tutorialMainTitle {
-	font-size: 23px;
-	font-weight: bold;
-	text-align: center;
-	color: white;
-}
-
-.tutorialBody {
-	margin: 0 auto; 
-	width: 800px;
-}
-
-.tutorialTitle {
-	margin: 20px 0 5px 0;
-	font-size: 15px;
-	font-weight: bold;
-}

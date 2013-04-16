@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<title>TweenJS: Canvas 补间</title>
+<title>TweenJS: Canvas 补间制作</title>
 
 <link rel="stylesheet" href="assets/demoStyles.css" />
 
@@ -24,7 +24,7 @@ xc.depends([
 		highlight.x = 250;
 		highlight.y = 250;
 
-		var txt = new createjs.Text("TweenJS", "bold 20px Arial");
+		var txt = new createjs.Text("X-Canvas", "bold 20px Arial", "red");
 		txt.textAlign = "center";
 		txt.x =  250;
 		txt.y = 250;
@@ -50,12 +50,12 @@ xc.depends([
 			.call(console.log, ["done!"],console) // 执行 console.log("done!");
 
 		// 这个 Tween 实际上没有执行任何东西，它只是序列化了一系列的 action：
-		// 注：pauseable 属性设置了为 false，所以它会在 Ticker 暂停的时候仍然继续执行。
+		// 注：ignoreGlobalPause 属性设置了为 true，所以它会在 Ticker 暂停的时候仍然继续执行。
 		createjs.Tween.get(txt,{loop:true, ignoreGlobalPause:true}) // 获取 Tween 的目标对象 txt。
-			.to({text:"the new javascript tweening engine"},1500) // 1.5 秒后改变 text。
+			.to({text:"the new engine"},1500) // 1.5 秒后改变 text。
 			.set({visible:false},highlight) // 设置 heighlight 的 visible = false。
-			.to({text:"by Grant Skinner, gskinner.com"},1500) // 1.5 秒后改变 text。
-			.to({text:"TweenJS"},1500).set({visible:true},highlight); // 1.5 秒后怪变 text，并且设置 highlight 的 visible=true。
+			.to({text:"http://xc.uc.cn"},1500) // 1.5 秒后改变 text。
+			.to({text:"X-Canvas"},1500).set({visible:true},highlight); // 1.5 秒后怪变 text，并且设置 highlight 的 visible=true。
 			/*
 			// 也可以通过 wait 和 set 实现以上功能。
 			.wait(1500) // 等待 1.5 秒。
@@ -76,7 +76,7 @@ xc.depends([
 
 <body>
 	<header id="header" class="TweenJS">
-	    <h1><span class="text-product">Tween<strong>JS</strong></span> Canvas 补间</h1>
+	    <h1><span class="text-product">Tween<strong>JS</strong></span> Canvas 补间制作</h1>
 	    <p>该例子演示了如何利用 TweenJS 的动画，延迟和回调。</p>
 	</header>
 	<canvas id="canvas1" width="960" height="350" style="border: 5px white solid;"></canvas><br/>

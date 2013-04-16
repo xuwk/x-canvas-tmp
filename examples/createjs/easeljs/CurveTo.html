@@ -12,13 +12,6 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var Shape = xc.module.require("xc.createjs.Shape");
-    var Point = xc.module.require("xc.createjs.Point");
-    var Text = xc.module.require("xc.createjs.Text");
-    var Touch = xc.module.require("xc.createjs.Touch");
-
     var canvas, stage;
     var drawingCanvas;
     var oldPt;
@@ -38,19 +31,19 @@ xc.depends([
         colors = ["#828b20", "#b0ac31", "#cbc53d", "#fad779", "#f9e4ad", "#faf2db", "#563512", "#9b4a0b", "#d36600", "#fe8a00", "#f9a71f"];
 
         // 检查当前浏览器是否支持 Touch 事件。
-        stage = new Stage(canvas);
+        stage = new createjs.Stage(canvas);
         stage.autoClear = false;
         stage.enableDOMEvents(true);
 
-        Touch.enable(stage);
-        Ticker.setFPS(24);
+        createjs.Touch.enable(stage);
+        createjs.Ticker.setFPS(24);
 
-        drawingCanvas = new Shape();
+        drawingCanvas = new createjs.Shape();
 
         stage.addEventListener("stagemousedown", handleMouseDown);
         stage.addEventListener("stagemouseup", handleMouseUp);
 
-        title = new Text("Click and Drag to draw", "36px Arial", "#777777");
+        title = new createjs.Text("Click and Drag to draw", "36px Arial", "#777777");
         title.x = 300;
         title.y = 200;
         stage.addChild(title);
@@ -60,20 +53,20 @@ xc.depends([
     }
 
     function stop() {
-        Ticker.removeEventListener("tick", tick);
+        createjs.Ticker.removeEventListener("tick", tick);
     }
 
     function handleMouseDown(event) {
         if (stage.contains(title)) { stage.clear(); stage.removeChild(title); }
         color = colors[(index++)%colors.length];
         stroke = Math.random()*30 + 10 | 0;
-        oldPt = new Point(stage.mouseX, stage.mouseY);
+        oldPt = new createjs.Point(stage.mouseX, stage.mouseY);
         oldMidPt = oldPt;
         stage.addEventListener("stagemousemove" , handleMouseMove);
     }
 
     function handleMouseMove(event) {
-        var midPt = new Point(oldPt.x + stage.mouseX>>1, oldPt.y+stage.mouseY>>1);
+        var midPt = new createjs.Point(oldPt.x + stage.mouseX>>1, oldPt.y+stage.mouseY>>1);
 
         drawingCanvas.graphics.clear().setStrokeStyle(stroke, 'round', 'round').beginStroke(color).moveTo(midPt.x, midPt.y).curveTo(oldPt.x, oldPt.y, oldMidPt.x, oldMidPt.y);
 
@@ -100,6 +93,6 @@ xc.depends([
         <h1><span class="text-product">Easel<strong>JS</strong></span> Curve To 的使用</h1>
         <p>该例子演示了如何利用 EaselJS 的矢量图 API 在 canvas 上绘制矢量图。</p>
     </header>
-    <canvas id="myCanvas" width="960" height="400"></canvas>
+    <canvas id="myCanvas" width="960" height="400" style="border: 5px solid white;"></canvas>
 </body>
 </html>

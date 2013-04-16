@@ -50,17 +50,17 @@ xc.depends([
 				.to({x:300,y:300}, 5000)
 				.to({guide:{path:[100,100, 800,100, 800,300], orient:true, start:1, end:0}}, 5000)
 		;*/
-		var tween = createjs.Tween.get(ball, {loop:true}, true)
-				.to({x:150,y:150}, 3000)
-				.to({rotation: -45}, 1000)
-				.to({guide:{path:[100,100, 800,100, 800,300], orient:true}}, 5000)
-				.to({x:900,y:300}, 2000)
-				.wait(2000)
-				.to({rotation: 360}, 2000)
-				.to({guide:{path:[100,100, 800,100, 800,300], start:1, end:0}}, 5000)
-				.wait(2000)
-				.to({x:200,y:200}, 1000)
-				.to({rotation: -360, guide:{path:[100,100, 800,100, 800,300]}}, 3000)
+		var tween = createjs.Tween.get(ball, {loop:true}, true) // 获取 ball 对象。
+				.to({x:150,y:150}, 3000) // 移动到 （150,150）处。
+				.to({rotation: -45}, 1000) // 旋转 -45 度。
+				.to({guide:{path:[100,100, 800,100, 800,300], orient:true}}, 5000) // 根据指定路径移动。
+				.to({x:900,y:300}, 2000) // 移动到 （900，300）。
+				.wait(2000) // 等待 2 秒。
+				.to({rotation: 360}, 2000) // 旋转 360 度。
+				.to({guide:{path:[100,100, 800,100, 800,300], start:1, end:0}}, 5000) // 根据指定路径移动。
+				.wait(2000) // 等待 2 秒。
+				.to({x:200,y:200}, 1000) // 移动到 （200，200）
+				.to({rotation: -360, guide:{path:[100,100, 800,100, 800,300]}}, 3000) // 旋转 -360 度。
 			;
 
 		stage.addChild(ball);

@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<title>SoundJS: Test Suite</title>
+<title>SoundJS: Sound 测试套件</title>
 
 <link type="text/css" href="assets/css/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
 <style type="text/css">
@@ -68,10 +68,6 @@ xc.depends([
     var intervalTime = 100;
 
     function init() {
-        if (window.top != window) {
-            document.getElementById("header").style.display = "none";
-        }
-
         if (params.type == "html5") {
             createjs.Sound.registerPlugins([createjs.HTMLAudioPlugin]);
         } else {
@@ -413,96 +409,98 @@ xc.depends([
 </head>
 
 <body>
-    <header id="header" class="SoundJS">
-        <h1><span class="text-product">Sound<strong>JS</strong></span> Test Suite</h1>
-        <p>该测试例子加载并播放多段定义好的音频，在播放过程中可以对音频进行控制。</p>
-    </header>
-    <div class="content" id="content">
-        <div>
-            <a href="?type=normal">Web Audio, HTML Audio</a> | <a href="?type=html5">HTML Audio</a>
+    <center>
+        <header id="header" class="SoundJS">
+            <h1><span class="text-product">Sound<strong>JS</strong></span> Sound 测试套件</h1>
+            <p>该测试例子加载并播放多段定义好的音频，在播放过程中可以对音频进行控制。</p>
+        </header>
+        <div class="content" id="content">
+            <div>
+                <a href="?type=normal">Web Audio, HTML Audio</a> | <a href="?type=html5">HTML Audio</a>
+            </div>
+
+            <div class="plugin">
+                <p id="activePlugin">可用插件是：</p>
+            </div>
+
+            <form id="playControls">
+                <p>选择要播放的音频 <br/>每段音频都显示了同时能播放多少个实例。</p>
+                <select id="library" multiple="multiple" class="select"></select><br />
+
+                <input type="button" id="playSoundBtn" value="Play" />
+
+                <label for="interrupt">Interrupt</label>
+                <select id="interrupt">
+                    <option selected="selected" value="any">
+                        Any</option>
+                    <option value="none">None</option>
+                    <option value="early">Early</option>
+                    <option value="late">Late</option>
+                </select>
+
+                <br />
+                <br />
+
+                <table border="0" width="400" cellpadding="5" cellspacing="5">
+                    <tr>
+                        <td><label for="loop">Loop</label></td>
+                        <td><div class="loopSlider" id="loop"></div></td>
+                        <td><label for="loop" id="loopValue">0</label></td>
+                    </tr>
+                    <tr>
+                        <td> <label for="delay">Delay</label></td>
+                        <td><div class="delaySlider" id="delay"></div></td>
+                        <td><label for="delay" id="delayValue">0 seconds</label></td>
+                    </tr>
+                    <tr>
+                        <td><label for="offset">Offset</label></td>
+                        <td><div class="offsetSlider" id="offset"></div></td>
+                        <td><label for="offset" id="offsetValue">0 seconds</label></td>
+                    </tr>
+                    <tr rowCount="2">
+                        <td><label for="masterVolume" class="nodisable">Master Volume</label></td>
+                        <td> <div class="masterVolumeSlider" id="masterVolume"></div></td>
+                        <td><label for="masterVolume" id="masterVolumeValue">100</label></td>
+                    </tr>
+                </table>
+                <input id="stopAllSoundsBtn" name="stopAll" type="button" value="Stop All Sounds" />
+                <input id="muteAllSoundsBtn" name="muteAll" type="button" value="Mute All Sounds" />
+            </form>
+
+            <form id="instanceControls">
+                <p>选择停止播放一段正在播放的音频，设置声音平衡，播放进度。<br/>当音频播放完成，音频将在该列表移除。</p>
+                <select id="nowPlaying" multiple="multiple" disabled="disabled" class="select">
+                    <option value="-1">-- 没有正在播放的音频 --</option>
+                </select>
+
+                <br/>
+                <br/>
+                <table border="0" width="400" cellpadding="5" cellspacing="5">
+                    <tr>
+                        <td><label for="volume">Instance Volume</label></td>
+                        <td><div id="volume" class="volumeSlider"></div></td>
+                        <td><label for="volume" id="volumeValue">100</label></td>
+                    </tr>
+                    <tr>
+                        <td><label for="pan">Pan</label></td>
+                        <td><div class="panSlider" id="pan"></div></td>
+                        <td><label for="pan" id="panValue">0</label></td>
+                    </tr>
+                    <tr>
+                        <td><label for="pos">Position</label></td>
+                        <td><div class="posSlider" id="pos"></div></td>
+                        <td><label for="pos" id="posValue">0</label></td>
+                    </tr>
+                </table>
+                <input id="pauseBtn" name="pause" type="button" value="Pause" />
+                <input id="stopBtn" name="stop" type="button" value="Stop" />
+                <input id="muteBtn" name="mute" type="button" value="Mute" />
+            </form>
         </div>
-
-        <div class="plugin">
-            <p id="activePlugin">可用插件是：</p>
+        <div id="error">
+            <h1>对不起！</h1>
+            <p>当前浏览器不支持 SoundJS</p>
         </div>
-
-        <form id="playControls">
-            <p>选择要播放的音频 <br/>每段音频都显示了同时能播放多少个实例。</p>
-            <select id="library" multiple="multiple" class="select"></select><br />
-
-            <input type="button" id="playSoundBtn" value="Play" />
-
-            <label for="interrupt">Interrupt</label>
-            <select id="interrupt">
-                <option selected="selected" value="any">
-                    Any</option>
-                <option value="none">None</option>
-                <option value="early">Early</option>
-                <option value="late">Late</option>
-            </select>
-
-            <br />
-            <br />
-
-            <table border="0" width="400" cellpadding="5" cellspacing="5">
-                <tr>
-                    <td><label for="loop">Loop</label></td>
-                    <td><div class="loopSlider" id="loop"></div></td>
-                    <td><label for="loop" id="loopValue">0</label></td>
-                </tr>
-                <tr>
-                    <td> <label for="delay">Delay</label></td>
-                    <td><div class="delaySlider" id="delay"></div></td>
-                    <td><label for="delay" id="delayValue">0 seconds</label></td>
-                </tr>
-                <tr>
-                    <td><label for="offset">Offset</label></td>
-                    <td><div class="offsetSlider" id="offset"></div></td>
-                    <td><label for="offset" id="offsetValue">0 seconds</label></td>
-                </tr>
-                <tr rowCount="2">
-                    <td><label for="masterVolume" class="nodisable">Master Volume</label></td>
-                    <td> <div class="masterVolumeSlider" id="masterVolume"></div></td>
-                    <td><label for="masterVolume" id="masterVolumeValue">100</label></td>
-                </tr>
-            </table>
-            <input id="stopAllSoundsBtn" name="stopAll" type="button" value="Stop All Sounds" />
-            <input id="muteAllSoundsBtn" name="muteAll" type="button" value="Mute All Sounds" />
-        </form>
-
-        <form id="instanceControls">
-            <p>选择停止播放一段正在播放的音频，设置声音平衡，播放进度。<br/>当音频播放完成，音频将在该列表移除。</p>
-            <select id="nowPlaying" multiple="multiple" disabled="disabled" class="select">
-                <option value="-1">-- 没有正在播放的音频 --</option>
-            </select>
-
-            <br/>
-            <br/>
-            <table border="0" width="400" cellpadding="5" cellspacing="5">
-                <tr>
-                    <td><label for="volume">Instance Volume</label></td>
-                    <td><div id="volume" class="volumeSlider"></div></td>
-                    <td><label for="volume" id="volumeValue">100</label></td>
-                </tr>
-                <tr>
-                    <td><label for="pan">Pan</label></td>
-                    <td><div class="panSlider" id="pan"></div></td>
-                    <td><label for="pan" id="panValue">0</label></td>
-                </tr>
-                <tr>
-                    <td><label for="pos">Position</label></td>
-                    <td><div class="posSlider" id="pos"></div></td>
-                    <td><label for="pos" id="posValue">0</label></td>
-                </tr>
-            </table>
-            <input id="pauseBtn" name="pause" type="button" value="Pause" />
-            <input id="stopBtn" name="stop" type="button" value="Stop" />
-            <input id="muteBtn" name="mute" type="button" value="Mute" />
-        </form>
-    </div>
-    <div id="error">
-        <h1>对不起！</h1>
-        <p>当前浏览器不支持 SoundJS</p>
-    </div>
+    </center>
 </body>
 </html>

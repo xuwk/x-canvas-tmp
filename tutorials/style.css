@@ -1,11 +1,10 @@
 body, html {
-    background-color:  #222;
+    /*background-color: #222;*/
     font-family: Arial, Verdana, sans-serif;
     font-weight: normal;
     color: #ccc;
 }
 h1 {
-  letter-spacing: -3px;
   font-weight: bold;
   margin: 0;
 }
@@ -16,6 +15,14 @@ li {
 .header {
     padding: 5px;
     background-color: #000000;
+    -webkit-border-radius: 10px;
+}
+.body {
+    background-color: rgb(57, 57, 57);
+    background-image: url("./resources/logo.png");
+    background-position: center;
+    -webkit-background-size: 30% 30%;
+    background-repeat: no-repeat; 
 }
 .title {
     color: #ccc;
@@ -63,6 +70,37 @@ li {
     font-weight: bold;
     font-size: 28px;
     float: right; 
-    margin-right: 50px;
+    margin-right: 20px;
     color: red;
+}
+.tutorials_box {
+    float: left;
+    margin: 10px 0 0 20px;
+    -webkit-box-shadow: 1px 1px 25px white;
+    background-color: rgba(100, 100, 100, 0.3);
+    min-width: 280px;
+    height: 500px;
+    padding: 0 30px 0 10px;
+    -webkit-border-radius: 20px;
+    overflow: auto;
+}
+.tutorialMainTitle {
+    font-size: 23px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+}
+.tutorialBody {
+    margin: 0 auto; 
+    width: 800px;
+}
+.tutorialTitle {
+    margin: 20px 0 5px 0;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.CodeMirror {
+    border: 1px solid black; 
+    font-size: 14px;
 }

@@ -19,14 +19,6 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-    // 读取 URL 参数。该值用于定义插件模块。
-    var params = {};
-    var pieces = window.location.search.slice(1).split("&");
-    for (var i=0, l=pieces.length; i<l; i++) {
-        var parts = pieces[i].split("=");
-        params[parts[0]] = parts[1];
-    }
-
     var queue;
     var displayStatus;
 
@@ -35,11 +27,7 @@ xc.depends([
             document.getElementById("header").style.display = "none";
         }
 
-        if (params.type == "html5") {
-            createjs.Sound.registerPlugins([createjs.HTMLAudioPlugin]);
-        } else {
-            createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.HTMLAudioPlugin]);
-        }
+        createjs.Sound.registerPlugins([createjs.HTMLAudioPlugin]);
 
         if (!createjs.Sound.isReady()) {
             document.getElementById("error").style.display = "block";
@@ -109,9 +97,6 @@ xc.depends([
         <p>该插件预加载一个音频实例，并立即通过 SoundJS 播放。SoundJS 将根据浏览器的功能，选择不同的输入源。注：某些浏览器不支持在本地环境中运行，需要服务器环境。</p>
     </header>
     <div class="content" id="content">
-        <div>
-            <a href="?type=normal">Web Audio，HTML Audio</a> | <a href="?type=html5">HTML Audio</a>
-        </div>
         <div class="plugin">
             <p id="activePlugin">可用插件是：</p>
         </div>

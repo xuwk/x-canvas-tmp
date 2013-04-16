@@ -6,6 +6,12 @@
 <title>SoundJS：音频播放</title>
 
 <link rel="stylesheet" type="text/css" href="assets/demoStyles.css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
 <script type="text/javascript">
@@ -18,10 +24,6 @@ xc.depends([
     var displayStatus;  // 一个用于显示播放信息的 HTML 元素。
 
     function init() {
-        if (window.top != window) {
-            document.getElementById("header").style.display = "none";
-        }
-
         // 这里做了两件事，初始化了默认插件，一旦失败将显示错误信息。
         if (!createjs.Sound.initializeDefaultPlugins()) {
             document.getElementById("error").style.display = "block";
@@ -63,20 +65,73 @@ xc.depends([
 </head>
 
 <body>
-	<header id="header" class="SoundJS">
-	    <h1><span class="text-product">Sound<strong>JS</strong></span> 音频播放</h1>
-        <p>该例子注册一个音频然后用 SoundJS 播放</p>
-	</header>
-	<div class="content" id="content">
-		<h1 id="status">开始</h1>
-	</div>
-	<div id="error">
-		<h1>对不起！</h1>
-        <p>当前浏览器不支持 SoundJS</p>
-	</div>
-    <div id="mobile">
-        <h1>对不起！</h1>
-        <p>移动设备只支持在用户事件内部播放音频，并不支持该例子。</p>
-    </div>
+    <center>
+    	<header id="header" class="SoundJS">
+    	    <h1><span class="text-product">Sound<strong>JS</strong></span> 音频播放</h1>
+            <p>该例子注册一个音频然后用 SoundJS 播放</p>
+    	</header>
+    	<div class="content jp-content" id="content">
+    		<h1 id="status">开始</h1>
+    	</div>
+    	<div id="error">
+    		<h1>对不起！</h1>
+            <p>当前浏览器不支持 SoundJS</p>
+    	</div>
+        <div id="mobile">
+            <h1>对不起！</h1>
+            <p>移动设备只支持在用户事件内部播放音频，并不支持该例子。</p>
+        </div>
+    </center>
+
+    <section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：定义变量。</div><br />
+                <textarea class="tutorialCode" name="code">
+var src;            // 准备播放的音频资源。
+var soundInstance;  // 当创建或播放音频时，SoundJS 返回的音频实例。
+var displayStatus;  // 一个用于显示播放信息的 HTML 元素。</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：初始化插件，初始化失败则返回。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 这里做了两件事，初始化了默认插件，一旦失败将显示错误信息。
+if (!createjs.Sound.initializeDefaultPlugins()) {
+    document.getElementById("error").style.display = "block";
+    document.getElementById("content").style.display = "none";
+    return;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：定位音频资源。</div><br />
+                <textarea class="tutorialCode" name="code">
+var assetsPath = "assets/";
+src = assetsPath+"18-machinae_supremacy-lord_krutors_dominion.mp3|"+assetsPath+"18-machinae_supremacy-lord_krutors_dominion.ogg";</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：注册音频。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Sound.registerSound(src); </textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：监听音频加载情况，一旦加载完成，马上播放。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Sound.addEventListener("loadComplete", createjs.proxy(playSound,this)); 
+function playSound(evt) {
+    if (evt.src == src) {
+        soundInstance = createjs.Sound.play(src);  // 开始播放加载完成的音频，并保存音频实例。
+    }
+}</textarea>
+        </div>  
+    </section>
+    
+<script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>
