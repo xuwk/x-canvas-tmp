@@ -3,9 +3,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<title>TweenJS: Canvas 补间</title>
+<title>TweenJS: Canvas 补间制作</title>
 
 <link rel="stylesheet" href="assets/demoStyles.css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
 <script type="text/javascript">
@@ -24,7 +30,7 @@ xc.depends([
 		highlight.x = 250;
 		highlight.y = 250;
 
-		var txt = new createjs.Text("TweenJS", "bold 20px Arial");
+		var txt = new createjs.Text("X-Canvas", "bold 20px Arial", "red");
 		txt.textAlign = "center";
 		txt.x =  250;
 		txt.y = 250;
@@ -50,12 +56,12 @@ xc.depends([
 			.call(console.log, ["done!"],console) // 执行 console.log("done!");
 
 		// 这个 Tween 实际上没有执行任何东西，它只是序列化了一系列的 action：
-		// 注：pauseable 属性设置了为 false，所以它会在 Ticker 暂停的时候仍然继续执行。
+		// 注：ignoreGlobalPause 属性设置了为 true，所以它会在 Ticker 暂停的时候仍然继续执行。
 		createjs.Tween.get(txt,{loop:true, ignoreGlobalPause:true}) // 获取 Tween 的目标对象 txt。
-			.to({text:"the new javascript tweening engine"},1500) // 1.5 秒后改变 text。
+			.to({text:"the new engine"},1500) // 1.5 秒后改变 text。
 			.set({visible:false},highlight) // 设置 heighlight 的 visible = false。
-			.to({text:"by Grant Skinner, gskinner.com"},1500) // 1.5 秒后改变 text。
-			.to({text:"TweenJS"},1500).set({visible:true},highlight); // 1.5 秒后怪变 text，并且设置 highlight 的 visible=true。
+			.to({text:"http://xc.uc.cn"},1500) // 1.5 秒后改变 text。
+			.to({text:"X-Canvas"},1500).set({visible:true},highlight); // 1.5 秒后怪变 text，并且设置 highlight 的 visible=true。
 			/*
 			// 也可以通过 wait 和 set 实现以上功能。
 			.wait(1500) // 等待 1.5 秒。
@@ -75,11 +81,86 @@ xc.depends([
 </head>
 
 <body>
-	<header id="header" class="TweenJS">
-	    <h1><span class="text-product">Tween<strong>JS</strong></span> Canvas 补间</h1>
-	    <p>该例子演示了如何利用 TweenJS 的动画，延迟和回调。</p>
-	</header>
-	<canvas id="canvas1" width="960" height="350" style="border: 5px white solid;"></canvas><br/>
-	<input type="button" value="toggle paused" onclick="createjs.Ticker.setPaused(!createjs.Ticker.getPaused());">
+	<center>
+		<header id="header" class="TweenJS">
+		    <h1><span class="text-product">Tween<strong>JS</strong></span> Canvas 补间制作</h1>
+		    <p>该例子演示了如何利用 TweenJS 的动画，延迟和回调。</p>
+		</header>
+		<canvas id="canvas1" width="960" height="350" style="border: 5px white solid;"></canvas><br/>
+		<input type="button" value="toggle paused" onclick="createjs.Ticker.setPaused(!createjs.Ticker.getPaused());">
+	</center>
+
+	<section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：创建一个 Stage 对象并指向 Canvas。</div><br />
+                <textarea class="tutorialCode" name="code">
+stage = new createjs.Stage("canvas1");</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：创建 circle，highlight 2 个 Shape 对象用于绘制圆形和高亮矢量图，以及创建 txt Text 对象用于显示文本信息，同时将它们添加到 Stage 中。</div><br />
+                <textarea class="tutorialCode" name="code">
+var circle = new createjs.Shape();
+circle.graphics.beginFill("#FF0000").drawCircle(0,0,50);
+
+var highlight = new createjs.Shape();
+highlight.graphics.beginFill("#FFFF66").drawRect(-50,-5,100,30);
+highlight.x = 250;
+highlight.y = 250;
+
+var txt = new createjs.Text("X-Canvas", "bold 20px Arial", "red");
+txt.textAlign = "center";
+txt.x =  250;
+txt.y = 250;
+
+stage.addChild(circle,highlight,txt);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：获取 circle 对象并为其设置补间动画。 </div><br />
+                <textarea class="tutorialCode" name="code">
+// 设置补间，该补间使得目标对象的大小每一秒都在 0.3 到 1 之间变动。
+createjs.Tween.get(circle,{loop:true})
+	.wait(1000) // 等待 1 秒。
+	.to({scaleX:0.2,scaleY:0.2}) // 改变目标对象的 scale 属性值。（默认过渡时间为 0）
+	.wait(1000)
+	.to({scaleX:1,scaleY:1},1000,createjs.Ease.bounceOut) // 通过 ease bounce out 的方式改变 scaleX/Y 的值。
+
+// 出于演示的目的，尝试将 override（第三个） 参数设置为 true，
+// 这样会覆盖所有在 circle 的其他补间。
+createjs.Tween.get(circle, {loop:true}, true) // 获取新的目标对象。
+	.to({x:500,y:200,alpha:0.1},1000,createjs.Ease.get(1)) // 通过 ease out 的方式在 1 秒内改变目标对象的 x/y/alpha 属性。
+	.to({x:0},1000,createjs.Ease.get(-1)) // 利用 ease in 方式在 0.5 秒内改变 x 值。
+	.to({y:400}) // 将 y 属性改为 400 （默认过渡时间为 0）。
+	.call(console.log, ["wait..."], console) // 执行 console.log("wait...")。
+	.wait(800) // 等待 0.8 秒。
+	.to({y:0,alpha:1},300) // 补间 y/alpha 属性，持续 0.3 秒。
+	.call(console.log, ["done!"],console) // 执行 console.log("done!");</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：获取 txt 对象并为其设置补间动画。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 注：ignoreGlobalPause 属性设置了为 true，所以它会在 Ticker 暂停的时候仍然继续执行。
+createjs.Tween.get(txt,{loop:true, ignoreGlobalPause:true}) // 获取 Tween 的目标对象 txt。
+	.to({text:"the new engine"},1500) // 1.5 秒后改变 text。
+	.set({visible:false},highlight) // 设置 heighlight 的 visible = false。
+	.to({text:"http://xc.uc.cn"},1500) // 1.5 秒后改变 text。
+	.to({text:"X-Canvas"},1500).set({visible:true},highlight); // 1.5 秒后怪变 text，并且设置 highlight 的 </textarea>
+        </div>
+
+        <div class="tutorialBody">
+	        <div class="tutorialTitle">步骤五：设置帧数为 20，并启用 tick 监听。</div><br />
+	                <textarea class="tutorialCode" name="code">
+createjs.Ticker.setFPS(20); 
+createjs.Ticker.addEventListener("tick", stage);</textarea>
+	    </div>
+    </section>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>

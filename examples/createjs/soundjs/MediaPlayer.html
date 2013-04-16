@@ -95,14 +95,12 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-    var Sound = xc.module.require("xc.createjs.Sound");
-
     function init() {
         if (window.top != window) {
             document.getElementById("header").style.display = "none";
         }
 
-        if (!Sound.initializeDefaultPlugins()) {
+        if (!createjs.Sound.initializeDefaultPlugins()) {
             document.getElementById("error").style.display = "block";
             document.getElementById("content").style.display = "none";
             return;
@@ -117,8 +115,8 @@ xc.depends([
         var assetPath = "assets/";
         var src = assetPath+"M-GameBG.mp3|"+assetPath+"M-GameBG.ogg";
 
-        Sound.addEventListener("loadComplete", Sound.proxy(handleLoadComplete,this)); // 添加一个监听器，监听资源是否加载完成。
-        Sound.registerSound(src, "music");
+        createjs.Sound.addEventListener("loadComplete", createjs.Sound.proxy(handleLoadComplete,this)); // 添加一个监听器，监听资源是否加载完成。
+        createjs.Sound.registerSound(src, "music");
     }
 
     var instance;
@@ -133,7 +131,7 @@ xc.depends([
         $("#progress").css("display", "none");
         $("#position").css("display", "block");
 
-        instance = Sound.play("music");
+        instance = createjs.Sound.play("music");
         instance.onComplete = function() {
             clearInterval(positionInterval);
             $("#playBtn").removeClass("pauseBtn").addClass("playBtn")
@@ -142,7 +140,7 @@ xc.depends([
         $("#playPauseBtn").attr("disabled", false);
         $("#playBtn").removeClass("playBtn").addClass("pauseBtn");
         $("#playBtn").click(function(event){
-            if (instance.playState == Sound.PLAY_FINISHED) {
+            if (instance.playState == createjs.Sound.PLAY_FINISHED) {
                 instance.play();
                 $("#playBtn").removeClass("playBtn").addClass("pauseBtn");
                 trackTime();

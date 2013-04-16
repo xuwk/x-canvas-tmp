@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<title>TweenJS：MotionGuide</title>
+<title>TweenJS：MotionGuidePlugin 使用（B）</title>
 
 <link rel="stylesheet" href="assets/demoStyles.css" />
 
@@ -40,10 +40,10 @@ xc.depends([
 		g.lineTo(50,0);
 		g.endStroke();
 
-		var tween = createjs.Tween.get(ball, {loop:true}, true)
-			.to({guide:{path:[100,100, 800,100, 800,300], orient:true}}, 5000)
-			.wait(1000)
-			.to({guide:{path:[800,300, 100,300, 100,100], end:0.75, orient:true}}, 3750)
+		var tween = createjs.Tween.get(ball, {loop:true}, true) // 获取 ball 对象。
+			.to({guide:{path:[100,100, 800,100, 800,300], orient:true}}, 5000) // 按照特定的路径运动。
+			.wait(1000) // 等待 1 秒。
+			.to({guide:{path:[800,300, 100,300, 100,100], end:0.75, orient:true}}, 3750) // 按照特定的路径运动。
 			;
 
 		stage.addChild(ball);
@@ -63,7 +63,7 @@ xc.depends([
 <body>
 	<div class="canvasHolder">
 		<header id="header" class="EaselJS">
-		    <h1><span class="text-product">Tween<strong>JS</strong></span> MotionGuide</h1>
+		    <h1><span class="text-product">Tween<strong>JS</strong></span> MotionGuidePlugin 使用（B）</h1>
 		    <p>该例子演示了 MotionGuidePlugin 的简单使用。</p>
 		</header>
 		<canvas id="testCanvas" width="960" height="400" style="border: 5px white solid;"></canvas>
