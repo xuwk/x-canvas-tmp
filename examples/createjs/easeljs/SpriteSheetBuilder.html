@@ -39,32 +39,33 @@
 			
 			stage.addChild(circle, square);
 			
-			// create the sprite sheet builder:
+			// 创建图片精灵生成器
 			var builder = new createjs.SpriteSheetBuilder();
 			
-			// add the circle as a frame, specify the bounds to draw, and grab the frame index:
+			// 添加一个圆形，把它作为一个帧，定义绘图的范围，并把该帧的下标记录下来
 			var index = builder.addFrame(circle, new createjs.Rectangle(-30,-30,60,60));
-			// add a named animation using the frame index:
+			
+			// 对该下标进行动画命名
 			builder.addAnimation("circle", index);
 			
-			// add the square as a sequence of frames, each with a different number in the text field:
+			// 作为帧序列添加正方形，每一个都包含了不同的数字
 			var frames = [];
 			for (var i=0; i<5; i++) {
-				// we're defining a setup function that will update the text before each frame draw.
-				// the setup function will be called right before the draw, and passed the setup params "[i]":
+				// 我们正在定义一个设置方法，该方法会在绘画每一帧前更新那些文本内容
+				// 这个方法会在绘画前被调用，并且会被传入参数“[i]”
 				index = builder.addFrame(square, null, 1, function(num) { squareFld.text=num; }, [i]);
-				// save off the index of each frame in order to use when defining the animation:
+				// 保存每一帧的下标，这个会在定义动画时调用
 				frames.push(index);
 			}
-			// create an animation named square that comprises all of the frames we just added:
-			// we're also telling it to loop the animation and setting a frequency so it updates every 8 ticks:
+			// 创建一个命名为“square”的动画，这个动画包含了我们刚刚添加的所有帧
+			// 我们同时让它循环播放，并且设置一个频率，让它每循环8次更新一次
 			builder.addAnimation("square", frames, true, 8);
 			
-			// run the build operation, and grab the resulting sprite sheet:
-			// we could also do this asynchronously with buildAsync(...)
+			// 执行创建操作，并保存图片精灵的生成结果
+			// 我们也可以通过异步方式（buildAsync）进行调用
 			var spriteSheet = builder.build();
 			
-			// create our bitmap animations using the generated sprite sheet, and put them on stage:
+			// 使用生成的图片精灵创建一个动画，并把它放在场景上
 			var circle2 = new createjs.BitmapAnimation(spriteSheet);
 			circle2.gotoAndPlay("circle");
 			circle2.setTransform(100,90+100);
@@ -75,11 +76,10 @@
 			square2.setTransform(150,50+100);
 			stage.addChild(square2);
 			
-			// append the generated spritesheet image for demo purposes:
+			// 追加一个生成的图片做演示用途
 			document.body.appendChild(spriteSheet._images[0]);
 			
-			// we want to do some work before we update the canvas,
-			// otherwise we could use Ticker.addEventListener("tick", stage);
+			// 我们需要在更新canvas前做一些事情，否则我们会用Ticker.addEventListener("tick", stage)来代替
 			createjs.Ticker.addEventListener("tick", tick);
 		}
 	
