@@ -545,7 +545,7 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
          * @protected
          */
         createTag: function(src) {
-            var tag = document.createElement("audio");
+            var tag = typeof Audio !== undefined ? new Audio() : document.createElement("audio");
             tag.autoplay = false;
             tag.preload = "none";
             tag.src = src;
@@ -689,10 +689,10 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
         if (HTMLAudioPlugin.capabilities != null) {
             return;
         }
-        var t = document.createElement("audio");
+        /*var t = document.createElement("audio");
         if (t.canPlayType == null) {
             return;
-        }
+        }*/
         HTMLAudioPlugin.capabilities = {
             panning: true,
             volume: true,
@@ -704,9 +704,9 @@ xc.module.define("xc.createjs.HTMLAudioPlugin", function(exports) {
         for ( var i = 0, l = supportedExtensions.length; i < l; i++) {
             var ext = supportedExtensions[i];
             var playType = extensionMap[ext] || ext;
-            HTMLAudioPlugin.capabilities[ext] =
-            (t.canPlayType("audio/" + ext) != "no" && t.canPlayType("audio/" + ext) != "") 
-            || (t.canPlayType("audio/" + playType) != "no" && t.canPlayType("audio/" + playType) != "");
+            HTMLAudioPlugin.capabilities[ext] = true;
+            /*(t.canPlayType("audio/" + ext) != "no" && t.canPlayType("audio/" + ext) != "") 
+            || (t.canPlayType("audio/" + playType) != "no" && t.canPlayType("audio/" + playType) != "");*/
         }
     }
 

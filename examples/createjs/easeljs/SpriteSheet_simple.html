@@ -1,35 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>EaselJS: Simple SpriteSheet Example</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>EaselJS: 简单的图片精灵示例</title>
 
 	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../src/easeljs/utils/UID.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Matrix2D.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/EventDispatcher.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/DisplayObject.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Container.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Stage.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/MouseEvent.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Shape.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Graphics.js"></script>
-	<script type="text/javascript" src="../src/easeljs/utils/Ticker.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/SpriteSheet.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/BitmapAnimation.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Rectangle.js"></script>
+	<script type="text/javascript" src="../../../src/xc.js"></script>
 
-	<!-- We also provide hosted minified versions of all CreateJS libraries.
-	  http://code.createjs.com -->
-
-	<script type="text/javascript">
+    <script>
+    xc.depends([
+        "../../../src/core",
+        "../../../src/lib/createjs"
+    ], function() {
         var stage;
 		function init() {
 
-			// create a new stage and point it at our canvas:
+			// 在canvas上创建一个场景
 			stage = new createjs.Stage(document.getElementById("testCanvas"));
 
-			// Define a spritesheet. Note that this data was exported by Zoë.
+			// 定义一个图片精灵，注：这个数据是Zoë导出的。
 			var ss = new createjs.SpriteSheet({
 				"animations":
 				{
@@ -52,7 +42,7 @@
 
 			grant.gotoAndPlay("run");
 
-			// Add Grant to the stage, and add it as a listener to Ticker to get updates each frame.
+			// 把grant添加到场景，并把它当作监听器添加到主循环上，以便每次去更新
 			stage.addChild(grant);
 			createjs.Ticker.setFPS(60);
 			createjs.Ticker.addEventListener("tick", tick);
@@ -61,15 +51,16 @@
         function tick() {
             stage.update();
         }
-
+        init();
+    });
 	</script>
 </head>
-<body onload="init();">
+<body>
 
 	<header id="header" class="EaselJS">
-		<h1><span class="text-product">Easel<strong>JS</strong></span> Simple SpriteSheet Example</h1>
-		<p>A simple example of a sprite sheet using <strong>BitmapAnimation</strong>. This demos also shows playing named
-			animations (jump and run), and animation chaining using <strong>getAnimation("name").next</strong>.</p>
+		<h1><span class="text-product">Easel<strong>JS</strong></span> 简单的图片精灵示例</h1>
+		<p>一个使用<strong>BitmapAnimation</strong>的简单的图片精灵示例。这个示例同时也展示了命名动画的播放方式（play和run），
+		还有使用<strong>getAnimation("name").next</strong>的链式动画播放。</p>
 	</header>
 
 	<div class="canvasHolder">
