@@ -47,7 +47,7 @@
 			star.graphics.beginStroke("#FF0").setStrokeStyle(5).drawPolyStar(0,0,img.height/2-15,5,0.6).closePath();
 	
 			var bg = new createjs.Bitmap(img);
-			// blur and desaturate the background image:
+			// 模糊并降低背景图片的饱和度
 			bg.filters = [new createjs.BoxBlurFilter(2,2,2), new createjs.ColorMatrixFilter(new createjs.ColorMatrix(0,0,-100,0))];
 			bg.cache(0,0,img.width,img.height);
 			stage.addChild(bg);
@@ -56,8 +56,7 @@
 			stage.addChild(bmp);
 			bmp.mask = star;
 			
-			// note that the shape can be used in the display list as well if you'd like, or
-			// we can reuse the Graphics instance in another shape if we'd like to transform it differently.
+			// 注：如果你喜欢的话，“形状”也可以用在显示列表里面，或者我们可以在其他的“形状”里面重用Graphics的实例，如果我们想要把它做不同转换的话。
 			stage.addChild(star);
 	
 			createjs.Ticker.addEventListener("tick", tick);
@@ -79,8 +78,8 @@
     <div id="loader"></div>
 
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Masks</h1>
-	    <p>Demonstrates using a vector mask. Note that the mask <strong>Shape</strong> that defines the mask can also be placed on the display list (in this case the star shape is used both a mask, and the yellow border)</p>
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> 遮罩</h1>
+	    <p>示范如何使用向量遮罩。注：遮罩的<strong>Shape</strong>定义了遮罩也可以放置在显示列表中</p>
 	</header>
 
 	<div class="canvasHolder">
