@@ -12,6 +12,7 @@ li {
   font-size: 15px;
 }
 
+
 .header {
     padding: 5px;
     background-color: #000000;
@@ -21,7 +22,6 @@ li {
     background-color: rgb(57, 57, 57);
     background-image: url("./resources/logo.png");
     background-position: center;
-    -webkit-background-size: 30% 30%;
     background-repeat: no-repeat; 
 }
 .title {
@@ -71,6 +71,17 @@ li {
     font-size: 28px;
     float: right; 
     margin-right: 20px;
+    color: red;
+}
+.download {
+    float: right;
+    margin: 30px;
+}
+.download-font {
+    font-size: 23px;
+    color: yellowgreen;
+}
+.download-link {
     color: red;
 }
 .tutorials_box {

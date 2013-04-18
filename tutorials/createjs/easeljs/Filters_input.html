@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>EaselJS: Filters Example</title>
-
+<title>EaselJS: 滤镜示例</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link type="text/css" href="assets/demoStyles.css" rel="stylesheet" />
 <link type="text/css" href="assets/css/dark-hive/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
@@ -16,13 +16,6 @@ xc.depends([
     "../../../src/lib/createjs"
 ], function() {
 
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Bitmap = xc.module.require("xc.createjs.Bitmap");
-    var BoxBlurFilter = xc.module.require("xc.createjs.BoxBlurFilter");
-    var ColorFilter = xc.module.require("xc.createjs.ColorFilter");
-    var ColorMatrix = xc.module.require("xc.createjs.ColorMatrix");
-    var ColorMatrixFilter = xc.module.require("xc.createjs.ColorMatrixFilter");
-
     var img;
     var stage;
     var bmp;
@@ -35,9 +28,6 @@ xc.depends([
     var cm;
 
     function init() {
-        if (window.top != window) {
-            document.getElementById("header").style.display = "none";
-        }
         document.getElementById("loader").className = "loader";
 
         img = new Image();
@@ -50,9 +40,9 @@ xc.depends([
 
         var canvas = document.getElementById("testCanvas");
 
-        stage = new Stage(canvas);
+        stage = new createjs.Stage(canvas);
 
-        bmp = new Bitmap(img);
+        bmp = new createjs.Bitmap(img);
         bmp.scaleX = bmp.scaleY = 2;
         bmp.cache(0,0,img.width,img.height);
         stage.addChild(bmp);
@@ -168,14 +158,14 @@ xc.depends([
         var greenChannelValue = $(".greenChannelSlider").slider("option", "value");
         var blueChannelValue = $(".blueChannelSlider").slider("option", "value");
 
-        cm = new ColorMatrix();
+        cm = new createjs.ColorMatrix();
         cm.adjustColor(brightnessValue, contrastValue, saturationValue, hueValue);
 
-        colorFilter = new ColorMatrixFilter(cm);
-        blurFilter = new BoxBlurFilter(blurXValue,  blurYValue, 2);
-        redChannelFilter = new ColorFilter(redChannelvalue/255,1,1,1);
-        greenChannelFilter = new ColorFilter(1,greenChannelValue/255,1,1);
-        blueChannelFilter = new ColorFilter(1,1,blueChannelValue/255,1);
+        colorFilter = new createjs.ColorMatrixFilter(cm);
+        blurFilter = new createjs.BoxBlurFilter(blurXValue,  blurYValue, 2);
+        redChannelFilter = new createjs.ColorFilter(redChannelvalue/255,1,1,1);
+        greenChannelFilter = new createjs.ColorFilter(1,greenChannelValue/255,1,1);
+        blueChannelFilter = new createjs.ColorFilter(1,1,blueChannelValue/255,1);
 
         updateImage();
     }
@@ -218,65 +208,65 @@ xc.depends([
 </style>
 </head>
 <body>
+    <center>
+        <div id="loader"></div>
 
-	<div id="loader"></div>
+        <header id="header" class="EaselJS">
+            <h1><span class="text-product">Easel<strong>JS</strong></span> 滤镜示例</h1>
+            <p>使用滤镜的演示。改变参数的值，然后预览结果。滤镜是应用在上一个滤镜的基础之上的。</p>
+        </header>
 
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Filters</h1>
-	    <p>Demonstrates using filters. Change the values in order to preview the results. Filters are applied on top of each other.</p>
-	</header>
-
-	<canvas id="testCanvas" width="960" height="250"></canvas>
-    <table>
-        <td>
-        <table cellspacing="7" border="0" cellpadding="3">
-            <tr>
-                <th><div>Brightness:</div></th>
-                <td><div class="brightnessSlider"></div></td>
+        <canvas id="testCanvas" width="960" height="250"></canvas>
+        <table>
             <td>
-                <th><div>Contrast:</div></th>
-                <td><div class="contrastSlider"></div></td>
-            </td>
-            </tr>
-            <tr>
-                <th><div>Hue:</div></th>
-                <td><div class="hueSlider"></div></td>
-
-            <td>
-                <th><div>Saturation:</div></th>
-                <td><div class="saturationSlider"></div></td>
-            </td>
-            </tr>
-        </table>
-        </td>
-        <td>
             <table cellspacing="7" border="0" cellpadding="3">
                 <tr>
-                    <th rowspan="1" align="center">Blur:</th>
-                    <td>
-                        <div class="blurXSlider"></div>
-                    </td>
-                    <td>
-                        <div class="blurYSlider"></div>
-                    </td>
+                    <th><div>亮度:</div></th>
+                    <td><div class="brightnessSlider"></div></td>
+                <td>
+                    <th><div>对比度:</div></th>
+                    <td><div class="contrastSlider"></div></td>
+                </td>
                 </tr>
                 <tr>
-                    <th><div>RGB:</div></th>
-                    <td>
-                        <div class="redChannelSlider"></div>
-                    </td>
-                    <td>
-                        <div class="greenChannelSlider"></div>
+                    <th><div>色调:</div></th>
+                    <td><div class="hueSlider"></div></td>
 
-                    </td>
-                    <td>
-                        <div class="blueChannelSlider"></div>
-                    </td>
+                <td>
+                    <th><div>饱和度:</div></th>
+                    <td><div class="saturationSlider"></div></td>
+                </td>
                 </tr>
             </table>
-        </td>
-    </table>
-    <input type="button" id="resetBtn" name="resetBtn" value="Reset" />
+            </td>
+            <td>
+                <table cellspacing="7" border="0" cellpadding="3">
+                    <tr>
+                        <th rowspan="1" align="center">模糊:</th>
+                        <td>
+                            <div class="blurXSlider"></div>
+                        </td>
+                        <td>
+                            <div class="blurYSlider"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><div>RGB:</div></th>
+                        <td>
+                            <div class="redChannelSlider"></div>
+                        </td>
+                        <td>
+                            <div class="greenChannelSlider"></div>
 
+                        </td>
+                        <td>
+                            <div class="blueChannelSlider"></div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </table>
+        <input type="button" id="resetBtn" name="resetBtn" value="重置" />
+    </center>
 </body>
 </html>

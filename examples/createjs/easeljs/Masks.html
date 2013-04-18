@@ -1,88 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>EaselJS 示例: 遮罩演示</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS：遮罩演示</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script>
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var img, star, stage;
+    var scale;
+	var angle;
+	function init() {
+        if (window.top != window) {
+            document.getElementById("header").style.display = "none";
+        }
+        document.getElementById("loader").className = "loader";
 
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-		var img, star, stage;
-	    var scale;
-		var angle;
-		function init() {
-	        if (window.top != window) {
-	            document.getElementById("header").style.display = "none";
-	        }
-	        document.getElementById("loader").className = "loader";
-	
-			//等待图片加载完毕
-			img = new Image();
-			img.onload = handleImageLoad;
-			img.src = "assets/photo-hires.jpg";
-			angle = 0;
-		}
-	
-		function handleImageLoad() {
-	        document.getElementById("loader").className = "";
-	        
-			//获取canvas对象，加载图片，直至最后一张图片被加载完成
-			var canvas = document.getElementById("testCanvas");
-	
-			// 在canvas上创建一个场景
-			stage = new createjs.Stage(canvas);
-			
-			// 遮罩只能是一个Shape对象
-			star = new createjs.Shape();
-			// 遮罩的位置会被关联到目标的父对象上
-			star.x = img.width/2;
-			star.y = img.height/2;
-			// 只有drawPolyStar的地方才是遮罩影响的范围
-			star.graphics.beginStroke("#FF0").setStrokeStyle(5).drawPolyStar(0,0,img.height/2-15,5,0.6).closePath();
-	
-			var bg = new createjs.Bitmap(img);
-			// blur and desaturate the background image:
-			bg.filters = [new createjs.BoxBlurFilter(2,2,2), new createjs.ColorMatrixFilter(new createjs.ColorMatrix(0,0,-100,0))];
-			bg.cache(0,0,img.width,img.height);
-			stage.addChild(bg);
-			
-			var bmp = new createjs.Bitmap(img);
-			stage.addChild(bmp);
-			bmp.mask = star;
-			
-			// note that the shape can be used in the display list as well if you'd like, or
-			// we can reuse the Graphics instance in another shape if we'd like to transform it differently.
-			stage.addChild(star);
-	
-			createjs.Ticker.addEventListener("tick", tick);
-		}
+		//等待图片加载完毕
+		img = new Image();
+		img.onload = handleImageLoad;
+		img.src = "assets/photo-hires.jpg";
+		angle = 0;
+	}
+
+	function handleImageLoad() {
+        document.getElementById("loader").className = "";
+        
+		//获取canvas对象，加载图片，直至最后一张图片被加载完成
+		var canvas = document.getElementById("testCanvas");
+
+		// 在canvas上创建一个场景
+		stage = new createjs.Stage(canvas);
 		
-		function tick() {
-			star.rotation += 5; 
-			star.scaleX = star.scaleY = 1.5+Math.sin(angle)*3;
-			stage.update(); 
-			angle+=0.025;
-		}
-	    init();
-	});
-	</script>
+		// 遮罩只能是一个Shape对象
+		star = new createjs.Shape();
+		// 遮罩的位置会被关联到目标的父对象上
+		star.x = img.width/2;
+		star.y = img.height/2;
+		// 只有drawPolyStar的地方才是遮罩影响的范围
+		star.graphics.beginStroke("#FF0").setStrokeStyle(5).drawPolyStar(0,0,img.height/2-15,5,0.6).closePath();
+
+		var bg = new createjs.Bitmap(img);
+		// 使背景图加上蒙层，和饱和度。
+		bg.filters = [new createjs.BoxBlurFilter(2,2,2), new createjs.ColorMatrixFilter(new createjs.ColorMatrix(0,0,-100,0))];
+		bg.cache(0,0,img.width,img.height);
+		stage.addChild(bg);
+		
+		var bmp = new createjs.Bitmap(img);
+		stage.addChild(bmp);
+		bmp.mask = star;
+		
+		// 注：Shape 对象也可以作为显示对象在显示列表中使用，我们也可以随时修改 Graphics 实例。
+		stage.addChild(star);
+
+		createjs.Ticker.addEventListener("tick", tick);
+	}
+	
+	function tick() {
+		star.rotation += 5; 
+		star.scaleX = star.scaleY = 1.5+Math.sin(angle)*3;
+		stage.update(); 
+		angle+=0.025;
+	}
+    init();
+});
+</script>
 </head>
 	
 <body>
-
     <div id="loader"></div>
-
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Masks</h1>
-	    <p>Demonstrates using a vector mask. Note that the mask <strong>Shape</strong> that defines the mask can also be placed on the display list (in this case the star shape is used both a mask, and the yellow border)</p>
+	    <h1><span class="text-product">Easel<strong>JS</strong> 遮罩演示</span></h1>
+	    <p>演示使用矢量蒙版。 注：<strong> Shape </strong> 对象也可以作为显示对象在显示列表中使用 （在该例子中，Shape 同时使用了矢量蒙层和黄色边框）。</p>
 	</header>
-
 	<div class="canvasHolder">
 		<canvas id="testCanvas" width="960" height="400"></canvas>
 	</div>

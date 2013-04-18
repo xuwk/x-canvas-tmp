@@ -1,144 +1,142 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>EaselJS 示例: 使用 globalToLocal #2</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS 示例: 使用 globalToLocal #2</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script>
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var canvas;
+	var stage;
 
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-		var canvas;
-		var stage;
-	
-		var _mouseIsDown;
-		var _mouseX;
-		var _mouseY;
-	
-		var spin1;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
-		var spin2;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
-	
-		var shape;        // 绘制图形
-        var color;      // 绘制颜色
-        var lastPt;     // 最后描绘的点
-		var graphics;
-		var count = 0;
-		var colorOffset;
-		var text;
-	
-		//
-		//
-		// 这个demo并没有做过多的评论，因为它是直接派生自globalToLocal1的
-		//
-		//
-	
-		function init() {
-			canvas = document.getElementById("testCanvas");
-			stage = new createjs.Stage(canvas);
-	
-			// 这个可以防止场景被清空，这样我们在每次循环操作时只需要画一条矢量的直线，然后被画到canvas上，然后被移除。
-			stage.autoClear = false;
-	
-			canvas.onmousemove = mouseMove;
-			canvas.onmousedown = mouseDown;
-			canvas.onmouseup = mouseUp;
-	
-			// 透明矩形，应用在每一帧的底层，在超过一定次数时会清楚之前的内容
-			var fade = new createjs.Shape(new createjs.Graphics().f("#333333").dr(0,0,canvas.width, canvas.height));
-			fade.alpha = 0.02;
-			stage.addChild(fade);
-	
-			shape = new createjs.Shape();
-			shape.y = 276;
-			graphics = shape.graphics;
-	
-			// 中间旋转器
-			spin2 = new createjs.Container();
-			spin2.addChild(shape);
-			spin2.x = 391;
-	
-			// 外部旋转器
-			spin1 = new createjs.Container();
-			spin1.addChild(spin2);
-			spin1.x = canvas.width/2;
-			spin1.y = canvas.height/2;
-			stage.addChild(spin1);
-	
-			text = new createjs.Text("Click and Drag", "36px Arial", "#777777");
-			text.x = 360; text.y = 200;
-			stage.addChild(text);
-	
-			//开始执行循环
-			createjs.Ticker.setInterval(20);
-			createjs.Ticker.addEventListener("tick", tick);
-	
-			stage.update(); // 先画一次场景
-		}
-	
-		function tick() {
-			//旋转对象
-			spin1.rotation += 10.7;
-			spin2.rotation += -7.113;
-			shape.rotation += 1.77;
-	
-			if(_mouseIsDown) {
-	
-				var color = createjs.Graphics.getHSL(
-					Math.cos((count++)*0.1) * 30 + colorOffset,
-					100,
-					50,
-					0.8);
-	
-				graphics.setStrokeStyle(Math.random()*20,"round").beginStroke(color);
-				graphics.moveTo(0,0);
-				lastPt = shape.globalToLocal(_mouseX,_mouseY);
-				graphics.lineTo(lastPt.x,lastPt.y);
-	
-				// 在canvas上画一条矢量线
-				stage.update();
-	
-	            // 然后清空图形的矢量数据，使它不会在下一次循环中渲染出来
-				graphics.clear();
-			}
-		}
-	
-		//开始作图
-		function mouseDown(e) {
-			if(!e){ var e = window.event; }
-			stage.removeChild(text);
-			if (_mouseIsDown) { return; }
-			_mouseIsDown = true;
-			colorOffset = Math.random()*360;
-			lastPt = shape.globalToLocal(e.pageX-canvas.offsetLeft,e.pageY-canvas.offsetTop);
-		}
-	
-		//停止作图
-		function mouseUp() {
-			_mouseIsDown = false;
-		}
-	
-		//更新鼠标位置
-		function mouseMove(e) {
-			if(!e){ var e = window.event; }
-			_mouseX = e.pageX-canvas.offsetLeft;
-			_mouseY = e.pageY-canvas.offsetTop;
-		}
+	var _mouseIsDown;
+	var _mouseX;
+	var _mouseY;
 
-        init();
-    });
-	</script>
+	var spin1;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
+	var spin2;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
+
+	var shape;        // 绘制图形
+    var color;      // 绘制颜色
+    var lastPt;     // 最后描绘的点
+	var graphics;
+	var count = 0;
+	var colorOffset;
+	var text;
+
+	//
+	//
+	// 这个demo并没有做过多的评论，因为它是直接派生自globalToLocal1的
+	//
+	//
+
+	function init() {
+		canvas = document.getElementById("testCanvas");
+		stage = new createjs.Stage(canvas);
+
+		// 这个可以防止场景被清空，这样我们在每次循环操作时只需要画一条矢量的直线，然后被画到canvas上，然后被移除。
+		stage.autoClear = false;
+
+		canvas.onmousemove = mouseMove;
+		canvas.onmousedown = mouseDown;
+		canvas.onmouseup = mouseUp;
+
+		// 透明矩形，应用在每一帧的底层，在超过一定次数时会清楚之前的内容
+		var fade = new createjs.Shape(new createjs.Graphics().f("#333333").dr(0,0,canvas.width, canvas.height));
+		fade.alpha = 0.02;
+		stage.addChild(fade);
+
+		shape = new createjs.Shape();
+		shape.y = 276;
+		graphics = shape.graphics;
+
+		// 中间旋转器
+		spin2 = new createjs.Container();
+		spin2.addChild(shape);
+		spin2.x = 391;
+
+		// 外部旋转器
+		spin1 = new createjs.Container();
+		spin1.addChild(spin2);
+		spin1.x = canvas.width/2;
+		spin1.y = canvas.height/2;
+		stage.addChild(spin1);
+
+		text = new createjs.Text("Click and Drag", "36px Arial", "#777777");
+		text.x = 360; text.y = 200;
+		stage.addChild(text);
+
+		//开始执行循环
+		createjs.Ticker.setInterval(20);
+		createjs.Ticker.addEventListener("tick", tick);
+
+		stage.update(); // 先画一次场景
+	}
+
+	function tick() {
+		//旋转对象
+		spin1.rotation += 10.7;
+		spin2.rotation += -7.113;
+		shape.rotation += 1.77;
+
+		if(_mouseIsDown) {
+
+			var color = createjs.Graphics.getHSL(
+				Math.cos((count++)*0.1) * 30 + colorOffset,
+				100,
+				50,
+				0.8);
+
+			graphics.setStrokeStyle(Math.random()*20,"round").beginStroke(color);
+			graphics.moveTo(0,0);
+			lastPt = shape.globalToLocal(_mouseX,_mouseY);
+			graphics.lineTo(lastPt.x,lastPt.y);
+
+			// 在canvas上画一条矢量线
+			stage.update();
+
+            // 然后清空图形的矢量数据，使它不会在下一次循环中渲染出来
+			graphics.clear();
+		}
+	}
+
+	//开始作图
+	function mouseDown(e) {
+		if(!e){ var e = window.event; }
+		stage.removeChild(text);
+		if (_mouseIsDown) { return; }
+		_mouseIsDown = true;
+		colorOffset = Math.random()*360;
+		lastPt = shape.globalToLocal(e.pageX-canvas.offsetLeft,e.pageY-canvas.offsetTop);
+	}
+
+	//停止作图
+	function mouseUp() {
+		_mouseIsDown = false;
+	}
+
+	//更新鼠标位置
+	function mouseMove(e) {
+		if(!e){ var e = window.event; }
+		_mouseX = e.pageX-canvas.offsetLeft;
+		_mouseY = e.pageY-canvas.offsetTop;
+	}
+
+    init();
+});
+</script>
 </head>
 	
 <body>
 	<header id="header" class="EaselJS">
 	    <h1><span class="text-product">Easel<strong>JS</strong></span>全局坐标转换为本地坐标</h1>
-	    <p>与globalToLocal1.html类似，不过会把<strong>Stage.autoClear</strong>设置为false(这样场景就不会被清空)，并且矢量图形<strong>Shape</strong>会在
-	                       每一次循环中被清除，因此在每一次循环中只有一条线会被渲染。因此，你不必担心性能会被损耗。每一帧都会在上一层之上画上一个高度透明的矩形，这样就可以使以前的内容渐渐隐藏掉。
+	    <p>与globalToLocal1.html类似，不过会把<strong>Stage.autoClear</strong>设置为false(这样场景就不会被清空)，并且矢量图形<strong>Shape</strong>会在每一次循环中被清除，因此在每一次循环中只有一条线会被渲染。因此，你不必担心性能会被损耗。每一帧都会在上一层之上画上一个高度透明的矩形，这样就可以使以前的内容渐渐隐藏掉。
 	    </p>
 	</header>
 

@@ -1,141 +1,141 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>EaselJS Example: 使用 globalToLocal #1</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS：全局坐标转换为本地坐标</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
 
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-		var canvas;
-		var stage;
-	
-		var _mouseIsDown;
-		var _mouseX;
-		var _mouseY;
-	
-		var spin1;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
-		var spin2;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
-	
-		var shape;		// 绘制图形
-		var color;		// 绘制颜色
-		var lastPt;		// 最后描绘的点
-		var text;
-		var graphics;
-		var count = 0;
-	
-		function init() {
-			// 创建一个基于当前canvas的场景
-			canvas = document.getElementById("testCanvas");
-			stage = new createjs.Stage(canvas);
-	
-			// 对场景添加鼠标动作监听器
-			// 向比起来，把鼠标事件添加到canvas标签上，会造成跨域问题，反而不好
-	
-	        stage.enableDOMEvents(true);
-	        stage.addEventListener("stagemousemove", mouseMove);
-	        stage.addEventListener("stagemousedown", mouseDown);
-	        stage.addEventListener("stagemouseup", mouseUp);
-	
-			text = new createjs.Text("Click and Drag", "36px Arial", "#777777");
-			text.x = 360; text.y = 200;
-			stage.addChild(text);
-	
-			// 绘制矢量数据的对象
-			shape = new createjs.Shape();
-			shape.x = 41;		//在父容器上的位置
-			graphics = shape.graphics;
-	
-			// 中间的记录仪：
-			spin2 = new createjs.Container();
-			spin2.addChild(shape);
-			spin2.x = 303;		//在父容器上的位置
-	
-			// 外部的记录仪：
-			spin1 = new createjs.Container();
-			spin1.addChild(spin2);
-	
-			// 把它们居中：
-			spin1.x = canvas.width/2;
-			spin1.y = canvas.height/2;
-			stage.addChild(spin1);
-	
-	        // 开始定时执行，并且把方法注入window对象里面，这样可以在更新场景前做一些其他的事情
-			createjs.Ticker.setFPS(30);
-			createjs.Ticker.addEventListener("tick", tick);
+<script>
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var canvas;
+	var stage;
+
+	var _mouseIsDown;
+	var _mouseX;
+	var _mouseY;
+
+	var spin1;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
+	var spin2;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
+
+	var shape;		// 绘制图形
+	var color;		// 绘制颜色
+	var lastPt;		// 最后描绘的点
+	var text;
+	var graphics;
+	var count = 0;
+
+	function init() {
+		// 创建一个基于当前canvas的场景
+		canvas = document.getElementById("testCanvas");
+		stage = new createjs.Stage(canvas);
+
+		// 对场景添加鼠标动作监听器
+		// 向比起来，把鼠标事件添加到canvas标签上，会造成跨域问题，反而不好
+
+        stage.enableDOMEvents(true);
+        stage.addEventListener("stagemousemove", mouseMove);
+        stage.addEventListener("stagemousedown", mouseDown);
+        stage.addEventListener("stagemouseup", mouseUp);
+
+		text = new createjs.Text("Click and Drag", "36px Arial", "#777777");
+		text.x = 360; text.y = 200;
+		stage.addChild(text);
+
+		// 绘制矢量数据的对象
+		shape = new createjs.Shape();
+		shape.x = 41;		//在父容器上的位置
+		graphics = shape.graphics;
+
+		// 中间的记录仪：
+		spin2 = new createjs.Container();
+		spin2.addChild(shape);
+		spin2.x = 303;		//在父容器上的位置
+
+		// 外部的记录仪：
+		spin1 = new createjs.Container();
+		spin1.addChild(spin2);
+
+		// 把它们居中：
+		spin1.x = canvas.width/2;
+		spin1.y = canvas.height/2;
+		stage.addChild(spin1);
+
+        // 开始定时执行，并且把方法注入window对象里面，这样可以在更新场景前做一些其他的事情
+		createjs.Ticker.setFPS(30);
+		createjs.Ticker.addEventListener("tick", tick);
+	}
+
+	function tick() {
+		// 旋转:
+		spin1.rotation += 10;
+		spin2.rotation += -7;
+		shape.rotation += 3;
+
+		if(_mouseIsDown) {
+			var color = createjs.Graphics.getHSL(
+				Math.cos((count++)*0.01) * 180,
+				100,
+				50,
+				1.0);
+
+			// 设置绘图参数
+			graphics.setStrokeStyle(Math.random()*20+2,"round").beginStroke(color);
+
+			// 在上一次最后一个点上画线
+			graphics.moveTo(lastPt.x,lastPt.y);
+
+			// 在当前图形的本地相对位置上计算新的坐标
+			lastPt = shape.globalToLocal(_mouseX,_mouseY);
+
+			// 画线，闭合
+			graphics.lineTo(lastPt.x,lastPt.y);
 		}
+
+		// 更新场景
+		stage.update();
+	}
+
+	//开始作图
+	function mouseDown(e) {
+		//if(!e){ e = window.event; }
+		stage.removeChild(text);
+		_mouseIsDown = true;
+
+		// 在新的绘图动作上设置第一个点，并随机选择一种颜色
+		lastPt = shape.globalToLocal(e.nativeEvent.pageX-canvas.offsetLeft,e.nativeEvent.pageY-canvas.offsetTop);
+		//color = "#"+(Math.random()*0xFFFFFF|0).toString(16);
+
+
+		// 清空缓存，这样的话可以确保每次执行都能正确的描绘出矢量数据
+		shape.uncache();
+	}
+
+	//停止作图
+	function mouseUp() {
+		_mouseIsDown = false;
+
+        // 把矢量数据缓存到另一个canvas上，这样我们就不必每次都逐步描绘出来
+		shape.cache(-800,-800,1600,1600);
+	}
+
+	//更新鼠标位置
+	function mouseMove(e) {
+		//if(!e){ e = window.event; }
+		_mouseX = e.nativeEvent.pageX-canvas.offsetLeft;
+		_mouseY = e.nativeEvent.pageY-canvas.offsetTop;
+	}
 	
-		function tick() {
-			// 旋转:
-			spin1.rotation += 10;
-			spin2.rotation += -7;
-			shape.rotation += 3;
-	
-			if(_mouseIsDown) {
-				var color = createjs.Graphics.getHSL(
-					Math.cos((count++)*0.01) * 180,
-					100,
-					50,
-					1.0);
-	
-				// 设置绘图参数
-				graphics.setStrokeStyle(Math.random()*20+2,"round").beginStroke(color);
-	
-				// 在上一次最后一个点上画线
-				graphics.moveTo(lastPt.x,lastPt.y);
-	
-				// 在当前图形的本地相对位置上计算新的坐标
-				lastPt = shape.globalToLocal(_mouseX,_mouseY);
-	
-				// 画线，闭合
-				graphics.lineTo(lastPt.x,lastPt.y);
-			}
-	
-			// 更新场景
-			stage.update();
-		}
-	
-		//开始作图
-		function mouseDown(e) {
-			//if(!e){ e = window.event; }
-			stage.removeChild(text);
-			_mouseIsDown = true;
-	
-			// 在新的绘图动作上设置第一个点，并随机选择一种颜色
-			lastPt = shape.globalToLocal(e.nativeEvent.pageX-canvas.offsetLeft,e.nativeEvent.pageY-canvas.offsetTop);
-			//color = "#"+(Math.random()*0xFFFFFF|0).toString(16);
-	
-	
-			// 清空缓存，这样的话可以确保每次执行都能正确的描绘出矢量数据
-			shape.uncache();
-		}
-	
-		//停止作图
-		function mouseUp() {
-			_mouseIsDown = false;
-	
-	        // 把矢量数据缓存到另一个canvas上，这样我们就不必每次都逐步描绘出来
-			shape.cache(-800,-800,1600,1600);
-		}
-	
-		//更新鼠标位置
-		function mouseMove(e) {
-			//if(!e){ e = window.event; }
-			_mouseX = e.nativeEvent.pageX-canvas.offsetLeft;
-			_mouseY = e.nativeEvent.pageY-canvas.offsetTop;
-		}
-		
-        init();
-    });
-	</script>
+    init();
+});
+</script>
 </head>
-	
+
 <body>
 	<header id="header" class="EaselJS">
 	    <h1><span class="text-product">Easel<strong>JS</strong></span>全局坐标转换为本地坐标</h1>

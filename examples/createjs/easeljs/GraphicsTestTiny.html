@@ -1,161 +1,156 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>EaselJS: 简单的图形(微接口版)</title>
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS: 图形测试 (微接口版)</title>
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<script src="http://code.jquery.com/jquery-latest.js"></script>
 
-    <script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script>
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var canvas;
+    var stage;
+    var img;
 
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
+    function init() {
+    	if (window.top != window) {
+    		document.getElementById("header").style.display = "none";
+    	}
 
-        var canvas;
-        var stage;
-        var img;
+        canvas = document.getElementById("testCanvas");
+        // 在canvas上创建一个新的场景
+        stage = new createjs.Stage(canvas);
 
-        function init() {
-        	if (window.top != window) {
-        		document.getElementById("header").style.display = "none";
-        	}
+        // 获取长宽以备后续的计算使用
+        w = canvas.width;
+        h = canvas.height;
+        img = new Image();
+        img.onload = layout;
+        img.src = "./assets/daisy.png";
+    }
 
-            canvas = document.getElementById("testCanvas");
-            // 在canvas上创建一个新的场景
-            stage = new createjs.Stage(canvas);
+    function layout() {
+        var arr = [createStar, createHex, createLineTo, createRadialGradientFill, createEllipse, createRectGradientFill, createBitmapFill];
+        var padding = 5;
+        var _width = 155;
+        var _height = 155;
+        var cols = 4;
+        var space = 0;
+        var l = arr.length;
 
-            // 获取长宽以备后续的计算使用
-            w = canvas.width;
-            h = canvas.height;
-            img = new Image();
-            img.onload = layout;
-            img.src = "./assets/daisy.png";
+        var border = createBorder();
+
+        for(var i=0;i<l;i++) {
+            var tile = arr[i]();
+            tile.x = 42+(_width + padding) *(i%cols);
+            tile.y = 42+(i/cols | 0) * (_height+padding);
+            stage.addChild(tile);
         }
+        stage.addChild(border);
+        stage.update();
+    }
 
-        function layout() {
-            var arr = [createStar, createHex, createLineTo, createRadialGradientFill, createEllipse, createRectGradientFill, createBitmapFill];
-            var padding = 5;
-            var _width = 155;
-            var _height = 155;
-            var cols = 4;
-            var space = 0;
-            var l = arr.length;
+    function createBorder() {
+        var container = new createjs.Container();
+        var s = new createjs.Shape();
+        s.graphics.bs(img).ss(32).dr(20,20,920,360);
+        container.addChild(s);
+        return container;
+    }
 
-            var border = createBorder();
+    function createBitmapFill() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.bf(img).ss(8).rs(["#FFF","#000"],[0,1],0,0,0,0,30,130).dr(0, 0, 130, 130);
+        s.x = 12;
+        s.y = 10;
+        container.addChild(s);
+        return container;
+    }
 
-            for(var i=0;i<l;i++) {
-                var tile = arr[i]();
-                tile.x = 42+(_width + padding) *(i%cols);
-                tile.y = 42+(i/cols | 0) * (_height+padding);
-                stage.addChild(tile);
-            }
-            stage.addChild(border);
-            stage.update();
-        }
+    function createRectGradientFill() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.lf(["#FFF","#000"],[0,1],0,0,0,130).dr(0,0,130,130);
+        s.x = 12;
+        s.y = 10;
+        container.addChild(s);
+        return container;
+    }
 
-        function createBorder() {
-            var container = new createjs.Container();
-            var s = new createjs.Shape();
-            s.graphics.bs(img).ss(32).dr(20,20,920,360);
-            container.addChild(s);
-            return container;
-        }
+    function createEllipse() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.f(createjs.Graphics.getRGB(0,0x66,0x99,0.5)).ss(4).ls(["#F00","#000"],[0,1],0,0,70,140).de(0,0,70,140,8);
+        s.x = 40;
+        s.y = 10;
+        container.addChild(s);
+        return container;
+    }
 
-        function createBitmapFill() {
-            var container = createTile();
-            var s = new createjs.Shape();
-            s.graphics.bf(img).ss(8).rs(["#FFF","#000"],[0,1],0,0,0,0,30,130).dr(0, 0, 130, 130);
-            s.x = 12;
-            s.y = 10;
-            container.addChild(s);
-            return container;
-        }
+    function createRadialGradientFill() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.ss(8).s("#f0f").rf(["#FFF","#0FF"],[0,1],0,0,0,0,0,40).dc(0,0,40);
+        s.x = s.y = 80;
+        container.addChild(s);
+        return container;
+    }
 
-        function createRectGradientFill() {
-            var container = createTile();
-            var s = new createjs.Shape();
-            s.graphics.lf(["#FFF","#000"],[0,1],0,0,0,130).dr(0,0,130,130);
-            s.x = 12;
-            s.y = 10;
-            container.addChild(s);
-            return container;
-        }
+    function createLineTo() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.ss(16, "round", "round").s("#f90").mt(20,10).lt(90,90).lt(90,140);
+        container.addChild(s);
+        return container;
+    }
 
-        function createEllipse() {
-            var container = createTile();
-            var s = new createjs.Shape();
-            s.graphics.f(createjs.Graphics.getRGB(0,0x66,0x99,0.5)).ss(4).ls(["#F00","#000"],[0,1],0,0,70,140).de(0,0,70,140,8);
-            s.x = 40;
-            s.y = 10;
-            container.addChild(s);
-            return container;
-        }
+    function createHex() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.f("#0F0").dp(0,0,40,6).dp(0,75,40,6);
+        s.x = 80
+        s.y = 40;
 
-        function createRadialGradientFill() {
-            var container = createTile();
-            var s = new createjs.Shape();
-            s.graphics.ss(8).s("#f0f").rf(["#FFF","#0FF"],[0,1],0,0,0,0,0,40).dc(0,0,40);
-            s.x = s.y = 80;
-            container.addChild(s);
-            return container;
-        }
+        container.addChild(s);
+        return container;
+    }
 
-        function createLineTo() {
-            var container = createTile();
-            var s = new createjs.Shape();
-            s.graphics.ss(16, "round", "round").s("#f90").mt(20,10).lt(90,90).lt(90,140);
-            container.addChild(s);
-            return container;
-        }
+    function createStar() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.ss(1).s(createjs.Graphics.getRGB(255, 255, 0)).f("#FF0").es().dp(0,0,80,5,0.6,-90);
+        s.x = 80
+        s.y = 85;
 
-        function createHex() {
-            var container = createTile();
-            var s = new createjs.Shape();
-            s.graphics.f("#0F0").dp(0,0,40,6).dp(0,75,40,6);
-            s.x = 80
-            s.y = 40;
+        container.addChild(s);
+        return container;
+    }
 
-            container.addChild(s);
-            return container;
-        }
-
-        function createStar() {
-            var container = createTile();
-            var s = new createjs.Shape();
-            s.graphics.ss(1).s(createjs.Graphics.getRGB(255, 255, 0)).f("#FF0").es().dp(0,0,80,5,0.6,-90);
-            s.x = 80
-            s.y = 85;
-
-            container.addChild(s);
-            return container;
-        }
-
-        function createTile() {
-            var container = new createjs.Container();
-            var bg = new createjs.Shape();
-            bg.graphics.f('#CCCCCC').dr(0, 0, 155, 155).ef();
-            bg.alpha = 0.25;
-            container.addChild(bg);
-            return container;
-        }
-        init();
-    });
-    </script>
+    function createTile() {
+        var container = new createjs.Container();
+        var bg = new createjs.Shape();
+        bg.graphics.f('#CCCCCC').dr(0, 0, 155, 155).ef();
+        bg.alpha = 0.25;
+        container.addChild(bg);
+        return container;
+    }
+    init();
+});
+</script>
 </head>
 <body>
-
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span>简单的图形(微接口版)</h1>
+	    <h1><span class="text-product">Easel<strong>JS</strong></span>图形测试 (微接口版)</h1>
 	    <p>这个示例跟graphicsTest是完全一样的，只是这个示例上用的接口是<strong>Graphics</strong>上提供的微缩接口来压缩画图的指令。、
 	       使用<strong>Graphics.decodePath()</strong>方法可以更加有效的压缩指令。不过那个格式是无法读懂的。</p>
 	</header>
-
 	<div class="canvasHolder">
 	    <canvas id="testCanvas" width="960" height="400"></canvas>
 	</div>
-
 </body>
 </html>

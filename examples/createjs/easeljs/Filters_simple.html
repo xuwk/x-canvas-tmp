@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>EaselJS: 滤镜示例</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS: 滤镜更新</title>
+
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
@@ -12,7 +13,6 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
     var img;
     var stage;
     var angle;
@@ -60,10 +60,10 @@ xc.depends([
 </head>
 <body>
 
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span>一个简单的滤镜示例</h1>
-	    <p>这个示例首先加载一张图片，然后对它应用不同程度的模糊。</p>
-	</header>
+    <header id="header" class="EaselJS">
+        <h1><span class="text-product">Easel<strong>JS</strong></span> 滤镜更新</h1>
+        <p>该示例演示了通过 updateCache() 在每一帧改变滤镜的值。</p>
+    </header>
 
     <canvas id="testCanvas" width="960" height="400"></canvas>
 
