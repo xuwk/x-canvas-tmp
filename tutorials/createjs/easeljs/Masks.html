@@ -1,42 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>EaselJS Example: Mask test file.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS：遮罩演示</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../src/easeljs/utils/UID.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Matrix2D.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/EventDispatcher.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/DisplayObject.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Container.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Stage.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/MouseEvent.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Bitmap.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Graphics.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Shape.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Rectangle.js"></script>
-	<script type="text/javascript" src="../src/easeljs/utils/Ticker.js"></script>
-	<script type="text/javascript" src="../src/easeljs/filters/Filter.js"></script>
-	<script type="text/javascript" src="../src/easeljs/filters/BoxBlurFilter.js"></script>
-	<script type="text/javascript" src="../src/easeljs/filters/ColorMatrixFilter.js"></script>
-	<script type="text/javascript" src="../src/easeljs/filters/ColorMatrix.js"></script>
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
 
-	<!-- We also provide hosted minified versions of all CreateJS libraries.
-	  http://code.createjs.com -->
-
-	<script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
 	var img, star, stage;
     var scale;
 	var angle;
 	function init() {
-        if (window.top != window) {
-            document.getElementById("header").style.display = "none";
-        }
         document.getElementById("loader").className = "loader";
 
-		//wait for the image to load
+		//等待图片加载完毕
 		img = new Image();
 		img.onload = handleImageLoad;
 		img.src = "assets/photo-hires.jpg";
@@ -46,22 +34,22 @@
 	function handleImageLoad() {
         document.getElementById("loader").className = "";
         
-		//find canvas and load images, wait for last image to load
+		//获取canvas对象，加载图片，直至最后一张图片被加载完成
 		var canvas = document.getElementById("testCanvas");
 
-		// create a new stage and point it at our canvas:
+		// 在canvas上创建一个场景
 		stage = new createjs.Stage(canvas);
 		
-		// masks can only be shapes.
+		// 遮罩只能是一个Shape对象
 		star = new createjs.Shape();
-		// the mask's position will be relative to the parent of its target:
+		// 遮罩的位置会被关联到目标的父对象上
 		star.x = img.width/2;
 		star.y = img.height/2;
-		// only the drawPolyStar call is needed for the mask to work:
+		// 只有drawPolyStar的地方才是遮罩影响的范围
 		star.graphics.beginStroke("#FF0").setStrokeStyle(5).drawPolyStar(0,0,img.height/2-15,5,0.6).closePath();
 
 		var bg = new createjs.Bitmap(img);
-		// blur and desaturate the background image:
+		// 使背景图加上蒙层，和饱和度。
 		bg.filters = [new createjs.BoxBlurFilter(2,2,2), new createjs.ColorMatrixFilter(new createjs.ColorMatrix(0,0,-100,0))];
 		bg.cache(0,0,img.width,img.height);
 		stage.addChild(bg);
@@ -70,8 +58,7 @@
 		stage.addChild(bmp);
 		bmp.mask = star;
 		
-		// note that the shape can be used in the display list as well if you'd like, or
-		// we can reuse the Graphics instance in another shape if we'd like to transform it differently.
+		// 注：Shape 对象也可以作为显示对象在显示列表中使用，如果我们想要把它做不同转换，也可以重用Graphics的实例。
 		stage.addChild(star);
 
 		createjs.Ticker.addEventListener("tick", tick);
@@ -83,21 +70,95 @@
 		stage.update(); 
 		angle+=0.025;
 	}
-
-	</script>
+    init();
+});
+</script>
 </head>
 	
-<body onload="init();">
+<body>
+	<center>
+	    <div id="loader"></div>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong> 遮罩演示</span></h1>
+		    <p>演示使用矢量蒙版。 注：<strong> Shape </strong> 对象也可以作为显示对象在显示列表中使用 （在该例子中，Shape 同时使用了矢量蒙层和黄色边框）。</p>
+		</header>
+		<div class="canvasHolder">
+			<canvas id="testCanvas" width="960" height="400"></canvas>
+		</div>
+	</center>
 
-    <div id="loader"></div>
+	<section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
 
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Masks</h1>
-	    <p>Demonstrates using a vector mask. Note that the mask <strong>Shape</strong> that defines the mask can also be placed on the display list (in this case the star shape is used both a mask, and the yellow border)</p>
-	</header>
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：定义变量，并加载一张图片。</div><br />
+                <textarea class="tutorialCode" name="code">
+var img, star, stage;
+var scale;
+var angle;
 
-	<div class="canvasHolder">
-		<canvas id="testCanvas" width="960" height="400"></canvas>
-	</div>
+img = new Image();
+img.onload = handleImageLoad;
+img.src = "assets/photo-hires.jpg";
+angle = 0;
+</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：当图片资源加载完成，在 canvas 上创建一个 Stage 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：创建并渲染遮罩区域。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 遮罩只能是一个Shape对象
+star = new createjs.Shape();
+// 遮罩的位置会被关联到目标的父对象上
+star.x = img.width/2;
+star.y = img.height/2;
+// 只有drawPolyStar的地方才是遮罩影响的范围
+star.graphics.beginStroke("#FF0").setStrokeStyle(5).drawPolyStar(0,0,img.height/2-15,5,0.6).closePath();</textarea>
+        </div>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：利用背景图创建 Bitmap 对象，并使其加上矢量蒙层以及饱和度，同时添加到 Stage 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+var bg = new createjs.Bitmap(img);
+// 使背景图加上蒙层，和饱和度。
+bg.filters = [new createjs.BoxBlurFilter(2,2,2), new createjs.ColorMatrixFilter(new createjs.ColorMatrix(0,0,-100,0))];
+bg.cache(0,0,img.width,img.height);
+stage.addChild(bg);</textarea>
+        </div>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：利用背景图创建 Bitmap 对象，并将 star 对象设置为 Bitmap 的 mask 属性，添加到 Stage 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+var bmp = new createjs.Bitmap(img);
+stage.addChild(bmp);
+bmp.mask = star;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤六：编写并绑定 tick 方法，使星星蒙层不断移动。</div><br />
+                <textarea class="tutorialCode" name="code">
+stage.addChild(star);
+createjs.Ticker.addEventListener("tick", tick);
+
+function tick() {
+	star.rotation += 5; 
+	star.scaleX = star.scaleY = 1.5+Math.sin(angle)*3;
+	stage.update(); 
+	angle+=0.025;
+}</textarea>
+        </div>
+        
+    </section>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>

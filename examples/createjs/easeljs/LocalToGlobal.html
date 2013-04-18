@@ -4,110 +4,106 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>EaselJS 示例: localToGlobal的使用</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var canvas;
+	var stage;
+	var whee;		// 展示位置的按钮
 
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-		var canvas;
-		var stage;
-		var whee;		// 展示位置的按钮
-	
-		var bar1;		// 蓝色棒的展示
-		var bar2;		// 绿色棒的展示
-		var bar3;		// 红色棒的展示
-	
-		var arm1;		// 蓝色棒的容器，用来放置子对象
-		var arm2;		// 绿色棒的容器，用来放置子对象
-	
-		function init() {
-	
-			if (window.top != window) {
-				document.getElementById("header").style.display = "none";
-			}
-	
-			// 创建canvas和whee的引用
-			canvas = document.getElementById("testCanvas");
-			whee = document.getElementById("whee");
-	
-			// 在canvas上面创建一个新的场景
-			stage = new createjs.Stage(canvas);
-	
-			// 设置各个颜色的棒
-	
-			// 这是一个代表红色棒的形状
-			bar3 = new createjs.Shape();
-			var g = bar3.graphics;
-			g.beginFill("#8B2222");
-			g.drawRect(-3,-3,6,130);
-			bar3.regY = 20;
-			bar3.y = 105;
-	
-			// 跟其他两个不一样，红色棒不需要一个匹配的arm元素，因为它没有任何子对象
-	
-			// 使中间的绿色棒可见
-			bar2 = new createjs.Shape();
-			g = bar2.graphics;
-			g.beginFill("#228B22");
-			g.drawRect(-5,-5,10,110);
-	
-			// arm容器，用来承载绿色棒和相连的红色棒
-			arm2 = new createjs.Container();
-			arm2.addChild(bar2);
-			arm2.addChild(bar3);
-			arm2.regY = 20;
-			arm2.y = 72;		//在父对象上的定位
-	
-			// 使末尾的蓝色棒可见
-			bar1 = new createjs.Shape();
-			g = bar1.graphics;
-			g.beginFill("#22228B");
-			g.drawRect(-8,-8,16,80);
-	
-			// arm容器，用来承载蓝色棒和相连的绿色棒
-			arm1 = new createjs.Container();
-			arm1.addChild(bar1);
-			arm1.addChild(arm2);
-	
-			// 把arm1置在屏幕中间
-			arm1.x = canvas.width/2;
-			arm1.y = canvas.height/2;
-			stage.addChild(arm1);
-	
-			// 开始循环执行
-			createjs.Ticker.setInterval(20);		// 单位：毫秒，就是50fps
-			createjs.Ticker.addEventListener("tick", tick);
+	var bar1;		// 蓝色棒的展示
+	var bar2;		// 绿色棒的展示
+	var bar3;		// 红色棒的展示
+
+	var arm1;		// 蓝色棒的容器，用来放置子对象
+	var arm2;		// 绿色棒的容器，用来放置子对象
+
+	function init() {
+		if (window.top != window) {
+			document.getElementById("header").style.display = "none";
 		}
-	
-		function tick() {
-			// 更新每个棒的角度
-			arm1.rotation += 1.9;
-			arm2.rotation += -2.7;
-			bar3.rotation += 4.4;
-	
-			// 计算红色棒尽头位置的全局对应坐标，并把“whee”按钮移动到那个地方
-			var pt = bar3.localToGlobal(0, 130);
-			whee.style.left = Math.round(pt.x+canvas.offsetLeft-10) + "px";
-			whee.style.top = Math.round(pt.y+canvas.offsetTop-10) + "px";
-	
-			stage.update();
-		}
-		init();
-	});
-	</script>
+
+		// 创建canvas和whee的引用
+		canvas = document.getElementById("testCanvas");
+		whee = document.getElementById("whee");
+
+		// 在canvas上面创建一个新的场景
+		stage = new createjs.Stage(canvas);
+
+		// 设置各个颜色的棒
+
+		// 这是一个代表红色棒的形状
+		bar3 = new createjs.Shape();
+		var g = bar3.graphics;
+		g.beginFill("#8B2222");
+		g.drawRect(-3,-3,6,130);
+		bar3.regY = 20;
+		bar3.y = 105;
+
+		// 跟其他两个不一样，红色棒不需要一个匹配的arm元素，因为它没有任何子对象
+
+		// 使中间的绿色棒可见
+		bar2 = new createjs.Shape();
+		g = bar2.graphics;
+		g.beginFill("#228B22");
+		g.drawRect(-5,-5,10,110);
+
+		// arm容器，用来承载绿色棒和相连的红色棒
+		arm2 = new createjs.Container();
+		arm2.addChild(bar2);
+		arm2.addChild(bar3);
+		arm2.regY = 20;
+		arm2.y = 72;		//在父对象上的定位
+
+		// 使末尾的蓝色棒可见
+		bar1 = new createjs.Shape();
+		g = bar1.graphics;
+		g.beginFill("#22228B");
+		g.drawRect(-8,-8,16,80);
+
+		// arm容器，用来承载蓝色棒和相连的绿色棒
+		arm1 = new createjs.Container();
+		arm1.addChild(bar1);
+		arm1.addChild(arm2);
+
+		// 把arm1置在屏幕中间
+		arm1.x = canvas.width/2;
+		arm1.y = canvas.height/2;
+		stage.addChild(arm1);
+
+		// 开始循环执行
+		createjs.Ticker.setInterval(20);		// 单位：毫秒，就是50fps
+		createjs.Ticker.addEventListener("tick", tick);
+	}
+
+	function tick() {
+		// 更新每个棒的角度
+		arm1.rotation += 1.9;
+		arm2.rotation += -2.7;
+		bar3.rotation += 4.4;
+
+		// 计算红色棒尽头位置的全局对应坐标，并把“whee”按钮移动到那个地方
+		var pt = bar3.localToGlobal(0, 130);
+		whee.style.left = Math.round(pt.x+canvas.offsetLeft-10) + "px";
+		whee.style.top = Math.round(pt.y+canvas.offsetTop-10) + "px";
+
+		stage.update();
+	}
+	init();
+});
+</script>
 </head>
 	
 <body>
-
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span>本地坐标转换为全局坐标</h1>
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> localToGlobal 的使用</h1>
 	    <p>使用<strong>CoordTransform.localToGlobal()</strong>对一个嵌套在显示列表的<strong>DisplayObject</strong>对象关联的的HTML元素进行定位</p>
 	</header>
-
 	<div class="canvasHolder">
 		<canvas id="testCanvas" width="960" height="400"></canvas>
 		<input type="button" value="wheeeeee!" id="whee" style="position:absolute;"/>

@@ -2,54 +2,44 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>EaselJS Example: Using localToGlobal</title>
+<title>EaselJS 示例: localToGlobal的使用</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../src/easeljs/utils/UID.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Matrix2D.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/EventDispatcher.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/DisplayObject.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Container.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Stage.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/MouseEvent.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Shape.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Graphics.js"></script>
-	<script type="text/javascript" src="../src/easeljs/utils/Ticker.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/DOMElement.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Point.js"></script>
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
 
-	<!-- We also provide hosted minified versions of all CreateJS libraries.
-	  http://code.createjs.com -->
-
-	<script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
 	var canvas;
 	var stage;
-	var whee;		// Button to demonstrate position
+	var whee;		// 展示位置的按钮
 
-	var bar1;		// visual of the blue bar
-	var bar2;		// visual of the green bar
-	var bar3;		// visual of the red bar
+	var bar1;		// 蓝色棒的展示
+	var bar2;		// 绿色棒的展示
+	var bar3;		// 红色棒的展示
 
-	var arm1;		// container of the blue arm to allow for children
-	var arm2;		// container of the green arm to allow for children
+	var arm1;		// 蓝色棒的容器，用来放置子对象
+	var arm2;		// 绿色棒的容器，用来放置子对象
 
 	function init() {
-
-		if (window.top != window) {
-			document.getElementById("header").style.display = "none";
-		}
-
-		// get references to canvas and "whee" button:
+		// 创建canvas和whee的引用
 		canvas = document.getElementById("testCanvas");
 		whee = document.getElementById("whee");
 
-		// create a new stage and point it at our canvas:
+		// 在canvas上面创建一个新的场景
 		stage = new createjs.Stage(canvas);
 
-		// set up arms:
+		// 设置各个颜色的棒
 
-		// this is the shape that represents the end (red) arm:
+		// 这是一个代表红色棒的形状
 		bar3 = new createjs.Shape();
 		var g = bar3.graphics;
 		g.beginFill("#8B2222");
@@ -57,70 +47,160 @@
 		bar3.regY = 20;
 		bar3.y = 105;
 
-		// unlike the other 2, bar3 does not require a matching arm element,
-		// because there are no other children.
+		// 跟其他两个不一样，红色棒不需要一个匹配的arm元素，因为它没有任何子对象
 
-		// visible middle (green) bar
+		// 使中间的绿色棒可见
 		bar2 = new createjs.Shape();
 		g = bar2.graphics;
 		g.beginFill("#228B22");
 		g.drawRect(-5,-5,10,110);
 
-		// arm container that holds the green bar, and the nested red bar:
+		// arm容器，用来承载绿色棒和相连的红色棒
 		arm2 = new createjs.Container();
 		arm2.addChild(bar2);
 		arm2.addChild(bar3);
 		arm2.regY = 20;
-		arm2.y = 72;		//position in parent object
+		arm2.y = 72;		//在父对象上的定位
 
-		// visible anchor (blue) bar:
+		// 使末尾的蓝色棒可见
 		bar1 = new createjs.Shape();
 		g = bar1.graphics;
 		g.beginFill("#22228B");
 		g.drawRect(-8,-8,16,80);
 
-		// arm container that holds the blue bar, and the nested green bar:
+		// arm容器，用来承载蓝色棒和相连的绿色棒
 		arm1 = new createjs.Container();
 		arm1.addChild(bar1);
 		arm1.addChild(arm2);
 
-		// center arm1 on screen
+		// 把arm1置在屏幕中间
 		arm1.x = canvas.width/2;
 		arm1.y = canvas.height/2;
 		stage.addChild(arm1);
 
-		// start the tick and point it at the window so we can do some work before updating the stage:
-		createjs.Ticker.setInterval(20);		// in ms, so 50 fps
+		// 开始循环执行
+		createjs.Ticker.setInterval(20);		// 单位：毫秒，就是50fps
 		createjs.Ticker.addEventListener("tick", tick);
 	}
 
 	function tick() {
-		// update rotation for all arms:
+		// 更新每个棒的角度
 		arm1.rotation += 1.9;
 		arm2.rotation += -2.7;
 		bar3.rotation += 4.4;
 
-		// calculate the global (stage) position of the end of the red bar,
-		// and move the HTML "whee" button to that position:
+		// 计算红色棒尽头位置的全局对应坐标，并把“whee”按钮移动到那个地方
 		var pt = bar3.localToGlobal(0, 130);
 		whee.style.left = Math.round(pt.x+canvas.offsetLeft-10) + "px";
 		whee.style.top = Math.round(pt.y+canvas.offsetTop-10) + "px";
 
 		stage.update();
 	}
-	</script>
+	init();
+});
+</script>
 </head>
 	
-<body onload="init();">
+<body>
+	<center>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> localToGlobal 的使用</h1>
+		    <p>使用<strong>CoordTransform.localToGlobal()</strong>对一个嵌套在显示列表的<strong>DisplayObject</strong>对象关联的的HTML元素进行定位</p>
+		</header>
+		<div class="canvasHolder">
+			<canvas id="testCanvas" width="960" height="400"></canvas>
+			<input type="button" value="wheeeeee!" id="whee" style="position:absolute;"/>
+		</div>
+	</center>
 
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Local To Global</h1>
-	    <p>Using <strong>CoordTransform.localToGlobal()</strong> to position an HTML element relative to a <strong>DisplayObject</strong> nested in the display list.</p>
-	</header>
+	<section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
 
-	<div class="canvasHolder">
-		<canvas id="testCanvas" width="960" height="400"></canvas>
-		<input type="button" value="wheeeeee!" id="whee" style="position:absolute;"/>
-	</div>
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：定义变量，在 canvas 上创建一个 stage 对象，同时获取 whee 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas;
+var stage;
+var whee;    // 展示位置的按钮
+
+var bar1;	 // 蓝色棒的展示
+var bar2;	 // 绿色棒的展示
+var bar3;	 // 红色棒的展示
+
+var arm1;	 // 蓝色棒的容器，用来放置子对象
+var arm2;	 // 绿色棒的容器，用来放置子对象
+
+canvas = document.getElementById("testCanvas");
+whee = document.getElementById("whee");</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：绘制一条红色棒，一条绿色棒，一条蓝色棒。</div><br />
+                <textarea class="tutorialCode" name="code">
+bar3 = new createjs.Shape();
+var g = bar3.graphics;
+g.beginFill("#8B2222");
+g.drawRect(-3,-3,6,130);
+bar3.regY = 20;
+bar3.y = 105;
+
+bar2 = new createjs.Shape();
+g = bar2.graphics;
+g.beginFill("#228B22");
+g.drawRect(-5,-5,10,110);
+
+bar1 = new createjs.Shape();
+g = bar1.graphics;
+g.beginFill("#22228B");
+g.drawRect(-8,-8,16,80);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：创建 arm 容器，用于承载绿色棒和相连的红色棒。</div><br />
+                <textarea class="tutorialCode" name="code">
+arm2 = new createjs.Container();
+arm2.addChild(bar2);
+arm2.addChild(bar3);
+arm2.regY = 20;
+arm2.y = 72;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：创建 arm1 容器，用来承载蓝色棒和相连的绿色棒。</div><br />
+                <textarea class="tutorialCode" name="code">
+arm1 = new createjs.Container();
+arm1.addChild(bar1);
+arm1.addChild(arm2);
+arm1.x = canvas.width/2;
+arm1.y = canvas.height/2;
+stage.addChild(arm1);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：绑定并编写 tick 方法，在 tick 方法中使用 localToGlobal 将 bar3 对象的本地坐标转换成全局坐标再设置 whee 对象的位置。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 开始循环执行
+createjs.Ticker.setInterval(20);		// 单位：毫秒，就是50fps
+createjs.Ticker.addEventListener("tick", tick);
+
+function tick() {
+	// 更新每个棒的角度
+	arm1.rotation += 1.9;
+	arm2.rotation += -2.7;
+	bar3.rotation += 4.4;
+
+	// 计算红色棒尽头位置的全局对应坐标，并把“whee”按钮移动到那个地方
+	var pt = bar3.localToGlobal(0, 130);
+	whee.style.left = Math.round(pt.x+canvas.offsetLeft-10) + "px";
+	whee.style.top = Math.round(pt.y+canvas.offsetTop-10) + "px";
+
+	stage.update();
+}</textarea>
+        </div>
+    </section>
+        
+<script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>

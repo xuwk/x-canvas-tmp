@@ -1,113 +1,110 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>EaselJS 示例: 使用BitmapAnimation和SpriteSheet显示图标</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS 示例: 使用 BitmapAnimation 和 SpriteSheet 显示图标</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<style>
+	#content {
+		padding: 10px;
+	}
+</style>
 
-	<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var stage;
 
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-		var stage;
-	
-		var iconSheet = new Image();
+	var iconSheet = new Image();
 
-		function init() {
-			//加载图片，直至最后一张图片被加载完成
-			iconSheet.onload = handleImageLoad;
-			iconSheet.src = "assets/icons.png";
+	function init() {
+		//加载图片，直至最后一张图片被加载完成
+		iconSheet.onload = handleImageLoad;
+		iconSheet.src = "assets/icons.png";
+	}
+
+	function handleImageLoad() {
+	    // 在canvas上创建一个场景，注：我们也可以把canvas的id传进去
+		stage = new createjs.Stage("testCanvas");
+
+		/*** 首先： 一个“简单”的步骤 ***/
+		// 使用iconSheet创建一个简单的图片精灵，每帧大小为80×80
+		var data = {images:[iconSheet], frames:{width:80, height:80}};
+		var spriteSheet  = new createjs.SpriteSheet(data);
+
+		// 创建一个动画，展示图片精灵上的每一帧
+		var icon1 = new createjs.BitmapAnimation(spriteSheet);
+        icon1.x = 10;
+        icon1.y = 100;
+
+		// 因为我们没有特别指定帧数据，所以我们必须通过下标来引用帧
+		icon1.gotoAndStop(2);
+		stage.addChild(icon1);
+
+		// 我们把icon1克隆出来，做一点小小的事情
+		var icon2 = icon1.clone();
+		icon2.x += 111;
+		icon2.gotoAndStop(5);
+		stage.addChild(icon2);
+
+		/*** 下一步：粗暴一点的方法  ***/
+		// 定义一些描绘可用图标的图片精灵数据
+		// 我们可以使用{帧名:下标}的格式来描述动画，因为每一个“序列”仅仅是一个单独的帧
+		var data = {
+			images:[iconSheet],
+			frames:{width:80, height:80},
+			animations: {trash:0, male:1, wait:2, library:3, female:4, hanger:5, stairs:6, noparking:7}
 		}
-	
-		function handleImageLoad() {
-		    // 在canvas上创建一个场景，注：我们也可以把canvas的id传进去
-			stage = new createjs.Stage("testCanvas");
-	
-			/*** 首先： 一个“简单”的步骤 ***/
-			// 使用iconSheet创建一个简单的图片精灵，每帧大小为80×80
-			var data = {images:[iconSheet], frames:{width:80, height:80}};
-			var spriteSheet  = new createjs.SpriteSheet(data);
-	
-			// 创建一个动画，展示图片精灵上的每一帧
-			var icon1 = new createjs.BitmapAnimation(spriteSheet);
-	        icon1.x = 10;
-	        icon1.y = 100;
-	
-			// 因为我们没有特别指定帧数据，所以我们必须通过下标来引用帧
-			icon1.gotoAndStop(2);
-			stage.addChild(icon1);
-	
-			// 我们把icon1克隆出来，做一点小小的事情
-			var icon2 = icon1.clone();
-			icon2.x += 111;
-			icon2.gotoAndStop(5);
-			stage.addChild(icon2);
-	
-			/*** 下一步：粗暴一点的方法  ***/
-			// 定义一些描绘可用图标的图片精灵数据
-			// 我们可以使用{帧名:下标}的格式来描述动画，因为每一个“序列”仅仅是一个单独的帧
-			var data = {
-				images:[iconSheet],
-				frames:{width:80, height:80},
-				animations: {trash:0, male:1, wait:2, library:3, female:4, hanger:5, stairs:6, noparking:7}
-			}
-	
-			// 使用数据创建图片精灵
-		    spriteSheet = new createjs.SpriteSheet(data);
-	
-		    // 我们需要把icon2克隆出来，来保护x/y参数值，并设置spriteSheet
-		    var icon3 = icon2.clone();
-		    icon3.spriteSheet = spriteSheet;
-		    icon3.x += 111;
-	
-		    // 现在我们可以通过名称引用帧了
-		    icon3.gotoAndStop("male");
-		    stage.addChild(icon3);
-	
-		    var icon4 = icon3.clone();
-		    icon4.gotoAndStop("female");
-		    icon4.x += 111;
-		    stage.addChild(icon4);
-	
-		    var icon5 = icon4.clone();
-		    icon5.gotoAndStop("trash");
-		    icon5.x += 111;
-		    stage.addChild(icon5);
-	
-		    // 最后，我们添加一个完整的动画
-		    var icon6 = icon1.clone();
-		    icon6.x = icon5.x + 111;
-		    icon6.gotoAndPlay(0);
-		    stage.addChild(icon6);
-	
-			createjs.Ticker.setFPS(3); // 慢一点，这样我们可以看清楚那些图标
-			createjs.Ticker.addEventListener("tick", tick);
-		}
-	
-	    function tick() {
-	        stage.update();
-	    }
-        init();
-    });
-	</script>
-	<style>
-		#content {
-			padding: 10px;
-		}
-	</style>
+
+		// 使用数据创建图片精灵
+	    spriteSheet = new createjs.SpriteSheet(data);
+
+	    // 我们需要把icon2克隆出来，来保护x/y参数值，并设置spriteSheet
+	    var icon3 = icon2.clone();
+	    icon3.spriteSheet = spriteSheet;
+	    icon3.x += 111;
+
+	    // 现在我们可以通过名称引用帧了
+	    icon3.gotoAndStop("male");
+	    stage.addChild(icon3);
+
+	    var icon4 = icon3.clone();
+	    icon4.gotoAndStop("female");
+	    icon4.x += 111;
+	    stage.addChild(icon4);
+
+	    var icon5 = icon4.clone();
+	    icon5.gotoAndStop("trash");
+	    icon5.x += 111;
+	    stage.addChild(icon5);
+
+	    // 最后，我们添加一个完整的动画
+	    var icon6 = icon1.clone();
+	    icon6.x = icon5.x + 111;
+	    icon6.gotoAndPlay(0);
+	    stage.addChild(icon6);
+
+		createjs.Ticker.setFPS(3); // 慢一点，这样我们可以看清楚那些图标
+		createjs.Ticker.addEventListener("tick", tick);
+	}
+
+    function tick() {
+        stage.update();
+    }
+    init();
+});
+</script>
 </head>
 	
 <body>
-
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span>图标精灵</h1>
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> 使用 BitmapAnimation 和 SpriteSheet 显示图标</h1>
 	    <p>展示了<strong>BitmapAnimation</strong>的两种使用方法，从<strong>SpriteSheet</strong>中展示独立的图标或图形。</p>
 	</header>
-
 	<div class="canvasHolder">
 		<canvas id="testCanvas" width="960" height="270"></canvas>
 	</div>

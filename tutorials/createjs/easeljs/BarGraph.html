@@ -10,10 +10,10 @@
 <link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
 <link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
 
-<script type="text/javascript" src="../../../src/xc.js"></script>
 <script type="text/javascript" src="../../codemirror/codemirror.js"></script>
 <script type="text/javascript" src="../../codemirror/javascript.js"></script>
 
+<script type="text/javascript" src="../../../src/xc.js"></script>
 <script>
 xc.depends([
     "../../../src/core",
@@ -218,7 +218,7 @@ xc.depends([
         </center>
         
         <div class="tutorialBody">
-            <div class="tutorialTitle">步骤一: 定义变量，以及创建一个 stage 对象并指向 canvas。</div><br />
+            <div class="tutorialTitle">步骤一: 定义变量，以及在 canvas 上创建一个 Stage 对象。</div><br />
                 <textarea class="tutorialCode" name="code">
 var canvas;
 var stage;
@@ -231,7 +231,9 @@ var bars = [];
 
 canvas = document.getElementById("testCanvas");
 stage = new createjs.Stage(canvas);</textarea>
+        </div>
 
+        <div class="tutorialBody">
             <div class="tutorialTitle">步骤二: 生成 4 到 10 之间随机数。</div><br />
                 <textarea class="tutorialCode" name="code">
 var numBars = Math.random()*6+4|0;
@@ -241,17 +243,23 @@ for (var i=0; i<numBars; i++) {
     if (val > max) { max = val; }
     barValues.push(val);
 }</textarea>
+        </div>
 
+        <div class="tutorialBody">
             <div class="tutorialTitle">步骤三: 根据 canvas 的宽度和条形的数量，计算单个条形的宽度和高度。</div><br />
                 <textarea class="tutorialCode" name="code">
 var barWidth = (canvas.width-150-(numBars-1)*barPadding)/numBars;
 barHeight = canvas.height-150;</textarea>
+        </div>
 
+        <div class="tutorialBody">
             <div class="tutorialTitle">步骤四: 创建一个用于画背景的 shape 对象。</div><br />
                 <textarea class="tutorialCode" name="code">
 var bg = new createjs.Shape();
 stage.addChild(bg);</textarea>
+        </div>
 
+        <div class="tutorialBody">
             <div class="tutorialTitle">步骤五:绘制条形图底部的框架，留意绘制命令是如何连接起来的。</div><br />
                 <textarea class="tutorialCode" name="code">
 bg.graphics.beginStroke("#444")
@@ -264,7 +272,9 @@ bg.graphics.beginStroke("#444")
 .lineTo(50, canvas.height-80)
 .lineTo(40, canvas.height-70)
 .closePath();</textarea>
+        </div>
 
+        <div class="tutorialBody">
             <div class="tutorialTitle">步骤六: 绘制背景横线。</div><br />
                 <textarea class="tutorialCode" name="code">
 for (i = 0; i < 9; i++) {
@@ -272,7 +282,9 @@ for (i = 0; i < 9; i++) {
     .moveTo(50,(canvas.height-80-i/8*barHeight|0)+0.5)
     .lineTo(canvas.width-60,(canvas.height-80-i/8*barHeight|0)+0.5);
 }</textarea>
+        </div>
 
+        <div class="tutorialBody">
             <div class="tutorialTitle">步骤七: 添加标题。</div><br />
                 <textarea class="tutorialCode" name="code">
 label = new createjs.Text("Bar Graph Example", "bold 30px Arial", "#FFF");
@@ -280,7 +292,9 @@ label.textAlign = "center";
 label.x = canvas.width/2;
 label.y = 20;
 stage.addChild(label);</textarea>
+        </div>
 
+        <div class="tutorialBody">
             <div class="tutorialTitle">步骤八: 定义画单个条形图方法。</div><br />
                 <textarea class="tutorialCode" name="code">
 function drawBar(bar, value) {
@@ -307,7 +321,9 @@ function drawBar(bar, value) {
         .lineTo(10,-10)
         .closePath();
 }</textarea>
+        </div>
 
+        <div class="tutorialBody">
             <div class="tutorialTitle">步骤九: 绘制条形图。</div><br />
                 <textarea class="tutorialCode" name="code">
 // 绘制条形图:
@@ -378,9 +394,11 @@ for (i=0; i < numBars; i++) {
     // 调用 drawBar 方法。
     drawBar(bar, 0);
 }</textarea>
+        </div>
 
-        <div class="tutorialTitle">步骤十: 条形图动画相关设置。</div><br />
-            <textarea class="tutorialCode" name="code">
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤十: 条形图动画相关设置。</div><br />
+                <textarea class="tutorialCode" name="code">
 // 基于条形数量设立动画计数器。
 count = numBars*10;
 // 开始执行 tick 并指向 window，因此可以再更新 stage 之前进行一系列相关操作。
@@ -405,6 +423,7 @@ function tick() {
 }</textarea>
         </div>
     </section>
+    
 <script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>

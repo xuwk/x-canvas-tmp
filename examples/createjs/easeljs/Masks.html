@@ -1,87 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>EaselJS 示例: 遮罩演示</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS：遮罩演示</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var img, star, stage;
+    var scale;
+	var angle;
+	function init() {
+        if (window.top != window) {
+            document.getElementById("header").style.display = "none";
+        }
+        document.getElementById("loader").className = "loader";
 
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-		var img, star, stage;
-	    var scale;
-		var angle;
-		function init() {
-	        if (window.top != window) {
-	            document.getElementById("header").style.display = "none";
-	        }
-	        document.getElementById("loader").className = "loader";
-	
-			//等待图片加载完毕
-			img = new Image();
-			img.onload = handleImageLoad;
-			img.src = "assets/photo-hires.jpg";
-			angle = 0;
-		}
-	
-		function handleImageLoad() {
-	        document.getElementById("loader").className = "";
-	        
-			//获取canvas对象，加载图片，直至最后一张图片被加载完成
-			var canvas = document.getElementById("testCanvas");
-	
-			// 在canvas上创建一个场景
-			stage = new createjs.Stage(canvas);
-			
-			// 遮罩只能是一个Shape对象
-			star = new createjs.Shape();
-			// 遮罩的位置会被关联到目标的父对象上
-			star.x = img.width/2;
-			star.y = img.height/2;
-			// 只有drawPolyStar的地方才是遮罩影响的范围
-			star.graphics.beginStroke("#FF0").setStrokeStyle(5).drawPolyStar(0,0,img.height/2-15,5,0.6).closePath();
-	
-			var bg = new createjs.Bitmap(img);
-			// 模糊并降低背景图片的饱和度
-			bg.filters = [new createjs.BoxBlurFilter(2,2,2), new createjs.ColorMatrixFilter(new createjs.ColorMatrix(0,0,-100,0))];
-			bg.cache(0,0,img.width,img.height);
-			stage.addChild(bg);
-			
-			var bmp = new createjs.Bitmap(img);
-			stage.addChild(bmp);
-			bmp.mask = star;
-			
-			// 注：如果你喜欢的话，“形状”也可以用在显示列表里面，或者我们可以在其他的“形状”里面重用Graphics的实例，如果我们想要把它做不同转换的话。
-			stage.addChild(star);
-	
-			createjs.Ticker.addEventListener("tick", tick);
-		}
+		//等待图片加载完毕
+		img = new Image();
+		img.onload = handleImageLoad;
+		img.src = "assets/photo-hires.jpg";
+		angle = 0;
+	}
+
+	function handleImageLoad() {
+        document.getElementById("loader").className = "";
+        
+		//获取canvas对象，加载图片，直至最后一张图片被加载完成
+		var canvas = document.getElementById("testCanvas");
+
+		// 在canvas上创建一个场景
+		stage = new createjs.Stage(canvas);
 		
-		function tick() {
-			star.rotation += 5; 
-			star.scaleX = star.scaleY = 1.5+Math.sin(angle)*3;
-			stage.update(); 
-			angle+=0.025;
-		}
-	    init();
-	});
-	</script>
+		// 遮罩只能是一个Shape对象
+		star = new createjs.Shape();
+		// 遮罩的位置会被关联到目标的父对象上
+		star.x = img.width/2;
+		star.y = img.height/2;
+		// 只有drawPolyStar的地方才是遮罩影响的范围
+		star.graphics.beginStroke("#FF0").setStrokeStyle(5).drawPolyStar(0,0,img.height/2-15,5,0.6).closePath();
+
+		var bg = new createjs.Bitmap(img);
+		// 使背景图加上蒙层，和饱和度。
+		bg.filters = [new createjs.BoxBlurFilter(2,2,2), new createjs.ColorMatrixFilter(new createjs.ColorMatrix(0,0,-100,0))];
+		bg.cache(0,0,img.width,img.height);
+		stage.addChild(bg);
+		
+		var bmp = new createjs.Bitmap(img);
+		stage.addChild(bmp);
+		bmp.mask = star;
+		
+		// 注：Shape 对象也可以作为显示对象在显示列表中使用，如果我们想要把它做不同转换，也可以重用Graphics的实例。
+		stage.addChild(star);
+
+		createjs.Ticker.addEventListener("tick", tick);
+	}
+	
+	function tick() {
+		star.rotation += 5; 
+		star.scaleX = star.scaleY = 1.5+Math.sin(angle)*3;
+		stage.update(); 
+		angle+=0.025;
+	}
+    init();
+});
+</script>
 </head>
 	
 <body>
-
     <div id="loader"></div>
-
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> 遮罩</h1>
-	    <p>示范如何使用向量遮罩。注：遮罩的<strong>Shape</strong>定义了遮罩也可以放置在显示列表中</p>
+	    <h1><span class="text-product">Easel<strong>JS</strong> 遮罩演示</span></h1>
+	    <p>演示使用矢量蒙版。 注：<strong> Shape </strong> 对象也可以作为显示对象在显示列表中使用 （在该例子中，Shape 同时使用了矢量蒙层和黄色边框）。</p>
 	</header>
-
 	<div class="canvasHolder">
 		<canvas id="testCanvas" width="960" height="400"></canvas>
 	</div>

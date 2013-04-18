@@ -8,7 +8,7 @@
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
 
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
@@ -35,7 +35,6 @@ xc.depends([
 		bmp.y = (canvas.height-2*img.height)/3;
 		stage.addChild(bmp);
 
-
 		var blurFilter = new createjs.BoxBlurFilter(32, 2, 2);
 		var margins = blurFilter.getBounds();
 		bmp = bmp.clone();
@@ -45,7 +44,6 @@ xc.depends([
 		bmp.cache(margins.x,margins.y,img.width+margins.width,img.height+margins.height);
 		bmp.x += bmp.x+img.width;
 		stage.addChild(bmp);
-
 
 		var greyScaleFilter = new createjs.ColorMatrixFilter([
 			0.33,0.33,0.33,0,0, // 红
@@ -58,7 +56,6 @@ xc.depends([
 		bmp.cache(0,0,img.width,img.height); // 颜色滤镜不会改变图片的大小
 		bmp.y += bmp.y+img.height;
 		stage.addChild(bmp);
-
 
 		var removeRedFilter = new createjs.ColorFilter(0,1,1,1); // 红、绿、蓝、透明
 		bmp = bmp.clone();

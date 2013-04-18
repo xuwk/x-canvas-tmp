@@ -1,104 +1,102 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>EaselJS 示例: SpriteSheetBuilder</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS：SpriteSheetBuilder 示例</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var canvas;
+	var stage;
 
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-		var canvas;
-		var stage;
-	
-		function init() {
-			//保存canvas和stage实例，并等待图片加载完毕
-			canvas = document.getElementById("testCanvas");
-			stage = new createjs.Stage(canvas);
-			
-			// 设置一对显示对象，作为资源，并把它们添加到场景
-			var circle = new createjs.Shape();
-			circle.graphics.beginFill("#F00").drawCircle(0,0,30).beginFill("#C00").drawCircle(0,0,10);
-			circle.setTransform(100,90);
-			
-			var square = new createjs.Container();
-			var squareBg = square.addChild(new createjs.Shape());
-			squareBg.graphics.beginFill("#00F").drawRect(0,0,80,80);
-			var squareFld = square.addChild(new createjs.Text("1", "bold 72px Arial", "#9BF"));
-			squareFld.textBaseline = "top";
-			squareFld.textAlign = "center";
-			squareFld.x = 40;
-			square.setTransform(150,50);
-			// 我们会定义这个形状的有效范围，当调用addFrame时会使用到
-			square.bounds = new createjs.Rectangle(0,0,80,80);
-			
-			stage.addChild(circle, square);
-			
-			// 创建图片精灵生成器
-			var builder = new createjs.SpriteSheetBuilder();
-			
-			// 添加一个圆形，把它作为一个帧，定义绘图的范围，并把该帧的下标记录下来
-			var index = builder.addFrame(circle, new createjs.Rectangle(-30,-30,60,60));
-			
-			// 对该下标进行动画命名
-			builder.addAnimation("circle", index);
-			
-			// 作为帧序列添加正方形，每一个都包含了不同的数字
-			var frames = [];
-			for (var i=0; i<5; i++) {
-				// 我们正在定义一个设置方法，该方法会在绘画每一帧前更新那些文本内容
-				// 这个方法会在绘画前被调用，并且会被传入参数“[i]”
-				index = builder.addFrame(square, null, 1, function(num) { squareFld.text=num; }, [i]);
-				// 保存每一帧的下标，这个会在定义动画时调用
-				frames.push(index);
-			}
-			// 创建一个命名为“square”的动画，这个动画包含了我们刚刚添加的所有帧
-			// 我们同时让它循环播放，并且设置一个频率，让它每循环8次更新一次
-			builder.addAnimation("square", frames, true, 8);
-			
-			// 执行创建操作，并保存图片精灵的生成结果
-			// 我们也可以通过异步方式（buildAsync）进行调用
-			var spriteSheet = builder.build();
-			
-			// 使用生成的图片精灵创建一个动画，并把它放在场景上
-			var circle2 = new createjs.BitmapAnimation(spriteSheet);
-			circle2.gotoAndPlay("circle");
-			circle2.setTransform(100,90+100);
-			stage.addChild(circle2);
-			
-			var square2 = new createjs.BitmapAnimation(spriteSheet);
-			square2.gotoAndPlay("square");
-			square2.setTransform(150,50+100);
-			stage.addChild(square2);
-			
-			// 追加一个生成的图片做演示用途
-			document.body.appendChild(spriteSheet._images[0]);
-			
-			// 我们需要在更新canvas前做一些事情，否则我们会用Ticker.addEventListener("tick", stage)来代替
-			createjs.Ticker.addEventListener("tick", tick);
+	function init() {
+		//保存canvas和stage实例，并等待图片加载完毕
+		canvas = document.getElementById("testCanvas");
+		stage = new createjs.Stage(canvas);
+		
+		// 设置一对显示对象，作为资源，并把它们添加到场景
+		var circle = new createjs.Shape();
+		circle.graphics.beginFill("#F00").drawCircle(0,0,30).beginFill("#C00").drawCircle(0,0,10);
+		circle.setTransform(100,90);
+		
+		var square = new createjs.Container();
+		var squareBg = square.addChild(new createjs.Shape());
+		squareBg.graphics.beginFill("#00F").drawRect(0,0,80,80);
+		var squareFld = square.addChild(new createjs.Text("1", "bold 72px Arial", "#9BF"));
+		squareFld.textBaseline = "top";
+		squareFld.textAlign = "center";
+		squareFld.x = 40;
+		square.setTransform(150,50);
+		// 我们会定义这个形状的有效范围，当调用addFrame时会使用到
+		square.bounds = new createjs.Rectangle(0,0,80,80);
+		
+		stage.addChild(circle, square);
+		
+		// 创建图片精灵生成器
+		var builder = new createjs.SpriteSheetBuilder();
+		
+		// 添加一个圆形，把它作为一个帧，定义绘图的范围，并把该帧的下标记录下来
+		var index = builder.addFrame(circle, new createjs.Rectangle(-30,-30,60,60));
+		
+		// 对该下标进行动画命名
+		builder.addAnimation("circle", index);
+		
+		// 作为帧序列添加正方形，每一个都包含了不同的数字
+		var frames = [];
+		for (var i=0; i<5; i++) {
+			// 我们正在定义一个设置方法，该方法会在绘画每一帧前更新那些文本内容
+			// 这个方法会在绘画前被调用，并且会被传入参数“[i]”
+			index = builder.addFrame(square, null, 1, function(num) { squareFld.text=num; }, [i]);
+			// 保存每一帧的下标，这个会在定义动画时调用
+			frames.push(index);
 		}
-	
-	    function tick() {
-	        stage.update();
-	    }
-	    init();
-    });
-	</script>
+		// 创建一个命名为“square”的动画，这个动画包含了我们刚刚添加的所有帧
+		// 我们同时让它循环播放，并且设置一个频率，让它每循环8次更新一次
+		builder.addAnimation("square", frames, true, 8);
+		
+		// 执行创建操作，并保存图片精灵的生成结果
+		// 我们也可以通过异步方式（buildAsync）进行调用
+		var spriteSheet = builder.build();
+		
+		// 使用生成的图片精灵创建一个动画，并把它放在场景上
+		var circle2 = new createjs.BitmapAnimation(spriteSheet);
+		circle2.gotoAndPlay("circle");
+		circle2.setTransform(100,90+100);
+		stage.addChild(circle2);
+		
+		var square2 = new createjs.BitmapAnimation(spriteSheet);
+		square2.gotoAndPlay("square");
+		square2.setTransform(150,50+100);
+		stage.addChild(square2);
+		
+		// 追加一个生成的图片做演示用途
+		document.getElementById("canvasHolder").appendChild(spriteSheet._images[0]);
+		
+		// 我们需要在更新canvas前做一些事情，否则我们会用Ticker.addEventListener("tick", stage)来代替
+		createjs.Ticker.addEventListener("tick", tick);
+	}
+
+    function tick() {
+        stage.update();
+    }
+
+    init();
+});
+</script>
 </head>
 	
 <body>
-
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> SpriteSheetBuilder示例</h1>
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> SpriteSheetBuilder 示例</h1>
 	    <p>使用 <strong>SpriteSheetBuilder</strong>在运行时创建<strong>SpriteSheet</strong>实例。</p>
 	</header>
-
-	<div class="canvasHolder">
+	<div id="canvasHolder" class="canvasHolder">
 		<canvas id="testCanvas" width="960" height="400"></canvas>
 	</div>
 </body>

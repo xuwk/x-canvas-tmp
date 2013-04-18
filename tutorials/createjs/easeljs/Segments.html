@@ -1,180 +1,345 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>EaselJS Example: Simple Animation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS：骨架动画，Segment 类的使用</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../src/easeljs/utils/UID.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Matrix2D.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/EventDispatcher.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/DisplayObject.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Container.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Stage.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/MouseEvent.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Shape.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Graphics.js"></script>
-	<script type="text/javascript" src="../src/easeljs/utils/Ticker.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Shadow.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Point.js"></script>
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 
-	<!-- We also provide hosted minified versions of all CreateJS libraries.
-	  http://code.createjs.com -->
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs",
+    "assets/Segment.js"
+], function() {
+    var canvas;
+    var stage;
+    var rate;
+    var isAutomate;
+    var offset;
+    var container;
+    var body;
+    var rightArm;
+    var leftArm;
+    var loader;
 
+    function init() {
+        // 在canvas上创建一个场景
+        canvas = document.getElementById("testCanvas");
+        stage = new createjs.Stage(canvas);
+        rate = 0;
+        offset = 100;
 
+        body = new Segment(120, 30, '#FFFF99');
+        body.rotation = 90;
+        body.y = -120;
 
-    <script src="assets/Segment.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-    <script>
+        rightArm = new Segment(85, 25, '#FFFF99');
+        rightArm.x = body.getPoint().x;
+        rightArm.y = body.y;
+        rightArm.rotation = 90;
 
-        var canvas;
-        var stage;
-        var rate;
-        var isAutomate;
-        var offset;
-        var container;
-        var body;
-        var rightArm;
-        var leftArm;
-        var loader;
+        rightForeArm = new Segment(80, 20, '#FFFF99');
+        rightForeArm.x = rightArm.getPoint().x;
+        rightForeArm.y = rightArm.getPoint().y;
+        rightForeArm.rotation = 90;
 
-        function init() {
-        	if (window.top != window) {
-        		document.getElementById("header").style.display = "none";
-			}
+        leftArm = new Segment(85, 25, '#FFFF99');
+        leftArm.x = body.getPoint().x;
+        leftArm.y = body.y;
+        leftArm.rotation = 90;
 
-            // create stage and point it to the canvas:
-            canvas = document.getElementById("testCanvas");
-            stage = new createjs.Stage(canvas);
-            rate = 0;
-            offset = 100;
+        leftForeArm = new Segment(80, 20, '#FFFF99');
+        leftForeArm.x = rightArm.getPoint().x;
+        leftForeArm.y = rightArm.getPoint().y;
+        leftForeArm.rotation = 90;
 
-            body = new Segment(120, 30, '#FFFF99');
-            body.rotation = 90;
-            body.y = -120;
+        rightThigh = new Segment(95, 20, '#FFFF99');
+        rightThigh.x = body.getPoint().x;
+        rightThigh.y = body.getPoint().y;
+        rightThigh.rotation = 90;
 
-            rightArm = new Segment(85, 25, '#FFFF99');
-            rightArm.x = body.getPoint().x;
-            rightArm.y = body.y;
-            rightArm.rotation = 90;
+        right = new Segment(110, 30, '#FFFF99');
+        right.x = rightThigh.getPoint().x;
+        right.y = rightThigh.getPoint().y;
+        right.rotation = 90;
 
-            rightForeArm = new Segment(80, 20, '#FFFF99');
-            rightForeArm.x = rightArm.getPoint().x;
-            rightForeArm.y = rightArm.getPoint().y;
-            rightForeArm.rotation = 90;
+        leftThigh = new Segment(95, 20, '#FFFF99');
+        leftThigh.x = body.getPoint().x;
+        leftThigh.y = body.getPoint().y;
+        leftThigh.rotation = 90;
 
-            leftArm = new Segment(85, 25, '#FFFF99');
-            leftArm.x = body.getPoint().x;
-            leftArm.y = body.y;
-            leftArm.rotation = 90;
+        rightFoot = new Segment(45, 40, '#FFFF99');
+        rightFoot.x = right.getPoint().x;
+        rightFoot.y = right.getPoint().y;
 
-            leftForeArm = new Segment(80, 20, '#FFFF99');
-            leftForeArm.x = rightArm.getPoint().x;
-            leftForeArm.y = rightArm.getPoint().y;
-            leftForeArm.rotation = 90;
+        left = new Segment(110, 30, '#FFFF99');
+        left.x = leftThigh.getPoint().x;
+        left.y = leftThigh.getPoint().y;
+        left.rotation = 90;
 
-            rightThigh = new Segment(95, 20, '#FFFF99');
-            rightThigh.x = body.getPoint().x;
-            rightThigh.y = body.getPoint().y;
-            rightThigh.rotation = 90;
+        leftFoot = new Segment(45, 40, '#FFFF99');
+        leftFoot.x = left.getPoint().x;
+        leftFoot.y = left.getPoint().y;
 
-            right = new Segment(110, 30, '#FFFF99');
-            right.x = rightThigh.getPoint().x;
-            right.y = rightThigh.getPoint().y;
-            right.rotation = 90;
+        container = new createjs.Container();
+        container.addChild(leftArm,leftForeArm,leftThigh,leftFoot,left,body,right,rightThigh,rightFoot,rightForeArm,rightArm);
+        container.x = 275;
+        container.y = 137;
 
-            leftThigh = new Segment(95, 20, '#FFFF99');
-            leftThigh.x = body.getPoint().x;
-            leftThigh.y = body.getPoint().y;
-            leftThigh.rotation = 90;
+        isAutomate = false;
 
-            rightFoot = new Segment(45, 40, '#FFFF99');
-            rightFoot.x = right.getPoint().x;
-            rightFoot.y = right.getPoint().y;
+        stage.addChild(container);
+        stage.update();
 
-            left = new Segment(110, 30, '#FFFF99');
-            left.x = leftThigh.getPoint().x;
-            left.y = leftThigh.getPoint().y;
-            left.rotation = 90;
+        createjs.Ticker.addEventListener("tick", tick);
+    }
 
-            leftFoot = new Segment(45, 40, '#FFFF99');
-            leftFoot.x = left.getPoint().x;
-            leftFoot.y = left.getPoint().y;
+    function stop() {
+        createjs.Ticker.removeEventListener("tick", tick);
+    }
 
-            container = new createjs.Container();
-            container.addChild(leftArm,leftForeArm,leftThigh,leftFoot,left,body,right,rightThigh,rightFoot,rightForeArm,rightArm);
-            container.x = 275;
-            container.y = 137;
+    function move(segA, segB, segC, p_rate) {
+       var angleA = Math.sin(p_rate) * 45 + 90;
+       var angleB = Math.sin(p_rate + offset) * 45 + 45;
+       var angleC = Math.sin(p_rate) * 90 - 50;
 
-            isAutomate = false;
+       segA.rotation = angleA;
+       segB.rotation = segA.rotation + angleB;
+       segC.rotation = segB.rotation + angleC;
 
-            stage.addChild(container);
-            stage.update();
+       segB.x = segA.getPoint().x;
+       segB.y = segA.getPoint().y;
 
-			createjs.Ticker.addEventListener("tick", tick);
-        }
+       segC.x = segB.getPoint().x;
+       segC.y = segB.getPoint().y;
+    }
 
-        function stop() {
-			createjs.Ticker.removeEventListener("tick", tick);
-        }
+    function moveUpperBody(segA, segB, p_rate) {
+        var angleA = Math.sin(p_rate) * 45 + 90;
+        var angleB = Math.sin(p_rate + offset) * 45 - 35;
 
-        function move(segA, segB, segC, p_rate) {
-           var angleA = Math.sin(p_rate) * 45 + 90;
-           var angleB = Math.sin(p_rate + offset) * 45 + 45;
-           var angleC = Math.sin(p_rate) * 90 - 50;
+        segA.rotation = angleA;
+        segB.rotation = segA.rotation + angleB;
 
-           segA.rotation = angleA;
-           segB.rotation = segA.rotation + angleB;
-           segC.rotation = segB.rotation + angleC;
+        segB.x = segA.getPoint().x;
+        segB.y = segA.getPoint().y;
+    }
 
-           segB.x = segA.getPoint().x;
-           segB.y = segA.getPoint().y;
+    function handleClick(event) {
+        isAutomate = !isAutomate;
+    }
 
-           segC.x = segB.getPoint().x;
-           segC.y = segB.getPoint().y;
-        }
+    function tick() {
+        rate += 0.1;
 
-        function moveUpperBody(segA, segB, p_rate) {
-            var angleA = Math.sin(p_rate) * 45 + 90;
-            var angleB = Math.sin(p_rate + offset) * 45 - 35;
+        move(rightThigh, right, rightFoot, rate);
+        move(leftThigh, left, leftFoot, rate*2);
 
-            segA.rotation = angleA;
-            segB.rotation = segA.rotation + angleB;
+        moveUpperBody(leftArm, leftForeArm, rate*2.5);
+        moveUpperBody(rightArm, rightForeArm, rate*1.5);
 
-            segB.x = segA.getPoint().x;
-            segB.y = segA.getPoint().y;
-        }
-
-        function handleClick(event) {
-            isAutomate = !isAutomate;
-        }
-
-        function tick() {
-            rate += 0.1;
-
-           move(rightThigh, right, rightFoot, rate);
-           move(leftThigh, left, leftFoot, rate*2);
-
-           moveUpperBody(leftArm, leftForeArm, rate*2.5);
-           moveUpperBody(rightArm, rightForeArm, rate*1.5);
-
-           stage.update();
-        }
-
-    </script>
+       stage.update();
+    }
+    init();
+});
+</script>
 </head>
 
-<body onload="init();">
+<body>
+    <center>
+        <header id="header" class="EaselJS">
+            <h1><span class="text-product">Easel<strong>JS</strong></span> 骨架动画，Segment 类的使用</h1>
+            <p>一个在显示层上演示多个显示元素组合的示例</p>
+        </header>
+        <div class="canvasHolder">
+            <canvas id="testCanvas" width="960" height="400"></canvas>
+        </div>
+    </center>
 
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Segment Animation</h1>
-	    <p>A sample of display elements joined together in the display hierarchy.</p>
-	</header>
+    <section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
 
-	<div class="canvasHolder">
-	    <canvas id="testCanvas" width="960" height="400"></canvas>
-	</div>
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：定义变量，在 canvas 上创建一个 stage 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas;
+var stage;
+var rate;
+var isAutomate;
+var offset;
+var container;
+var body;
+var rightArm;
+var leftArm;
+var loader;
 
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：创建一宽度为 120，高度为 30，颜色为 #FFFF99 的 Segment 对象作为身躯。同时旋转 90 度，y 坐标为 -120。</div><br />
+                <textarea class="tutorialCode" name="code">
+body = new Segment(120, 30, '#FFFF99');
+body.rotation = 90;
+body.y = -120;</textarea>
+        </div>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：创建一宽度为 85，高度为 25，色为 #FFFF99 的 Segment 对象作为右臂。同时旋转 90 度，x，y 坐标同步 body 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+rightArm = new Segment(85, 25, '#FFFF99');
+rightArm.x = body.getPoint().x;
+rightArm.y = body.y;
+rightArm.rotation = 90;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：创建一宽度为 80，高度为 20，色为 #FFFF99 的 Segment 对象作为右前臂。同时旋转 90 度，x，y 坐标同步 rightArm 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+rightForeArm = new Segment(80, 20, '#FFFF99');
+rightForeArm.x = rightArm.getPoint().x;
+rightForeArm.y = rightArm.getPoint().y;
+rightForeArm.rotation = 90;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：创建一宽度为 85，高度为 25，色为 #FFFF99 的 Segment 对象作为左臂。同时旋转 90 度，x，y 坐标同步 body 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+leftArm = new Segment(85, 25, '#FFFF99');
+leftArm.x = body.getPoint().x;
+leftArm.y = body.y;
+leftArm.rotation = 90;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤六：创建一宽度为 80，高度为 20，色为 #FFFF99 的 Segment 对象作为左前臂。同时旋转 90 度，x，y 坐标同步 rightArm 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+leftForeArm = new Segment(80, 20, '#FFFF99');
+leftForeArm.x = rightArm.getPoint().x;
+leftForeArm.y = rightArm.getPoint().y;
+leftForeArm.rotation = 90;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤七：创建一宽度为 95，高度为 20，色为 #FFFF99 的 Segment 对象作为右腿。同时旋转 90 度，x，y 坐标同步 body 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+rightThigh = new Segment(95, 20, '#FFFF99');
+rightThigh.x = body.getPoint().x;
+rightThigh.y = body.getPoint().y;
+rightThigh.rotation = 90;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤八：创建一宽度为 110，高度为 30，色为 #FFFF99 的 Segment 对象作为右边。同时旋转 90 度，x，y 坐标同步 rightThigh 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+right = new Segment(110, 30, '#FFFF99');
+right.x = rightThigh.getPoint().x;
+right.y = rightThigh.getPoint().y;
+right.rotation = 90;</textarea>
+        </div>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤九：创建一宽度为 95，高度为 20，色为 #FFFF99 的 Segment 对象作为左腿。同时旋转 90 度，x，y 坐标同步 body 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+leftThigh = new Segment(95, 20, '#FFFF99');
+leftThigh.x = body.getPoint().x;
+leftThigh.y = body.getPoint().y;
+leftThigh.rotation = 90;</textarea>
+        </div>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤十：创建一宽度为 45，高度为 40，色为 #FFFF99 的 Segment 对象作为右脚。x，y 坐标同步 right 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+rightFoot = new Segment(45, 40, '#FFFF99');
+rightFoot.x = right.getPoint().x;
+rightFoot.y = right.getPoint().y;</textarea>
+        </div>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤十一：创建一宽度为 110，高度为 30，色为 #FFFF99 的 Segment 对象作为左边。同时旋转 90 度，x，y 坐标同步 leftThigh 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+left = new Segment(110, 30, '#FFFF99');
+left.x = leftThigh.getPoint().x;
+left.y = leftThigh.getPoint().y;
+left.rotation = 90;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤十二：创建一宽度为 45，高度为 40，色为 #FFFF99 的 Segment 对象作为左脚。x，y 坐标同步 left 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+leftFoot = new Segment(45, 40, '#FFFF99');
+leftFoot.x = left.getPoint().x;
+leftFoot.y = left.getPoint().y;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤十三：创建一个 Container 对象，将以上步骤创建的所有 Segment 对象添加进去，继而将该 Container 对象添加到 Stage。</div><br />
+                <textarea class="tutorialCode" name="code">
+container = new createjs.Container();
+container.addChild(leftArm,leftForeArm,leftThigh,leftFoot,left,body,right,rightThigh,rightFoot,rightForeArm,rightArm);
+container.x = 275;
+container.y = 137;
+stage.addChild(container);</textarea>
+        </div>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤十四：绑定并编写 tick 方法，使人物的手脚能自由运动。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Ticker.addEventListener("tick", tick);
+
+function move(segA, segB, segC, p_rate) {
+    var angleA = Math.sin(p_rate) * 45 + 90;
+    var angleB = Math.sin(p_rate + offset) * 45 + 45;
+    var angleC = Math.sin(p_rate) * 90 - 50;
+
+    segA.rotation = angleA;
+    segB.rotation = segA.rotation + angleB;
+    segC.rotation = segB.rotation + angleC;
+
+    segB.x = segA.getPoint().x;
+    segB.y = segA.getPoint().y;
+
+    segC.x = segB.getPoint().x;
+    segC.y = segB.getPoint().y;
+}
+
+function moveUpperBody(segA, segB, p_rate) {
+    var angleA = Math.sin(p_rate) * 45 + 90;
+    var angleB = Math.sin(p_rate + offset) * 45 - 35;
+
+    segA.rotation = angleA;
+    segB.rotation = segA.rotation + angleB;
+
+    segB.x = segA.getPoint().x;
+    segB.y = segA.getPoint().y;
+}
+
+function tick() {
+    rate += 0.1;
+
+    move(rightThigh, right, rightFoot, rate);
+    move(leftThigh, left, leftFoot, rate*2);
+
+    moveUpperBody(leftArm, leftForeArm, rate*2.5);
+    moveUpperBody(rightArm, rightForeArm, rate*1.5);
+
+    stage.update();
+}</textarea>
+        </div>
+    </section>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>
