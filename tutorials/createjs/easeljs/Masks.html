@@ -58,7 +58,7 @@ xc.depends([
 		stage.addChild(bmp);
 		bmp.mask = star;
 		
-		// 注：Shape 对象也可以作为显示对象在显示列表中使用，我们也可以随时修改 Graphics 实例。
+		// 注：Shape 对象也可以作为显示对象在显示列表中使用，如果我们想要把它做不同转换，也可以重用Graphics的实例。
 		stage.addChild(star);
 
 		createjs.Ticker.addEventListener("tick", tick);
