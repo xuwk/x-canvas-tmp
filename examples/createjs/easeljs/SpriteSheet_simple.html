@@ -1,68 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>EaselJS: 简单的图片精灵示例</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS：简单的图片精灵示例</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var stage;
+	function init() {
+		// 在canvas上创建一个场景
+		stage = new createjs.Stage(document.getElementById("testCanvas"));
 
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-        var stage;
-		function init() {
+		// 定义一个图片精灵，注：这个数据是Zoë导出的。
+		var ss = new createjs.SpriteSheet({
+			"animations": {
+				"run": [0, 25, "jump"],
+				"jump": [26, 63, "run"]
+		    },
+			"images": ["assets/runningGrant.png"],
+			"frames": {
+				"height": 292.5,
+				"width":165.75,
+				"regX": 0,
+				"regY": 0,
+				"count": 64
+			}
+		});
 
-			// 在canvas上创建一个场景
-			stage = new createjs.Stage(document.getElementById("testCanvas"));
+		var grant = new createjs.BitmapAnimation(ss);
+		grant.x = 360;
+		grant.y = 22;
 
-			// 定义一个图片精灵，注：这个数据是Zoë导出的。
-			var ss = new createjs.SpriteSheet({
-				"animations":
-				{
-					"run": [0, 25, "jump"],
-					"jump": [26, 63, "run"]},
-					"images": ["assets/runningGrant.png"],
-					"frames":
-						{
-							"height": 292.5,
-							"width":165.75,
-							"regX": 0,
-							"regY": 0,
-							"count": 64
-						}
-				});
+		grant.gotoAndPlay("run");
 
-			var grant = new createjs.BitmapAnimation(ss);
-			grant.x = 360;
-			grant.y = 22;
+		// 把grant添加到场景，并把它当作监听器添加到主循环上，以便每次去更新
+		stage.addChild(grant);
+		createjs.Ticker.setFPS(60);
+		createjs.Ticker.addEventListener("tick", tick);
+	}
 
-			grant.gotoAndPlay("run");
-
-			// 把grant添加到场景，并把它当作监听器添加到主循环上，以便每次去更新
-			stage.addChild(grant);
-			createjs.Ticker.setFPS(60);
-			createjs.Ticker.addEventListener("tick", tick);
-		}
-
-        function tick() {
-            stage.update();
-        }
-        init();
-    });
-	</script>
+    function tick() {
+        stage.update();
+    }
+    
+    init();
+});
+</script>
 </head>
-<body>
 
+<body>
 	<header id="header" class="EaselJS">
 		<h1><span class="text-product">Easel<strong>JS</strong></span> 简单的图片精灵示例</h1>
 		<p>一个使用<strong>BitmapAnimation</strong>的简单的图片精灵示例。这个示例同时也展示了命名动画的播放方式（play和run），
 		还有使用<strong>getAnimation("name").next</strong>的链式动画播放。</p>
 	</header>
-
 	<div class="canvasHolder">
 		<canvas id="testCanvas" width="960" height="400"></canvas>
 	</div>

@@ -7,7 +7,7 @@
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
@@ -135,7 +135,7 @@ xc.depends([
 	
 <body>
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span>全局坐标转换为本地坐标</h1>
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> 全局坐标转换为本地坐标</h1>
 	    <p>与globalToLocal1.html类似，不过会把<strong>Stage.autoClear</strong>设置为false(这样场景就不会被清空)，并且矢量图形<strong>Shape</strong>会在每一次循环中被清除，因此在每一次循环中只有一条线会被渲染。因此，你不必担心性能会被损耗。每一帧都会在上一层之上画上一个高度透明的矩形，这样就可以使以前的内容渐渐隐藏掉。
 	    </p>
 	</header>

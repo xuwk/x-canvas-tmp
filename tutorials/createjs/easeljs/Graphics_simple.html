@@ -13,7 +13,7 @@
 <script type="text/javascript" src="../../codemirror/javascript.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
@@ -73,7 +73,7 @@ xc.depends([
 <body>
 	<center>
 		<header id="header" class="EaselJS">
-		    <h1><span class="text-product">Easel<strong>JS</strong></span>简单的图形示例</h1>
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> 简单的图形示例</h1>
 		    <p>这个示例使用矢量的图形画出一个笑脸。</p>
 		</header>
 		<canvas id="myCanvas" width="960" height="400"></canvas>
@@ -89,6 +89,7 @@ xc.depends([
                 <textarea class="tutorialCode" name="code">
 var canvas;
 var stage;
+
 function init() {
 	canvas = document.getElementById('myCanvas');
 	width = canvas.width;

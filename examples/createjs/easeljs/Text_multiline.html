@@ -1,57 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>EaselJS 示例: 多行文本</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS：多行文本</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var stage;
+	function init() {
+		stage = new createjs.Stage(document.getElementById("testCanvas"));
 
-    <script>
-    xc.depends([
-        "../../../src/core",
-        "../../../src/lib/createjs"
-    ], function() {
-		var stage;
-		function init() {
-			stage = new createjs.Stage(document.getElementById("testCanvas"));
-	
-	
-			var txt = new createjs.Text("", "17px Arial", "#FFF");
-			txt.text = "这个文本的内容是使用 Text对象在canvas上渲染出来的：\n\n";
-			txt.text += "这里的API是基于Flash的显示列表粗略地实现的，对JS和AS3的开发者来说应该很容易就可以理解。关键的类有：\n\n";
-			txt.text += "DisplayObject\n在Easel里面所有显示元素的抽象基类。暴露了所有的显示属性（例如，x, y, rotation, scaleX, scaleY, alpha, shadow等等），这些在所有显示元素上通用。\n\n"
-			txt.text += "Stage\n作为最底层的容器，容纳所有的显示元素。 每一次tick在Stage上执行时，它会在关联的canvas上更新和渲染显示列表。\n\n";
-			txt.text += "Container\n一个可嵌套的显示容器，可以让你以组的形式聚合和操作那些显示对象。\n\n";
-			txt.text += "Text\n在显示列表的上下文里渲染文本内容。"
-	
-			txt.lineWidth = 850;
-			txt.textBaseline = "top";
-			txt.textAlign = "left";
-			txt.y = 50;
-			txt.x = 30;
-			stage.addChild(txt);
-			
-			// 使用lineWidth和getMeasuredHeight为我们的文本动态地描绘出背景：
-			var pad = 10;
-			var bg = new createjs.Shape();
-			bg.graphics.beginFill("#114").drawRect(txt.x-pad, txt.y-pad, txt.lineWidth+pad*2, txt.getMeasuredHeight()+pad*2);
-			stage.addChildAt(bg,0);
-	
-			stage.update();
-		}
-		init();
-	});
-	</script>
+		var txt = new createjs.Text("", "17px Arial", "#FFF");
+		txt.text = "这个文本的内容是使用 Text对象在canvas上渲染出来的：\n\n";
+		txt.text += "这里的API是基于Flash的显示列表粗略地实现的，对JS和AS3的开发者来说应该很容易就可以理解。关键的类有：\n\n";
+		txt.text += "DisplayObject\n在Easel里面所有显示元素的抽象基类。暴露了所有的显示属性（例如，x, y, rotation, scaleX, scaleY, alpha, shadow等等），这些在所有显示元素上通用。\n\n"
+		txt.text += "Stage\n作为最底层的容器，容纳所有的显示元素。 每一次tick在Stage上执行时，它会在关联的canvas上更新和渲染显示列表。\n\n";
+		txt.text += "Container\n一个可嵌套的显示容器，可以让你以组的形式聚合和操作那些显示对象。\n\n";
+		txt.text += "Text\n在显示列表的上下文里渲染文本内容。"
+
+		txt.lineWidth = 850;
+		txt.textBaseline = "top";
+		txt.textAlign = "left";
+		txt.y = 50;
+		txt.x = 30;
+		stage.addChild(txt);
+		
+		// 使用lineWidth和getMeasuredHeight为我们的文本动态地描绘出背景：
+		var pad = 10;
+		var bg = new createjs.Shape();
+		bg.graphics.beginFill("#114").drawRect(txt.x-pad, txt.y-pad, txt.lineWidth+pad*2, txt.getMeasuredHeight()+pad*2);
+		stage.addChildAt(bg,0);
+
+		stage.update();
+	}
+	init();
+});
+</script>
 </head>
-<body onload="">
 
+<body onload="">
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span>多行文本</h1>
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> 多行文本</h1>
 	    <p>使用<strong>Text</strong>元素封装的多行文本示例。</p>
 	</header>
-
 	<div class="canvasHolder">
 		<canvas id="testCanvas" width="960" height="400"></canvas>
 	</div>
