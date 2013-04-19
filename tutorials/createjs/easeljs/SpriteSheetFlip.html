@@ -20,41 +20,41 @@ xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-	var imgSeq = new Image();		//图片精灵对象
-	var results;				//需要显示的帧数据
-	var imageSrc = "assets/runningGrantSmall.png";
+    var imgSeq = new Image();       //图片精灵对象
+    var results;                //需要显示的帧数据
+    var imageSrc = "assets/runningGrantSmall.png";
 
-	function init() {
-		document.getElementById('origImage').src = imageSrc;
+    function init() {
+        document.getElementById('origImage').src = imageSrc;
 
-		//等待图片加载完毕
-		imgSeq.onload = handleImageLoad;
-		imgSeq.src = imageSrc;
-	}
+        //等待图片加载完毕
+        imgSeq.onload = handleImageLoad;
+        imgSeq.src = imageSrc;
+    }
 
-	function handleImageLoad() {
-	    // 从加载的图片中创建一个新的图片精灵对象，并在里面定义动画序列。例如，{walkUpRight:[0,19]}定义了一组叫“walkUpRight”的
-	    // 动画，这个动画会回放0-19帧。
-		var spriteSheet  = new createjs.SpriteSheet({
-			"animations": {
-			    "run": [0, 15]
-			},
-			"images": ["assets/runningGrantSmall.png"],
-			"frames": {
-				"regX": 0,
-				"regY": 0,
-				"width": 51,
-				"height": 90,
-				"count": 16
-			}
-		});
+    function handleImageLoad() {
+        // 从加载的图片中创建一个新的图片精灵对象，并在里面定义动画序列。例如，{walkUpRight:[0,19]}定义了一组叫“walkUpRight”的
+        // 动画，这个动画会回放0-19帧。
+        var spriteSheet  = new createjs.SpriteSheet({
+            "animations": {
+                "run": [0, 15]
+            },
+            "images": ["assets/runningGrantSmall.png"],
+            "frames": {
+                "regX": 0,
+                "regY": 0,
+                "width": 51,
+                "height": 90,
+                "count": 16
+            }
+        });
 
         // 把翻转的帧添加到图片精灵上。第二、三、四个参数分别代表需要从水平方向、垂直方向、水平垂直方向翻转帧。
-		createjs.SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);
+        createjs.SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);
 
         // 把新创建的图片精灵添加到当前DOM的底部。我们使用一个私有属性“_images”作展示用途。
-		document.getElementById("content").appendChild(spriteSheet._images[1]);
-	}
+        document.getElementById("content").appendChild(spriteSheet._images[1]);
+    }
     init();
 });
 </script>
@@ -63,18 +63,18 @@ xc.depends([
 <body bgcolor="#FFFFFF">
 	<center>
 		<header id="header" class="EaselJS">
-		    <h1><span class="text-product">Easel<strong>JS</strong></span> 翻转图片精灵</h1>
-		    <p>测试使用<strong>SpriteSheetUtils.flip()</strong>方法来把一个加载好的图片精灵进行水平翻转操作。
-		           上面一排的帧展示的是原始的图片精灵，底部的是生成的。
-		    </p>
-		</header>
-		<div class="content jp-content">
-			<div id="content" style="margin-top: 90px; margin-left: 70px; font-weight: bold;">
-				原始图片<br/><br/>
-				<img id="origImage"><br/><br/><br/>
-				附加图片<br/><br/>
-			</div>
-		</div>
+            <h1><span class="text-product">Easel<strong>JS</strong></span> 翻转图片精灵</h1>
+            <p>测试使用<strong>SpriteSheetUtils.flip()</strong>方法来把一个加载好的图片精灵进行水平翻转操作。
+                   上面一排的帧展示的是原始的图片精灵，底部的是生成的。
+            </p>
+        </header>
+		<div class="content jp-content none-margin">
+            <div id="content" style="margin-left: 70px; font-weight: bold;">
+                原始图片<br/><br/>
+                <img id="origImage"><br/><br/><br/>
+                附加图片<br/><br/>
+            </div>
+        </div>
 	</center>
 
 	<section id="header" class="EaselJS">
@@ -123,6 +123,11 @@ createjs.SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);</te
 document.getElementById("content").appendChild(spriteSheet._images[1]);</textarea>
         </div>
     </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
 
 <script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
