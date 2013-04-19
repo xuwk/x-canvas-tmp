@@ -3,24 +3,23 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
     var EventDispatcher = xc.module.require("xc.createjs.EventDispatcher");
 
     /**
-     * This is passed as the parameter to mousedown, mouseup, mousemove, stagemouseup, stagemousedown, mouseover, mouseout
-     * and click events on {{#crossLink "DisplayObject"}}{{/crossLink}} instances.
+     * 这个会被作为参数传进mousedown, mouseup, mousemove, stagemouseup, stagemousedown, mouseover, mouseout和{{#crossLink "DisplayObject"}}{{/crossLink}}实例上的点击事件。
      *
      * @class MouseEvent
      * @extends EventDispatcher
      * @constructor
-     * @param {String} type The event type.
-     * @param {Number} stageX The normalized x position relative to the stage.
-     * @param {Number} stageY The normalized y position relative to the stage.
-     * @param {DisplayObject} target The display object this event relates to. Note that this will be overwritten when the event is dispatched via EventDispatcher.
-     * @param {MouseEvent} nativeEvent The native DOM event related to this mouse event.
-     * @param {Number} pointerID The unique id for the pointer.
-     * @param {Boolean} primary Indicates whether this is the primary pointer in a multitouch environment.
-     * @param {Number} rawX The raw x position relative to the stage.
-     * @param {Number} rawY The raw y position relative to the stage.
+     * @param {String} type 事件类型。
+     * @param {Number} stageX 关联到场景的正常的x坐标值。
+     * @param {Number} stageY 关联到场景的正常的y坐标值。
+     * @param {DisplayObject} target 这个事件关联到的显示对象。注：这个会被EventDispatcher分派的事件覆盖掉。
+     * @param {MouseEvent} nativeEvent 关联到鼠标事件的本地DOM事件。 
+     * @param {Number} pointerID 鼠标指针的唯一id。
+     * @param {Boolean} primary 定义在多点触控的环境下该指针是否是第一个点。
+     * @param {Number} rawX 关联场景的原始x坐标值。
+     * @param {Number} rawY 关联场景的原始y坐标值。
      */
     var MouseEvent = EventDispatcher.extend({
-        _init: function(type, stageX, stageY, target, nativeEvent, pointerID, primary, rawX, rawY) {
+        initialize: function(type, stageX, stageY, target, nativeEvent, pointerID, primary, rawX, rawY) {
             this.type = type;
             this.stageX = stageX;
             this.stageY = stageY;
@@ -33,25 +32,23 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
         },
 
         /**
-         * For MouseEvent objects of type "mousedown", mousemove events will be dispatched from the event object until the
-         * user releases the mouse anywhere. This enables you to listen to mouse move interactions for the duration of a
-         * press, which can be very useful for operations such as drag and drop.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
+         * 对于“mousedown”类型的MouseEvent对象，mousemove事件会在用户释放鼠标按钮前不断被分派。
+         * 这个事件能让你监听到一个按键操作的过程中鼠标移动时的交互事件，这个在拖拽操作中是非常有用的。
+         * 从{{#crossLink "MouseEvent"}}{{/crossLink}}类里面查看事件属性的列表。
          *
          * @event mousemove
          */
 
         /**
-         * For MouseEvent objects of type "mousedown", a mouseup event will be dispatched from the event object when the
-         * user releases the mouse anywhere. This enables you to listen for a corresponding mouse up from a specific press,
-         * which can be very useful for operations such as drag and drop.
-         * See the {{#crossLink "MouseEvent"}}{{/crossLink}} class for a listing of event properties.
+         * 对于“mousedown”类型的MouseEvent对象，mouseup事件会在用户释放鼠标按钮的时候被分派。
+         * 这个事件能让你监听到一个指定按键过程中对应的鼠标释放事件，这个在拖拽操作中是非常有用的。
+         * 从{{#crossLink "MouseEvent"}}{{/crossLink}}类里面查看事件属性的列表。
          *
          * @event mouseup
          */
 
         /**
-         * The normalized x position on the stage. This will always be within the range 0 to stage width.
+         * 场景中正常的x坐标值。这个值的范围通常在0和场景的宽度之间。
          *
          * @property stageX
          * @type Number
@@ -59,7 +56,7 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
         stageX: 0,
 
         /**
-         * The normalized y position on the stage. This will always be within the range 0 to stage height.
+         * 场景中正常的y坐标值。这个值的范围通常在0和场景的高度之间。
          *
          * @property stageY
          * @type Number
@@ -67,8 +64,7 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
         stageY: 0,
 
         /**
-         * The raw x position relative to the stage. Normally this will be the same as the stageX value, unless
-         * stage.mouseMoveOutside is true and the pointer is outside of the stage bounds.
+         * 关联到场景的原始x坐标值。正常情况下它的值与stageX一致，除非stage.mouseMoveOutside的值为true且用户的指针位置在场景外。
          *
          * @property rawX
          * @type Number
@@ -76,8 +72,7 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
         rawX: 0,
 
         /**
-         * The raw y position relative to the stage. Normally this will be the same as the stageY value, unless
-         * stage.mouseMoveOutside is true and the pointer is outside of the stage bounds.
+         * 关联到场景的原始y坐标值。正常情况下它的值与stageY一致，除非stage.mouseMoveOutside的值为true且用户的指针位置在场景外。
          *
          * @property rawY
          * @type Number
@@ -85,8 +80,7 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
         rawY: 0,
 
         /**
-         * The type of mouse event. This will be the same as the handler it maps to (onPress,
-         * onMouseDown, onMouseUp, onMouseMove, or onClick).
+         * 鼠标的事件名称。这个与回调操作的名称是一一对应的（onPress, onMouseDown, onMouseUp, onMouseMove, 或者 onClick）。
          *
          * @property type
          * @type String
@@ -94,9 +88,7 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
         type: null,
 
         /**
-         * The native MouseEvent generated by the browser. The properties and API for this
-         * event may differ between browsers. This property will be null if the
-         * EaselJS property was not directly generated from a native MouseEvent.
+         * 浏览器生成的本地鼠标事件。不同的浏览器，这个事件的属性和API有可能有差异。当EaselJS的属性没有从原生的鼠标事件生成该值时，该属性值为空。
          *
          * @property nativeEvent
          * @type MouseEvent
@@ -105,7 +97,7 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
         nativeEvent: null,
 
         /**
-         * The display object this event relates to.
+         * 与这个事件关联的显示对象。
          *
          * @property target
          * @type DisplayObject
@@ -114,8 +106,7 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
         target: null,
 
         /**
-         * The unique id for the pointer (touch point or cursor). This will be either -1 for the mouse, or the system
-         * supplied id value.
+         * 指针的唯一ID（触摸点或者鼠标指针）。对于鼠标，这个值可能为-1，也可能是系统分配的一个值。
          *
          * @property pointerID
          * @type {Number}
@@ -123,8 +114,7 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
         pointerID: 0,
 
         /**
-         * Indicates whether this is the primary pointer in a multitouch environment. This will always be true for the mouse.
-         * For touch pointers, the first pointer in the current stack will be considered the primary pointer.
+         * 定义在多点触控的环境下该指针是否是第一个点。这个在用鼠标时常常是true的。在多点时，在堆栈的第一个点常常被认定为是这个的值。
          *
          * @property primary
          * @type {Boolean}
@@ -132,21 +122,22 @@ xc.module.define("xc.createjs.MouseEvent", function(exports) {
         primary: false,
 
         /**
-         * Returns a clone of the MouseEvent instance.
+         * 返回MouseEvent实例的克隆。
          *
          * @method clone
-         * @return {MouseEvent} a clone of the MouseEvent instance.
+         * @return {MouseEvent} MouseEvent实例的克隆
          */
         clone: function() {
-            return new MouseEvent(this.type, this.stageX, this.stageY, this.target,
-                    this.nativeEvent, this.pointerID, this.primary, this.rawX, this.rawY);
+            return new MouseEvent(this.type, this.stageX, this.stageY, 
+                                this.target, this.nativeEvent, this.pointerID, 
+                                this.primary, this.rawX, this.rawY);
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回一个代表当前对象的字符串。
          *
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 一个代表当前对象的字符串。
          */
         toString: function() {
             return "[MouseEvent (type=" + this.type + " stageX=" + this.stageX + " stageY=" + this.stageY + ")]";

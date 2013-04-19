@@ -3,60 +3,63 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     var EventDispatcher = xc.module.require("xc.createjs.EventDispatcher");
 
     /**
-     * The Sound class is the public API for creating sounds, controlling the overall sound levels, and managing plugins.
-     * All Sound APIs on this class are static.
+     * Sound 类包含所有创建声音，控制声音音量，以及管理插件的 API。
+     * 所有在这个类里面的 API 都是静态的。
      *
-     * <b>Registering</b><br/>
-     * Before you can play a sound, it <b>must</b> be registered. You can do this with {{#crossLink "Sound/registerSound"}}{{/crossLink}},
-     * or register multiple sounds using {{#crossLink "Sound/registerManifest"}}{{/crossLink}}. If you don't register
-     * them immediately, they will be automatically registered if you try and play a sound using {{#crossLink "Sound/play"}}{{/crossLink}},
-     * or if you create a stopped sound using {{#crossLink "Sound/createInstance"}}{{/crossLink}}.
+     * <b>注册和预加载</b><br />
+     * 音频必须在播放之前已经被注册。可以通过 {{#crossLink "Sound/registerSound"}}{{/crossLink}} 注册单个音频
+     * 或 {{#crossLink "Sound/registerManifest"}}{{/crossLink}} 注册多个。
+     * 如果没有及时注册，音频将会在调用 {{#crossLink "Sound/play"}}{{/crossLink}} 时自动注册。
+     * 如果使用 <a href="http://preloadjs.com" target="_blank">PreloadJS</a>，则会在加载完成时注册。
+     * 这里建议，内部加载音频的时候使用 register 方法，而外部加载的时候使用 PreloadJS。这样会使得音频在任何时候都是准备好的状态。
+     * 
+     * <b>播放</b><br />
+     * 使用 {{#crossLink "Sound/play"}}{{/crossLink}} 方法，播放一段加载并注册好的音频。
+     * 方法返回一个 {{#crossLink "SoundInstance"}}{{/crossLink}} 实例，该实例可以 paused，resumed，muted，等等。
+     * 请看 {{#crossLink "SoundInstance"}}{{/crossLink}} 文档获取更多 API 信息。
      *
-     * <b>Playback</b><br/>
-     * To play a sound once its been registered, use the {{#crossLink "Sound/play"}}{{/crossLink}} method.
-     * This method returns a {{#crossLink "SoundInstance"}}{{/crossLink}} which can be paused, resumed, muted, etc.
-     * Please see the {{#crossLink "SoundInstance"}}{{/crossLink}} documentation for more on the instance control APIs.
+     * <b>插件</b><br />
+     * 默认情况下 {{#crossLink "WebAudioPlugin"}}{{/crossLink}} 或 {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}} 插件将被使用（产检可用的前提下），
+     * 即使开发者可以改变插件的优先级以及添加新的插件（比如提供一个 {{#crossLink "FlashPlugin"}}{{/crossLink}} 插件）。
+     * 请看 {{#crossLink "Sound"}}{{/crossLink}} API 获取更多关于 playback 和 插件 API。
+     * 看 {{#crossLink "Sound/installPlugins"}}{{/crossLink}} 获取更多关于安装插件，管理插件信息。
      *
-     * <b>Plugins</b><br/>
-     * By default, the {{#crossLink "WebAudioPlugin"}}{{/crossLink}} or the {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}}
-     * are used (when available), although developers can change plugin priority or add new plugins.
-     * Please see the {{#crossLink "Sound"}}{{/crossLink}} API methods for more on the playback and plugin APIs.
-     * To install plugins, or specify a different plugin order, see {{#crossLink "Sound/installPlugins"}}{{/crossLink}}.
+     * <h4>例子</h4>
+     *      createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.FlashPlugin]);
+     *      createjs.Sound.addEventListener("loadComplete", createjs.proxy(this.loadHandler, (this));
+     *      createjs.Sound.registerSound("path/to/mySound.mp3|path/to/mySound.ogg", "sound");
+     *      function loadHandler(event) {
+     *          // 播放所有注册音频。
+     *          var instance = createjs.Sound.play("sound");  // 传入音频 id，同时可以传入资源路径。
+     *          instance.addEventListener("complete", createjs.proxy(this.handleComplete, this));
+     *          instance.setVolume(0.5);
+     *      }
      *
-     * <h4>Example</h4>
-     *     Sound.registerPlugins([WebAudioPlugin, HTMLAudioPlugin]);
-     *     Sound.addEventListener("loadComplete", Sound.proxy(this.loadHandler, (this)));
-     *     Sound.registerSound("path/to/mySound.mp3|path/to/mySound.ogg", "sound");
-     *     function loadHandler(event) {
-   *         // This is fired for each sound that is registered.
-   *         var instance = Sound.play("sound");  // play using id. Could also use source.
-   *         instance.addEventListener("playComplete", Sound.proxy(this.handleComplete, this));
-   *         instance.setVolume(0.5);
-	 *     }
+     * 可以通过指定 {{#crossLink "Sound/registerSound"}}{{/crossLink}} 的参数以指定同时播放的音频实例的最大数量。
      *
-     * The maximum number of concurrently playing instances of the same sound can be specified in the "data" argument
-     * of {{#crossLink "Sound/registerSound"}}{{/crossLink}}.
+     *      createjs.Sound.registerSound("sound.mp3", "soundId", 4);
      *
-     *      Sound.registerSound("sound.mp3", "soundId", 4);
+     * Sound 可以作为一个 PreloadJS 的插件，更恰当地加载音频。通过 PreloadJS 加载的音频会自动加载到 Sound 里面。
+     * 当音频没有预加载，Sound 会做一个内部的预加载，也就是说，当第一次播放的时候，它并不是马上就播放的，它需要一次预加载的过程。
+     * 通过监听 {{#crossLink "Sound/loadComplete"}}{{/crossLink}} 事件判断音频何时加载完成。
+     * 这里建议所有的音频都在播放之前先加载完成。
      *
-     * <h4>Known Browser and OS issues</h4>
-     * <b>IE 9 html audio quirk</b><br/>
-     * Note in IE 9 there is a delay in applying volume changes to tags that occurs once playback is started. So if you have
-     * muted all sounds, they will all play during this delay until the mute applies internally. This happens regardless of
-     * when or how you apply the volume change, as the tag seems to need to play to apply it.
+     *      createjs.PreloadJS.installPlugin(createjs.Sound);
      *
-     * <b>iOS 6 limitations</b><br/>
-     * <ul>
-     *  <li>Sound is initially muted and will only unmute through play being called inside a user initiated event (touch).</li>
-     *  <li>Despite suggestions to the opposite, we have control over audio volume through our gain nodes.</li>
-     * </ul>
-     * More details: http://stackoverflow.com/questions/12517000/no-sound-on-ios-6-web-audio-api
+     * <h4>已知浏览器和操作系统问题</h4>
+     * <b>IE 9 的 html 局限性</b><br />
+     * <ul><li> 当改变音频状态的时候有一个延迟。所以进行静音操作时，音频将在延迟的这段时间里面继续播放。此时对音频进行任何操作均无济于事。</li>
+     * <li> MP3 编码并不是任何时候都有效，尤其是在 IE 下。但 64kbps 编码是有效的。</li></ul>
      *
-     * <b>Android limitations</b><br/>
-     * <ul>
-     *  <li>We have no control over audio volume. Only the user can set volume on their device.</li>
-     *  <li>We can only play audio inside a user event (touch).  This currently means you cannot loop sound.</li>
-     * </ul>
+     * <b>iOS 6 局限性</b><br />
+     * <ul><li>Sound 初始化为静音，一旦在用户内部事件（touch）里调用 play，静音会自动消除。</li>
+     *     <li>尽管有相反的意见，但这里还是通过控制音量去解决这个问题。</li></ul>
+     * 更多信息: http://stackoverflow.com/questions/12517000/no-sound-on-ios-6-web-audio-api
+     *
+     * <b>Android 局限性</b><br />
+     * <ul><li>当调用 createjs.Sound.BrowserDetect.isChrome 的时候 Android chrome 会返回 true, 但其他不同的浏览器会返回不同的结果。</li>
+     *     <li>不能控制音量的大小，只有用户可以设置设备的音量大小。</li>
+     *     <li>只能在用户事件里面播放音频，这意味着音频不能循环播放。</li></ul>
      *
      * @class Sound
      * @static
@@ -66,55 +69,60 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * The character (or characters) that are used to split multiple paths from an audio source.
-     *
+     * 用于分割开多个资源路径的分隔符。
+     * 
      * @property DELIMITER
      * @type {String}
+     * @default |
      * @static
      */
     Sound.DELIMITER = "|";
 
     /**
-     * The interrupt value to interrupt the earliest currently playing instance with the same source that progressed the
-     * least distance in the audio track, if the maximum number of instances of the sound are already playing.
-     *
+     * 一个中断值，标识最大数量的音频实例已经在播放时，
+     * 中断最早播放并拥有相同资源的音频,该音频距离起点最近。
+     * 
      * @property INTERRUPT_EARLY
      * @type {String}
+     * @default early
      * @static
      */
     Sound.INTERRUPT_EARLY = "early";
 
     /**
-     * The interrupt value to interrupt the currently playing instance with the same source that progressed the most
-     * distance in the audio track, if the maximum number of instances of the sound are already playing.
-     *
+     * 一个中断值，标识最大数量的音频实例已经在播放时，
+     * 中断最晚播放并拥有相同资源的音频,该音频距离起点最远。
+     * 
      * @property INTERRUPT_LATE
      * @type {String}
+     * @default late
      * @static
      */
     Sound.INTERRUPT_LATE = "late";
 
     /**
-     * The interrupt value to interrupt no currently playing instances with the same source, if the maximum number of
-     * instances of the sound are already playing.
-     *
+     * 一个中断值，标识最大数量的音频实例已经在播放时，
+     * 不中断任何当前播放并拥有相同资源的音频。
+     * 
      * @property INTERRUPT_NONE
      * @type {String}
+     * @default none
      * @static
      */
     Sound.INTERRUPT_NONE = "none";
 
     /**
-     * Defines the playState of an instance that is currently playing or paused.
-     *
+     * 正在播放或暂停的实例状态。
+     * 
      * @property PLAY_SUCCEEDED
      * @type {String}
+     * @default playSucceeded
      * @static
      */
     Sound.PLAY_SUCCEEDED = "playSucceeded";
 
     /**
-     * Defines the playState of an instance that was interrupted by another instance.
+     * 被其他实例中断的实例状态。
      *
      * @property PLAY_INTERRUPTED
      * @type {String}
@@ -123,7 +131,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.PLAY_INTERRUPTED = "playInterrupted";
 
     /**
-     * Defines the playState of an instance that completed playback.
+     * 完成播放的实例状态。
      *
      * @property PLAY_FINISHED
      * @type {String}
@@ -132,8 +140,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.PLAY_FINISHED = "playFinished";
 
     /**
-     * Defines the playState of an instance that failed to play. This is usually caused by a lack of available channels
-     * when the interrupt mode was "INTERRUPT_NONE", the playback stalled, or the sound could not be found.
+     * 一个播放失败的实例状态。这个通常发生在当调用 INTERRUPT_NONE 的时候，缺乏可用频道，播放中断，或找不到音频资源。
      *
      * @property PLAY_FAILED
      * @type {String}
@@ -142,13 +149,14 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.PLAY_FAILED = "playFailed";
 
     /**
-     * A list of the default supported extensions that Sound will <i>try</i> to play. Plugins will check if the browser
-     * can play these types, so modifying this list before a plugin is initialized will allow the plugins to try and
-     * support additional media types.
+     * 一个 Sound 默认支持格式列表，Sound 将根据这些格式去播放音频。插件会检查浏览器是否支持列表中的音频格式，
+     * 所以当插件初始化之前改变该表格，将允许插件支持额外的音频格式。
      *
-     * More details on file formats can be found at http://en.wikipedia.org/wiki/Audio_file_format. A very detailed
-     * list of file formats can be found //http://www.fileinfo.com/filetypes/audio. A useful list of extensions for a
-     * format can be found at http://html5doctor.com/html5-audio-the-state-of-play/
+     * 注意，目前不支持 {{#crossLink "FlashPlugin"}}{{/crossLink}}。
+     *
+     * 文件格式更多信息，请查阅 http://en.wikipedia.org/wiki/Audio_file_format。
+     * 文件格式列表，请查阅 //http://www.fileinfo.com/filetypes/audio。
+     * 一个有用的扩展名格式列表，请查阅 http://html5doctor.com/html5-audio-the-state-of-play/。
      *
      * @property SUPPORTED_EXTENSIONS
      * @type {Array[String]}
@@ -158,9 +166,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.SUPPORTED_EXTENSIONS = ["mp3", "ogg", "mpeg", "wav", "m4a", "mp4", "aiff", "wma", "mid"];
 
     /**
-     * Some extensions use another type of extension support to play (one of them is a codex).  This allows you to map
-     * that support so plugins can accurately determine if an extension is supported.  Adding to this list can help
-     * plugins determine more accurately if an extension is supported.
+     * 一些扩展类型使用另一种扩展类型的支持（其中一个是 codex）。这个允许映射响应的支持格式，这样插件可以准确地判断
+     * 该扩展是否被支持。添加该列表，能帮助插件更加准确地判断扩展是否被支持。
      *
      * @property EXTENSION_MAP
      * @type {Object}
@@ -171,8 +178,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     };
 
     /**
-     * The RegExp pattern to use to parse file URIs. This supports simple file names, as well as full domain URIs with
-     * query strings. The resulting match is: protocol:$1 domain:$2 path:$3 file:$4 extension:$5 query string:$6.
+     * 利用正则表达解析文件 URI。这个支持简单的文件名，或全局的 URI 查询字符串。
+     * 最终匹配是：protocol:$1 domain:$2 path:$3 file:$4 extension:$5 query string:$6。
      *
      * @property FILE_PATTERN
      * @type {RegExp}
@@ -182,10 +189,9 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.FILE_PATTERN = /(\w+:\/{2})?((?:\w+\.){2}\w+)?(\/?[\S]+\/|\/)?([\w\-%\.]+)(?:\.)(\w+)?(\?\S+)?/i;
 
     /**
-     * Determines the default behavior for interrupting other currently playing instances with the same source, if the
-     * maximum number of instances of the sound are already playing.  Currently the default is <code>Sound.INTERRUPT_NONE</code>
-     * but this can be set and will change playback behavior accordingly.  This is only used if {{#crossLink "Sound/play"}}{{/crossLink}}
-     * is called without passing a value for interrupt.
+     * 定义当最大数量的音频实例已经在播放时，中断当前正在播放且具有相同源的音频实例时的默认行为。
+     * 目前默认值是 <code>Sound.INTERRUPT_NONE</code>，但可以通过设置，将改变播放的行为。
+     * 这个仅仅在调用 {{#crossLink "Sound/play"}}{{/crossLink}} 时没有传入 interrupt 值的时候生效。
      *
      * @property defaultInterruptBehavior
      * @type {String}
@@ -195,7 +201,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.defaultInterruptBehavior = Sound.INTERRUPT_NONE;
 
     /**
-     * Used internally to assign unique IDs to each SoundInstance
+     * 在内部分配给每个 Sound 实例的 Id。
      *
      * @property lastID
      * @type {Number}
@@ -205,20 +211,18 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.lastId = 0,
 
     /**
-     * The currently active plugin. If this is null, then no plugin could be initialized. If no plugin was specified,
-     * Sound attempts to apply the default plugins: {{#crossLink "WebAudioPlugin"}}{{/crossLink}}, followed by
-     * {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}}.
+     * 当前活跃的插件。如果这个值为 null，那么没有一个插件能被初始化。
+     * 如果没有插件被指定，Sound 会尝试去加载默认的插件：{{#crossLink "WebAudioPlugin"}}{{/crossLink}}，其次是 {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}}。
      *
      * @property activePlugin
      * @type {Object}
      * @static
      */
-            Sound.activePlugin = null;
+    Sound.activePlugin = null;
 
     /**
-     * Determines if the plugins have been registered. If false, the first call to play() will instantiate the default
-     * plugins ({{#crossLink "WebAudioPlugin"}}{{/crossLink}}, followed by {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}}).
-     * If plugins have been registered, but none are applicable, then sound playback will fail.
+     * 确定插件是否被注册。如果为 fasle，第一次调用 play() 的时候会初始化默认的插件 ({{#crossLink "WebAudioPlugin"}}{{/crossLink}}
+     * 其次是 {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}})。如果插件被注册了，但没有一个适用，那么音频在播放时会失败。
      *
      * @property pluginsRegistered
      * @type {Boolean}
@@ -229,8 +233,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.pluginsRegistered = false;
 
     /**
-     * The master volume value. Use {{#crossLink "Sound/getVolume"}}{{/crossLink}} and {{#crossLink "Sound/setVolume"}}{{/crossLink}}
-     * to modify the volume of all audio.
+     * 音量管理。使用 {{#crossLink "Sound/getVolume"}}{{/crossLink}} 和 {{#crossLink "Sound/setVolume"}}{{/crossLink}}
+     * 去控制音频音量。
      *
      * @property masterVolume
      * @type {Number}
@@ -240,8 +244,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.masterVolume = 1;
 
     /**
-     * The master mute value for Sound.  This is applies to all sound instances.  This value can be set through
-     * {{#crossLink "Sound/setMute"}}{{/crossLink}} and accessed via {{#crossLink "Sound/getMute"}}{{/crossLink}}.
+     * 静音管理。这个适用于所有 sound 实例。这个值可以通过 {{#crossLink "Sound/setMute"}}{{/crossLink}}
+     * 和通过 {{#crossLink "Sound/getMute"}}{{/crossLink}} 获取。
      *
      * @property masterMute
      * @type {Boolean}
@@ -252,10 +256,10 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.masterMute = false;
 
     /**
-     * An array containing all currently playing instances. This helps Sound control the volume, mute, and playback of
-     * all instances when using static APIs like {{#crossLink "Sound/stop"}}{{/crossLink}} and {{#crossLink "Sound/setVolume"}}{{/crossLink}}.
-     * When an instance has finished playback, it gets removed via the {{#crossLink "Sound/finishedPlaying"}}{{/crossLink}}
-     * method. If the user replays an instance, it gets added back in via the {{#crossLink "Sound/beginPlaying"}}{{/crossLink}} method.
+     * 一个包含所有当前播放实例的数组。这能帮助 Sound 去控制音量，静音，和通过静态接口去播放所有实例，
+     * 比如 {{#crossLink "Sound/stop"}}{{/crossLink}} 和 {{#crossLink "Sound/setVolume"}}{{/crossLink}}。
+     * 当一个实例播放完成，它则通过 {{#crossLink "Sound/finishedPlaying"}}{{/crossLink}} 方法移除。
+     * 如果用户希望重新播放实例，则需要通过 {{#crossLink "Sound/beginPlaying"}}{{/crossLink}} 方法重新添加到列表。
      *
      * @property instances
      * @type {Array}
@@ -265,7 +269,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.instances = [];
 
     /**
-     * A hash lookup of sound sources via the corresponding ID.
+     * 一个哈希集合，通过对应的 id 寻找音频资源。
      *
      * @property idHash
      * @type {Object}
@@ -275,9 +279,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.idHash = {};
 
     /**
-     * A hash lookup of preloading sound sources via the parsed source that is passed to the plugin.  Contains the
-     * source, id, and data that was passed in by the user.  Parsed sources can contain multiple instances of source, id,
-     * and data.
+     * 一个哈希集合通过解析插件资源，搜索预加载音频资源。包括资源 id，用户传入的数据。
+     * 解析资源同时可以包含多个资源实例，id 和数据。
      *
      * @property preloadHash
      * @type {Object}
@@ -287,9 +290,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.preloadHash = {};
 
     /**
-     * An object that stands in for audio that fails to play. This allows developers to continue to call methods
-     * on the failed instance without having to check if it is valid first. The instance is instantiated once, and
-     * shared to keep the memory footprint down.
+     * 一个音频对象，该对象在音频播放失败时使用。允许开发者在不检查实例是否有效的前提下，在失败的实例上继续调用方法。
+     * 一旦实例被初始化，将会占用内存空间。
      *
      * @property defaultSoundInstance
      * @type {Object}
@@ -299,21 +301,20 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     Sound.defaultSoundInstance = null;
 
     /**
-     * This event that is fired when a file finishes loading internally. This event is fired for each loaded sound,
-     * so any handler methods should look up the <code>event.src</code> to handle a particular sound.
-     *
+     * 当所有的文件加载完成时触发该事件。该事件对所有加载完成的音频都有效，
+     * 所有处理程序都必须根据 <code>event.src</code> 去处理特定的音频。
+     * 
      * @event loadComplete
-     * @param {Object} target The object that dispatched the event.
-     * @param {String} type The event type.
-     * @param {String} src The source of the sound that was loaded. Note this will only return the loaded part of a
-     *  delimiter-separated source.
-     * @param {String} [id] The id passed in when the sound was registered. If one was not provided, it will be null.
-     * @param {Number|Object} [data] Any additional data associated with the item. If not provided, it will be undefined.
+     * @param {Object} target 要调度事件的对象。
+     * @param {String} type 事件类型。
+     * @param {String} src 被加载文件的资源路径。注意这将返回分割符号的一部分。
+     * @param {String} [id] 注册音频时，音频的 id。如果没有提供，则为 null。
+     * @param {Number|Object} [data] 与该项目相关的任何其他数据。 如果没提供，则为 undefined。
      */
 
     /**
      * @method sendLoadComplete
-     * @param {String} src A sound file has completed loading, and should be dispatched.
+     * @param {String} src 一个完成加载的文件资源路径。
      * @private
      * @static
      */
@@ -321,7 +322,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         if (!Sound.preloadHash[src]) {
             return;
         }
-        for (var i = 0, l = Sound.preloadHash[src].length; i < l; i++) {
+        for ( var i = 0, l = Sound.preloadHash[src].length; i < l; i++) {
             var item = Sound.preloadHash[src][i];
             var event = {
                 target: this,
@@ -334,20 +335,43 @@ xc.module.define("xc.createjs.Sound", function(exports) {
             Sound.dispatchEvent(event);
         }
     }
+    
+    /**
+     * 获取预加载规则，允许 Sound 作为一个 <a href="http://preloadjs.com" target="_blank">PreloadJS</a> 的一个插件。
+     * 任何所有匹配到类型的或扩展的加载调用，都会触发回调函数，并且返回 Sound 生成的对象。
+     * 这有助于确定正确的路径，以及注册 Sound 实例。这个方法除了 PreloadJS 之外，不能被调用。
+     *
+     * @method getPreloadHandlers
+     * @return {Object} An object containing:
+     * <ul>
+     *     <li>callback ：一个预加载回调，当文件被添加到 PreloadJS 时候触发，提供 Sound 一个修改加载参数的机制，选择正确的文件格式，注册音频，等等。</li>
+     *     <li>types: 一个 Sound 支持的格式列表 (目前支持 "sound")。</li>
+     *     <li>extensions 一个 Sound 支持的文件拓展列表 (看 Sound.SUPPORTED_EXTENSIONS)。</li>
+     * </ul>
+     * @static
+     * @protected
+     */
+    Sound.getPreloadHandlers = function () {
+        return {
+            callback: Sound.proxy(Sound.initLoad, Sound),
+            types: ["sound"],
+            extensions: Sound.SUPPORTED_EXTENSIONS
+        };
+    }
 
     /**
-     * Register a Sound plugin. Plugins handle the actual playback of audio. The default plugins are
-     * ({{#crossLink "WebAudioPlugin"}}{{/crossLink}} followed by the {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}}),
-     * and are installed if no other plugins are present when the user starts playback.
+     * 注册一个 Sound 插件。插件本质上用于播放音频。如果当用户播放音频的时候没有任何其他插件，默认的插件
+     * ({{#crossLink "WebAudioPlugin"}}{{/crossLink}}，其次是 {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}})，
+     * 
+     * <h4>例子</h4>
+     *      createjs.FlashPlugin.BASE_PATH = "../src/SoundJS/";
+     *      createjs.Sound.registerPlugin(createjs.FlashPlugin);
      *
-     * <h4>Example</h4>
-     *     Sound.registerPlugin(HTMLAudioPlugin);
-     *
-     * To register multiple plugins, use {{#crossLink "Sound/registerPlugins"}}{{/crossLink}}.
+     * 注册多个插件, 调用 {{#crossLink "Sound/registerPlugins"}}{{/crossLink}}.
      *
      * @method registerPlugin
-     * @param {Object} plugin The plugin class to install.
-     * @return {Boolean} Whether the plugin was successfully initialized.
+     * @param {Object} plugin 要安装的插件类。
+     * @return {Boolean} 插件是否被成功安装。
      * @static
      */
     Sound.registerPlugin = function(plugin) {
@@ -355,7 +379,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         if (plugin == null) {
             return false;
         }
-        // Note: Each plugin is passed in as a class reference, but we store the activePlugin as an instance
+        // 注：每一个传进来的插件都是一个引用，但实例化成一个实例才去运用。
         if (plugin.isSupported()) {
             Sound.activePlugin = new plugin();
             //TODO: Check error on initialization
@@ -365,19 +389,19 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Register a list of Sound plugins, in order of precedence. To register a single plugin, use
-     * {{#crossLink "Sound/registerPlugin"}}{{/crossLink}}.
+     * 根据优先级注册一个列表的 Sound 插件。要注册一个插件，调用 {{#crossLink "Sound/registerPlugin"}}{{/crossLink}}
      *
-     * <h4>Example</h4>
-     *     Sound.registerPlugins([WebAudioPlugin, HTMLAudioPlugin]);
+     * <h4>例子</h4>
+     *      createjs.FlashPlugin.BASE_PATH = "../src/SoundJS/";
+     *      createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.HTMLAudioPlugin, createjs.FlashPlugin]);
      *
      * @method registerPlugins
-     * @param {Array} plugins An array of plugins classes to install.
-     * @return {Boolean} Whether a plugin was successfully initialized.
+     * @param {Array} plugins 将要被安装的插件类数组。
+     * @return {Boolean} 插件是否被成功安装。
      * @static
      */
     Sound.registerPlugins = function(plugins) {
-        for (var i = 0, l = plugins.length; i < l; i++) {
+        for ( var i = 0, l = plugins.length; i < l; i++) {
             var plugin = plugins[i];
             if (Sound.registerPlugin(plugin)) {
                 return true;
@@ -387,13 +411,11 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Initialize the default plugins. This method is called when any audio is played before the user has registered
-     * any plugins, and enables Sound to work without manual plugin setup. Currently, the default plugins are
-     * {{#crossLink "WebAudioPlugin"}}{{/crossLink}} followed by {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}}.
-     *
+     * 初始化默认插件。当用户注册了所有插件之后，这个方法将被执行，并且让 Sound 能够不安装其他插件的前提下运行。
+     * 目前只支持 {{#crossLink "WebAudioPlugin"}}{{/crossLink}}，其次是 {{#crossLink "HTMLAudioPlugin"}}{{/crossLink}}。
+     * 
      * @method initializeDefaultPlugins
-     * @returns {Boolean} If a plugin is initialized (true) or not (false). If the browser does not have the
-     *  capabilities to initialize any available plugins, this will return false.
+     * @returns {Boolean} 插件成功初始化 (true) 或 初始化失败(false)。如果浏览器不具备初始化任何一个可用插件的功能时，返回 false。
      * @private
      */
     Sound.initializeDefaultPlugins = function() {
@@ -412,10 +434,10 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Determines if Sound has been initialized, and a plugin has been activated.
-     *
+     * 确定 Sound 是否已经被初始化，和插件是否可用。
+     * 
      * @method isReady
-     * @return {Boolean} If Sound has initialized a plugin.
+     * @return {Boolean} Sound 是否已经初始化插件。
      * @static
      */
     Sound.isReady = function() {
@@ -423,25 +445,24 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Get the active plugins capabilities, which help determine if a plugin can be used in the current environment,
-     * or if the plugin supports a specific feature. Capabilities include:
+     * 获取插件功能，这有助于确定插件是否在当前环境下可用，或确定插件是否支持特定的功能。
+     * Capabilities 包括：
      * <ul>
-     *  <li><b>panning:</b> If the plugin can pan audio from left to right</li>
-     *  <li><b>volume;</b> If the plugin can control audio volume.</li>
-     *  <li><b>mp3:</b> If MP3 audio is supported.</li>
-     *  <li><b>ogg:</b> If OGG audio is supported.</li>
-     *  <li><b>wav:</b> If WAV audio is supported.</li>
-     *  <li><b>mpeg:</b> If MPEG audio is supported.</li>
-     *  <li><b>m4a:</b> If M4A audio is supported.</li>
-     *  <li><b>mp4:</b> If MP4 audio is supported.</li>
-     *  <li><b>aiff:</b> If aiff audio is supported.</li>
-     *  <li><b>wma:</b> If wma audio is supported.</li>
-     *  <li><b>mid:</b> If mid audio is supported.</li>
-     *  <li><b>tracks:</b> The maximum number of audio tracks that can be played back at a time. This will be -1 if there is no known limit.</li>
-     * </ul>
-     *
+     *     <li><b>panning:</b> 插件是否可以从左到右调节声道。</li>
+     *     <li><b>volume;</b> 插件是否可以控制音量。</li>
+     *     <li><b>mp3:</b> 是否支持 mp3 格式。</li>
+     *     <li><b>ogg:</b> 是否支持 ogg 格式。</li>
+     *     <li><b>wav:</b> 是否支持 wav 格式。</li>
+     *     <li><b>mpeg:</b> 是否支持 mpeg 格式。</li>
+     *     <li><b>m4a:</b> 是否支持 m4a 格式。</li>
+     *     <li><b>mp4:</b> 是否支持 mp4 格式。</li>
+     *     <li><b>aiff:</b> 是否支持 aiff 格式。</li>
+     *     <li><b>wma:</b> 是否支持 wma 格式。</li>
+     *     <li><b>mid:</b> 是否支持 mid 格式。</li>
+     *     <li><b>tracks:</b> 该插件可以同时播放音频的最大数。如果不知道最大限度，这个值为 -1。</li>
+     *     
      * @method getCapabilities
-     * @return {Object} An object containing the capabilities of the active plugin.
+     * @return {Object} 一个包含插件各项功能的对象。
      * @static
      */
     Sound.getCapabilities = function() {
@@ -452,12 +473,11 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Get a specific capability of the active plugin. See {{#crossLink "Sound/getCapabilities"}}{{/crossLink}} for a
-     * full list of capabilities.
-     *
+     * 获取指定的插件功能。看 {{#crossLink "Sound/getCapabilities"}}{{/crossLink}} 获取更多关于插件功能信息。
+     * 
      * @method getCapability
-     * @param {String} key The capability to retrieve
-     * @return {Number|Boolean} The value of the capability.
+     * @param {String} key 希望获取的插件功能。
+     * @return {Number|Boolean} 插件功能对应的值。
      * @static
      * @see getCapabilities
      */
@@ -467,24 +487,45 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         }
         return Sound.activePlugin.capabilities[key];
     }
-
+    
     /**
-     * Register a sound to playback in Sound. It is recommended to register all sounds that need to be played back in order
-     * to properly prepare and preload them. Sound does internal preloading when required.
-     *
-     * <h4>Example</h4>
-     *     Sound.registerSound("myAudioPath/mySound.mp3|myAudioPath/mySound.ogg", "myID", 3);
-     *
-     * @method registerSound
-     * @param {String | Object} src The source or an Objects with a "src" property
-     * @param {String} [id] An id specified by the user to play the sound later.
-     * @param {Number | Object} [data] Data associated with the item. Sound uses the data parameter as the number of
-     *  channels for an audio instance, however a "channels" property can be appended to the data object if it is used
-     *  for other information. The audio channels will set a default based on plugin if no value is found.
-     * @return {Object} An object with the modified values that were passed in, which defines the sound. Returns false
-     *  if the source cannot be parsed.
+     * 处理 <a href="http://preloadjs.com" target="_blank">PreloadJS</a> 的清单。该方法只适用于插件，不适用于直接调用。
+     * @method initLoad
+     * @param {String | Object} src 将要被加载的资源路径或对象。这里通常是一个字符串路径，但也可以是一个 HTMLAudioElement 或 音频播放对象。
+     * @param {String} [type] 对象类型。可能是 "sound" 或 null。
+     * @param {String} [id] 可选的用户指定的 id，用于播放音频。
+     * @param {Number|String|Boolean|Object} [data] 与该项目相关的数据。Sound 将这些数据参数作为频道用于音频实例。然而，一个 “channels” 属性可被追加到 data 对象，
+     * 如果该属性被作为其他信息使用。音频的 channels 属性默认值为 1。
+     * @return {Boolean|Object} 一个包含修改完的值的对象，或当当前可用插件不能播放音频类型的时候，返回 false。
+     * @protected
      * @static
      */
+    Sound.initLoad = function (src, type, id, data) {
+        var details = Sound.registerSound(src, id, data, false);
+        if (details == null) {
+            return false;
+        }
+        return details;
+    }
+
+    /**
+    *
+    * 注册一个将要在 Sound 中播放的音频。当使用 <a href="http://preloadjs.com" target="_blank">PreloadJS</a> 的时候，这个方法将自动执行。
+    * 然而，该方法支持手动注册单一音频。
+    * 这里先建议注册所有将要被播放的音频。为了做好充分的准备和预加载。当需要用到音频的时候，Sound 类内部会进行预加载。
+    *
+    * <h4>Example</h4>
+    *      createjs.Sound.registerSound("myAudioPath/mySound.mp3|myAudioPath/mySound.ogg", "myID", 3);
+    *
+    * @method registerSound
+    * @param {String | Object} src 一个资源路径，或一个拥有 src 属性的对象。
+    * @param {String} [id] 一个用户指定的 id 标识晚点将要播放的音频。
+    * @param {Number | Object} [data] 与该项目相关的数据。Sound 将这些数据参数作为频道用于音频实例。然而，一个 “channels” 属性可被追加到 data 对象，
+    * 如果该属性被作为其他信息使用。SoundChannel 属性将会给予 插件设置默认值。
+    * @param {Boolean} [preload=true] 如果音频应该再内部预加载，这样音频可以在无需任何 preloader 的前提下播放。
+    * @return {Object} 一个包含所有修改后参数的对象，该对象用于地定义一段音频。如果资源路径不能被解析，返回 true。
+    * @static
+    */
     Sound.registerSound = function(src, id, data) {
         if (!Sound.initializeDefaultPlugins()) {
             return false;
@@ -501,35 +542,33 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         if (id != null) {
             Sound.idHash[id] = details.src;
         }
-        var numChannels = null; // null will set all SoundChannel to set this to it's internal maxDefault
+        var numChannels = null; // 该值为 null 时，SoundChannel 将会设置成内部的默认最大值。
         if (data != null) {
             if (!isNaN(data.channels)) {
                 numChannels = parseInt(data.channels);
-            }
-            else if (!isNaN(data)) {
+            } else if (!isNaN(data)) {
                 numChannels = parseInt(data);
             }
         }
-        var loader = Sound.activePlugin.register(details.src, numChannels);  // Note only HTML audio uses numChannels
+        var loader = Sound.activePlugin.register(details.src, numChannels); // 注：只有 HTMLAudio 使用 numChannels
         if (loader != null) {
             if (loader.numChannels != null) {
                 numChannels = loader.numChannels;
-            } // currently only HTMLAudio returns this
+            } // 目前只有 HTMLAudio 返回这个。
             SoundChannel.create(details.src, numChannels);
-            // return the number of instances to the user.  This will also be returned in the load event.
+            // 返回用户的音频实例数量。这个也会在加载事件里面返回。
             if (data == null || !isNaN(data)) {
                 data = details.data = numChannels || SoundChannel.maxPerChannel();
             } else {
                 data.channels = details.data.channels = numChannels || SoundChannel.maxPerChannel();
             }
-            // If the loader returns a tag, return it instead for preloading.
+            // 如果加载器返回 tag，则返回 preloading 代替它。
             if (loader.tag != null) {
                 details.tag = loader.tag;
-            }
-            else if (loader.src) {
+            } else if (loader.src) {
                 details.src = loader.src;
             }
-            // If the loader returns a complete handler, pass it on to the prelaoder.
+            // 如果加载器返回完成事件处理程序，则把它传到 preloder。
             if (loader.completeHandler != null) {
                 details.completeHandler = loader.completeHandler;
             }
@@ -537,8 +576,12 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         }
         if (!Sound.preloadHash[details.src]) {
             Sound.preloadHash[details.src] = [];
-        }  // we do this so we can store multiple id's and data if needed
-        Sound.preloadHash[details.src].push({src: src, id: id, data: data});  // keep this data so we can return it onLoadComplete
+        } // 这样做是为了能够同时保存多个所需的 id 和数据
+        Sound.preloadHash[details.src].push({
+            src: src,
+            id: id,
+            data: data
+        }); // 保存这个数据，所以可返回 onLoadComplete 处理方法。
         if (Sound.preloadHash[details.src].length == 1) {
             Sound.activePlugin.preload(details.src, loader)
         }
@@ -546,42 +589,38 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Register a manifest of sounds to playback in Sound. It is recommended to register all sounds that need to be
-     * played back in order to properly prepare and preload them. Sound does internal preloading when required.
+     * 注册一个清单的音频用于在 Sound 中播放。这里先建议注册所有将要被播放的音频。为了做好充分的准备和预加载。当需要用到音频的时候，Sound 类内部会进行预加载。
      *
-     * <h4>Example</h4>
-     *     var manifest = [
-     *         {src:"assetPath/asset0.mp3|assetPath/asset0.ogg", id:"example"}, // Note the Sound.DELIMITER
-     *         {src:"assetPath/asset1.mp3|assetPath/asset1.ogg", id:"1", data:6},
-     *         {src:"assetPath/asset2.mp3", id:"works"}
-     *     ];
-     *     Sound.addEventListener("loadComplete", doneLoading); // call doneLoading when each sound loads
-     *     Sound.registerManifest(manifest);
-     *
+     * <h4>例子</h4>
+     *      var manifest = [
+     *          {src:"assetPath/asset0.mp3|assetPath/asset0.ogg", id:"example"},
+     *          {src:"assetPath/asset1.mp3|assetPath/asset1.ogg", id:"1", data:6},
+     *          {src:"assetPath/asset2.mp3", id:"works"}
+     *      ];
+     *      createjs.Sound.addEventListener("loadComplete", doneLoading);
+     *      createjs.Sound.registerManifest(manifest);
      *
      * @method registerManifest
-     * @param {Array} manifest An array of objects to load. Objects are expected to be in the format needed for
-     *  {{#crossLink "Sound/registerSound"}}{{/crossLink}}: <code>{src:srcURI, id:ID, data:Data, preload:UseInternalPreloader}</code>
-     *  with "id" and "data" being optional.
-     * @return {Object} An array of objects with the modified values that were passed in, which defines each sound. It
-     *  will return false for any values that the source cannot be parsed.
+     * @param {Array} manifest 一个将要加载的对象数组。对象要根据 {{#crossLink "Sound/registerSound"}}{{/crossLink}} 的格式要求: 
+     * <code>{src:srcURI, id:ID, data:Data, preload:UseInternalPreloader}</code>
+     * "id", "data", 和 "preload" 将是可选项。
+     * @return {Object} 一个包含修改后参数的对象数组，用于定义每一个音频。当资源路径不能被解析时，将会返回 false。
      * @static
      */
     Sound.registerManifest = function(manifest) {
         var returnValues = [];
-        for (var i = 0, l = manifest.length; i < l; i++) {
+        for ( var i = 0, l = manifest.length; i < l; i++) {
             returnValues[i] = Sound.registerSound(manifest[i].src, manifest[i].id, manifest[i].data);
         }
         return returnValues;
     }
 
     /**
-     * Check if a source has been loaded by internal preloaders. This is necessary to ensure that sounds that are
-     * not completed preloading will not kick off a new internal preload if they are played.
-     *
-     * @method loadComplete
-     * @param {String} src The src or id that is being loaded.
-     * @return {Boolean} If the src is already loaded.
+     * 检查资源是否内部预加载完成。当音频播放时，确保当音频未加载完成时不会启动新的预加载行为。
+     * 
+     * @method loadComplete 
+     * @param {String} src 将要被加载的资源路径或 id。
+     * @return {Boolean} 如果资源已经加载，返回 true。
      */
     Sound.loadComplete = function(src) {
         var details = Sound.parsePath(src, "sound");
@@ -590,30 +629,34 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         } else {
             src = Sound.getSrcById(src);
         }
-        return (Sound.preloadHash[src][0] == true);  // src only loads once, so if it's true for the first it's true for all
+        return (Sound.preloadHash[src][0] == true); // src only loads once, so if it's true for the first it's true for all
     }
 
     /**
-     * Parse the path of a sound, usually from a manifest item. Manifest items support single file paths, as well as
-     * composite paths using <code>Sound.DELIMITER</code>, which defaults to "|". The first path supported by the
-     * current browser/plugin will be used.
-     *
+     * 解析来自清单项的音频的路径。清单项目支持单个文件的路径，使用 <code>Sound.DELIMITER</code> 支持多个路径，
+     * <code>Sound.DELIMITER</code> 默认值为 "|"。当前浏览器支持的第一个路径将被使用。
+     * 
      * @method parsePath
-     * @param {String} value The path to an audio source.
-     * @param {String} [type] The type of path. This will typically be "sound" or null.
-     * @param {String} [id] The user-specified sound ID. This may be null, in which case the src will be used instead.
-     * @param {Number | String | Boolean | Object} [data] Arbitrary data appended to the sound, usually denoting the
-     *  number of channels for the sound. This method doesn't currently do anything with the data property.
-     * @return {Object} A formatted object that can be registered with the <code>Sound.activePlugin</code> and returned
-     *  to a preloader like <a href="http://preloadjs.com" target="_blank">PreloadJS</a>.
+     * @param {String} value 音频的资源路径。
+     * @param {String} [type] 路径类型。这个通常为 "sound" 或 null.
+     * @param {String} [id] 用户指定的 sound-id。这个可能是 null，在这种情况下 src 属性将被使用。
+     * @param {Number | String | Boolean | Object} [data] 任意追加到音频的数据，通常是 SoundChannel 的数量。这个方法目前还没有用到这些数据属性。
+     * @return {Object} 一个格式化后的对象，可以用 <code>Sound.activePlugin</code> 注册和用于
+     * <a href="http://preloadjs.com" target="_blank">PreloadJS</a>。
      * @protected
      */
     Sound.parsePath = function(value, type, id, data) {
-        if (typeof(value) != "string") {value = value.toString();}
+        if (typeof (value) != "string") {
+            value = value.toString();
+        }
         var sounds = value.split(Sound.DELIMITER);
-        var ret = {type: type || "sound", id: id, data: data};
+        var ret = {
+            type: type || "sound",
+            id: id,
+            data: data
+        };
         var c = Sound.getCapabilities();
-        for (var i = 0, l = sounds.length; i < l; i++) {
+        for ( var i = 0, l = sounds.length; i < l; i++) {
             var sound = sounds[i];
             var match = sound.match(Sound.FILE_PATTERN);
             if (match == null) {
@@ -632,32 +675,28 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Play a sound and get a {{#crossLink "SoundInstance"}}{{/crossLink}} to control. If the sound fails to play, a
-     * SoundInstance will still be returned, and have a playState of <code>Sound.PLAY_FAILED</code>. Note that even on
-     * sounds with failed playback, you may still be able to call SoundInstance {{#crossLink "SoundInstance/play"}}{{/crossLink}},
-     * since the failure could be due to lack of available channels. If there is no available plugin,
-     * <code>Sound.defaultSoundInstance</code> will be returned, which will not play any audio, but will not generate
-     * errors.
+     * 播放音频以及获取一个可控制的 {{#crossLink "SoundInstance"}}{{/crossLink}}。如果音频播放失败，一个 Sound 实例
+     * 依然会返回，同时伴随一个播放状态 <code>Sound.PLAY_FAILED</code>。
+     * 请注意，即使音频播放失败，依旧可以调用 sound 实例的 {{#crossLink "SoundInstance/play"}}{{/crossLink}} 方法，
+     * 因为失败的原因可能是缺乏可用的频道。
+     * 如果没有可用的插件，<code>Sound.defaultSoundInstance</code> 将被返回，他不会播放任何音频，但不会产生任何错误。
      *
-     * <h4>Example</h4>
-     *     Sound.registerSound("myAudioPath/mySound.mp3", "myID", 3);
-     *     // wait until load is complete
-     *     Sound.play("myID");
-     *     // alternately we could call the following
-     *     var myInstance = Sound.play("myAudioPath/mySound.mp3", Sound.INTERRUPT_NONE, 0, 0, -1, 1, 0);
+     * <h4>例子</h4>
+     *      createjs.Sound.registerSound("myAudioPath/mySound.mp3", "myID", 3);
+     *      // 等待，直到加载完成
+     *      createjs.Sound.play("myID");
+     *      // 可以像这样调用：
+     *      var myInstance = createjs.Sound.play("myAudioPath/mySound.mp3", createjs.Sound.INTERRUPT_ANY, 0, 0, -1, 1, 0);
      *
      * @method play
-     * @param {String} src The src or ID of the audio.
-     * @param {String} [interrupt="none"] How to interrupt other instances of audio. Values are defined as <code>INTERRUPT_TYPE</code>
-     *  constants on the Sound class.
-     * @param {Number} [delay=0] The amount of time to delay the start of the audio in milliseconds.
-     * @param {Number} [offset=0] The point to start the audio in milliseconds.
-     * @param {Number} [loop=0] How many times the audio loops when it reaches the end of playback. The efault is 0 (no
-     *  loops), and -1 can be used for infinite playback.
-     * @param {Number} [volume=1] The volume of the sound, between 0 and 1. Note that the master volume is applied
-     *  against the individual volume.
-     * @param {Number} [pan=0] The left-right pan of the sound (if supported), between -1 (left) and 1 (right).
-     * @return {SoundInstance} A {{#crossLink "SoundInstance"}}{{/crossLink}} that can be controlled after it is created.
+     * @param {String} src 音频的资源路径或 id。
+     * @param {String} [interrupt="none"] 如何中断其他实例。取值要根据 Sound 类的常数 <code>INTERRUPT_TYPE</code>。
+     * @param {Number} [delay=0] 设置延迟时间，以毫秒为单位。
+     * @param {Number} [offset=0] 音频开始播放的位置，以毫秒为单位。
+     * @param {Number} [loop=0] 设置音频循环播放次数。默认值为 0 (不循环), 而 -1 可以用于无线循环。
+     * @param {Number} [volume=1] 音频的音量, 介乎 0 到 1 之间。 注意，主音量使用于单位音量。
+     * @param {Number} [pan=0] 音频的左右声道（如果支持），介乎 -1 （左） 和 1 (右)。
+     * @return {SoundInstance} 一个 {{#crossLink "SoundInstance"}}{{/crossLink}} 创建后用于控制的。
      * @static
      */
     Sound.play = function(src, interrupt, delay, offset, loop, volume, pan) {
@@ -670,17 +709,15 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Creates a {{#crossLink "SoundInstance"}}{{/crossLink}} using the passed in src. If the src does not have a
-     * supported extension, a default SoundInstance will be returned that can be called safely but does nothing.
-     *
+     * 如果 src 对应资源不被支持，则一个默认的 SoundInstance 将被返回，这样调用将是安全的，只是不做任何事而已。
+     * 
      * @method createInstance
-     * @param {String} src The src of the audio.
-     * @return {SoundInstance} A {{#crossLink "SoundInstance"}}{{/crossLink}} that can be controlled after it is created.
-     *  Unsupported extensions will return the default SoundInstance.
+     * @param {String} src 音频的 src 属性。
+     * @return {SoundInstance} 一个 {{#crossLink "SoundInstance"}}{{/crossLink}} 创建后用于控制的。不支持扩展将返回一个默认的 SoundInstance。
      */
     Sound.createInstance = function(src) {
         // TODO this function appears to be causing a memory leak, and needs spike tested.
-        // in new SoundInstance
+        // 一个新的音频实例
         if (!Sound.initializeDefaultPlugins()) {
             return Sound.defaultSoundInstance;
         }
@@ -691,24 +728,25 @@ xc.module.define("xc.createjs.Sound", function(exports) {
             src = Sound.getSrcById(src);
         }
         var dot = src.lastIndexOf(".");
-        var ext = src.slice(dot + 1);  // sound have format of "path+name . ext"
-        if (dot != -1 && Sound.SUPPORTED_EXTENSIONS.indexOf(ext) > -1) {  // we have an ext and it is one of our supported,Note this does not mean the plugin supports it.
-            // make sure that we have a sound channel (sound is registered or previously played)
+        
+        var ext = src.slice(dot + 1); // 音频拥有 "path+name . ext" 这样的格式。
+        if (dot != -1 && Sound.SUPPORTED_EXTENSIONS.indexOf(ext) > -1) { // 如果该格式被支持，则意味着该插件被支持。
+            // 确保有频道
             SoundChannel.create(src);
             var instance = Sound.activePlugin.create(src);
         } else {
-            var instance = Sound.defaultSoundInstance; // the src is not supported, so give back a dummy instance.
+            var instance = Sound.defaultSoundInstance; // 资源不被支持，返回一个假实例。
         }
         instance.uniqueId = Sound.lastId++;
         return instance;
     }
 
     /**
-     * Set the master volume of Sound. The master volume is multiplied against each sound's individual volume.
-     * To set individual sound volume, use SoundInstance {{#crossLink "SoundInstance/setVolume"}}{{/crossLink}} instead.
-     *
+     * 设置音频的主音量。主音量相当于所有单位音量的积。
+     * 要设置音频的单位音量，通过 SoundInstance 的 {{#crossLink "SoundInstance/setVolume"}}{{/crossLink}} 方法代替。
+     * 
      * @method setVolume
-     * @param {Number} value The master volume value. The acceptable range is 0-1.
+     * @param {Number} value 主音量的值，可接受区间为 0 - 1。
      * @static
      */
     Sound.setVolume = function(value) {
@@ -719,18 +757,18 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         Sound.masterVolume = value;
         if (!this.activePlugin || !this.activePlugin.setVolume || !this.activePlugin.setVolume(value)) {
             var instances = this.instances;
-            for (var i = 0, l = instances.length; i < l; i++) {
+            for ( var i = 0, l = instances.length; i < l; i++) {
                 instances[i].setMasterVolume(value);
             }
         }
     }
 
     /**
-     * Get the master volume of Sound. The master volume is multiplied against each sound's individual volume.
-     * To get individual sound volume, use SoundInstance {{#crossLink "SoundInstance/getVolume"}}{{/crossLink}} instead.
-     *
+     * 获取音频的主音量。主音量相当于所有单位音量的积。
+     * 要获取音频的单位音量，通过 SoundInstance 的 {{#crossLink "SoundInstance/getVolume"}}{{/crossLink}} 方法代替。
+     * 
      * @method getVolume
-     * @return {Number} The master volume, in a range of 0-1.
+     * @return {Number} 主音量的值，可接受区间为 0 - 1。
      * @static
      */
     Sound.getVolume = function(value) {
@@ -738,13 +776,11 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Mute/Unmute all audio. Note that muted audio still plays at 0 volume. This global mute value is maintained
-     * separately and will override, but not change the mute property of individual instances. To mute an individual
-     * instance, use SoundInstance {{#crossLink "SoundInstance/setMute"}}{{/crossLink}} instead.
-     *
+     * 对于所有音频 静音/取消静音。注意静音即音量为 0 。这个全局 mute 属性值保持分开，且将被覆盖，但不能改变单个实例的
+     * mute 属性。要使单个实例静音，使用 SoundInstance 的 {{#crossLink "SoundInstance/setMute"}}{{/crossLink}} 代替。
      * @method setMute
-     * @param {Boolean} value Whether the audio should be muted or not.
-     * @return {Boolean} If the mute was set.
+     * @param {Boolean} value 音频是否需要被静音。
+     * @return {Boolean} 是否设置成功。
      * @static
      */
     Sound.setMute = function(value) {
@@ -754,7 +790,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         this.masterMute = value;
         if (!this.activePlugin || !this.activePlugin.setMute || !this.activePlugin.setMute(value)) {
             var instances = this.instances;
-            for (var i = 0, l = instances.length; i < l; i++) {
+            for ( var i = 0, l = instances.length; i < l; i++) {
                 instances[i].setMasterMute(value);
             }
         }
@@ -762,11 +798,9 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Returns the global mute value. To get the mute value of an individual instance, use SoundInstance
-     * {{#crossLink "SoundInstance/getMute"}}{{/crossLink}} instead.
-     *
+     * 返回全局 mute 值。要获得单个实例的 mute 值，用 SoundInstance 的 {{#crossLink "SoundInstance/getMute"}}{{/crossLink}} 代替。
      * @method getMute
-     * @return {Boolean} The mute value of Sound.
+     * @return {Boolean} Sound 的 mute 属性。
      * @static
      */
     Sound.getMute = function() {
@@ -774,35 +808,30 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Stop all audio (global stop). Stopped audio is reset, and not paused. To play back audio that has been stopped,
-     * call {{#crossLink "SoundInstance.play"}}{{/crossLink}}.
-     *
+     * 停止所有音频（全局停止）。停止音频相当于重置，并不是暂停。要重新启动停止了的音频，调用 {{#crossLink "SoundInstance.play"}}{{/crossLink}}
+     * 
      * @method stop
      * @static
      */
     Sound.stop = function() {
         var instances = this.instances;
-        for (var i = instances.length; i > 0; i--) {
-            instances[i - 1].stop();  // NOTE stop removes instance from this.instances
+        for ( var i = instances.length; i > 0; i--) {
+            instances[i - 1].stop(); // NOTE stop removes instance from this.instances
         }
     }
 
     /**
-     * Play an instance. This is called by the static API, as well as from plugins. This allows the core class to
-     * control delays.
-     *
+     * 播放一个实例。这个方法将被静态 API 调用，也被插件调用。这使得核心类能控制延时。
+     * 
      * @method playInstance
-     * @param {SoundInstance} instance The {{#crossLink "SoundInstance"}}{{/crossLink}} to start playing.
-     * @param {String} [interrupt=none] How this sound interrupts other instances with the same source.  Defaults to
-     *  <code>Sound.INTERRUPT_NONE</code>. All interrupt values are defined as <code>INTERRUPT_TYPE</code>constants on Sound.
-     * @param {Number} [delay=0] Time in milliseconds before playback begins.
-     * @param {Number} [offset=instance.offset] Time into the sound to begin playback in milliseconds.  Defaults to the
-     *  current value on the instance.
-     * @param {Number} [loop=0] The number of times to loop the audio. Use 0 for no loops, and -1 for an infinite loop.
-     * @param {Number} [volume] The volume of the sound between 0 and 1. Defaults to current instance value.
-     * @param {Number} [pan] The pan of the sound between -1 and 1. Defaults to current instance value.
-     * @return {Boolean} If the sound can start playing. Sounds that fail immediately will return false. Sounds that
-     *  have a delay will return true, but may still fail to play.
+     * @param {SoundInstance} instance 开始播放的 {{#crossLink "SoundInstance"}}{{/crossLink}}
+     * @param {String} [interrupt=none] 如何中断其他具有相同源的实例。默认是 <code>Sound.INTERRUPT_NONE</code>。所有中断的取值要根据 Sound 类的常数 <code>INTERRUPT_TYPE</code>。
+     * @param {Number} [delay=0] 设置延迟时间，以毫秒为单位。
+     * @param {Number} [offset=instance.offset] 音频开始播放的位置，以毫秒为单位。默认为实例的当前值。
+     * @param {Number} [loop=0] 设置音频循环播放次数。默认值为 0 (不循环), 而 -1 可以用于无线循环。
+     * @param {Number} [volume] 音频的音量, 介乎 0 到 1 之间。默认为当前实例音量。
+     * @param {Number} [pan] 音频的左右声道（如果支持）。默认为实例当前值。
+     * @return {Boolean} 如果音频可以开始播放，返回 true。音频马上失败则返回 false。Sound 如果有 delay 属性将 返回 true，但依然不能播放。
      * @protected
      * @static
      */
@@ -829,7 +858,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
                 return false;
             }
         } else {
-            //Note that we can't pass arguments to proxy OR setTimeout (IE only), so just wrap the function call.
+            // 注：如果不使用 setTimeout，将不能传参到代理函数中（IE 下），所以要包装一下方法再调用。 
             var delayTimeoutId = setTimeout(function() {
                 Sound.beginPlaying(instance, interrupt, offset, loop, volume, pan);
             }, delay);
@@ -840,19 +869,16 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Begin playback. This is called immediately or after delay by {{#crossLink "Sound/playInstance"}}{{/crossLink}}.
-     *
+     * 开始播放。这个会马上执行或者过了 {{#crossLink "Sound/playInstance"}}{{/crossLink}} 的 delay 时间执行。
+     * 
      * @method beginPlaying
-     * @param {SoundInstance} instance A {{#crossLink "SoundInstance"}}{{/crossLink}} to begin playback.
-     * @param {String} [interrupt=none] How this sound interrupts other instances with the same source. Defaults to
-     *  <code>Sound.INTERRUPT_NONE</code>. Interrupts are defined as <code>INTERRUPT_TYPE</code> constants on Sound.
-     * @param {Number} [offset] Time in milliseconds into the sound to begin playback.  Defaults to the current value on
-     *  the instance.
-     * @param {Number} [loop=0] The number of times to loop the audio. Use 0 for no loops, and -1 for an infinite loop.
-     * @param {Number} [volume] The volume of the sound between 0 and 1. Defaults to the current value on the instance.
-     * @param {Number} [pan=instance.pan] The pan of the sound between -1 and 1. Defaults to current instance value.
-     * @return {Boolean} If the sound can start playing. If there are no available channels, or the instance fails to
-     *  start, this will return false.
+     * @param {SoundInstance} instance 一个 {{#crossLink "SoundInstance"}}{{/crossLink}} 开始播放。
+     * @param {String} [interrupt=none] 指出如何中断和当前实例拥有相同源的实例。默认值是 <code>Sound.INTERRUPT_NONE</code>。Interrupts 的取值要根据 Sound 的 <code>INTERRUPT_TYPE</code> 常数。
+     * @param {Number} [offset] 指出音频在什么位置开始播放，以毫秒为单位。默认值为当前位置。
+     * @param {Number} [loop=0] 设置音频循环播放次数。默认值为 0 (不循环), 而 -1 可以用于无线循环。
+     * @param {Number} [volume] 音频的音量, 介乎 0 到 1 之间。默认为当前实例音量。
+     * @param {Number} [pan=instance.pan] 声道选择，取值介乎 -1 到 1。默认为当前值。
+     * @return {Boolean} 如果音频可以开始播放。如果没有可用的频道，或者实例播放失败，就会返回 false。
      * @protected
      * @static
      */
@@ -873,12 +899,11 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Get the source of a sound via the ID passed in with a register call. If no ID is found the value is returned
-     * instead.
-     *
+     * 通过传入的 id 获取注册了的音频资源。如果没有 id 就返回传入的 value 值。
+     * 
      * @method getSrcById
-     * @param {String} value The ID the sound was registered with.
-     * @return {String} The source of the sound.  Returns null if src has been registered with this id.
+     * @param {String} value 注册了的音频 id
+     * @return {String} 音频资源。 当根据此 id 找不到资源时，返回 null。 
      * @protected
      * @static
      */
@@ -890,12 +915,11 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * A sound has completed playback, been interrupted, failed, or been stopped. This method removes the instance from
-     * Sound management. It will be added again, if the sound re-plays. Note that this method is called from the
-     * instances themselves.
-     *
+     * 一个音频完成播放，完成中断，播放失败，或被停止。这个方法会在 Sound 管理器中移除实例。
+     * 当音频重新播放的时候重新添加。注意这个方法是由实例本身调用的。
+     * 
      * @method playFinished
-     * @param {SoundInstance} instance The instance that finished playback.
+     * @param {SoundInstance} instance 完成播放的实例。
      * @protected
      * @static
      */
@@ -908,18 +932,17 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * A function proxy for Sound methods. By default, JavaScript methods do not maintain scope, so passing a
-     * method as a callback will result in the method getting called in the scope of the caller. Using a proxy
-     * ensures that the method gets called in the correct scope.
-     * Note arguments can be passed that will be applied to the function when it is called.
+     * 一个关于 Sound 方法的代理。默认情况下，Javascript 的方法并不维持作用域，所以传递一个方法作为回调的作用域
+     * 将是调用者的作用域。用代理确保方法在合理的作用域内调用。
+     * 注意可以传入的 arguments 参数作为将要调用的方法的参数。 
      *
-     * <h4>Example<h4>
-     *     myObject.myCallback = Sound.proxy(myHandler, this, arg1, arg2);
+     * <h4>例子<h4>
+     *     myObject.myCallback = createjs.proxy(myHandler, this, arg1, arg2);
      *
-     * #method proxy
-     * @param {Function} method The function to call
-     * @param {Object} scope The scope to call the method name on
-     * @param {mixed} [arg]* Arguments that are appended to the callback for additional params.
+     * @method proxy
+     * @param {Function} method 要调用的方法。
+     * @param {Object} scope 方法要调用的作用域。
+     * @param {mixed} [arg] 将要调用的方法的参数。
      * @protected
      * @static
      */
@@ -931,24 +954,73 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * An internal class that manages the number of active {{#crossLink "SoundInstance"}}{{/crossLink}} instances for
-     * each sound type. This method is only used internally by the {{#crossLink "Sound"}}{{/crossLink}} class.
+     * 一个额外的模块，以确定当前浏览器，版本，操作系统，和其他环境变量。这不是公开说明的。
+     * #class BrowserDetect
+     * @param {Boolean} isFirefox 如果是 firefox 返回 true。
+     * @param {Boolean} isOpera 如果是 opera 返回 true。
+     * @param {Boolean} isChrome 如果是 chrome 返回 true。注意 android 的 chrome 会返回 true，但不同的浏览器有不同的能力。
+     * @param {Boolean} isIOS 如果是 iOS 设备 (iPad, iPhone, and iPad) 的 safari，返回 true。
+     * @param {Boolean} isAndroid 如果是 Aandroid 的 浏览器，返回 true。
+     * @param {Boolean} isBlackberry 如果是 Blackberry 的浏览器。
+     * @constructor
+     * @static
+     */
+    function BrowserDetect() {}
+
+    BrowserDetect.init = function () {
+        var agent = navigator.userAgent;
+        BrowserDetect.isFirefox = (agent.indexOf("Firefox") > -1);
+        BrowserDetect.isOpera = (window.opera != null);
+        BrowserDetect.isChrome = (agent.indexOf("Chrome") > -1);  // NOTE that Chrome on Android returns true but is a completely different browser with different abilities
+        BrowserDetect.isIOS = agent.indexOf("iPod") > -1 || agent.indexOf("iPhone") > -1 || agent.indexOf("iPad") > -1;
+        BrowserDetect.isAndroid = (agent.indexOf("Android") > -1);
+        BrowserDetect.isBlackberry = (agent.indexOf("Blackberry") > -1);
+    }
+
+    BrowserDetect.init();
+
+    Sound.BrowserDetect = BrowserDetect;
+    
+    // 不往 SoundChannel 添加命名空间。
+
+    // 这是一个虚拟的音频实例，用于让 Sound 返回，这样能使开发者不需要每次都检查 null 值。
+    function SoundInstance() {
+        this.isDefault = true;
+        this.addEventListener = this.removeEventListener = this.removeAllEventListener = 
+            this.dispatchEvent = this.hasEventListener = this._listeners = this.interrupt = 
+                this.playFailed = this.pause = this.resume = this.play = this.beginPlaying = 
+                    this.cleanUp = this.stop = this.setMasterVolume = this.setVolume = this.mute = 
+                        this.setMute = this.getMute = this.setPan = this.getPosition = 
+                            this.setPosition = function () {
+            return false;
+        };
+        this.getVolume = this.getPan = this.getDuration = function () {
+            return 0;
+        }
+        this.playState = Sound.PLAY_FAILED;
+        this.toString = function () {
+            return "[Sound Default Sound Instance]";
+        }
+    }
+    
+    Sound.defaultSoundInstance = new SoundInstance();
+
+    /**
+     * 一个内部类，用于管理每一个可用的 {{#crossLink "SoundInstance"}}{{/crossLink}} 实例。
+     * 该方法仅仅能被 {{#crossLink "Sound"}}{{/crossLink}} 内部调用。
+     * 
+     * 即使将来浏览器可能有更好的支持，sounds 的数量总是被认为有限的，目的是为了防止单一声音的过度饱和，以及确保在硬件
+     * 容量可支配范围内。
      *
-     * The number of sounds is artificially limited by Sound in order to prevent over-saturation of a
-     * single sound, as well as to stay within hardware limitations, although the latter may disappear with better
-     * browser support.
-     *
-     * When a sound is played, this class ensures that there is an available instance, or interrupts an appropriate
-     * sound that is already playing.
-     *
+     * 当音频正在播放的时候，该方法确保总有一个可用的实例，或恰当地中断一个正在播放的音频。
      * @class SoundChannel
-     * @param {String} src The source of the instances
-     * @param {Number} [max=1] The number of instances allowed
+     * @param {String} src 实例的资源路径。
+     * @param {Number} [max=1] 允许实例的数量。
      * @constructor
      * @protected
      */
     var SoundChannel = xc.class.create({
-        _init: function(src, max) {
+        initialize: function(src, max) {
             this.src = src;
             this.max = max || this.maxDefault;
             if (this.max == -1) {
@@ -958,7 +1030,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         },
 
         /**
-         * The source of the channel.
+         * 频道资源
          *
          * @property src
          * @type {String}
@@ -966,7 +1038,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         src: null,
 
         /**
-         * The maximum number of instances in this channel. -1 indicates no limit
+         * 频道可拥有的最大实例数。 -1 表示没限制。
          *
          * @property max
          * @type {Number}
@@ -974,7 +1046,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         max: null,
 
         /**
-         * The default value to set for max, if it isn't passed in.  Also used if -1 is passed.
+         * 如果没传入最大值，默认为该最大值。通常传入 -1 的时候用到该值。
          *
          * @property maxDefault
          * @type {Number}
@@ -983,7 +1055,7 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         maxDefault: 100,
 
         /**
-         * The current number of active instances.
+         * 当前活跃实例数。
          *
          * @property length
          * @type {Number}
@@ -991,32 +1063,30 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         length: 0,
 
         /**
-         * Initialize the channel.
-         *
+         * 初始化频道。
          * @method init
-         * @param {String} src The source of the channel
-         * @param {Number} max The maximum number of instances in the channel
+         * @param {String} src 频道的资源路径。
+         * @param {Number} max 频道的最大实例数。
          * @protected
          */
 
         /**
-         * Get an instance by index.
-         *
+         * 根据索引获取实例。
+         * 
          * @method get
-         * @param {Number} index The index to return.
-         * @return {SoundInstance} The SoundInstance at a specific instance.
+         * @param {Number} index 索引号。
+         * @return {SoundInstance} 指定的实例。
          */
         get: function(index) {
             return this.instances[index];
         },
 
         /**
-         * Add a new instance to the channel.
-         *
+         * 添加一个新实例到频道。
+         * 
          * @method add
-         * @param {SoundInstance} instance The instance to add.
-         * @param {String} interrupt The interrupt value to use.
-         * @return {Boolean} The success of the method call. If the channel is full, it will return false.
+         * @param {SoundInstance} instance 要添加的实例。
+         * @return {Boolean} 如果添加成功，返回 true，如果频道满了，返回 false。
          */
         add: function(instance, interrupt) {
             if (!this.getSlot(interrupt, instance)) {
@@ -1028,12 +1098,11 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         },
 
         /**
-         * Remove an instance from the channel, either when it has finished playing, or it has been interrupted.
-         *
+         * 在频道里移除实例，无论是播放完成还是被中断。
+         * 
          * @method remove
-         * @param {SoundInstance} instance The instance to remove
-         * @return {Boolean} The success of the remove call. If the instance is not found in this channel, it will
-         *  return false.
+         * @param {SoundInstance} instance 将要移除的实例。
+         * @return {Boolean} 如果成功移除，则返回 true。如果在频道不能找到对应实例，返回 false。
          */
         remove: function(instance) {
             var index = this.instances.indexOf(instance);
@@ -1046,38 +1115,34 @@ xc.module.define("xc.createjs.Sound", function(exports) {
         },
 
         /**
-         * Get an available slot depending on interrupt value and if slots are available.
-         *
+         * 如果插槽可用，则根据中断值获取可用的插槽。
+         * 
          * @method getSlot
-         * @param {String} interrupt The interrupt value to use.
-         * @param {SoundInstance} instance The sound instance that will go in the channel if successful.
-         * @return {Boolean} Determines if there is an available slot. Depending on the interrupt mode, if there are no slots,
-         *  an existing SoundInstance may be interrupted. If there are no slots, this method returns false.
+         * @param {String} interrupt 要用到的中断值。
+         * @param {SoundInstance} instance 音频实例。
+         * @return {Boolean} 确保是否有一个可用的 slot。
          */
         getSlot: function(interrupt, instance) {
             var target, replacement;
-            for (var i = 0, l = this.max; i < l; i++) {
+            for ( var i = 0, l = this.max; i < l; i++) {
                 target = this.get(i);
-                // Available Space
+                // 可用空间
                 if (target == null) {
                     return true;
                 } else if (interrupt == Sound.INTERRUPT_NONE && target.playState != Sound.PLAY_FINISHED) {
                     continue;
                 }
-                // First replacement candidate
+                // 第一个候选替补
                 if (i == 0) {
                     replacement = target;
                     continue;
                 }
-                // Audio is complete or not playing
-                if (target.playState == Sound.PLAY_FINISHED ||
-                        target == Sound.PLAY_INTERRUPTED ||
-                        target == Sound.PLAY_FAILED) {
+                // Audio 完成了或没播放
+                if (target.playState == Sound.PLAY_FINISHED || target == Sound.PLAY_INTERRUPTED || target == Sound.PLAY_FAILED) {
                     replacement = target;
                     // Audio is a better candidate than the current target, according to playhead
-                } else if (
-                        (interrupt == Sound.INTERRUPT_EARLY && target.getPosition() < replacement.getPosition()) ||
-                                (interrupt == Sound.INTERRUPT_LATE && target.getPosition() > replacement.getPosition())) {
+                } else if ((interrupt == Sound.INTERRUPT_EARLY && target.getPosition() < replacement.getPosition())
+                || (interrupt == Sound.INTERRUPT_LATE && target.getPosition() > replacement.getPosition())) {
                     replacement = target;
                 }
             }
@@ -1095,8 +1160,8 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     });
 
     /**
-     * A hash of channel instances indexed by source.
-     *
+     * 一个关于频道实例并以资源路径为索引的哈希集合。
+     * 
      * @property channels
      * @type {Object}
      * @static
@@ -1104,12 +1169,12 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     SoundChannel.channels = {};
 
     /**
-     * Create a sound channel. Note that if the sound channel already exists, this will fail.
-     *
+     * 创建一个 SoundChannel 实例。注意如果 SoundChannel 已经存在，则该方法会执行失败。
+     * 
      * @method create
-     * @param {String} src The source for the channel
-     * @param {Number} max The maximum amount this channel holds. The default is {{#crossLink "SoundChannel.maxDefault"}}{{/crossLink}}.
-     * @return {Boolean} If the channels were created.
+     * @param {String} src 频道的资源路径
+     * @param {Number} max 可以保持频道的最大数量。 默认值是 {{#crossLink "SoundChannel.maxDefault"}}{{/crossLink}}.
+     * @return {Boolean} 如果频道成功创建，返回 true。
      * @static
      */
     SoundChannel.create = function(src, max) {
@@ -1122,13 +1187,12 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Add an instance to a sound channel.
-     *
+     * 往 SoundChannel 添加一个音频实例。
+     * 
      * @method add
-     * @param {SoundInstance} instance The instance to add to the channel
-     * @param {String} interrupt The interrupt value to use. Please see the {{#crossLink "Sound/play"}}{{/crossLink}}
-     *  for details on interrupt modes.
-     * @return {Boolean} The success of the method call. If the channel is full, it will return false.
+     * @param {SoundInstance} instance 要添加到频道的实例。
+     * @param {String} interrupt 要使用的中断值。 请看 {{#crossLink "Sound/play"}}{{/crossLink}} 获取更多中断值信息。
+     * @return {Boolean} 方法执行成功，返回 true。如果频道满了，返回 false。
      * @static
      */
     SoundChannel.add = function(instance, interrupt) {
@@ -1140,11 +1204,11 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Remove an instance from the channel.
-     *
+     * 从频道里移除一个实例。
+     * 
      * @method remove
-     * @param {SoundInstance} instance The instance to remove from the channel
-     * @return The success of the method call. If there is no channel, it will return false.
+     * @param {SoundInstance} instance 要移除的实例。
+     * @return 如果移除成功返回 true，如果没有频道，返回 false。
      * @static
      */
     SoundChannel.remove = function(instance) {
@@ -1157,21 +1221,20 @@ xc.module.define("xc.createjs.Sound", function(exports) {
     }
 
     /**
-     * Get the maximum number of sounds you can have in a channel.
-     *
+     * 获取在一个频道里面可以支配的最大音频数。
+     * 
      * @method maxPerChannel
-     * @return {Number} The maximum number of sounds you can have in a channel.
-     * @static
+     * @return {Number} 可拥有的最大频道数。
      */
     SoundChannel.maxPerChannel = function() {
-        return p.maxDefault;
+        return SoundChannel.maxDefault;
     }
 
     /**
-     * Get a channel instance by its src.
-     *
+     * 通过资源路径获取频道实例。
+     * 
      * @method get
-     * @param {String} src The src to use to look up the channel
+     * @param {String} src 用于寻找频道的资源路径。
      * @static
      */
     SoundChannel.get = function(src) {

@@ -1,25 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>TweenJS: Simple Tween Demo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>TweenJS：MotionGuidePlugin 使用（A）</title>
 
 <link rel="stylesheet" href="assets/demoStyles.css" />
-<script type="text/javascript" src="./assets/easeljs-0.6.0.min.js"></script>
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Shape = xc.module.require("xc.createjs.Shape");
-    var Tween = xc.module.require("xc.createjs.Tween");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var MotionGuidePlugin = xc.module.require("xc.createjs.MotionGuidePlugin");
-
     var canvas;
     var stage;
 
@@ -28,27 +21,27 @@ xc.depends([
             document.getElementById("header").style.display = "none";
         }
 
-        MotionGuidePlugin.install(Tween);
+        createjs.MotionGuidePlugin.install(createjs.Tween);
 
         canvas = document.getElementById("testCanvas");
-        stage = new Stage(canvas);
+        stage = new createjs.Stage(canvas);
         stage.autoClear = true;
 
         var ball;
         var count = 1000;
 
         while(count--){
-            ball = new Shape();
+            ball = new createjs.Shape();
             ball.graphics.ss(1,'round','round').s(('#000000')).f("#"+rc()+rc()+rc()).dc(0,0,5).ef().es();
-            var path = [rx(),ry(),rx(),ry(),rx(),ry()];
-            Tween.get(ball, {loop:true})
-                .to({guide:{path:path, start:0, end:1}}, 5000)
-                .wait(Math.random()*4000)
-                .to({guide:{path:path, start:1, end:0}}, 5000);
+            var path = [rx(),ry(),rx(),ry(),rx(),ry()]; 
+            createjs.Tween.get(ball, {loop:true}) // 获取目标 ball 对象。
+                .to({guide:{path:path, start:0, end:1}}, 5000) // 使 ball 对象根据设定好的 path 路径运动，从 0 到 1。
+                .wait(Math.random()*4000) // 等待若干秒。
+                .to({guide:{path:path, start:1, end:0}}, 5000); // 使 ball 对象根据设定好的 path 路径运动，从 1 到 0。
             stage.addChild(ball);
         }
 
-        Ticker.addEventListener("tick", stage);
+        createjs.Ticker.addEventListener("tick", stage);
     }
 
     function rx(){ return Math.random()*940+10; }
@@ -58,20 +51,15 @@ xc.depends([
     init();
 });
 </script>
-<link rel="stylesheet" href="assets/demoStyles.css"/>
 </head>
+
 <body>
-
-<div class="canvasHolder">
-
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Tween<strong>JS</strong></span> Simple Tween Demo</h1>
-	    <p>This example shows TweenJS in action.</p>
-	</header>
-
-	<canvas id="testCanvas" width="960" height="400"></canvas>
-
-</div>
-
+    <div class="canvasHolder">
+    	<header id="header" class="EaselJS">
+    	    <h1><span class="text-product">Tween<strong>JS</strong></span> MotionGuidePlugin 使用（A）</h1>
+    	    <p>该例子演示了 TweenJS MotionGuidePlugin 插件的使用。</p>
+    	</header>
+    	<canvas id="testCanvas" width="960" height="400" style="border: 5px white solid;"></canvas>
+    </div>
 </body>
 </html>

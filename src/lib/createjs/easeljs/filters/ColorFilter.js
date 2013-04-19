@@ -3,9 +3,9 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
     var Filter = xc.module.require("xc.createjs.Filter");
 
     /**
-     * Applies color transforms.
+     * 颜色转换滤镜。
      *
-     * See {{#crossLink "Filter"}}{{/crossLink}} for an example of how to apply filters.
+     * 想了解滤镜的使用，请查看{{#crossLink "Filter"}}{{/crossLink}}。
      *
      * @class ColorFilter
      * @constructor
@@ -20,7 +20,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
      * @param {Number} alphaOffset
      */
     var ColorFilter = Filter.extend({
-        _init: function(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset) {
+        initialize: function(redMultiplier, greenMultiplier, blueMultiplier, alphaMultiplier, redOffset, greenOffset, blueOffset, alphaOffset) {
             this.redMultiplier = redMultiplier != null ? redMultiplier : 1;
             this.greenMultiplier = greenMultiplier != null ? greenMultiplier : 1;
             this.blueMultiplier = blueMultiplier != null ? blueMultiplier : 1;
@@ -32,7 +32,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
         },
 
         /**
-         * Red channel multiplier.
+         * 红色通道乘数。
          *
          * @property redMultiplier
          * @type Number
@@ -40,7 +40,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
         redMultiplier: 1,
 
         /**
-         * Green channel multiplier.
+         * 绿色通道乘数。
          *
          * @property greenMultiplier
          * @type Number
@@ -48,7 +48,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
         greenMultiplier: 1,
 
         /**
-         * Blue channel multiplier.
+         * 蓝色通道乘数。
          *
          * @property blueMultiplier
          * @type Number
@@ -56,7 +56,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
         blueMultiplier: 1,
 
         /**
-         * Alpha channel multiplier.
+         * alpha通道乘数。
          *
          * @property redMultiplier
          * @type Number
@@ -64,7 +64,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
         alphaMultiplier: 1,
 
         /**
-         * Red channel offset (added to value).
+         * 红色通道补偿（附加值）。
          *
          * @property redOffset
          * @type Number
@@ -72,7 +72,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
         redOffset: 0,
 
         /**
-         * Green channel offset (added to value).
+         * 绿色通道补偿（附加值）。
          *
          * @property greenOffset
          * @type Number
@@ -80,7 +80,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
         greenOffset: 0,
 
         /**
-         * Blue channel offset (added to value).
+         * 蓝色通道补偿（附加值）。
          *
          * @property blueOffset
          * @type Number
@@ -88,7 +88,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
         blueOffset: 0,
 
         /**
-         * Alpha channel offset (added to value).
+         * alpha通道补偿（附加值）。
          *
          * @property alphaOffset
          * @type Number
@@ -96,23 +96,27 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
         alphaOffset: 0,
 
         /**
-         * Applies the filter to the specified context.
+         * 把滤镜应用到指定的上下文。
          *
          * @method applyFilter
-         * @param {CanvasRenderingContext2D} ctx The 2D context to use as the source.
-         * @param {Number} x The x position to use for the source rect.
-         * @param {Number} y The y position to use for the source rect.
-         * @param {Number} width The width to use for the source rect.
-         * @param {Number} height The height to use for the source rect.
-         * @param {CanvasRenderingContext2D} targetCtx Optional. The 2D context to draw the result to. Defaults to the context passed to ctx.
-         * @param {Number} targetX Optional. The x position to draw the result to. Defaults to the value passed to x.
-         * @param {Number} targetY Optional. The y position to draw the result to. Defaults to the value passed to y.
+         * @param {CanvasRenderingContext2D} ctx 用作资源的2D上下文。
+         * @param {Number} x 应用到资源矩阵的x坐标值。
+         * @param {Number} y 应用到资源矩阵的y坐标值。
+         * @param {Number} width 应用到资源矩阵的宽度。
+         * @param {Number} height 应用到资源矩阵的高度。
+         * @param {CanvasRenderingContext2D} targetCtx 可选。绘制结果的2D上下文。默认为ctx代表的上下文。
+         * @param {Number} targetX 可选。绘制结果的x坐标值。默认为x传递的坐标值。
+         * @param {Number} targetY 可选。绘制结果的y坐标值。默认为y传递的坐标值。
          * @return {Boolean}
          */
         applyFilter: function(ctx, x, y, width, height, targetCtx, targetX, targetY) {
             targetCtx = targetCtx || ctx;
-            if (targetX == null) { targetX = x; }
-            if (targetY == null) { targetY = y; }
+            if (targetX == null) {
+                targetX = x;
+            }
+            if (targetY == null) {
+                targetY = y;
+            }
             try {
                 var imageData = ctx.getImageData(x, y, width, height);
             } catch (e) {
@@ -121,7 +125,7 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
             }
             var data = imageData.data;
             var l = data.length;
-            for (var i = 0; i < l; i += 4) {
+            for ( var i = 0; i < l; i += 4) {
                 data[i] = data[i] * this.redMultiplier + this.redOffset;
                 data[i + 1] = data[i + 1] * this.greenMultiplier + this.greenOffset;
                 data[i + 2] = data[i + 2] * this.blueMultiplier + this.blueOffset;
@@ -133,24 +137,23 @@ xc.module.define("xc.createjs.ColorFilter", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回当前对象的字符串表示。
          *
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 当前对象的字符串表示。
          */
         toString: function() {
             return "[ColorFilter]";
         },
 
         /**
-         * Returns a clone of this ColorFilter instance.
+         * 返回ColorFilter实例的克隆。
          *
          * @method clone
-         * @return {ColorFilter} A clone of the current ColorFilter instance.
+         * @return {ColorFilter} ColorFilter实例的克隆。
          */
         clone: function() {
-            return new ColorFilter(this.redMultiplier, this.greenMultiplier, this.blueMultiplier, this.alphaMultiplier,
-                    this.redOffset, this.greenOffset, this.blueOffset, this.alphaOffset);
+            return new ColorFilter(this.redMultiplier, this.greenMultiplier, this.blueMultiplier, this.alphaMultiplier, this.redOffset, this.greenOffset, this.blueOffset, this.alphaOffset);
         }
     });
 

@@ -1,88 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>SoundJS: Just Play</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-	<link rel="stylesheet" type="text/css" href="assets/demoStyles.css" />
+<title>SoundJS：音频播放</title>
+
+<link rel="stylesheet" type="text/css" href="assets/demoStyles.css" />
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var src;            // 准备播放的音频资源。
+    var soundInstance;  // 当创建或播放音频时，SoundJS 返回的音频实例。
+    var displayStatus;  // 一个用于显示播放信息的 HTML 元素。
+
+    function init() {
+        if (window.top != window) {
+            document.getElementById("header").style.display = "none";
+        }
+
+        // 这里做了两件事，初始化了默认插件，一旦失败将显示错误信息。
+        if (!createjs.Sound.initializeDefaultPlugins()) {
+            document.getElementById("error").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            return;
+        }
+
+        // 检测是否在移动设备中运行，移动设备中只支持在用户事件中播放音频。
+        if (createjs.Sound.BrowserDetect.isIOS || createjs.Sound.BrowserDetect.isAndroid) {
+            document.getElementById("mobile").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            return;
+        }
+
+        // 记录 DOM 元素，避免每次查找。
+        displayStatus = document.getElementById("status");
+
+        // 创建一个加载项。
+        var assetsPath = "assets/";
+        src = assetsPath+"18-machinae_supremacy-lord_krutors_dominion.mp3|"+assetsPath+"18-machinae_supremacy-lord_krutors_dominion.ogg";
+        // 注意 “|” 分隔符是用于区分多个音频资源路径。
+
+        createjs.Sound.addEventListener("loadComplete", createjs.proxy(playSound,this)); // 添加一个监听器，监听资源是否加载完成。
+        createjs.Sound.registerSound(src);  // 注册音频。
+
+        displayStatus.innerText = "加载中...";  // 让用户了解加载情况。
+    }
+
+    function playSound(evt) {
+        if (evt.src == src) {
+            soundInstance = createjs.Sound.play(src);  // 开始播放加载完成的音频，并保存音频实例。
+            displayStatus.innerText = "资源路径：" + evt.src;  // 显示正在播放的音频路径。
+        }
+    }
+
+    init();
+});
+</script>
 </head>
 
-<body onload="init()">
-
+<body>
 	<header id="header" class="SoundJS">
-	    <h1><span class="text-product">Sound<strong>JS</strong></span> Just Play</h1>
-	    <p>This example registers and plays a sound with SoundJS.</p>
+	    <h1><span class="text-product">Sound<strong>JS</strong></span> 音频播放</h1>
+        <p>该例子注册一个音频然后用 SoundJS 播放</p>
 	</header>
-
 	<div class="content" id="content">
-		<h1 id="status">Startup.</h1>
+		<h1 id="status">开始</h1>
 	</div>
-	
 	<div id="error">
-		<h1>Sorry!</h1>
-		<p>SoundJS is not currently supported in your browser.</p>
-		<p>Please <a href="http://github.com/CreateJS/SoundJS/issues" target="_blank">log a bug</a>
-			with the device and browser you are using.  Thank you.</p>
+		<h1>对不起！</h1>
+        <p>当前浏览器不支持 SoundJS</p>
 	</div>
-
     <div id="mobile">
-        <h1>Sorry!</h1>
-        <p>Mobile devices require sound to be played inside of user events, which this demo does not do.</p>
-        <p>Please <a href="http://github.com/CreateJS/SoundJS/issues" target="_blank">log a bug</a>
-            with the OS and browser if you see this on a device that is not mobile.  Thank you.</p>
+        <h1>对不起！</h1>
+        <p>移动设备只支持在用户事件内部播放音频，并不支持该例子。</p>
     </div>
-
-    <script type="text/javascript" src="../src/easeljs/events/EventDispatcher.js"></script>
-    <script type="text/javascript" src="../src/soundjs/Sound.js"></script>
-    <script type="text/javascript" src="../src/soundjs/WebAudioPlugin.js"></script>
-    <script type="text/javascript" src="../src/soundjs/HTMLAudioPlugin.js"></script>
-
-    <script>
-        var src;            // the audio src we are trying to play
-        var soundInstance;  // the soundInstance returned by Sound when we create or play a src
-        var displayStatus;  // the HTML element we use to display messages to the user
-
-        function init() {
-            if (window.top != window) {
-                document.getElementById("header").style.display = "none";
-            }
-
-            // this does two things, it initializes the default plugins, and if that fails the if statement triggers and we display an error
-            if (!createjs.Sound.initializeDefaultPlugins()) {
-                document.getElementById("error").style.display = "block";
-                document.getElementById("content").style.display = "none";
-                return;
-            }
-
-            // check if we are on a mobile device, as these currently require us to launch sound inside of a user event
-            if (createjs.Sound.BrowserDetect.isIOS || createjs.Sound.BrowserDetect.isAndroid) {  // || createjs.Sound.BrowserDetect.isBlackberry  OJR blackberry has not been tested yet
-                document.getElementById("mobile").style.display = "block";
-                document.getElementById("content").style.display = "none";
-                return;
-            }
-
-            // store the DOM element so we do not have to keep looking it up
-            displayStatus = document.getElementById("status");
-
-            // Create a single item to load.
-            var assetsPath = "assets/";
-            src = assetsPath+"18-machinae_supremacy-lord_krutors_dominion.mp3|"+assetsPath+"18-machinae_supremacy-lord_krutors_dominion.ogg";
-            // NOTE the "|" character is used by Sound to separate source into distinct files, which allows you to provide multiple extensions for wider browser support
-
-            //createjs.Sound.onLoadComplete = playSound;  // add a callback for when load is completed
-            createjs.Sound.addEventListener("loadComplete", createjs.proxy(playSound,this)); // add an event listener for when load is completed
-            createjs.Sound.registerSound(src);  // register sound, which preloads by default
-
-            displayStatus.innerText = "Waiting for load to complete.";  // letting the user know what's happening
-        }
-
-        function playSound(evt) {
-            if (evt.src == src) {  // note that callback and event listener return the same event
-                soundInstance = createjs.Sound.play(src);  // start playing the sound we just loaded, storing the playing instance
-                displayStatus.innerText = "Playing source: " + evt.src;  // let the user know what we are playing
-            }
-        }
-
-    </script>
-
 </body>
 </html>

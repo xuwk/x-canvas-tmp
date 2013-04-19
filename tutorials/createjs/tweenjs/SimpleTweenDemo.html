@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——>TweenJS：简易 Tween 制作</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link rel="stylesheet" href="assets/demoStyles.css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var canvas;
+    var stage;
+
+    function init() {
+        canvas = document.getElementById("testCanvas");
+        stage = new createjs.Stage(canvas);
+        stage.autoClear = true;
+
+        var ball = new createjs.Shape();
+        ball.graphics.setStrokeStyle(5, 'round', 'round');
+        ball.graphics.beginStroke(('#000000'));
+        ball.graphics.beginFill("#FF0000").drawCircle(0,0,50);
+        ball.graphics.endStroke();
+        ball.graphics.endFill();
+        ball.graphics.setStrokeStyle(1, 'round', 'round');
+        ball.graphics.beginStroke(('#000000'));
+        ball.graphics.moveTo(0,0);
+        ball.graphics.lineTo(0,50);
+        ball.graphics.endStroke();
+        ball.x = 200;
+        ball.y = -50;
+
+        var tween = createjs.Tween.get(ball, {loop:true}) // 获取目标 ball 对象。
+             .to({x:ball.x, y:canvas.height - 55, rotation:-360}, 1500, createjs.Ease.bounceOut) // 以 createjs.Ease.bounceOut 的方式将 ball 对象移动到 canvas 底部，移动过程转动 -360 度。
+             .wait(1000) // 等待 1 秒。
+             .to({x:canvas.width-55, rotation:360}, 2500, createjs.Ease.bounceOut) // 以为 createjs.Ease.bounceOut 的方式平移 ball 对象，平移过程转动 360 度。
+             .wait(1000).call(handleComplete) // 等待 1 秒后执行 handleComplete 方法。
+             .to({scaleX:2, scaleY:2, x:canvas.width - 110, y:canvas.height-110}, 2500, createjs.Ease.bounceOut) // 以 reatejs.Ease.bounceOut 的方式放大 ball 对象 2 倍。
+             .wait(1000) // 等待 1 秒。
+             .to({scaleX:.5, scaleY:.5, x:30, rotation:-360, y:canvas.height-30}, 2500, createjs.Ease.bounceOut); // 以 reatejs.Ease.bounceOut 的方式放大 ball 对象 5 倍。
+
+        stage.addChild(ball);
+
+		createjs.Ticker.addEventListener("tick", stage);
+    }
+
+    function handleComplete(tween) {
+        var ball = tween._target;
+    }
+
+    init();
+});
+</script>
+</head>
+<body>
+    <center>
+        <div class="canvasHolder">
+        	<header id="header" class="EaselJS">
+        	    <h1><span class="text-product">Tween<strong>JS</strong></span> 简易 Tween 制作</h1>
+        	    <p>该例子演示了 tween 的简单操作。</p>
+        	</header>
+            <canvas id="testCanvas" width="960" height="400" style="border: 5px white solid;"></canvas>
+        </div>
+    </center>
+
+    <section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：定义变量，以及在 canvas 上创建一个 Stage 对象。同时设定 stage 的 autoClear 属性为 true。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas;
+var stage;
+
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);
+stage.autoClear = true;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：创建 ball 的 Shape 对象，并添加到 Stage 中。</div><br />
+                <textarea class="tutorialCode" name="code">
+var ball = new createjs.Shape();
+ball.graphics.setStrokeStyle(5, 'round', 'round');
+ball.graphics.beginStroke(('#000000'));
+ball.graphics.beginFill("#FF0000").drawCircle(0,0,50);
+ball.graphics.endStroke();
+ball.graphics.endFill();
+ball.graphics.setStrokeStyle(1, 'round', 'round');
+ball.graphics.beginStroke(('#000000'));
+ball.graphics.moveTo(0,0);
+ball.graphics.lineTo(0,50);
+ball.graphics.endStroke();
+ball.x = 200;
+ball.y = -50;
+
+stage.addChild(ball);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：创建 ball 的 Shape 对象，并添加到 Stage 中。</div><br />
+                <textarea class="tutorialCode" name="code">
+var tween = createjs.Tween.get(ball, {loop:true}) // 获取目标 ball 对象。
+     .to({x:ball.x, y:canvas.height - 55, rotation:-360}, 1500, createjs.Ease.bounceOut) // 以 createjs.Ease.bounceOut 的方式将 ball 对象移动到 canvas 底部，移动过程转动 -360 度。
+     .wait(1000) // 等待 1 秒。
+     .to({x:canvas.width-55, rotation:360}, 2500, createjs.Ease.bounceOut) // 以为 createjs.Ease.bounceOut 的方式平移 ball 对象，平移过程转动 360 度。
+     .wait(1000).call(handleComplete) // 等待 1 秒后执行 handleComplete 方法。
+     .to({scaleX:2, scaleY:2, x:canvas.width - 110, y:canvas.height-110}, 2500, createjs.Ease.bounceOut) // 以 reatejs.Ease.bounceOut 的方式放大 ball 对象 2 倍。
+     .wait(1000) // 等待 1 秒。
+     .to({scaleX:.5, scaleY:.5, x:30, rotation:-360, y:canvas.height-30}, 2500, createjs.Ease.bounceOut); // 以 reatejs.Ease.bounceOut 的方式放大 ball 对象 5 倍。
+
+function handleComplete(tween) {
+    var ball = tween._target;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：启用 tick 监听。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Ticker.addEventListener("tick", stage);</textarea>
+        </div>
+    </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

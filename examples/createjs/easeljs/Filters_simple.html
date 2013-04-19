@@ -1,23 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>EaselJS: Filters Example</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS: 滤镜更新</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Bitmap = xc.module.require("xc.createjs.Bitmap");
-    var BoxBlurFilter = xc.module.require("xc.createjs.BoxBlurFilter");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-
     var img;
     var stage;
     var angle;
@@ -36,15 +30,15 @@ xc.depends([
 
     function handleImageLoad() {
         canvas = document.getElementById("testCanvas");
-        stage = new Stage(canvas);
+        stage = new createjs.Stage(canvas);
 
-        bmp = new Bitmap(img);
+        bmp = new createjs.Bitmap(img);
         bmp.cache(0, 0, img.width, img.height);
 
         stage.addChild(bmp);
 
-        Ticker.setFPS(15);
-        Ticker.addEventListener("tick", tick);
+        createjs.Ticker.setFPS(15);
+        createjs.Ticker.addEventListener("tick", tick);
     }
 
     function tick() {
@@ -55,7 +49,7 @@ xc.depends([
     function updateImage() {
         var value = Math.sin(angle)*range;
         bmp.updateCache();
-        bmp.filters = [new BoxBlurFilter(value,  value, 2)];
+        bmp.filters = [new createjs.BoxBlurFilter(value,  value, 2)];
         stage.update();
     }
 
@@ -65,10 +59,10 @@ xc.depends([
 </head>
 <body>
 
-	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Simple Filter Example</h1>
-	    <p>This sample loads an image, and applies a blur filter each frame with a varying value.</p>
-	</header>
+    <header id="header" class="EaselJS">
+        <h1><span class="text-product">Easel<strong>JS</strong></span> 滤镜更新</h1>
+        <p>该示例演示了通过 updateCache() 在每一帧改变滤镜的值。</p>
+    </header>
 
     <canvas id="testCanvas" width="960" height="400"></canvas>
 

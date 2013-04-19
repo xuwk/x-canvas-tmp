@@ -1,23 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>TweenJS: CSS Tweening Example</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>TweenJS: CSS Tweening 插件使用</title>
 
 <link rel="stylesheet" href="assets/demoStyles.css" />
-<script type="text/javascript" src="./assets/easeljs-0.6.0.min.js"></script> <!-- included for Ticker -->
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
-    var Tween = xc.module.require("xc.createjs.Tween");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var CSSPlugin = xc.module.require("xc.createjs.CSSPlugin");
-
 	var colorSeed = 0;
 
 	function init() {
@@ -25,9 +20,9 @@ xc.depends([
 			document.getElementById("header").style.display = "none";
 	    }
 
-		CSSPlugin.install(Tween);
+		createjs.CSSPlugin.install(createjs.Tween);
 
-		Ticker.setFPS(20);
+		createjs.Ticker.setFPS(20);
 		var count = 600;
 		while (--count >= 0) {
 			var box = document.createElement("div");
@@ -45,18 +40,19 @@ xc.depends([
 			d = (Math.min(window.innerWidth,window.innerHeight)-16)/2*(Math.random()*0.3+0.7);
 			var x = window.innerWidth/2+Math.cos(a)*d;
 			var y = window.innerHeight/2+Math.sin(a)*d;
-			Tween.get(box, {loop:true}, true).set({opacity:"0"},box.style).wait(Math.random()*1000+1|0).call(updateColor).to({top:y,left:x,width:16,height:4,opacity:1},Math.random()*1500+1000,easeIn);
+			createjs.Tween.get(box, {loop:true}, true).set({opacity:"0"},box.style).wait(Math.random()*1000+1|0).call(updateColor).to({top:y,left:x,width:16,height:4,opacity:1},Math.random()*1500+1000,easeIn);
 		}
-		// tween the base color that divs will be assigned when they start moving:
-		Tween.get(this,{loop:true}).to({colorSeed:360},5000);
+
+		// 补间颜色，该颜色在 div 开始移动的时候开始分配。
+		createjs.Tween.get(this,{loop:true}).to({colorSeed:360},5000);
 	}
 
 	function updateColor(tween) {
-		// grab the tween's target (the style object), and update it's color
+		// 获取补间的目标对象（style 对象），并更新它的颜色。
 		tween._target.style.backgroundColor = "hsl("+(Math.random()*60+colorSeed|0)+",100%,50%)";
 	}
 
-	// very simple easing equation:
+	// 最简单的 easing 方程。
 	function easeIn(ratio) {
 		return ratio*ratio;
 	}
@@ -67,11 +63,9 @@ xc.depends([
 </head>
 
 <body style="background-color:#111111">
-
 	<header id="header" class="TweenJS">
-	    <h1><span class="text-product">Tween<strong>JS</strong></span> CSS Plugin Example</h1>
-	    <p>This example shows how a plugin can be used to override values in TweenJS. The CSSPlugin ensures the CSS position and size parameters all receive the "px" suffix required by CSS.</p>
+	    <h1><span class="text-product">Tween<strong>JS</strong></span> CSS Tweening 插件使用</h1>
+	    <p>该例子演示了一个插件如何去修改 TweenJS 的值。CSSPlugin 确保 CSS 的位置和大小属性都是以 “px” 作为后缀的。</p>
 	</header>
-
 </body>
 </html>

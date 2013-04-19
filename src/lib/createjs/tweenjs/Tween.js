@@ -7,35 +7,32 @@ xc.module.define("xc.createjs.Tween", function(exports) {
     var EventDispatcher = xc.module.require("xc.createjs.EventDispatcher");
 
     /**
-     * A Tween instance tweens properties for a single target.
-     * Instance methods can be chained for easy construction and sequencing:
+     * 一个拥有一个目标对象的 Tween 实例。实例的方法可以按顺序简单的连接在一起：
+     * 
+     * <h4>例子</h4>
      *
-     * <h4>Example</h4>
+     *      target.alpha = 1;
+     *      Tween.get(target)
+     *           .wait(500)
+     *           .to({alpha:0, visible:false}, 1000)
+     *           .call(onComplete);
+     *      function onComplete() {
+     *          //Tween complete
+     *      }
      *
-     *     target.alpha = 1;
-     *     Tween.get(target)
-     *         .wait(500)
-     *         .to({alpha:0, visible:false}, 1000)
-     *         .call(onComplete);
-     *     function onComplete() {
-   *         //Tween complete
-   *     }
+     * 多个 tween 可以指向同一个实例。然而，如果他们都改变同一个属性，这将带来不可预估的效果。要移除一个对象上的所有 tween，
+     * 使用 {{#crossLink "Tween/removeTweens"}}{{/crossLink}} 或在 props 参数中传入 <code>override:true</code>。
      *
-     * Multiple tweens can point to the same instance, however if they affect the same properties there could be unexpected
-     * behaviour. To stop all tweens on an object, use {{#crossLink "Tween/removeTweens"}}{{/crossLink}} or pass <code>override:true</code>
-     * in the props argument.
+     *      Tween.get(target, {override:true}).to({x:100});
      *
-     *     Tween.get(target, {override:true}).to({x:100});
+     * 监听 "change" 事件。以便在 target 变化时做出相应处理。
+     *      Tween.get(target, {override:true}).to({x:100}).addEventListener("change", handleChange);
+     *      function handleChange(event) {
+     *          // The tween changed.
+     *      }
      *
-     * Subscribe to the "change" event to get notified when a property of the target is changed.
-     *
-     *     Tween.get(target, {override:true}).to({x:100}).addEventListener("change", handleChange);
-     *     function handleChange(event) {
-   *         // The tween changed.
-   *     }
-     *
-     * See the Tween {{#crossLink "Tween/get"}}{{/crossLink}} method for additional param documentation.
-     *
+     * 看 {{#crossLink "Tween/get"}}{{/crossLink}} 方法获取参数说明。
+     * 
      * @class Tween
      * @extends EventDispatcher
      * @constructor
@@ -43,39 +40,50 @@ xc.module.define("xc.createjs.Tween", function(exports) {
      * @param {Object} props
      * @param {Object} pluginData
      */
-    var Tween = EventDispatcher.extend({
-        _init: function(target, props, pluginData) {
+    var Tween = xc.class.create({
+        initialize: function(target, props, pluginData) {
             this.target = this._target = target;
             if (props) {
                 this._useTicks = props.useTicks;
                 this.ignoreGlobalPause = props.ignoreGlobalPause;
                 this.loop = props.loop;
                 this.onChange = props.onChange;
-                if (props.override) { Tween.removeTweens(target); }
+                if (props.override) {
+                    Tween.removeTweens(target);
+                }
             }
             this.pluginData = pluginData || {};
             this._curQueueProps = {};
             this._initQueueProps = {};
             this._steps = [];
             this._actions = [];
-            if (props && props.paused) { this._paused = true; }
-            else { Tween._register(this, true); }
-            if (props && props.position != null) { this.setPosition(props.position, Tween.NONE); }
+            if (props && props.paused) {
+                this._paused = true;
+            } else {
+                Tween._register(this, true);
+            }
+            if (props && props.position != null) {
+                this.setPosition(props.position, Tween.NONE);
+            }
+            this.w = this.wait;
+            this.t = this.to;
+            this.c = this.call;
+            this.s = this.set;
         },
 
         /**
-         * Causes this tween to continue playing when a global pause is active. For example, if TweenJS is using Ticker,
-         * then setting this to true (the default) will cause this tween to be paused when <code>Ticker.setPaused(true)</code> is called.
-         * See Tween.tick() for more info. Can be set via the props param.
-         *
+         * 使得当全局暂停的时候，这个 tween 仍然继续运行。举例， 如果 TweenJS 用了 Ticker，
+         * 然后，设置这个值为 true 将会导致当调用 Ticker.setPaused(true) 的时候这个 tween 会暂停。
+         * 看 Tween.tick() 获取更多信息，可以通过设置 props 参数设置。
+         * 
          * @property ignoreGlobalPause
          * @type Boolean
          * @default false
-         */
+         **/
         ignoreGlobalPause: false,
 
         /**
-         * If true, the tween will loop when it reaches the end. Can be set via the props param.
+         * 如果为 true，当到结尾时，tween 将会重新循环。可以通过设置 props 参数设置。
          *
          * @property loop
          * @type {Boolean}
@@ -84,8 +92,8 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         loop: false,
 
         /**
-         * Read-only. Specifies the total duration of this tween in milliseconds (or ticks if useTicks is true).
-         * This value is automatically updated as you modify the tween. Changing it directly could result in unexpected behaviour.
+         * 只读。指定 tween 的总周期数，周期以毫秒为单位（如果 userTicks 为 true，则为 tick 的总数量）。
+         * 当修改 tween 时，这个值会自动更新。直接改变可能会带来不可预期的行为。
          *
          * @property duration
          * @type {Number}
@@ -94,26 +102,20 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         duration: 0,
 
         /**
-         * Allows you to specify data that will be used by installed plugins. Each plugin uses this differently, but in general
-         * you specify data by setting it to a property of pluginData with the same name as the plugin class.
-         *
-         * <h4>Example</h4>
-         *     myTween.pluginData.PluginClassName = data;
-         *
-         * Also, most plugins support a property to enable or disable them. This is typically the plugin class name followed by "_enabled".<br/>
-         *
-         * <h4>Example</h4>
-         *     myTween.pluginData.PluginClassName_enabled = false;<br/>
-         *
-         * Some plugins also store instance data in this object, usually in a property named _PluginClassName.
-         * See the documentation for individual plugins for more details.
+         * 可以指定安装的插件将会用到的数据。每个插件使用该参数噶方法都不同，但当设置它的是时候要与插件类相同名。<br/>
+         * 例如 myTween.pluginData.PluginClassName = data;<br/>
+         * <br/>
+         * 同时，很多插件都支持一个属性去确定自身可用或不可用。这一般在插件类名后面接 "_enabled"。<br/>
+         * 例如 myTween.pluginData.PluginClassName_enabled = false;<br/>
+         * <br/>
+         * 一些插件还可以存储该对象的实例数据，一般在属性名为 _PluginClassName 里。看文档里的 individual plugins 获取更多信息。
          * @property pluginData
          * @type {Object}
          */
         pluginData: null,
 
         /**
-         * Called whenever the tween's position changes with a single parameter referencing this tween instance.
+         * 当 tween 的位置发生改变的时候就执行。
          *
          * @property onChange
          * @type {Function}
@@ -121,14 +123,14 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         onChange: null,
 
         /**
-         * Called whenever the tween's position changes with a single parameter referencing this tween instance.
+         * 当 tween 的位置发生改变的时候就执行。
+         * 
          * @event change
          */
         change: null,
 
         /**
-         * Read-only. The target of this tween. This is the object on which the tweened properties will be changed. Changing
-         * this property after the tween is created will not have any effect.
+         * 只读。使用 tween 的目标对象。将要执行 tween 的目标对象。在 tween 创建之后再改变该属性的值是无效的。
          *
          * @property target
          * @type {Object}
@@ -136,8 +138,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         target: null,
 
         /**
-         * Read-only. The current normalized position of the tween. This will always be a value between 0 and duration.
-         * Changing this property directly will have no effect.
+         * 只读。当前 tween 的规范化位置。这个值通常是 0 和 duration 之间的某个数。直接改变这个值是无效的。
          *
          * @property position
          * @type {Object}
@@ -181,7 +182,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         _actions: null,
 
         /**
-         * Raw position.
+         * 原始位置
          *
          * @property _prevPosition
          * @type {Number}
@@ -191,17 +192,17 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         _prevPosition: 0,
 
         /**
-         * The position within the current step.
+         * 当前步骤内的位置。
          *
          * @property _stepPosition
          * @type {Number}
          * @default 0
          * @protected
          */
-        _stepPosition: 0, // this is needed by MovieClip.
+        _stepPosition: 0, // 这个是 MovieClip 需要的。
 
         /**
-         * Normalized position.
+         * 规范化后的位置。
          *
          * @property _prevPos
          * @type {Number}
@@ -224,186 +225,229 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @protected
          */
         _useTicks: false,
+        
+        // 混合插件:
+        // EventDispatcher 方法:
+        addEventListener: null,
+        removeEventListener: null,
+        removeAllEventListeners: null,
+        dispatchEvent: null,
+        hasEventListener: null,
+        _listeners: null,
 
-        /**
-         * Queues a wait (essentially an empty tween).
-         *
-         * <h4>Example</h4>
-         *     //This tween will wait 1s before alpha is faded to 0.
-         *     Tween.get(target).wait(1000).to({alpha:0}, 1000);
-         *
+        /** 
+         * 等待（本质上是一个空的 tween）
+         * 
+         * @example                                                   
+         *  //这个 tween 会执行透明度变成 0 之前先等待 1 秒。
+         *  createjs.Tween.get(target).wait(1000).to({alpha:0}, 1000);
+         *  
          * @method wait
-         * @param {Number} duration The duration of the wait in milliseconds (or in ticks if <code>useTicks</code> is true).
-         * @return {Tween} This tween instance (for chaining calls).
-         */
+         * @param {Number} duration 需要等待的毫秒数（如果 userTicks 为 true 则为 tick 的总数量）。
+         * @return {Tween} 当前的 tween 实例（用于链接方法）。
+         **/
         wait: function(duration) {
-            if (duration == null || duration <= 0) { return this; }
+            if (duration == null || duration <= 0) {
+                return this;
+            }
             var o = this._cloneProps(this._curQueueProps);
-            return this._addStep({d: duration, p0: o, e: this._linearEase, p1: o});
+            return this._addStep({
+                d: duration,
+                p0: o,
+                e: this._linearEase,
+                p1: o
+            });
         },
 
-        /**
-         * Queues a tween from the current values to the target properties. Set duration to 0 to jump to these value.
-         * Numeric properties will be tweened from their current value in the tween to the target value. Non-numeric
-         * properties will be set at the end of the specified duration.
-         *
-         * <h4>Example</h4>
-         *       Tween.get(target).to({alpha:0}, 1000);
-         *
+        /** 
+         * 改变 tween 从当前值改变到目标属性值。如果 duration 为 0 的话就直接跳到目标属性值。
+         * 数字属性的值将从当前值变到目标值。不是数字的属性将在 duration 的最后被设置成目标值。
+         * 
+         * @example
+         *  createjs.Tween.get(target).to({alpha:0}, 1000);
+         *  
          * @method to
-         * @param {Object} props An object specifying property target values for this tween (Ex. <code>{x:300}</code> would tween the x
-         *  property of the target to 300).
-         * @param {Number} duration Optional. The duration of the wait in milliseconds (or in ticks if <code>useTicks</code> is true).
-         *  Defaults to 0.
-         * @param {Function} ease Optional. The easing function to use for this tween. Defaults to a linear ease.
-         * @return {Tween} This tween instance (for chaining calls).
-         */
+         * @param {Object} props 该 tween 目标属性的对象(Ex. {x:300} 将 x 属性变至 300)。
+         * @param {Number} duration 可选项. 需要等待的毫秒数（如果 userTicks 为 true 则为 tick 的总数量）。默认值是 0。
+         * @param {Function} ease 可选项. 这个 tween 的 easing 方法。默认是 linear ease。
+         * @return {Tween} 当前的 tween 实例（用于链接方法）。
+         **/
         to: function(props, duration, ease) {
-            if (isNaN(duration) || duration < 0) { duration = 0; }
-            return this._addStep({d: duration ||
-                    0, p0: this._cloneProps(this._curQueueProps), e: ease, p1: this._cloneProps(this._appendQueueProps(props))});
+            if (isNaN(duration) || duration < 0) {
+                duration = 0;
+            }
+            return this._addStep({
+                d: duration || 0,
+                p0: this._cloneProps(this._curQueueProps),
+                e: ease,
+                p1: this._cloneProps(this._appendQueueProps(props))
+            });
         },
 
-        /**
-         * Queues an action to call the specified function.
-         *
-         * <h4>Example</h4>
-         *     // would call myFunction() after 1s.
-         *     myTween.wait(1000).call(myFunction);
-         *
+        /** 
+         * 调用指定的方法。举例：
+         * myTween.wait(1000).call(myFunction); 将会在 1s 后调用 myFunction()。
+         * 
+         * @example
+         *   //1 秒后会执行 myFunction()。     
+         *   myTween.wait(1000).call(myFunction);
+         *   
          * @method call
-         * @param {Function} callback The function to call.
-         * @param {Array} params Optional. The parameters to call the function with. If this is omitted, then the function
-         *  will be called with a single param pointing to this tween.
-         * @param {Object} scope Optional. The scope to call the function in. If omitted, it will be called in the target's scope.
-         * @return {Tween} This tween instance (for chaining calls).
-         */
+         * @param {Function} callback 要调用的方法。
+         * @param {Array} params 可选项。要调用的方法的参数。如果这个值省略, 那么该方法调用的时候只有单一一个参数。
+         * @param {Object} scope 可选项。条用方法的范围。如果省略，则该范围就是目标对象范围。
+         * @return {Tween} 当前的 tween 实例（用于链接方法）。
+         **/
         call: function(callback, params, scope) {
-            return this._addAction({f: callback, p: params ? params : [this], o: scope ? scope : this._target});
+            return this._addAction({
+                f: callback,
+                p: params ? params : [this],
+                o: scope ? scope : this._target
+            });
         },
 
         // TODO: add clarification between this and a 0 duration .to:
-        /**
-         * Queues an action to set the specified props on the specified target. If target is null, it will use this tween's
-         * target.
-         *
-         * <h4>Example</h4>
-         *     myTween.wait(1000).set({visible:false},foo);
-         *
+        /** 
+         * 对指定的目标设置指定的属性。如果目标为 null，就会作用于当前 tween 的目标对象。
+         * 
+         * @example
+         *  myTween.wait(1000).set({visible:false},foo);
+         *  
          * @method set
-         * @param {Object} props The properties to set (ex. <code>{visible:false}</code>).
-         * @param {Object} target Optional. The target to set the properties on. If omitted, they will be set on the tween's target.
-         * @return {Tween} This tween instance (for chaining calls).
-         */
+         * @param {Object} props 要设置的属性集合 (ex. {visible:false}).
+         * @param {Object} target 可选项. 指定噶目标，如果省略，则默认为当前 tween 的目标对象。
+         * @return {Tween} 当前的 tween 实例（用于链接方法）。
+         **/
         set: function(props, target) {
-            return this._addAction({f: this._set, o: this, p: [props, target ? target : this._target]});
+            return this._addAction({
+                f: this._set,
+                o: this,
+                p: [props, target ? target : this._target]
+            });
         },
 
-        /**
-         * Queues an action to to play (unpause) the specified tween. This enables you to sequence multiple tweens.
-         *
-         * <h4>Example</h4>
-         *     myTween.to({x:100},500).play(otherTween);
-         *
+        /** 
+         * 播放（消除暂停）指定的 tween。这个可以处理多个 tween。
+         * 
+         * @example
+         *  myTween.to({x:100},500).play(otherTween);
+         * 
          * @method play
-         * @param {Tween} tween The tween to play.
-         * @return {Tween} This tween instance (for chaining calls).
-         */
+         * @param {Tween} tween 要播放的 tween
+         * @return {Tween} 当前的 tween 实例（用于链接方法）。
+         **/
         play: function(tween) {
             return this.call(tween.setPaused, [false], tween);
         },
 
-        /**
-         * Queues an action to to pause the specified tween.
-         *
+        /** 
+         * 暂停指定的 tween
+         * 
          * @method pause
-         * @param {Tween} tween The tween to play. If null, it pauses this tween.
-         * @return {Tween} This tween instance (for chaining calls)
-         */
+         * @param {Tween} tween 正在播放的 tween，如果为 null，则默认为当前 tween。
+         * @return {Tween} 当前的 tween 实例（用于链接方法）。
+         **/
         pause: function(tween) {
-            if (!tween) { tween = this; }
+            if (!tween) {
+                tween = this;
+            }
             return this.call(tween.setPaused, [true], tween);
         },
 
-        /**
-         * Advances the tween to a specified position.
-         *
+        /** 
+         * 使 tween 去到指定位置。
+         * 
          * @method setPosition
-         * @param {Number} value The position to seek to in milliseconds (or ticks if useTicks is true).
-         * @param {Number} actionsMode Optional parameter specifying how actions are handled (ie. call, set, play, pause):
-         *  <code>Tween.NONE</code> (0) - run no actions. <code>Tween.LOOP</code> (1) - if new position is less than old, then run all actions
-         *  between old and duration, then all actions between 0 and new. Defaults to <code>LOOP</code>. <code>Tween.REVERSE</code> (2) - if new
-         *  position is less than old, run all actions between them in reverse.
-         * @return {Boolean} Returns true if the tween is complete (ie. the full tween has run & loop is false).
-         */
+         * @param {Number} value 去到指定位置所需要的的毫秒数。（如果 userTicks 为 true 则为 tick 的总数量）
+         * @param {Number} actionsMode 可选项，指出 action 如何处理。 (例如： call, set, play, pause):
+         *      Tween.NONE (0) - 没有任何 action。
+         *      Tween.LOOP (1) - 如果新的位置小于旧的位置, 则先运行就的位置到 duration，再运行 0 到 新位置。
+         *      Tween.REVERSE (2) - 如果新位置小于旧位置，运行所有在他们之间的 action
+         * @return {Boolean} 如果 tween 完成了就返回 true (ie. 整个 tween 都运行完了 & loop 为 false)。
+         **/
         setPosition: function(value, actionsMode) {
-            if (value < 0) { value = 0; }
-            if (actionsMode == null) { actionsMode = 1; }
-            // normalize position:
+            if (value < 0) {
+                value = 0;
+            }
+            if (actionsMode == null) {
+                actionsMode = 1;
+            }
+            // 正常位置:
             var t = value;
             var end = false;
             if (t >= this.duration) {
-                if (this.loop) { t = t % this.duration; }
-                else {
+                if (this.loop) {
+                    t = t % this.duration;
+                } else {
                     t = this.duration;
                     end = true;
                 }
             }
-            if (t == this._prevPos) { return end; }
+            if (t == this._prevPos) {
+                return end;
+            }
             var prevPos = this._prevPos;
-            this.position = this._prevPos = t; // set this in advance in case an action modifies position.
+            this.position = this._prevPos = t;
             this._prevPosition = value;
-            // handle tweens:
+            // 处理 tween:
             if (this._target) {
                 if (end) {
-                    // addresses problems with an ending zero length step.
+                    // 解决长度为零的步骤问题
                     this._updateTargetProps(null, 1);
                 } else if (this._steps.length > 0) {
-                    // find our new tween index:
-                    for (var i = 0, l = this._steps.length; i < l; i++) {
-                        if (this._steps[i].t > t) { break; }
+                    // 寻找新的 tween 索引；
+                    for ( var i = 0, l = this._steps.length; i < l; i++) {
+                        if (this._steps[i].t > t) {
+                            break;
+                        }
                     }
                     var step = this._steps[i - 1];
                     this._updateTargetProps(step, (this._stepPosition = t - step.t) / step.d);
                 }
             }
-            // run actions:
+            // 运行 action:
             if (actionsMode != 0 && this._actions.length > 0) {
                 if (this._useTicks) {
-                    // only run the actions we landed on.
+                    // 只运行已绑定的 action
                     this._runActions(t, t);
                 } else if (actionsMode == 1 && t < prevPos) {
-                    if (prevPos != this.duration) { this._runActions(prevPos, this.duration); }
+                    if (prevPos != this.duration) {
+                        this._runActions(prevPos, this.duration);
+                    }
                     this._runActions(0, t, true);
                 } else {
                     this._runActions(prevPos, t);
                 }
             }
-            if (end) { this.setPaused(true); }
+            if (end) {
+                this.setPaused(true);
+            }
             this.onChange && this.onChange(this);
             this.dispatchEvent("change");
             return end;
         },
 
-        /**
-         * Advances this tween by the specified amount of time in milliseconds (or ticks if <code>useTicks</code> is true).
-         * This is normally called automatically by the Tween engine (via <code>Tween.tick</code>), but is exposed for advanced uses.
-         *
+        /** 
+         * 按照指定的相隔毫秒数推进这个 tween。（如果 userTicks 为 true 则为 tick 的总数量）
+         * 这个正常会根据 Tween 的引擎前进的（通过 Tween.tick）, 但也暴露给更高级的应用。
+         * 
          * @method tick
-         * @param {Number} delta The time to advance in milliseconds (or ticks if <code>useTicks</code> is true).
-         */
+         * @param {Number} delta 前进一次相隔的毫秒数（如果 userTicks 为 true 的话，则为 tick 的总数量）
+         **/
         tick: function(delta) {
-            if (this._paused) { return; }
+            if (this._paused) {
+                return;
+            }
             this.setPosition(this._prevPosition + delta);
         },
 
-        /**
-         * Pauses or plays this tween.
-         *
+        /** 
+         * 暂停或播放 tween
+         * 
          * @method setPaused
-         * @param {Boolean} value Indicates whether the tween should be paused (true) or played (false).
-         * @return {Tween} This tween instance (for chaining calls)
-         */
+         * @param {Boolean} value 说明 tween 是被暂停（true）还是播放（false）
+         * @return {Tween} 当前的 tween 实例（用于链接方法）。
+         **/
         setPaused: function(value) {
             this._paused = !!value;
             Tween._register(this, !value);
@@ -411,11 +455,11 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         },
 
         /**
-         * Returns a string representation of this object.
-         *
+         * 返回该对象的字符串表示形式。
+         * 
          * @method toString
-         * @return {String} a string representation of the instance.
-         */
+         * @return {String} 该对象的字符串表示形式。
+         **/
         toString: function() {
             return "[Tween]";
         },
@@ -425,7 +469,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @protected
          */
         clone: function() {
-            throw("Tween can not be cloned.")
+            throw ("Tween can not be cloned.")
         },
 
         /**
@@ -440,14 +484,20 @@ xc.module.define("xc.createjs.Tween", function(exports) {
                 p0 = p1 = this._curQueueProps;
             } else {
                 // apply ease to ratio.
-                if (step.e) { ratio = step.e(ratio, 0, 1, 1); }
+                if (step.e) {
+                    ratio = step.e(ratio, 0, 1, 1);
+                }
                 p0 = step.p0;
                 p1 = step.p1;
             }
             for (n in this._initQueueProps) {
-                if ((v0 = p0[n]) == null) { p0[n] = v0 = this._initQueueProps[n]; }
-                if ((v1 = p1[n]) == null) { p1[n] = v1 = v0; }
-                if (v0 == v1 || ratio == 0 || ratio == 1 || (typeof(v0) != "number")) {
+                if ((v0 = p0[n]) == null) {
+                    p0[n] = v0 = this._initQueueProps[n];
+                }
+                if ((v1 = p1[n]) == null) {
+                    p1[n] = v1 = v0;
+                }
+                if (v0 == v1 || ratio == 0 || ratio == 1 || (typeof (v0) != "number")) {
                     // no interpolation - either at start, end, values don't change, or the value is non-numeric.
                     v = ratio == 1 ? v1 : v0;
                 } else {
@@ -455,13 +505,18 @@ xc.module.define("xc.createjs.Tween", function(exports) {
                 }
                 var ignore = false;
                 if (arr = Tween._plugins[n]) {
-                    for (var i = 0, l = arr.length; i < l; i++) {
+                    for ( var i = 0, l = arr.length; i < l; i++) {
                         var v2 = arr[i].tween(this, n, v, p0, p1, ratio, !!step && p0 == p1, !step);
-                        if (v2 == Tween.IGNORE) { ignore = true; }
-                        else { v = v2; }
+                        if (v2 == Tween.IGNORE) {
+                            ignore = true;
+                        } else {
+                            v = v2;
+                        }
                     }
                 }
-                if (!ignore) { this._target[n] = v; }
+                if (!ignore) {
+                    this._target[n] = v;
+                }
             }
         },
 
@@ -501,7 +556,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          */
         _appendQueueProps: function(o) {
             var arr, oldValue, i, l, injectProps;
-            for (var n in o) {
+            for ( var n in o) {
                 if (this._initQueueProps[n] === undefined) {
                     oldValue = this._target[n];
                     // init plugins:
@@ -518,12 +573,16 @@ xc.module.define("xc.createjs.Tween", function(exports) {
                     injectProps = injectProps || {};
                     for (i = 0, l = arr.length; i < l; i++) {
                         // TODO: remove the check for .step in the next version. It's here for backwards compatibility.
-                        if (arr[i].step) { arr[i].step(this, n, oldValue, o[n], injectProps); }
+                        if (arr[i].step) {
+                            arr[i].step(this, n, oldValue, o[n], injectProps);
+                        }
                     }
                 }
                 this._curQueueProps[n] = o[n];
             }
-            if (injectProps) { this._appendQueueProps(injectProps); }
+            if (injectProps) {
+                this._appendQueueProps(injectProps);
+            }
             return this._curQueueProps;
         },
 
@@ -534,7 +593,7 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          */
         _cloneProps: function(props) {
             var o = {};
-            for (var n in props) {
+            for ( var n in props) {
                 o[n] = props[n];
             }
             return o;
@@ -572,44 +631,45 @@ xc.module.define("xc.createjs.Tween", function(exports) {
          * @protected
          */
         _set: function(props, o) {
-            for (var n in props) {
+            for ( var n in props) {
                 o[n] = props[n];
             }
         }
     });
 
-    /**
-     * Constant defining the none actionsMode for use with setPosition.
-     *
+    /** 
+     * 用于 setPostion 的常量 none 模型
+     * 
      * @property NONE
      * @type Number
      * @default 0
      * @static
-     */
+     **/
     Tween.NONE = 0;
 
-    /**
-     * Constant defining the loop actionsMode for use with setPosition.
-     *
+    /** 
+     * 用于 setPostion 的常量 loop 模型
+     * 
      * @property LOOP
      * @type Number
      * @default 1
      * @static
-     */
+     **/
     Tween.LOOP = 1;
 
-    /**
-     * Constant defining the reverse actionsMode for use with setPosition.
-     *
+    /** 
+     * 用于 setPostion 的常量 reverse 模型
+     * 
      * @property REVERSE
      * @type Number
      * @default 2
      * @static
-     */
+     **/
     Tween.REVERSE = 2;
 
     /**
-     * Constant returned by plugins to tell the tween not to use default assignment.
+     * 插件返回的常量让 tween 不要用默认的分配。
+     * 
      * @property IGNORE
      * @type Object
      * @static
@@ -633,69 +693,67 @@ xc.module.define("xc.createjs.Tween", function(exports) {
     Tween._plugins = {};
 
     /**
-     * Returns a new tween instance. This is functionally identical to using "new Tween(...)", but looks cleaner
-     * with the chained syntax of TweenJS.
-     *
-     * <h4>Example</h4>
-     *     var tween = Tween.get(target);
-     *
+     * 返回一个新的 tween 实例。这个功能上等同于使用 “new Tween(...)”，但是当链接起来的时候看起来更加简洁。
+     * 
      * @method get
      * @static
-     * @param {Object} target The target object that will have its properties tweened.
-     * @param {Object} props The configuration properties to apply to this tween instance (ex. <code>{loop:true, paused:true}</code>).
-     *  All properties default to false. Supported props are:
-     *  <ul>
-     *    <li>loop: sets the loop property on this tween.</li>
-     *    <li>useTicks: uses ticks for all durations instead of milliseconds.</li>
-     *    <li>ignoreGlobalPause: sets the ignoreGlobalPause property on this tween.</li>
-     *    <li>override: if true, Tween.removeTweens(target) will be called to remove any other tweens with the same target.
-     *    <li>paused: indicates whether to start the tween paused.</li>
-     *    <li>position: indicates the initial position for this tween.</li>
-     *    <li>onChange: specifies an onChange handler for this tween. Note that this is deprecated in favour of the "change" event.</li>
-     *  </ul>
-     * @param {Object} [pluginData] An object containing data for use by installed plugins. See individual
-     *  plugins' documentation for details.
-     * @param {Boolean} [override=false] If true, any previous tweens on the same target will be removed. This is the same as
-     *  calling <code>Tween.removeTweens(target)</code>.
-     * @return {Tween} A reference to the created tween. Additional chained tweens, method calls, or callbacks can be
-     *  applied to the returned tween instance.
-     */
+     * @param {Object} target 需要补间的目标对象。
+     * @param {Object} props 将应用于 tween 实例的配置属性。 (ex. {loop:true, paused:true}).
+     * 所有的配置默认值都是 false。支持以下属性:<UL>
+     *    <LI> loop: 设置 tween 的 loop 属性。</LI>
+     *    <LI> useTicks: 利用 tick 充当毫秒作为补间周期。</LI>
+     *    <LI> ignoreGlobalPause: 设置当前 tween 的 ignoreGlobalPause 属性。</LI>
+     *    <LI> override: 如果为 true，Tween.removeTweens(target) 将会删除所有拥有同一目标的所有对象。
+     *    <LI> paused: 说明是否开启补间暂停。</LI>
+     *    <LI> position: 说明 tween 的初始位置。</LI>
+     *    <LI> onChanged: 指定该对象的 onChange 处理程序。</LI>
+     * </UL>
+     * @param {Object} pluginData 可选项。一个包含用于 installed plugins 数据的对象。看 individual
+     *      plugins' 文档获取更多信息。
+     * @param {Boolean} override 如果为 true, 所有值钱拥有项目 target 的 tween 将被删除。这个与
+     *      calling Tween.removeTweens(target) 的功能相同。
+     * @return {Tween} 创建的 tween 实例。
+     **/
     Tween.get = function(target, props, pluginData, override) {
-        if (override) { Tween.removeTweens(target); }
+        if (override) {
+            Tween.removeTweens(target);
+        }
         return new Tween(target, props, pluginData);
     };
 
     /**
-     * Advances all tweens. This typically uses the Ticker class (available in the EaselJS library), but you can call it
-     * manually if you prefer to use your own "heartbeat" implementation.
-     *
+     * 推进所有 tween。这个通常是用到 Ticker 类（在 EaselJS 库），但如果想用自己的“心跳”模式，也可以手动更改它。
+     * 
      * @method tick
      * @static
-     * @param {Number} delta The change in time in milliseconds since the last tick. Required unless all tweens have
-     *  <code>useTicks</code> set to true.
-     * @param {Boolean} paused Indicates whether a global pause is in effect. Tweens with <code>ignoreGlobalPause</code> will ignore
-     *  this, but all others will pause if this is true.
-     */
+     * @param {Number} delta 一个时间间隔，以毫秒为单位。必须的，除非所有 tween 的 useTicks 都设置为 true。
+     * @param {Boolean} paused 指出 ignoreGlobalPause 是否能影响到这里。有 ignoreGlobalPause 的 Tweens 都会无视这个属性。
+     *      但如果这里设置为 true，则其他的 tween 都会暂停。
+     **/
     Tween.tick = function(delta, paused) {
         var tweens = Tween._tweens.slice(); // to avoid race conditions.
-        for (var i = tweens.length - 1; i >= 0; i--) {
+        for ( var i = tweens.length - 1; i >= 0; i--) {
             var tween = tweens[i];
-            if ((paused && !tween.ignoreGlobalPause) || tween._paused) { continue; }
+            if ((paused && !tween.ignoreGlobalPause) || tween._paused) {
+                continue;
+            }
             tween.tick(tween._useTicks ? 1 : delta);
         }
     };
 
-    /**
-     * Removes all existing tweens for a target. This is called automatically by new tweens if the <code>override</code> prop is true.
-     *
+    /** 
+     * 删除指定 target 下的所有 tween。当新的 tween 的 “override” 属性为 true 时，会自动调用。
+     * 
      * @method removeTweens
      * @static
-     * @param {Object} target The target object to remove existing tweens from.
-     */
+     * @param {Object} target 要删除 tween 的对象。
+     **/
     Tween.removeTweens = function(target) {
-        if (!target.tweenjs_count) { return; }
+        if (!target.tweenjs_count) {
+            return;
+        }
         var tweens = Tween._tweens;
-        for (var i = tweens.length - 1; i >= 0; i--) {
+        for ( var i = tweens.length - 1; i >= 0; i--) {
             if (tweens[i]._target == target) {
                 tweens[i]._paused = true;
                 tweens.splice(i, 1);
@@ -704,67 +762,80 @@ xc.module.define("xc.createjs.Tween", function(exports) {
         target.tweenjs_count = 0;
     };
 
-    /**
-     * Indicates whether there are any active tweens on the target object (if specified) or in general.
-     *
+    /** 
+     * 指出在对象（如果指定）中或全局是否存在活跃的 tween。
+     * 
      * @method hasActiveTweens
      * @static
-     * @param {Object} target Optional. If not specified, the return value will indicate if there are any active tweens
-     *  on any target.
-     * @return {Boolean} A boolean indicating whether there are any active tweens.
-     */
+     * @param {Object} target 可选。 如果没指定，一旦检测到任何活跃的 tween ，返回值都为 true。
+     * @return {Boolean} 一个 boolean 值说明是否有活跃的 tween。
+     **/
     Tween.hasActiveTweens = function(target) {
-        if (target) { return target.tweenjs_count; }
+        if (target) {
+            return target.tweenjs_count;
+        }
         return Tween._tweens && Tween._tweens.length;
     };
 
-    /**
-     * Installs a plugin, which can modify how certain properties are handled when tweened. See the CSSPlugin for an
-     * example of how to write TweenJS plugins.
-     *
+    /** 
+     * 安装插件，该插件可以在 tween 过程中，修改某些属性的处理方法。看 CSSPlugin 学习如何写 TweenJS 插件。
+     * 
      * @method installPlugin
      * @static
-     * @param {Object} plugin The plugin class to install
-     * @param {Array} properties An array of properties that the plugin will handle.
-     */
+     * @param {Object} plugin
+     * @param {Array} properties
+     **/
     Tween.installPlugin = function(plugin, properties) {
         var priority = plugin.priority;
-        if (priority == null) { plugin.priority = priority = 0; }
-        for (var i = 0, l = properties.length, p = Tween._plugins; i < l; i++) {
+        if (priority == null) {
+            plugin.priority = priority = 0;
+        }
+        for ( var i = 0, l = properties.length, p = Tween._plugins; i < l; i++) {
             var n = properties[i];
-            if (!p[n]) { p[n] = [plugin]; }
-            else {
+            if (!p[n]) {
+                p[n] = [plugin];
+            } else {
                 var arr = p[n];
-                for (var j = 0, jl = arr.length; j < jl; j++) {
-                    if (priority < arr[j].priority) { break; }
+                for ( var j = 0, jl = arr.length; j < jl; j++) {
+                    if (priority < arr[j].priority) {
+                        break;
+                    }
                 }
                 p[n].splice(j, 0, plugin);
             }
         }
     };
 
-    /**
-     * Registers or unregisters a tween with the ticking system.
-     *
+    /** 
+     * 在 ticking 系统中注册或注销一个 tween。
+     * 
      * @method _register
      * @static
-     * @protected
-     */
+     * @protected 
+     **/
     Tween._register = function(tween, value) {
         var target = tween._target;
         if (value) {
             // TODO: this approach might fail if a dev is using sealed objects in ES5
-            if (target) { target.tweenjs_count = target.tweenjs_count ? target.tweenjs_count + 1 : 1; }
+            if (target) {
+                target.tweenjs_count = target.tweenjs_count ? target.tweenjs_count + 1 : 1;
+            }
             Tween._tweens.push(tween);
         } else {
-            if (target) { target.tweenjs_count--; }
+            if (target) {
+                target.tweenjs_count--;
+            }
             var i = Tween._tweens.indexOf(tween);
-            if (i != -1) { Tween._tweens.splice(i, 1); }
+            if (i != -1) {
+                Tween._tweens.splice(i, 1);
+            }
         }
     };
-
+    
+    EventDispatcher.initialize(Tween.prototype);
+    
     Ticker.addListener(Tween, false);
-
+    
     return Tween;
 
 });

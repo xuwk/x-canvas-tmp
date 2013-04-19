@@ -1,20 +1,20 @@
 xc.module.define("xc.createjs.Rectangle", function(exports) {
 
     /**
-     * Represents a rectangle as defined by the points (x, y) and (x+width, y+height).
+     * 代表一个起始点为(x, y)、宽为width、高为height的矩形。
      *
-     * <h4>Example</h4>
+     * <h4>样例</h4>
      *     var rect = new Rectangle(0, 0, 100, 100);
      *
      * @class Rectangle
      * @constructor
-     * @param {Number} [x=0] X position.
-     * @param {Number} [y=0] Y position.
-     * @param {Number} [width=0] The width of the Rectangle.
-     * @param {Number} [height=0] The height of the Rectangle.
+     * @param {Number} [x=0] X 坐标位置。
+     * @param {Number} [y=0] Y 坐标位置。
+     * @param {Number} [width=0] 矩形的宽。
+     * @param {Number} [height=0] 矩形的高。
      */
     var Rectangle = xc.class.create({
-        _init: function(x, y, width, height) {
+        initialize: function(x, y, width, height) {
             this.x = (x == null ? 0 : x);
             this.y = (y == null ? 0 : y);
             this.width = (width == null ? 0 : width);
@@ -22,7 +22,7 @@ xc.module.define("xc.createjs.Rectangle", function(exports) {
         },
 
         /**
-         * X position.
+         * X 坐标位置。
          *
          * @property x
          * @type Number
@@ -30,7 +30,7 @@ xc.module.define("xc.createjs.Rectangle", function(exports) {
         x: 0,
 
         /**
-         * Y position.
+         * Y 坐标位置。
          *
          * @property y
          * @type Number
@@ -38,7 +38,7 @@ xc.module.define("xc.createjs.Rectangle", function(exports) {
         y: 0,
 
         /**
-         * Width.
+         * 宽度。
          *
          * @property width
          * @type Number
@@ -46,7 +46,7 @@ xc.module.define("xc.createjs.Rectangle", function(exports) {
         width: 0,
 
         /**
-         * Height.
+         * 高度。
          *
          * @property height
          * @type Number
@@ -54,20 +54,20 @@ xc.module.define("xc.createjs.Rectangle", function(exports) {
         height: 0,
 
         /**
-         * Returns a clone of the Rectangle instance.
+         * 返回一个矩形实例的克隆。
          *
          * @method clone
-         * @return {Rectangle} a clone of the Rectangle instance.
+         * @return {Rectangle} 一个矩形实例的克隆。
          */
         clone: function() {
             return new Rectangle(this.x, this.y, this.width, this.height);
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回当前实例的字符串表示。
          *
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 当前实例的字符串表示。
          */
         toString: function() {
             return "[Rectangle (x=" + this.x + " y=" + this.y + " width=" + this.width + " height=" + this.height + ")]";

@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——>SoundJS：预加载及播放</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link rel="stylesheet" type="text/css" href="assets/demoStyles.css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+<style>
+    .plugin {
+        font-size: 16px;
+        font-weight: bold;
+    }
+</style>
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var queue;
+    var displayStatus;
+
+    function init() {
+        createjs.Sound.registerPlugins([createjs.HTMLAudioPlugin]);
+
+        if (!createjs.Sound.isReady()) {
+            document.getElementById("error").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            return;
+        }
+
+        if (createjs.Sound.BrowserDetect.isIOS || createjs.Sound.BrowserDetect.isAndroid) {
+            document.getElementById("mobile").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            return;
+        }
+
+        var pluginStatus = document.getElementById("activePlugin");
+        pluginStatus.innerHTML = "可用插件是： " + createjs.Sound.activePlugin.toString();  // FF 不支持 innerText 
+
+        displayStatus = document.getElementById("status");
+
+        // 创建一个独立的加载项。
+        var assetsPath = "assets/";
+        var item = {src:assetsPath+"18-machinae_supremacy-lord_krutors_dominion.mp3|"+assetsPath+"18-machinae_supremacy-lord_krutors_dominion.ogg", id:"music"};
+        var manifest = [
+            {id:"music", src:assetsPath+"18-machinae_supremacy-lord_krutors_dominion.mp3|"+assetsPath+"18-machinae_supremacy-lord_krutors_dominion.ogg"}
+        ]
+
+        // 实例化一个队列。
+        queue = new createjs.LoadQueue();
+        queue.installPlugin(createjs.Sound);
+        queue.addEventListener("complete", loadComplete);
+        queue.addEventListener("fileload", fileComplete);
+        queue.addEventListener("error",handleFileError);
+        queue.addEventListener("progress",handleProgress);
+        queue.loadManifest(manifest);
+    }
+
+    function handleFileError(evt) {
+        // 抛出错误。
+        displayStatus.innerText = "错误 :("
+    }
+
+    function handleProgress(evt) {
+        // 加载进度。
+        displayStatus.innerText = "已加载: " + (queue.progress.toFixed(2) * 100) + "%";
+    }
+
+    function loadComplete(evt) {
+        // 加载完成。
+        displayStatus.innerText = "加载完成 :)";
+        playSound("music");
+    }
+
+    function fileComplete(evt) {}
+
+    function playSound(name) {
+        // 利用创建的 ID 播放音频。
+        return createjs.Sound.play("music");
+    }
+
+    init();
+});
+</script>
+</head>
+
+<body>
+    <center>
+        <header id="header" class="SoundJS">
+            <h1><span class="text-product">Sound<strong>JS</strong></span> 预加载及播放</h1>
+            <p>该插件预加载一个音频实例，并立即通过 SoundJS 播放。SoundJS 将根据浏览器的功能，选择不同的输入源。注：某些浏览器不支持在本地环境中运行，需要服务器环境。</p>
+        </header>
+        <div class="content jp-content" id="content">
+            <div class="plugin">
+                <p id="activePlugin">可用插件是：</p>
+            </div>
+            <h1 id="status">加载中...</h1>
+        </div>
+        <div id="error">
+            <h1>对不起！</h1>
+            <p>当前浏览器不支持 SoundJS</p>
+        </div>
+        <div id="mobile">
+            <h1>对不起！</h1>
+            <p>移动设备只支持在用户事件内部播放音频，并不支持该例子。</p>
+        </div>
+    </center>
+
+    <section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：定义变量。</div><br />
+                <textarea class="tutorialCode" name="code">
+var queue;
+var displayStatus;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：判断 Sound 类未加载完成，则返回。</div><br />
+                <textarea class="tutorialCode" name="code">
+if (!createjs.Sound.isReady()) {
+    return;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：定义资源清单。</div><br />
+                <textarea class="tutorialCode" name="code">
+var assetsPath = "assets/";
+var manifest = [
+    {id:"music", src:assetsPath+"18-machinae_supremacy-lord_krutors_dominion.mp3|"+assetsPath+"18-machinae_supremacy-lord_krutors_dominion.ogg"}
+]</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：创建 LoadQueue 对象，并将 Sound 类作为插件添加到其中。</div><br />
+                <textarea class="tutorialCode" name="code">
+queue = new createjs.LoadQueue();
+queue.installPlugin(createjs.Sound);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：监听 LoadQueue “完成加载全部文件”，“完成加载单一文件”，“异常”，“加载进度” 4 个事件。</div><br />
+                <textarea class="tutorialCode" name="code">
+queue.addEventListener("complete", loadComplete);
+queue.addEventListener("fileload", fileComplete);
+queue.addEventListener("error",handleFileError);
+queue.addEventListener("progress",handleProgress);
+
+function handleFileError(evt) {
+    // 抛出错误。
+    displayStatus.innerText = "错误 :("
+}
+
+function handleProgress(evt) {
+    // 加载进度。
+    displayStatus.innerText = "已加载: " + (queue.progress.toFixed(2) * 100) + "%";
+}
+
+function loadComplete(evt) {
+    // 加载完成。
+    displayStatus.innerText = "加载完成 :)";
+    playSound("music");
+}
+
+function fileComplete(evt) {}
+
+function playSound(name) {
+    // 利用创建的 ID 播放音频。
+    return createjs.Sound.play("music");
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：开始加载资源。</div><br />
+                <textarea class="tutorialCode" name="code">
+queue.loadManifest(manifest);</textarea>
+        </div>
+    </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+    
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

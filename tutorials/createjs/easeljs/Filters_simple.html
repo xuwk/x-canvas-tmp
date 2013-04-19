@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——EaselJS：滤镜更新</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var img;
+    var stage;
+    var angle;
+    var canvas;
+    var range;
+    var speed;
+
+    function init() {
+        angle = 0;
+        range = 30;
+        speed = 0.1;
+        img = new Image();
+        img.onload = handleImageLoad;
+        img.src = "assets/flowers.jpg";
+    }
+
+    function handleImageLoad() {
+        canvas = document.getElementById("testCanvas");
+        stage = new createjs.Stage(canvas);
+
+        bmp = new createjs.Bitmap(img);
+        bmp.cache(0, 0, img.width, img.height);
+
+        stage.addChild(bmp);
+
+        createjs.Ticker.setFPS(15);
+        createjs.Ticker.addEventListener("tick", tick);
+    }
+
+    function tick() {
+        angle += speed;
+        updateImage();
+    }
+
+    function updateImage() {
+        var value = Math.sin(angle)*range;
+        bmp.updateCache();
+        bmp.filters = [new createjs.BoxBlurFilter(value,  value, 2)];
+        stage.update();
+    }
+
+    init();
+});
+</script>
+</head>
+<body>
+    <center>
+        <header id="header" class="EaselJS">
+            <h1><span class="text-product">Easel<strong>JS</strong></span> 滤镜更新</h1>
+            <p>该示例演示了通过 updateCache() 在每一帧改变滤镜的值。</p>
+        </header>
+        <canvas id="testCanvas" width="960" height="400"></canvas>
+    </center>
+
+    <section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：定义变量，并加载一张图片，同时监听完成加载事件。</div><br />
+                <textarea class="tutorialCode" name="code">
+ var img;
+var stage;
+var angle;
+var canvas;
+var range;
+var speed;
+
+function init() {
+    angle = 0;
+    range = 30;
+    speed = 0.1;
+    img = new Image();
+    img.onload = handleImageLoad;
+    img.src = "assets/flowers.jpg";
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：当图片资源加载完成，在 canvas 上创建一 Stage 对象，再利用加载完成的图片创建一 Bitmap 对象，添加到 Stage 中。</div><br />
+                <textarea class="tutorialCode" name="code">
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);
+
+bmp = new createjs.Bitmap(img);
+bmp.cache(0, 0, img.width, img.height);
+
+stage.addChild(bmp);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：改变步骤二中创建的 Bitmap 对象的滤镜值。</div><br />
+                <textarea class="tutorialCode" name="code">
+var value = Math.sin(angle)*range;
+bmp.updateCache();
+bmp.filters = [new createjs.BoxBlurFilter(value,  value, 2)];
+stage.update();</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：绑定并编写 tick 方法，使得步骤二中创建的 Bitmap 对象的滤镜值能在每一帧对应改变。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Ticker.setFPS(15);
+createjs.Ticker.addEventListener("tick", tick);
+
+function tick() {
+    angle += speed;
+    updateImage();
+}
+
+function updateImage() {
+    var value = Math.sin(angle)*range;
+    bmp.updateCache();
+    bmp.filters = [new createjs.BoxBlurFilter(value,  value, 2)];
+    stage.update();
+}</textarea>
+        </div>
+    </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+    
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

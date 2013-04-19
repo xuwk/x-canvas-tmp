@@ -1,14 +1,13 @@
 xc.module.define("xc.createjs.UID", function(exports) {
 
     /**
-     * Global utility for generating sequential unique ID numbers. The UID class uses a static interface (ex. <code>UID.get()</code>)
-     * and should not be instantiated.
+     * 生成自增唯一ID数的全局工具。UID类使用静态的接口 (例如： <code>UID.get()</code>)且不能被实例化。
      *
      * @class UID
      * @static
      */
     var UID = function() {
-        throw "UID cannot be instantiated.";
+        throw "UID不能被实例化。";
     };
 
     /**
@@ -19,9 +18,9 @@ xc.module.define("xc.createjs.UID", function(exports) {
     UID._nextID = 0;
 
     /**
-     * Returns the next unique id.
+     * 返回下一个唯一ID。
      * @method get
-     * @return {Number} The next unique id
+     * @return {Number} 下一个唯一ID。
      * @static
      */
     UID.get = function() {

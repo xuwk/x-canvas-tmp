@@ -37,6 +37,7 @@
     xc.module.define = function(id, factory) {
         mapping[id] = factory;
     };
+    
     /**
      * 获取模块对象。
      *
@@ -60,5 +61,16 @@
             return cache[id];
         }
         throw "module [" + id + "] not found";
+    };
+    
+    /**
+     * 获取所有模块的标识
+     * 
+     * @method getIds
+     * @static
+     * @return {Array} 所有模块的标识
+     */
+    xc.module.getIds = function () {
+        return Object.keys(mapping);
     };
 })();

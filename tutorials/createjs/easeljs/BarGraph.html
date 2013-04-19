@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——EaselJS：绘制动态条形图</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script>
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var canvas;
+    var stage;
+    var barPadding = 7;
+    var barHeight;
+    var maxValue = 50;
+    var count;
+    var barValues = [];
+    var bars = [];
+
+    function init() {
+        // 创建一个 stage 对象并指向 canvas。
+        canvas = document.getElementById("testCanvas");
+        stage = new createjs.Stage(canvas);
+
+        // 生成 4 到 10 之间随机数。
+        var numBars = Math.random()*6+4|0;
+        var max = 0;
+        for (var i=0; i<numBars; i++) {
+            var val = Math.random()*maxValue+1|0;
+            if (val > max) { max = val; }
+            barValues.push(val);
+        }
+
+        // 根据 canvas 的宽度和条形的数量，计算单个条形的宽度和高度。
+        var barWidth = (canvas.width-150-(numBars-1)*barPadding)/numBars;
+        barHeight = canvas.height-150;
+
+        // 创建一个用于画背景的 shape 对象，并添加到 stage 对象里。
+        var bg = new createjs.Shape();
+        stage.addChild(bg);
+
+        // 绘制条形图底部的框架，留意绘制命令是如何连接起来的。
+        bg.graphics.beginStroke("#444")
+            .moveTo(40, canvas.height-69.5)
+            .lineTo(canvas.width-70, canvas.height-69.5)
+            .endStroke()
+            .beginFill("#222")
+            .moveTo(canvas.width-70, canvas.height-70)
+            .lineTo(canvas.width-60, canvas.height-80)
+            .lineTo(50, canvas.height-80)
+            .lineTo(40, canvas.height-70)
+            .closePath();
+
+        // 绘制背景横线。
+        for (i=0; i<9; i++) {
+            bg.graphics.beginStroke(i%2 ? "#333" : "#444")
+                .moveTo(50,(canvas.height-80-i/8*barHeight|0)+0.5)
+                .lineTo(canvas.width-60,(canvas.height-80-i/8*barHeight|0)+0.5);
+        }
+
+        // 添加标题:
+        label = new createjs.Text("条形图例子", "bold 30px Arial", "#FFF");
+        label.textAlign = "center";
+        label.x = canvas.width/2;
+        label.y = 20;
+        stage.addChild(label);
+
+        // 绘制条形图:
+        for (i=0; i<numBars; i++) {
+            // 每一个条形都是一个 Container，这样操作起来会更方便。
+            var bar = new createjs.Container();
+
+            // 定义每个条形的颜色，并记录下来。
+            var hue = bar.hue = i/numBars*360;
+
+            // 绘制条形图的前置面板，将缩放到合适的比例。
+            var front = new createjs.Shape();
+            front.graphics.beginLinearGradientFill(
+                    [createjs.Graphics.getHSL(hue,100,60,0.9),
+                    createjs.Graphics.getHSL(hue,100,20,0.75)],
+                    [0,1],
+                    0,
+                    -100,
+                    barWidth,0).drawRect(0,-100,barWidth+1,
+                    100);
+
+            // 绘制条形图的顶部，垂直于条形图。
+            var top = new createjs.Shape();
+            top.graphics.beginFill(createjs.Graphics.getHSL(hue,100,70,0.9))
+                .moveTo(10,-10)
+                .lineTo(10+barWidth,-10)
+                .lineTo(barWidth,0)
+                .lineTo(0,0)
+                .closePath();
+
+            // 如果是最大值，将在条形的顶部绘制一颗星。
+            if (barValues[i] == max) {
+                top.graphics.beginFill("rgba(0,0,0,0.45)").drawPolyStar(barWidth/2, 31, 7, 5, 0.6, -90).closePath();
+            }
+
+            // 定义好侧栏，将动态渲染到条形图。
+            var right = new createjs.Shape();
+            right.x = barWidth-0.5;
+
+            // 创建 Text 对象，将添加到条形图的底部。
+            var label = new createjs.Text("Label "+i, "16px Arial", "#FFF");
+            label.textAlign = "center";
+            label.x = barWidth/2;
+            label.maxWidth = barWidth;
+            label.y = 12;
+            label.alpha = 0.5;
+
+            // 创建一个 Shape 对象，用于绘制条形图底部的 tab。
+            var tab = new createjs.Shape();
+            tab.graphics.beginFill(createjs.Graphics.getHSL(hue,100,20))
+                .drawRoundRectComplex(0,1,barWidth,38,0,0,10,10);
+
+            // 创建一个 Text 对象用于标识数值。
+            var value = new createjs.Text("foo","bold 14px Arial","#000");
+            value.textAlign = "center";
+            value.x = barWidth/2;
+            value.alpha = 0.45;
+
+            // 添加所有元素到 Container 里。
+            bar.addChild(right,front,top,value,tab,label);
+
+            // 定位条形图，并添加到 stage 里。
+            bar.x = i*(barWidth+barPadding)+60;
+            bar.y = canvas.height-70;
+
+            stage.addChild(bar);
+            bars.push(bar);
+            // 调用 drawBar 方法。
+            drawBar(bar, 0);
+        }
+
+        // 基于条形数量设立动画计数器。
+        count = numBars*10;
+
+        // 开始执行 tick 并将其指向 window，因此可以在更新 stage 之前进行一系列相关操作。
+        createjs.Ticker.useRAF = true;
+        // 如果使用 requestAnimationFrame, 则必须把 FPS 设置成 60。
+        createjs.Ticker.setFPS(30);
+        createjs.Ticker.addEventListener("tick", tick);
+    }
+
+    // 定义 tick 方法
+    function tick() {
+        // 一旦检测到达最后一帧，则移除 tick 的事件监听。
+        if (--count == 1){ createjs.Ticker.removeEventListener("tick", tick); }
+
+        // 播放条形图动画
+        var c = bars.length*10-count;
+        var index = c/10|0;
+        var bar = bars[index];
+        drawBar(bar, (c%10+1)/10*barValues[index]);
+
+        // 更新 stage。
+        stage.update();
+    }
+
+    function drawBar(bar, value) {
+        // 计算条形的高度:
+        var h = value/maxValue*barHeight;
+
+        // 更新标签值:
+        var val = bar.getChildAt(3);
+        val.text = value|0;
+        val.visible = (h>28);
+        val.y = -h+10;
+
+        // 缩放大小, 以及定位最高点:
+        bar.getChildAt(1).scaleY = h/100;
+        bar.getChildAt(2).y = -h+0.5; // 数值 +0.5 为了消除误差问题。
+
+        // 重新绘制侧栏（因为有角度，我们不能只改变比例）。
+        var right = bar.getChildAt(0);
+        right.graphics.clear()
+            .beginFill(createjs.Graphics.getHSL(bar.hue,60,15,0.7))
+            .moveTo(0,0)
+            .lineTo(0,-h)
+            .lineTo(10,-h-10)
+            .lineTo(10,-10)
+            .closePath();
+    }
+
+    init();
+});
+</script>
+</head>
+    
+<body>
+    <center>
+        <header id="header" class="EaselJS">
+            <h1><span class="text-product">Easel<strong>JS</strong></span> 绘制动态条形图</h1>
+            <p>随机加载数据，使用到<strong>Graphics</strong>, <strong>Shape</strong>, <strong>Text</strong> 以及 <strong>Container</strong> 类构建条形图。
+            </p>
+        </header>
+        <div class="canvasHolder">
+            <canvas id="testCanvas" width="960" height="400"></canvas>
+        </div>
+    </center>
+    
+    <section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一: 定义变量，以及在 canvas 上创建一个 Stage 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas;
+var stage;
+var barPadding = 7;
+var barHeight;
+var maxValue = 50;
+var count;
+var barValues = [];
+var bars = [];
+
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二: 生成 4 到 10 之间随机数。</div><br />
+                <textarea class="tutorialCode" name="code">
+var numBars = Math.random()*6+4|0;
+var max = 0;
+for (var i=0; i<numBars; i++) {
+    var val = Math.random()*maxValue+1|0;
+    if (val > max) { max = val; }
+    barValues.push(val);
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三: 根据 canvas 的宽度和条形的数量，计算单个条形的宽度和高度。</div><br />
+                <textarea class="tutorialCode" name="code">
+var barWidth = (canvas.width-150-(numBars-1)*barPadding)/numBars;
+barHeight = canvas.height-150;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四: 创建一个用于画背景的 shape 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+var bg = new createjs.Shape();
+stage.addChild(bg);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五:绘制条形图底部的框架，留意绘制命令是如何连接起来的。</div><br />
+                <textarea class="tutorialCode" name="code">
+bg.graphics.beginStroke("#444")
+.moveTo(40, canvas.height-69.5)
+.lineTo(canvas.width-70, canvas.height-69.5)
+.endStroke()
+.beginFill("#222")
+.moveTo(canvas.width-70, canvas.height-70)
+.lineTo(canvas.width-60, canvas.height-80)
+.lineTo(50, canvas.height-80)
+.lineTo(40, canvas.height-70)
+.closePath();</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤六: 绘制背景横线。</div><br />
+                <textarea class="tutorialCode" name="code">
+for (i = 0; i < 9; i++) {
+    bg.graphics.beginStroke(i%2 ? "#333" : "#444")
+    .moveTo(50,(canvas.height-80-i/8*barHeight|0)+0.5)
+    .lineTo(canvas.width-60,(canvas.height-80-i/8*barHeight|0)+0.5);
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤七: 添加标题。</div><br />
+                <textarea class="tutorialCode" name="code">
+label = new createjs.Text("条形图例子", "bold 30px Arial", "#FFF");
+label.textAlign = "center";
+label.x = canvas.width/2;
+label.y = 20;
+stage.addChild(label);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤八: 定义画单个条形图方法。</div><br />
+                <textarea class="tutorialCode" name="code">
+function drawBar(bar, value) {
+    // 计算条形的高度:
+    var h = value/maxValue*barHeight;
+
+    // 更新标签值:
+    var val = bar.getChildAt(3);
+    val.text = value|0;
+    val.visible = (h>28);
+    val.y = -h+10;
+
+    // 缩放大小, 以及定位最高点:
+    bar.getChildAt(1).scaleY = h/100;
+    bar.getChildAt(2).y = -h+0.5; // 数值 +0.5 为了消除误差问题。
+
+    // 重新绘制侧栏（因为有角度，我们不能只改变比例）。
+    var right = bar.getChildAt(0);
+    right.graphics.clear()
+        .beginFill(createjs.Graphics.getHSL(bar.hue,60,15,0.7))
+        .moveTo(0,0)
+        .lineTo(0,-h)
+        .lineTo(10,-h-10)
+        .lineTo(10,-10)
+        .closePath();
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤九: 绘制条形图。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 绘制条形图:
+for (i=0; i < numBars; i++) {
+    // 每一个条形都是一个 Container，这样操作起来会更方便。
+    var bar = new createjs.Container();
+
+    // 定义每个条形的颜色，并记录下来。
+    var hue = bar.hue = i/numBars*360;
+
+    // 绘制条形图的前置面板，将缩放到合适的比例。
+    var front = new createjs.Shape();
+    front.graphics.beginLinearGradientFill(
+            [createjs.Graphics.getHSL(hue,100,60,0.9),
+            createjs.Graphics.getHSL(hue,100,20,0.75)],
+            [0,1],
+            0,
+            -100,
+            barWidth,0).drawRect(0,-100,barWidth+1,
+            100);
+
+    // 绘制条形图的顶部，垂直于条形图。
+    var top = new createjs.Shape();
+    top.graphics.beginFill(createjs.Graphics.getHSL(hue,100,70,0.9))
+        .moveTo(10,-10)
+        .lineTo(10+barWidth,-10)
+        .lineTo(barWidth,0)
+        .lineTo(0,0)
+        .closePath();
+
+    // 如果是最大值，将在条形的顶部绘制一颗星。
+    if (barValues[i] == max) {
+        top.graphics.beginFill("rgba(0,0,0,0.45)").drawPolyStar(barWidth/2, 31, 7, 5, 0.6, -90).closePath();
+    }
+
+    // 定义好侧栏，将动态渲染到条形图。
+    var right = new createjs.Shape();
+    right.x = barWidth-0.5;
+
+    // 创建 Text 对象，将添加到条形图的底部。
+    var label = new createjs.Text("Label "+i, "16px Arial", "#FFF");
+    label.textAlign = "center";
+    label.x = barWidth/2;
+    label.maxWidth = barWidth;
+    label.y = 12;
+    label.alpha = 0.5;
+
+    // 创建一个 Shape 对象，用于绘制条形图底部的 tab。
+    var tab = new createjs.Shape();
+    tab.graphics.beginFill(createjs.Graphics.getHSL(hue,100,20))
+        .drawRoundRectComplex(0,1,barWidth,38,0,0,10,10);
+
+    // 创建一个 Text 对象用于标识数值。
+    var value = new createjs.Text("foo","bold 14px Arial","#000");
+    value.textAlign = "center";
+    value.x = barWidth/2;
+    value.alpha = 0.45;
+
+    // 添加所有元素到 Container 里。
+    bar.addChild(right,front,top,value,tab,label);
+
+    // 定位条形图，并添加到 stage 里。
+    bar.x = i*(barWidth+barPadding)+60;
+    bar.y = canvas.height-70;
+
+    stage.addChild(bar);
+    bars.push(bar);
+    // 调用 drawBar 方法。
+    drawBar(bar, 0);
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤十: 条形图动画相关设置。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 基于条形数量设立动画计数器。
+count = numBars*10;
+// 开始执行 tick 并指向 window，因此可以再更新 stage 之前进行一系列相关操作。
+createjs.Ticker.useRAF = true;
+// 如果使用 requestAnimationFrame, 则必须把 FPS 设置成 60。
+createjs.Ticker.setFPS(30);
+createjs.Ticker.addEventListener("tick", tick);
+
+// 定义 tick 方法
+function tick() {
+    // 一旦检测到达最后一帧，则移除 tick 的事件监听。
+    if (--count == 1){ createjs.Ticker.removeEventListener("tick", tick); }
+
+    // 播放条形图动画
+    var c = bars.length*10-count;
+    var index = c/10|0;
+    var bar = bars[index];
+    drawBar(bar, (c%10+1)/10*barValues[index]);
+
+    // 更新 stage
+    stage.update();
+}</textarea>
+        </div>
+    </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+    
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

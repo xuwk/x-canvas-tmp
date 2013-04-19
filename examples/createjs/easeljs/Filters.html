@@ -2,78 +2,69 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>EaselJS Example: Filters test file.</title>
+<title>EaselJS Example: 对文件应用不同的滤镜。</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
 
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
 
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Bitmap = xc.module.require("xc.createjs.Bitmap");
-    var BoxBlurFilter = xc.module.require("xc.createjs.BoxBlurFilter");
-    var ColorFilter = xc.module.require("xc.createjs.ColorFilter");
-    var ColorMatrixFilter = xc.module.require("xc.createjs.ColorMatrixFilter");
-
 	var img;
 
 	function init() {
-		//wait for the image to load
+		//准备加载图片
 		img = new Image();
 		img.onload = handleImageLoad;
 		img.src = "assets/photo.jpg";
 	}
 
 	function handleImageLoad() {
-		//find canvas and load images, wait for last image to load
+		// 获取canvas对象，并加载图片，等待最后一张图片加载完
 		var canvas = document.getElementById("testCanvas");
 
-		// create a new stage and point it at our canvas:
-		stage = new Stage(canvas);
+		// 在该canvas上创建一个场景
+		stage = new createjs.Stage(canvas);
 
-		var bmp = new Bitmap(img);
+		var bmp = new createjs.Bitmap(img);
 		bmp.x = (canvas.width-2*img.width)/3;
 		bmp.y = (canvas.height-2*img.height)/3;
 		stage.addChild(bmp);
 
-
-		var blurFilter = new BoxBlurFilter(32, 2, 2);
+		var blurFilter = new createjs.BoxBlurFilter(32, 2, 2);
 		var margins = blurFilter.getBounds();
 		bmp = bmp.clone();
 		bmp.filters = [blurFilter];
-		// filters are only displayed when the display object is cached
-		// later, you can call updateCache() to update changes to your filters
+		// 滤镜仅仅在已经缓存了的显示对象上展示
+		// 你可以再后面调用updateCache的方法来更新你使用的滤镜效果
 		bmp.cache(margins.x,margins.y,img.width+margins.width,img.height+margins.height);
 		bmp.x += bmp.x+img.width;
 		stage.addChild(bmp);
 
-
-		var greyScaleFilter = new ColorMatrixFilter([
-			0.33,0.33,0.33,0,0, // red
-			0.33,0.33,0.33,0,0, // green
-			0.33,0.33,0.33,0,0, // blue
-			0,0,0,1,0  // alpha
+		var greyScaleFilter = new createjs.ColorMatrixFilter([
+			0.33,0.33,0.33,0,0, // 红
+			0.33,0.33,0.33,0,0, // 绿
+			0.33,0.33,0.33,0,0, // 蓝
+			0,0,0,1,0  // 透明
 		]);
 		bmp = bmp.clone();
 		bmp.filters = [greyScaleFilter];
-		bmp.cache(0,0,img.width,img.height); // color filters don't change the bounds.
+		bmp.cache(0,0,img.width,img.height); // 颜色滤镜不会改变图片的大小
 		bmp.y += bmp.y+img.height;
 		stage.addChild(bmp);
 
-
-		var removeRedFilter = new ColorFilter(0,1,1,1); // red, green, blue, alpha
+		var removeRedFilter = new createjs.ColorFilter(0,1,1,1); // 红、绿、蓝、透明
 		bmp = bmp.clone();
 		bmp.filters = [removeRedFilter];
-		bmp.cache(0,0,img.width,img.height); // color filters don't change the bounds.
+		bmp.cache(0,0,img.width,img.height); // 颜色滤镜不会改变图片的大小
 		bmp.x = (canvas.width-2*img.width)/3;
 		stage.addChild(bmp);
 
-		// draw to the canvas:
+		// 画在canvas上
 		stage.update();
 	}
 
@@ -84,8 +75,8 @@ xc.depends([
 	
 <body>
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Filters</h1>
-	    <p>Demonstrates using filters. Top-left: original. Top-right: <strong>BoxBlurFilter</strong>. Bottom-left: <strong>ColorFilter</strong>. Bottom-right: <strong>ColorMatrixFilter</strong>.</p>
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> 滤镜</h1>
+	    <p>使用滤镜的演示。左上角: 原图。 右上角: <strong>BoxBlurFilter</strong>。 左下角: <strong>ColorFilter</strong>。 右下角: <strong>ColorMatrixFilter</strong>。</p>
 	</header>
 
 	<div class="canvasHolder">

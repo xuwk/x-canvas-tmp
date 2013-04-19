@@ -2,28 +2,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>EaselJS Example: Rollovers and Drag & Drop</title>
+
+<title>EaselJS：翻转，拖拽的实现</title>
 
 <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="../../../src/xc.js"></script>
-
-<script>
+<script type="text/javascript">
 xc.depends([
     "../../../src/core",
     "../../../src/lib/createjs"
 ], function() {
-
-    var Stage = xc.module.require("xc.createjs.Stage");
-    var Bitmap = xc.module.require("xc.createjs.Bitmap");
-    var Container = xc.module.require("xc.createjs.Container");
-    var Ticker = xc.module.require("xc.createjs.Ticker");
-    var Touch = xc.module.require("xc.createjs.Touch");
-
 	var canvas, stage;
 
-	var mouseTarget;	// the display object currently under the mouse, or being dragged
-	var dragStarted;	// indicates whether we are currently in a drag operation
+	var mouseTarget;   // 标识在鼠标下或正在被拖动的显示对象。
+	var dragStarted;   // 标识当前是否正在进行拖动操作。
 	var offset;
 	var update = true;
 
@@ -32,38 +25,35 @@ xc.depends([
 			document.getElementById("header").style.display = "none";
 		}
 		document.getElementById("loader").className = "loader";
-		// create stage and point it to the canvas:
+
+		// 创建一个 Stage 对象并指向 Canvas。
 		canvas = document.getElementById("testCanvas");
 
-		//check to see if we are running in a browser with touch support
-		stage = new Stage(canvas);
+		stage = new createjs.Stage(canvas); // 检查当前浏览器是否支持 Touch 事件。	
+		createjs.Touch.enable(stage); // 如果当前设备支持 Touch 事件，则将其启用。
+		
+		stage.enableMouseOver(10); // 启用 mouseover 事件。
+		stage.mouseMoveOutside = true; // 设置当鼠标离开 Canvas 时，仍跟踪鼠标。
 
-		// enable touch interactions if supported on the current device:
-		Touch.enable(stage);
-
-		// enabled mouse over / out events
-		stage.enableMouseOver(10);
-		stage.mouseMoveOutside = true; // keep tracking the mouse even when it leaves the canvas
-
-		// load the source image:
+		// 加载资源图片。
 		var image = new Image();
 		image.src = "assets/daisy.png";
 		image.onload = handleImageLoad;
 	}
 
 	function stop() {
-		Ticker.removeEventListener("tick", tick);
+		createjs.Ticker.removeEventListener("tick", tick);
 	}
 
 	function handleImageLoad(event) {
 		var image = event.target;
 		var bitmap;
-		var container = new Container();
+		var container = new createjs.Container();
 		stage.addChild(container);
 
-		// create and populate the screen with random daisies:
+		// 创建随机位置的雏菊图片对象，并填充满整个屏幕。
 		for(var i = 0; i < 100; i++){
-			bitmap = new Bitmap(image);
+			bitmap = new createjs.Bitmap(image);
 			container.addChild(bitmap);
 			bitmap.x = canvas.width * Math.random()|0;
 			bitmap.y = canvas.height * Math.random()|0;
@@ -75,17 +65,17 @@ xc.depends([
 			bitmap.cursor = "pointer";
 
 			bitmap.addEventListener("mousedown", function(evt) {
-				// bump the target in front of it's siblings:
+				// 调整目标对象到所有子对象的最前面。
 				var o = evt.target;
 				o.parent.addChild(o);
 				var offset = {x:o.x-evt.stageX, y:o.y-evt.stageY};
 
-				// add a listener to the event object's mouseMove event
-				// this will be active until the user releases the mouse button:
+				// 对目标对象监听 mousemove 事件。
+				// 在用户松开鼠标按钮之前都是有效的。
 				evt.addEventListener("mousemove", function(ev) {
 					o.x = ev.stageX+offset.x;
 					o.y = ev.stageY+offset.y;
-					// indicate that the stage should be updated on the next tick:
+					// 设置 Stage 在下一个 tick 里需要更新。
 					update = true;
 				});
 			});
@@ -101,17 +91,16 @@ xc.depends([
 				o.scaleX = o.scaleY = o.scale;
 				update = true;
 			});
-
 		}
 
 		document.getElementById("loader").className = "";
-		Ticker.addEventListener("tick", tick);
+		createjs.Ticker.addEventListener("tick", tick);
 	}
 
 	function tick() {
-		// this set makes it so the stage only re-renders when an event handler indicates a change has happened.
+		// 通过 update 属性控制 Stage 只在有子对象绑定事件的情况下才更新。
 		if (update) {
-			update = false; // only update once
+			update = false; // 设置只更新一次。
 			stage.update();
 		}
 	}
@@ -122,14 +111,11 @@ xc.depends([
 </head>
 
 <body>
-
 	<div id="loader"></div>
-
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Drag &amp; Drop Example</h1>
-	    <p>Example of implementing drag &amp; drop using mouse events such as <strong>onPress</strong>, <strong>onMouseUp</strong>, and <strong>onMouseMove</strong>. Some browsers do not allow access to pixel data when running local files, and may throw a security error or not work unless the content is running on a server.</p>
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> 翻转，拖拽的实现</h1>
+	    <p>该例子展示了通过 <strong>mousedown</strong> <strong>mousemove</strong> 鼠标事件实现拖拽效果。某些浏览器不支持在本地环境加载图片，或获取图片数据，可能抛出安全性错误，遇到这种情况在服务器下运行该文件即可。</p>
 	</header>
-
 	<div class="canvasHolder">
 		<canvas id="testCanvas" width="960" height="400"></canvas>
 	</div>

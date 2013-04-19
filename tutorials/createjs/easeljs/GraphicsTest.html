@@ -1,0 +1,307 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——EaselJS：图形测试</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var canvas;
+    var stage;
+    var img;
+
+    function init() {
+        canvas = document.getElementById("testCanvas");
+        // 在canvas上创建一个新的场景
+        stage = new createjs.Stage(canvas);
+
+        // 获取长宽以备后续的计算使用
+        w = canvas.width;
+        h = canvas.height;
+        img = new Image();
+        img.onload = layout;
+        img.src = "./assets/daisy.png";
+    }
+
+    function layout() {
+        var arr = [createStar, createHex, createLineTo, createRadialGradientFill, createEllipse, createRectGradientFill, createBitmapFill];
+        var padding = 5;
+        var _width = 155;
+        var _height = 155;
+        var cols = 4;
+        var space = 0;
+        var l = arr.length;
+
+        var border = createBorder();
+
+        for(var i=0;i<l;i++) {
+            var tile = arr[i]();
+            tile.x = 42+(_width + padding) *(i%cols);
+            tile.y = 42+(i/cols | 0) * (_height+padding);
+            stage.addChild(tile);
+        }
+        stage.addChild(border);
+        stage.update();
+    }
+
+    function createBorder() {
+        var container = new createjs.Container();
+        var s = new createjs.Shape();
+        s.graphics.beginBitmapStroke(img).setStrokeStyle(32).drawRect(20,20,920,360);
+        container.addChild(s);
+        return container;
+    }
+
+    function createBitmapFill() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.beginBitmapFill(img).setStrokeStyle(8).beginRadialGradientStroke(["#FFF","#000"],[0,1],0,0,0,0,30,130).drawRect(0, 0, 130, 130);
+        s.x = 12;
+        s.y = 10;
+        container.addChild(s);
+        return container;
+    }
+
+    function createRectGradientFill() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.beginLinearGradientFill(["#FFF","#000"],[0,1],0,0,0,130).drawRect(0,0,130,130);
+        s.x = 12;
+        s.y = 10;
+        container.addChild(s);
+        return container;
+    }
+
+    function createEllipse() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.f(createjs.Graphics.getRGB(0,0x66,0x99,0.5)).setStrokeStyle(4).beginLinearGradientStroke(["#F00","#000"],[0,1],0,0,70,140).drawEllipse(0,0,70,140,8);
+        s.x = 40;
+        s.y = 10;
+        container.addChild(s);
+        return container;
+    }
+
+    function createRadialGradientFill() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.ss(8).beginStroke("#f0f").beginRadialGradientFill(["#FFF","#0FF"],[0,1],0,0,0,0,0,40).drawCircle(0,0,40);
+        s.x = s.y = 80;
+        container.addChild(s);
+        return container;
+    }
+
+    function createLineTo() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.setStrokeStyle(16, "round", "round").beginStroke("#f90").moveTo(20,10).lineTo(90,90).lineTo(90,140);
+        container.addChild(s);
+        return container;
+    }
+
+    function createHex() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.beginFill("#0F0").drawPolyStar(0,0,40,6).drawPolyStar(0,75,40,6);
+        s.x = 80
+        s.y = 40;
+
+        container.addChild(s);
+        return container;
+    }
+
+    function createStar() {
+        var container = createTile();
+        var s = new createjs.Shape();
+        s.graphics.setStrokeStyle(1).beginStroke(createjs.Graphics.getRGB(255, 255, 0)).beginFill("#FF0").endStroke().drawPolyStar(0,0,80,5,0.6,-90);
+        s.x = 80
+        s.y = 85;
+
+        container.addChild(s);
+        return container;
+    }
+
+    function createTile() {
+        var container = new createjs.Container();
+        var bg = new createjs.Shape();
+        bg.graphics.beginFill('#CCCCCC').drawRect(0, 0, 155, 155).endFill();
+        bg.alpha = 0.25;
+        container.addChild(bg);
+        return container;
+    }
+    init();
+});
+</script>
+</head>
+<body>
+    <center>
+        <header id="header" class="EaselJS">
+            <h1><span class="text-product">Easel<strong>JS</strong></span> 图形测试</h1>
+            <p>这个示例展示了所有<b>Graphics</b>接口的使用方法。</p>
+        </header>
+        <div class="canvasHolder">
+            <canvas id="testCanvas" width="960" height="400"></canvas>
+        </div>
+    </center>
+
+    <section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：定义变量，在 canvas 上创建一个 stage 对象，加载一张图片，定义绘制背景框方法。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas;
+var stage;
+var img;
+
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);
+
+img = new Image();
+img.onload = layout;
+img.src = "./assets/daisy.png";
+
+function createTile() {
+    var container = new createjs.Container();
+    var bg = new createjs.Shape();
+    bg.graphics.beginFill('#CCCCCC').drawRect(0, 0, 155, 155).endFill();
+    bg.alpha = 0.25;
+    container.addChild(bg);
+    return container;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：绘制边框。</div><br />
+                <textarea class="tutorialCode" name="code">
+function createBorder() {
+    var container = new createjs.Container();
+    var s = new createjs.Shape();
+    s.graphics.beginBitmapStroke(img).setStrokeStyle(32).drawRect(20,20,920,360);
+    container.addChild(s);
+    return container;
+}</textarea>
+        </div>
+         
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：测试绘制星星。</div><br />
+                <textarea class="tutorialCode" name="code">
+function createStar() {
+    var container = createTile();
+    var s = new createjs.Shape();
+    s.graphics.setStrokeStyle(1).beginStroke(createjs.Graphics.getRGB(255, 255, 0)).beginFill("#FF0").endStroke().drawPolyStar(0,0,80,5,0.6,-90);
+    s.x = 80
+    s.y = 85;
+    container.addChild(s);
+    return container;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：绘制六角形。</div><br />
+                <textarea class="tutorialCode" name="code">
+function createHex() {
+    var container = createTile();
+    var s = new createjs.Shape();
+    s.graphics.beginFill("#0F0").drawPolyStar(0,0,40,6).drawPolyStar(0,75,40,6);
+    s.x = 80
+    s.y = 40;
+
+    container.addChild(s);
+    return container;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：绘制线段。</div><br />
+                <textarea class="tutorialCode" name="code">
+function createLineTo() {
+    var container = createTile();
+    var s = new createjs.Shape();
+    s.graphics.setStrokeStyle(16, "round", "round").beginStroke("#f90").moveTo(20,10).lineTo(90,90).lineTo(90,140);
+    container.addChild(s);
+    return container;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：径向渐变填充。</div><br />
+                <textarea class="tutorialCode" name="code">
+function createRadialGradientFill() {
+    var container = createTile();
+    var s = new createjs.Shape();
+    s.graphics.ss(8).beginStroke("#f0f").beginRadialGradientFill(["#FFF","#0FF"],[0,1],0,0,0,0,0,40).drawCircle(0,0,40);
+    s.x = s.y = 80;
+    container.addChild(s);
+    return container;
+}</textarea>
+        </div>
+        
+         <div class="tutorialBody">
+            <div class="tutorialTitle">步骤六：绘制椭圆。</div><br />
+                <textarea class="tutorialCode" name="code">
+function createEllipse() {
+    var container = createTile();
+    var s = new createjs.Shape();
+    s.graphics.f(createjs.Graphics.getRGB(0,0x66,0x99,0.5)).setStrokeStyle(4).beginLinearGradientStroke(["#F00","#000"],[0,1],0,0,70,140).drawEllipse(0,0,70,140,8);
+    s.x = 40;
+    s.y = 10;
+    container.addChild(s);
+    return container;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤七：矩形渐变填充。</div><br />
+                <textarea class="tutorialCode" name="code">
+function createRectGradientFill() {
+    var container = createTile();
+    var s = new createjs.Shape();
+    s.graphics.beginLinearGradientFill(["#FFF","#000"],[0,1],0,0,0,130).drawRect(0,0,130,130);
+    s.x = 12;
+    s.y = 10;
+    container.addChild(s);
+    return container;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤八：Bitmap 对象填充。</div><br />
+                <textarea class="tutorialCode" name="code">
+ function createBitmapFill() {
+    var container = createTile();
+    var s = new createjs.Shape();
+    s.graphics.beginBitmapFill(img).setStrokeStyle(8).beginRadialGradientStroke(["#FFF","#000"],[0,1],0,0,0,0,30,130).drawRect(0, 0, 130, 130);
+    s.x = 12;
+    s.y = 10;
+    container.addChild(s);
+    return container;
+}</textarea>
+        </div>
+    </section>
+      
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

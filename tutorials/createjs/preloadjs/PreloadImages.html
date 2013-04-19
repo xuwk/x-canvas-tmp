@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——>PreloadJS: 加载图片</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link rel="stylesheet" href="./assets/demoStyles.css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var loaderBar;
+    var stage;
+    var bar;   
+    var imageContainer;
+    var currentImage;
+    var loaderWidth;
+    var loaderColor;
+    var borderPadding;
+    var preload;
+    var oldItem;
+
+    function init() {
+
+        manifest = [
+            {src:"./assets/image0.jpg", id:"image0"},
+            {src:"./assets/image1.jpg", id:"image1"},
+            {src:"./assets/image2.jpg", id:"image2"},
+            {src:"./assets/image3.jpg", id:"image3"}
+        ];
+
+        canvas = document.getElementById('myCanvas');
+        stage = new createjs.Stage(canvas);
+        stage.enableMouseOver(10);
+
+        borderPadding = 10;
+
+        var barHeight = 20;
+        loaderColor = createjs.Graphics.getRGB(247,247,247);
+        loaderBar = new createjs.Container();
+
+        bar = new createjs.Shape();
+        bar.graphics.beginFill(loaderColor).drawRect(0, 0, 1, barHeight).endFill();
+
+        imageContainer = new createjs.Container();
+        imageContainer.x = 430;
+        imageContainer.y = 200;
+
+        loaderWidth = 300;
+        stage.addChild(imageContainer);
+
+        var bgBar = new createjs.Shape();
+        var padding = 3
+        bgBar.graphics.setStrokeStyle(1).beginStroke(loaderColor).drawRect(-padding/2, -padding/2, loaderWidth+padding, barHeight+padding);
+
+        loaderBar.x = canvas.width - loaderWidth>>1;
+        loaderBar.y = canvas.height - barHeight>>1; 
+        loaderBar.addChild(bar, bgBar);    
+
+        stage.addChild(loaderBar);
+
+        preload = new createjs.LoadQueue(false); // 使用标签加载代替
+
+        preload.addEventListener("progress", handleProgress);
+        preload.addEventListener("complete", handleComplete);
+        preload.addEventListener("fileload", handleFileLoad);
+        preload.loadManifest(manifest);
+
+        createjs.Ticker.setFPS(30);
+    }
+
+    function stop() {
+        if (preload != null) { preload.close(); }
+    }
+
+    function handleProgress(event) {
+        bar.scaleX = (event.loaded)*(loaderWidth);
+    }
+
+    function handleFileLoad(event) {
+        var img = new Image();
+        img.onload = handleLoadComplete;
+        img.src = event.item.src;
+    }
+
+    function handleLoadComplete(event) {
+        var movieClip = new createjs.Container();
+        var _w = this.width;
+        var _h = this.height;
+        
+        var bmp = new createjs.Bitmap(this);
+        bmp.scaleX = bmp.scaleY = .75;
+        bmp.regX = _w/2;
+        bmp.regY = _h/2;
+        bmp.addEventListener("click", handleClick);
+        bmp.rotation = Math.random() * 16 - 8;
+        bmp.cursor = "pointer";
+
+        var border = new createjs.Shape();
+        border.graphics.beginFill("#FFFFFF").drawRect(0, 0, _w + borderPadding, _h + borderPadding).endFill();
+        border.rotation = bmp.rotation;
+        border.regX = _w/2;
+        border.regY = _h/2;
+        
+        bmp.x = bmp.y = (borderPadding/2) * bmp.scaleX;
+
+        border.scaleX = border.scaleY =  bmp.scaleX;
+        border.shadow = new createjs.Shadow('#000000', 0, 0, 2.5);
+
+        movieClip.addChild(border, bmp);
+
+        imageContainer.addChild(movieClip); 
+        stage.update();     
+    }
+
+    function handleClick(event) {
+        currentItem = event.target.parent;
+        var tween = createjs.Tween.get(currentItem, {override:true}).to({y:-350}, 200).call(tweenUpComplete).to({y:0}, 500);
+        tween.addEventListener("change", handleTweenChange);
+    }        
+    
+    function handleTweenChange(tween) {
+        stage.update();           
+    }
+
+    function tweenUpComplete() {
+        imageContainer.addChildAt(currentItem, 0);
+    }
+
+    function handleComplete(event) {
+        loaderBar.visible = false;
+    }
+    
+    init();
+});
+</script>
+</head>
+<body>
+    <center>
+        <header id="header" class="PreloadJS">
+            <h1><span class="text-product">Preload<strong>JS</strong></span> 加载图片</h1>
+            <p>在这个示例里面，加载了若干张图片，并且在加载完成时把它们添加到canvas的场景中。点击图片可以看下一张。
+                注：当加载本地的图片时，确保PreloadJS是使用标签加载，这样可以避免跨域的错误。图片上的鼠标交互同样
+                无法在本地操作上完成。</p>
+        </header>
+        <canvas id="myCanvas" width="960" height="400"></canvas>
+    </center>
+
+    <section id="header" class="EaselJS">
+        <center>
+             <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一: 定义变量。并在 canvas 上创建一个 Stage 对象，同时启用 mouseOver 事件。</div><br />
+                <textarea class="tutorialCode" name="code">
+var loaderBar;
+var stage;
+var bar;   
+var imageContainer;
+var currentImage;
+var loaderWidth;
+var loaderColor;
+var borderPadding;
+var preload;
+var oldItem;
+
+canvas = document.getElementById('myCanvas');
+stage = new createjs.Stage(canvas);
+stage.enableMouseOver(10);</textarea>
+        </div>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二: 定义资源清单。</div><br />
+                <textarea class="tutorialCode" name="code">
+manifest = [
+    {src:"./assets/image0.jpg", id:"image0"},
+    {src:"./assets/image1.jpg", id:"image1"},
+    {src:"./assets/image2.jpg", id:"image2"},
+    {src:"./assets/image3.jpg", id:"image3"}
+];</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三: 创建一个 PreloadJS 的实例。</div><br />
+                <textarea class="tutorialCode" name="code">
+preload = new createjs.LoadQueue(false);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四: 监听并显示加载进度。</div><br />
+                <textarea class="tutorialCode" name="code">
+preload.addEventListener("progress", handleProgress);
+
+function handleProgress(event) {
+    bar.scaleX = (event.loaded)*(loaderWidth);
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五: 监听全部资源加载完成，移除进度条。</div><br />
+                <textarea class="tutorialCode" name="code">
+preload.addEventListener("complete", handleComplete);
+
+function handleComplete(event) {
+    loaderBar.visible = false;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤六: 监听加载单个文件成功。若成功，则在 Stage 对应位置显示图片。</div><br />
+                <textarea class="tutorialCode" name="code">
+preload.addEventListener("fileload", handleFileLoad);
+
+function handleFileLoad(event) {
+    var img = new Image();
+    img.onload = handleLoadComplete;
+    img.src = event.item.src;
+}
+
+function handleLoadComplete(event) {
+    var movieClip = new createjs.Container();
+    var _w = this.width;
+    var _h = this.height;
+    
+    var bmp = new createjs.Bitmap(this);
+    bmp.scaleX = bmp.scaleY = .75;
+    bmp.regX = _w/2;
+    bmp.regY = _h/2;
+    bmp.addEventListener("click", handleClick);
+    bmp.rotation = Math.random() * 16 - 8;
+    bmp.cursor = "pointer";
+
+    var border = new createjs.Shape();
+    border.graphics.beginFill("#FFFFFF").drawRect(0, 0, _w + borderPadding, _h + borderPadding).endFill();
+    border.rotation = bmp.rotation;
+    border.regX = _w/2;
+    border.regY = _h/2;
+    
+    bmp.x = bmp.y = (borderPadding/2) * bmp.scaleX;
+
+    border.scaleX = border.scaleY =  bmp.scaleX;
+    border.shadow = new createjs.Shadow('#000000', 0, 0, 2.5);
+
+    movieClip.addChild(border, bmp);
+
+    imageContainer.addChild(movieClip); 
+    stage.update();     
+}</textarea>
+        </div>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤七: 设置点击图片效果。</div><br />
+                <textarea class="tutorialCode" name="code">
+function handleClick(event) {
+    currentItem = event.target.parent;
+    var tween = createjs.Tween.get(currentItem, {override:true}).to({y:-350}, 200).call(tweenUpComplete).to({y:0}, 500);
+    tween.addEventListener("change", handleTweenChange);
+}        
+
+function handleTweenChange(tween) {
+    stage.update();           
+}
+
+function tweenUpComplete() {
+    imageContainer.addChildAt(currentItem, 0);
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤八: 开始加载图片。</div><br />
+                <textarea class="tutorialCode" name="code">
+preload.loadManifest(manifest);</textarea>
+        </div>
+    </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

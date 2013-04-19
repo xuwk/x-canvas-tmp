@@ -1,86 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>EaselJS Example: Flipping a sprite sheet</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS：翻转图片精灵</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../src/easeljs/utils/UID.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Matrix2D.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/EventDispatcher.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/DisplayObject.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Container.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Stage.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/MouseEvent.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/SpriteSheet.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Rectangle.js"></script>
-	<script type="text/javascript" src="../src/easeljs/utils/SpriteSheetUtils.js"></script>
-
-		<!-- We also provide hosted minified versions of all CreateJS libraries.
-		  http://code.createjs.com -->
-
-
-	<script>
-
-	var imgSeq = new Image();		//bmp of the sprite sheet
-	var results;				//frame data to be displayed
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var imgSeq = new Image();		//图片精灵对象
+	var results;				//需要显示的帧数据
 	var imageSrc = "assets/runningGrantSmall.png";
 
 	function init() {
 		document.getElementById('origImage').src = imageSrc;
 
-		//wait for the image to load
+		//等待图片加载完毕
 		imgSeq.onload = handleImageLoad;
 		imgSeq.src = imageSrc;
 	}
 
 	function handleImageLoad() {
-		// create a new sprite sheet from the loaded image, and define the animation sequences in it.
-		// for example, {walkUpRight:[0,19]} defines an animation sequence called "walkUpRight" that
-		// will play back frames 0 to 19 inclusive.
-		var spriteSheet  = new createjs.SpriteSheet(
-				{"animations":
-					{
-					"run": [0, 15]},
-					"images": ["assets/runningGrantSmall.png"],
-					"frames":
-					{
-						"regX": 0,
-						"regY": 0,
-						"width": 51,
-						"height": 90,
-						"count": 16
-					}
-				}
-		);
+	    // 从加载的图片中创建一个新的图片精灵对象，并在里面定义动画序列。例如，{walkUpRight:[0,19]}定义了一组叫“walkUpRight”的
+	    // 动画，这个动画会回放0-19帧。
+		var spriteSheet  = new createjs.SpriteSheet({
+			"animations": {
+			    "run": [0, 15]
+			},
+			"images": ["assets/runningGrantSmall.png"],
+			"frames": {
+				"regX": 0,
+				"regY": 0,
+				"width": 51,
+				"height": 90,
+				"count": 16
+			}
+		});
 
-		// append flipped frames to the sprite sheet. The 2nd, 3rd, and 4th params indicate whether
-		// to add horizontal, vertical, and both horizontally & vertically flipped frames.
+        // 把翻转的帧添加到图片精灵上。第二、三、四个参数分别代表需要从水平方向、垂直方向、水平垂直方向翻转帧。
 		createjs.SpriteSheetUtils.addFlippedFrames(spriteSheet, true, false, false);
 
-		// add the newly created sprite sheet to the bottom of this document. We're accessing a private property "_images"
-		// for demonstration purposes only.
+        // 把新创建的图片精灵添加到当前DOM的底部。我们使用一个私有属性“_images”作展示用途。
 		document.getElementById("content").appendChild(spriteSheet._images[1]);
 	}
-
-	</script>
+    init();
+});
+</script>
 </head>
 
-
-<body onload="init();" bgcolor="#FFFFFF">
+<body bgcolor="#FFFFFF">
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> SpriteSheet Flip Sample</h1>
-	    <p>Tests using the <strong>SpriteSheetUtils.flip()</strong> method to extend a loaded sprite sheet with horizontally flipped frames.
-		    The top row of frames is from the original sprite sheet, the bottom is the generated frames.
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> 翻转图片精灵</h1>
+	    <p>测试使用<strong>SpriteSheetUtils.flip()</strong>方法来把一个加载好的图片精灵进行水平翻转操作。
+	           上面一排的帧展示的是原始的图片精灵，底部的是生成的。
 	    </p>
 	</header>
-
 	<div class="content">
 		<div id="content" style="margin-top: 90px; margin-left: 70px; font-weight: bold;">
-			Original sprite sheet<br/><br/>
+			原始图片<br/><br/>
 			<img id="origImage"><br/><br/><br/>
-			Appended sprites<br/><br/>
+			附加图片<br/><br/>
 		</div>
 	</div>
 </body>
