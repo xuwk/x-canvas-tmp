@@ -51,15 +51,15 @@ xc.depends([
 			.to({x:500,y:200,alpha:0.1},1000,createjs.Ease.get(1)) // 通过 ease out 的方式在 1 秒内改变目标对象的 x/y/alpha 属性。
 			.to({x:0},1000,createjs.Ease.get(-1)) // 利用 ease in 方式在 0.5 秒内改变 x 值。
 			.to({y:400}) // 将 y 属性改为 400 （默认过渡时间为 0）。
-			.call(console.log, ["wait..."], console) // 执行 console.log("wait...")。
+			.call(console.log, ["等待..."], console) // 执行 console.log("wait...")。
 			.wait(800) // 等待 0.8 秒。
 			.to({y:0,alpha:1},300) // 补间 y/alpha 属性，持续 0.3 秒。
-			.call(console.log, ["done!"],console) // 执行 console.log("done!");
+			.call(console.log, ["完成!"],console) // 执行 console.log("done!");
 
 		// 这个 Tween 实际上没有执行任何东西，它只是序列化了一系列的 action：
 		// 注：ignoreGlobalPause 属性设置了为 true，所以它会在 Ticker 暂停的时候仍然继续执行。
 		createjs.Tween.get(txt,{loop:true, ignoreGlobalPause:true}) // 获取 Tween 的目标对象 txt。
-			.to({text:"the new engine"},1500) // 1.5 秒后改变 text。
+			.to({text:"createjs"},1500) // 1.5 秒后改变 text。
 			.set({visible:false},highlight) // 设置 heighlight 的 visible = false。
 			.to({text:"http://xc.uc.cn"},1500) // 1.5 秒后改变 text。
 			.to({text:"X-Canvas"},1500).set({visible:true},highlight); // 1.5 秒后怪变 text，并且设置 highlight 的 visible=true。
@@ -88,7 +88,7 @@ xc.depends([
 		    <p>该例子演示了如何利用 TweenJS 的动画，延迟和回调。</p>
 		</header>
 		<canvas id="canvas1" width="960" height="350" style="border: 5px white solid;"></canvas><br/>
-		<input type="button" value="toggle paused" onclick="createjs.Ticker.setPaused(!createjs.Ticker.getPaused());">
+		<input type="button" value="暂停" onclick="createjs.Ticker.setPaused(!createjs.Ticker.getPaused());">
 	</center>
 
 	<section id="header" class="EaselJS">
@@ -137,10 +137,10 @@ createjs.Tween.get(circle, {loop:true}, true) // 获取新的目标对象。
 	.to({x:500,y:200,alpha:0.1},1000,createjs.Ease.get(1)) // 通过 ease out 的方式在 1 秒内改变目标对象的 x/y/alpha 属性。
 	.to({x:0},1000,createjs.Ease.get(-1)) // 利用 ease in 方式在 0.5 秒内改变 x 值。
 	.to({y:400}) // 将 y 属性改为 400 （默认过渡时间为 0）。
-	.call(console.log, ["wait..."], console) // 执行 console.log("wait...")。
+	.call(console.log, ["等待..."], console) // 执行 console.log("wait...")。
 	.wait(800) // 等待 0.8 秒。
 	.to({y:0,alpha:1},300) // 补间 y/alpha 属性，持续 0.3 秒。
-	.call(console.log, ["done!"],console) // 执行 console.log("done!");</textarea>
+	.call(console.log, ["完成!"],console) // 执行 console.log("done!");</textarea>
         </div>
 
         <div class="tutorialBody">
@@ -148,7 +148,7 @@ createjs.Tween.get(circle, {loop:true}, true) // 获取新的目标对象。
                 <textarea class="tutorialCode" name="code">
 // 注：ignoreGlobalPause 属性设置了为 true，所以它会在 Ticker 暂停的时候仍然继续执行。
 createjs.Tween.get(txt,{loop:true, ignoreGlobalPause:true}) // 获取 Tween 的目标对象 txt。
-	.to({text:"the new engine"},1500) // 1.5 秒后改变 text。
+	.to({text:"createjs"},1500) // 1.5 秒后改变 text。
 	.set({visible:false},highlight) // 设置 heighlight 的 visible = false。
 	.to({text:"http://xc.uc.cn"},1500) // 1.5 秒后改变 text。
 	.to({text:"X-Canvas"},1500).set({visible:true},highlight); // 1.5 秒后怪变 text，并且设置 highlight 的 </textarea>
@@ -161,6 +161,11 @@ createjs.Ticker.setFPS(20);
 createjs.Ticker.addEventListener("tick", stage);</textarea>
 	    </div>
     </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
 
 <script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>

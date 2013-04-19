@@ -56,7 +56,7 @@ xc.depends([
     function playSound(evt) {
         if (evt.src == src) {
             soundInstance = createjs.Sound.play(src);  // 开始播放加载完成的音频，并保存音频实例。
-            displayStatus.innerText = "Playing source: " + evt.src;  // 显示正在播放的音频路径。
+            displayStatus.innerText = "资源路径：" + evt.src;  // 显示正在播放的音频路径。
         }
     }
 
@@ -133,6 +133,11 @@ function playSound(evt) {
         </div>  
     </section>
     
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+
 <script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
 </html>
