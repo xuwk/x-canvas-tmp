@@ -210,7 +210,6 @@ function addSparkles(count, x, y, speed) {
                 <textarea class="tutorialCode" name="code">
 stage.addEventListener("stagemousemove", moveCanvas);
 
-//星星轨迹
 function moveCanvas(evt) {
 	addSparkles(Math.random()*2+1|0, stage.mouseX, stage.mouseY,1);
 }</textarea>
@@ -221,7 +220,6 @@ function moveCanvas(evt) {
                 <textarea class="tutorialCode" name="code">
 stage.addEventListener("stagemousedown", clickCanvas);
 
-//星星轨迹
 function clickCanvas(evt) {
 	addSparkles(Math.random()*200+100|0, stage.mouseX, stage.mouseY,2);
 }</textarea>
