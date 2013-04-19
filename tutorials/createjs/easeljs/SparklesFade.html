@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS：BitmapAnimation 星星示例（消退）</title>
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var canvas, stage, oldX=0;
+
+	var imgSeq = new Image();		// 作为那些星星动画的图片
+	var bmpAnim;						// 用作克隆使用的星星动画模板
+
+	function init() {
+		// 在canvas上创建一个场景
+		canvas = document.getElementById("testCanvas");
+		stage = new createjs.Stage(canvas);
+        stage.enableDOMEvents(true);
+        // 开始加载图片精灵，等待其加载完毕
+		imgSeq.onload = handleImageLoad;
+		imgSeq.src = "assets/sparkle_21x23.png";
+	}
+
+	function handleImageLoad() {
+		// 对canvas添加鼠标事件
+        // 为了跨平台，相对于直接在canvas上添加，更建议使用以下方式：
+		stage.addEventListener("stagemousemove", moveCanvas);
+		stage.addEventListener("stagemousedown", clickCanvas);
+
+        // 创建一个覆盖整个场景的黑色半透明矩形
+		// 在每次循环的时候画上这个会使canvas褪回黑色
+		var shape = new createjs.Shape(new createjs.Graphics().beginFill('#333').drawRect(0,0,canvas.width+1,canvas.height));
+		shape.alpha = 0.35;
+		stage.addChild(shape);
+
+        // 这个是用来阻止场景在每次循环中的自我清空行为
+		// 在这个示例中，它在星星的足迹上体现，那些之前画上去的还一直停留在屏幕上
+		stage.autoClear = false;
+
+		// 定义了需要使用的简单的图片精灵数据、帧的尺寸和该帧在场景上的坐标
+        // 系统会自动从图片集中计算帧的数量并循环播放
+		var data = {
+			images: ["assets/sparkle_21x23.png"],
+			frames: {width:21,height:23,regX:10,regY:11}
+		}
+        
+        // 设置一个动画实例，方便我们进行克隆
+		bmpAnim = new createjs.BitmapAnimation(new createjs.SpriteSheet(data));
+
+		// 开始进入主循环
+		createjs.Ticker.addEventListener("tick", tick);
+	}
+
+	function tick() {
+		var h = canvas.height;
+		var w = canvas.width;
+
+		// 对场景上的所有星星进行遍历
+		var l = stage.getNumChildren();
+		for (var i=l-1; i>0; i--) {
+			var sparkle = stage.getChildAt(i);
+
+			// 应用重力和摩擦力
+			sparkle.vY += 2;
+			sparkle.vX *= 0.98;
+
+			// 更新位置、缩放和透明度
+			sparkle.x += sparkle.vX;
+			sparkle.y += sparkle.vY;
+			sparkle.alpha += sparkle.vA;
+
+
+			//把已经隐藏或停止的星星移除掉
+			if (sparkle.alpha <= 0 || sparkle.y>=h && sparkle.vY < 10) {
+				stage.removeChildAt(i);
+			}
+			
+			//把星星从底部反弹回去
+			if (sparkle.y > h) {
+				sparkle.vY *= -(Math.random()*0.4+0.4);
+				sparkle.y -= sparkle.y%h;
+			}
+			if (sparkle.x >= w || sparkle.x <= 0) { sparkle.vX *= -1; }
+		}
+
+		// 把更新的内容描绘到场景上
+		stage.update();
+	}
+
+	//星星爆炸
+	function clickCanvas(evt) {
+		addSparkles(Math.random()*100+100|0, evt.stageX, evt.stageY, 2, 0);
+	}
+
+	//星星轨迹
+	function moveCanvas(evt) {
+		addSparkles(Math.random()*2+1|0, evt.stageX, evt.stageY, 1, evt.stageX-oldX);
+		oldX = evt.stageX;
+	}
+
+	function addSparkles(count, x, y, speed, velX) {
+		//创建指定数量的星星
+		for (var i=0; i<count; i++) {
+			// 复制原始的星星，这样我们就不用共享那些属性了
+			var sparkle = bmpAnim.clone();
+
+			// 设置显示属性
+			sparkle.x = x;
+			sparkle.y = y;
+			sparkle.alpha = Math.random()*0.5+0.5;
+			sparkle.scaleX = sparkle.scaleY = Math.random()+0.3;
+			sparkle.compositeOperation = "lighter";
+
+			// 设置速率
+			var a = Math.PI*2*Math.random();
+			var v = (Math.random()-0.5)*30*speed;
+			sparkle.vX = Math.cos(a)*v+velX;
+			sparkle.vY = Math.sin(a)*v;
+			sparkle.vA = -Math.random()*0.05-0.01; // 透明度
+
+			// 在一个随机的帧上开始动画
+			sparkle.gotoAndPlay(Math.random()*sparkle.spriteSheet.getNumFrames()|0);
+
+			// 添加到显示列表
+			stage.addChild(sparkle);
+		}
+	}
+	init();
+});
+</script>
+</head>
+
+<body>
+	<center>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> BitmapAnimation 星星示例（消退）</h1>
+		    <p>跟sparkles.html类似，展示了把<strong>Stage.autoClear</strong>设为false时的效果。尝试移动鼠标和点击鼠标，注：那个半透明的黑色矩形<strong>Shape</strong>是画在每帧里面所有图形之上的，会把它们褪回黑色
+		    </p>
+		</header>
+		<div class="canvasHolder">
+			<canvas id="testCanvas" width="960" height="400"></canvas>
+		</div>
+	</center>
+
+	<section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：定义变量，在 canvas 上创建一个 stage 对象，同时加载一张图片。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas, stage, oldX=0;
+var imgSeq = new Image();  // 作为那些星星动画的图片
+var bmpAnim;			   // 用作克隆使用的星星动画模板
+
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);
+stage.enableDOMEvents(true);
+
+imgSeq.onload = handleImageLoad;
+imgSeq.src = "assets/sparkle_21x23.png";</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：创建一个覆盖整个场景的黑色半透明矩形，在每次循环的时候将其渲染会使 canvas 褪回黑色。同时设置 Stage 对象的 autoClear 属性为 false。</div><br />
+                <textarea class="tutorialCode" name="code">
+var shape = new createjs.Shape(new createjs.Graphics().beginFill('#333').drawRect(0,0,canvas.width+1,canvas.height));
+shape.alpha = 0.35;
+stage.addChild(shape);
+
+// 这个是用来阻止场景在每次循环中的自我清空行为
+// 在这个示例中，它在星星的足迹上体现，那些之前画上去的还一直停留在屏幕上
+stage.autoClear = false;</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：定义 BitmapAnimation 数据，并实例化一个 BitmapAnimation 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 定义了需要使用的简单的图片精灵数据、帧的尺寸和该帧在场景上的坐标
+// 系统会自动从图片集中计算帧的数量并循环播放
+var data = {
+	images: ["assets/sparkle_21x23.png"],
+	frames: {width:21,height:23,regX:10,regY:11}
+}
+
+// 设置一个动画实例，方便我们进行克隆
+bmpAnim = new createjs.BitmapAnimation(new createjs.SpriteSheet(data));</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：编写创建星星动画的方法 addSparkles，一个星星本质上是一个 BitmapAnimation 对象，创建后对其进行相关属性设置，再添加到 Stage 对象中。</div><br />
+                <textarea class="tutorialCode" name="code">
+function addSparkles(count, x, y, speed, velX) {
+	//创建指定数量的星星
+	for (var i=0; i < count; i++) {
+		// 复制原始的星星，这样我们就不用共享那些属性了
+		var sparkle = bmpAnim.clone();
+
+		// 设置显示属性
+		sparkle.x = x;
+		sparkle.y = y;
+		sparkle.alpha = Math.random()*0.5+0.5;
+		sparkle.scaleX = sparkle.scaleY = Math.random()+0.3;
+		sparkle.compositeOperation = "lighter";
+
+		// 设置速率
+		var a = Math.PI*2*Math.random();
+		var v = (Math.random()-0.5)*30*speed;
+		sparkle.vX = Math.cos(a)*v+velX;
+		sparkle.vY = Math.sin(a)*v;
+		sparkle.vA = -Math.random()*0.05-0.01; // 透明度
+
+		// 在一个随机的帧上开始动画
+		sparkle.gotoAndPlay(Math.random()*sparkle.spriteSheet.getNumFrames()|0);
+
+		// 添加到显示列表
+		stage.addChild(sparkle);
+	}
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：监听鼠标移动事件，当移动鼠标时在鼠标处创建若干星星。</div><br />
+                <textarea class="tutorialCode" name="code">
+stage.addEventListener("stagemousemove", moveCanvas);
+
+function moveCanvas(evt) {
+	addSparkles(Math.random()*2+1|0, evt.stageX, evt.stageY, 1, evt.stageX-oldX);
+	oldX = evt.stageX;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤六：监听鼠标按下事件，当按下鼠标时在鼠标处创建比移动鼠标更多的星星。</div><br />
+                <textarea class="tutorialCode" name="code">
+stage.addEventListener("stagemousedown", clickCanvas);
+
+function clickCanvas(evt) {
+	addSparkles(Math.random()*100+100|0, evt.stageX, evt.stageY, 2, 0);
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤七：绑定并编写 tick 方法，在每个 tick 中改变星星对象的位置，透明度等属性，同时更新 Stage 对象，重新绘制步骤二中 Shape 透明框，使得星星不断下落和逐渐隐退。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Ticker.addEventListener("tick", tick);
+
+function tick() {
+	var h = canvas.height;
+	var w = canvas.width;
+
+	// 对场景上的所有星星进行遍历
+	var l = stage.getNumChildren();
+	for (var i=l-1; i>0; i--) {
+		var sparkle = stage.getChildAt(i);
+
+		// 应用重力和摩擦力
+		sparkle.vY += 2;
+		sparkle.vX *= 0.98;
+
+		// 更新位置、缩放和透明度
+		sparkle.x += sparkle.vX;
+		sparkle.y += sparkle.vY;
+		sparkle.alpha += sparkle.vA;
+
+		//把已经隐藏或停止的星星移除掉
+		if (sparkle.alpha <= 0 || sparkle.y>=h && sparkle.vY < 10) {
+			stage.removeChildAt(i);
+		}
+		
+		//把星星从底部反弹回去
+		if (sparkle.y > h) {
+			sparkle.vY *= -(Math.random()*0.4+0.4);
+			sparkle.y -= sparkle.y%h;
+		}
+		if (sparkle.x >= w || sparkle.x <= 0) { sparkle.vX *= -1; }
+	}
+
+	// 把更新的内容描绘到场景上
+	stage.update();
+}</textarea>
+        </div>
+    </section>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>
