@@ -47,7 +47,7 @@ xc.depends([
         stage.addEventListener("stagemousedown", handleMouseDown);
         stage.addEventListener("stagemouseup", handleMouseUp);
 
-        title = new createjs.Text("Click and Drag to draw", "36px Arial", "#777777");
+        title = new createjs.Text("点击开始画图", "36px Arial", "#777777");
         title.x = 300;
         title.y = 200;
         stage.addChild(title);
@@ -138,7 +138,7 @@ stage.addEventListener("stagemouseup", handleMouseUp);</textarea>
                 <textarea class="tutorialCode" name="code">
 drawingCanvas = new createjs.Shape();
 
-title = new createjs.Text("Click and Drag to draw", "36px Arial", "#777777");
+title = new createjs.Text("点击开始画图", "36px Arial", "#777777");
 title.x = 300;
 title.y = 200;
 
@@ -185,6 +185,11 @@ function handleMouseUp(event) {
 }</textarea>
         </div>
     </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
 
 <script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>

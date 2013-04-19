@@ -186,7 +186,7 @@ xc.depends([
             注：当加载本地的图片时，确保PreloadJS是使用标签加载，这样可以避免跨域的错误。</p>
         </header>
 
-        <div id="container" class="content jp-content">
+        <div id="container" class="content jp-content" style="overflow:hidden;">
             <input type="button" id="loadAnotherBtn" value="加载下一个" disabled="disabled" />
             <input type="button" id="loadAllBtn" value="加载所有" disabled="disabled" />
             <input type="button" id="reloadBtn" value="重置" />
@@ -198,8 +198,10 @@ xc.depends([
         </div>
 
         <!-- 图片项的模板，当我们想增加一个项，就会在这里克隆一份出来 -->
-        <div id="template" class="item">
-            <div class="progress"></div>
+        <div id="container">
+            <div id="template" class="item jp-content">
+                <div class="progress"></div>
+            </div>
         </div>
     </center>
 
@@ -347,6 +349,11 @@ function loadAll() {
 }</textarea>
         </div>
     </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
 
 <script type="text/javascript" src="../../codemirror/index.js"></script>
 </body>
