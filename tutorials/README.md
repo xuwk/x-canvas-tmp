@@ -11,7 +11,6 @@
 + dbclick.html (手机上并没有 double click 事件)
 + DragAndDrop.html (可参考 DragAndDrop_hitArea.html) 
 + GlobalToLocal2.html (可参考 GlobalToLocal1.html)
-+ SparklesFade.html (可参考 Sparkles.html)
 
 ### SoundJS:
 
