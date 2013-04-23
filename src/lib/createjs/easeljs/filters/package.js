@@ -1,9 +1,9 @@
 xc.depends([
-    "AlphaMapFilter.js",
-    "AlphaMaskFilter.js",
-    "BoxBlurFilter.js",
-    "ColorFilter.js",
-    "ColorMatrix.js",
-    "ColorMatrixFilter.js",
-    "Filter.js"
+  "AlphaMapFilter.js",
+  "AlphaMaskFilter.js",
+  "BoxBlurFilter.js",
+  "ColorFilter.js",
+  "ColorMatrix.js",
+  "ColorMatrixFilter.js",
+  "Filter.js"
 ]);

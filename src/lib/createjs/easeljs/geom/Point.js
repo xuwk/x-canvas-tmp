@@ -1,24 +1,24 @@
 xc.module.define("xc.createjs.Point", function(exports) {
 
     /**
-     * Represents a point on a 2 dimensional x / y coordinate system.
+     * 代表一个在二维(X/Y)坐标系统上的点。
      *
-     * <h4>Example</h4>
-     *     var point = new Point(0, 100);
+     * <h4>样例</h4>
+     *      var point = new Point(0, 100);
      *
      * @class Point
      * @constructor
-     * @param {Number} [x=0] X position.
-     * @param {Number} [y=0] Y position.
+     * @param {Number} [x=0] X 坐标位置。
+     * @param {Number} [y=0] Y 坐标位置。
      */
     var Point = xc.class.create({
-        _init: function(x, y) {
+        initialize: function(x, y) {
             this.x = (x == null ? 0 : x);
             this.y = (y == null ? 0 : y);
         },
 
         /**
-         * X position.
+         * X 坐标位置。
          *
          * @property x
          * @type Number
@@ -26,7 +26,7 @@ xc.module.define("xc.createjs.Point", function(exports) {
         x: 0,
 
         /**
-         * Y position.
+         * Y 坐标位置。
          *
          * @property y
          * @type Number
@@ -34,20 +34,20 @@ xc.module.define("xc.createjs.Point", function(exports) {
         y: 0,
 
         /**
-         * Returns a clone of the Point instance.
+         * 返回当前Point实例的克隆。
          *
          * @method clone
-         * @return {Point} a clone of the Point instance.
+         * @return {Point} 当前Point实例的克隆。
          */
         clone: function() {
             return new Point(this.x, this.y);
         },
 
         /**
-         * Returns a string representation of this object.
+         * 返回当前对象的字符串表示。
          *
          * @method toString
-         * @return {String} a string representation of the instance.
+         * @return {String} 当前实例的字符串表示。
          */
         toString: function() {
             return "[Point (x=" + this.x + " y=" + this.y + ")]";

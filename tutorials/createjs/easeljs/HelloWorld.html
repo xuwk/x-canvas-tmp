@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——EaselJS：文本 Hello World!</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	function init() {
+		// 获取一个canvas的引用
+		var canvas = document.getElementById("testCanvas");
+
+		// 在canvas上创建一个场景
+		var stage = new createjs.Stage(canvas);
+
+		// 创建一个Text对象
+		var text = new createjs.Text("Hello World!", "36px Arial", "#777");
+
+        // 把文本对象作为子对象添加到场景上。这说明它会在场景更新时顺便画上去，并且它的任何转换都是跟场景相关的
+		stage.addChild(text);
+
+		// 把文本放置在屏幕上，也是与场景相关
+		text.x = 360;
+		text.y = 200;
+
+		// 更新场景，使展示指令列表可以渲染在canvas上
+		stage.update();
+	}
+	init();
+});
+</script>
+</head>
+	
+<body>
+	<center>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> 文本 Hello World!</h1>
+		    <p>Hello World 示例使用了<strong>Text</strong> 和 <strong>Stage</strong>。</p>
+		</header>
+		<div class="canvasHolder">
+			<canvas id="testCanvas" width="960" height="400"></canvas>
+		</div>
+	</center>
+
+	<section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：在 canvas 上创建一个 stage 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas = document.getElementById("testCanvas");
+var stage = new createjs.Stage(canvas);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：创建一个内容为 “Hello World!” 的 Text 对象，设置位置，并添加到 Stage 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+var text = new createjs.Text("Hello World!", "36px Arial", "#777");
+
+text.x = 360;
+text.y = 200;
+
+stage.addChild(text);</textarea>
+        </div>
+    </section>
+    
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

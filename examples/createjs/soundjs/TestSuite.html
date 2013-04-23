@@ -1,167 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>SoundJS: Test Suite</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-	<link type="text/css" href="assets/css/jquery-ui-1.8.18.custom.css" rel="stylesheet" />  <!-- update to http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css? -->
-	<style type="text/css">
-	    /* define a width for the sliders by styling the wrapping div */
-	    .panSlider,
-	    .volumeSlider,
-        .posSlider,
-	    .offsetSlider,
-	    .delaySlider,
-	    .masterVolumeSlider,
-	    .loopSlider { width:200px; }
-	</style>
+<title>SoundJS: Sound 测试套件</title>
 
-	<link rel="stylesheet" type="text/css" href="assets/demoStyles.css"/>
-	<style>
-	    FORM {
-	        text-align:left;
-		    width: 450px;
-		    padding: 5px;
-		    float:left;
-	    }
-	    FORM P {
-		    margin: 0 0 10px 0;
-	    }
-	    #instanceControls {
-	    }
-	    .select {
-	        width: 100%;
-	        height: 80px;
-	    }
-	    .disabled {
-	        color: #333;
-	        font-style: italic;
-	    }
-	    .disabled p, .disabled .nodisable {
-	        color: #333;
-	        font-style: normal;
-	    }
-        .plugin {
-            font-size: 16px;
-            font-weight: bold;
-        }
-    </style>
-</head>
+<link type="text/css" href="assets/css/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
+<style type="text/css">
+    .panSlider,
+    .volumeSlider,
+    .posSlider,
+    .offsetSlider,
+    .delaySlider,
+    .masterVolumeSlider,
+    .loopSlider { width:200px; }
+</style>
+<link rel="stylesheet" type="text/css" href="assets/demoStyles.css"/>
+<style>
+    FORM {
+        text-align:left;
+        width: 450px;
+        padding: 5px;
+        float:left;
+    }
+    FORM P {
+        margin: 0 0 10px 0;
+    }
+    #instanceControls {
+    }
+    .select {
+        width: 100%;
+        height: 80px;
+    }
+    .disabled {
+        color: #333;
+        font-style: italic;
+    }
+    .disabled p, .disabled .nodisable {
+        color: #333;
+        font-style: normal;
+    }
+    .plugin {
+        font-size: 16px;
+        font-weight: bold;
+    }
+</style>
 
-<body onload="init()">
-
-	<header id="header" class="SoundJS">
-	    <h1><span class="text-product">Sound<strong>JS</strong></span> Test Suite</h1>
-	    <p>This test suite loads and plays a number of sounds, defined in the source. Playing sounds can be controlled, stopped, etc</p>
-	</header>
-
-	<div class="content" id="content">
-	    <div>
-	        <a href="?type=normal">Web Audio with HTML Audio then Flash Fallbacks</a> | <a href="?type=html5">HTML Audio Only</a> | <a href="?type=flash">Flash Only</a>
-	    </div>
-
-        <div class="plugin">
-            <p id="activePlugin">Active Plugin is</p>
-        </div>
-
-	    <form id="playControls">
-	        <p>Select a sound to play it. <br/>Each sound shows how many instances it can play at once.</p>
-	        <select id="library" multiple="multiple" class="select"></select><br />
-
-	        <input type="button" id="playSoundBtn" value="Play" />
-
-	        <label for="interrupt">Interrupt</label>
-	        <select id="interrupt">
-	            <option selected="selected" value="any">
-	                Any</option>
-	            <option value="none">None</option>
-	            <option value="early">Early</option>
-	            <option value="late">Late</option>
-	        </select>
-
-	        <br />
-	        <br />
-
-	        <table border="0" width="400" cellpadding="5" cellspacing="5">
-	            <tr>
-	                <td><label for="loop">Loop</label></td>
-	                <td><div class="loopSlider" id="loop"></div></td>
-	                <td><label for="loop" id="loopValue">0</label></td>
-	            </tr>
-	            <tr>
-	                <td> <label for="delay">Delay</label></td>
-	                <td><div class="delaySlider" id="delay"></div></td>
-	                <td><label for="delay" id="delayValue">0 seconds</label></td>
-	            </tr>
-	            <tr>
-	                <td><label for="offset">Offset</label></td>
-	                <td><div class="offsetSlider" id="offset"></div></td>
-	                <td><label for="offset" id="offsetValue">0 seconds</label></td>
-	            </tr>
-	            <tr rowCount="2">
-	                <td><label for="masterVolume" class="nodisable">Master Volume</label></td>
-	                <td> <div class="masterVolumeSlider" id="masterVolume"></div></td>
-	                <td><label for="masterVolume" id="masterVolumeValue">100</label></td>
-	            </tr>
-	        </table>
-	        <input id="stopAllSoundsBtn" name="stopAll" type="button" value="Stop All Sounds" />
-            <input id="muteAllSoundsBtn" name="muteAll" type="button" value="Mute All Sounds" />
-	    </form>
-
-	    <form id="instanceControls">
-	        <p>Select a playing sound to stop, set volume, set pan, or set position. <br/>When a sound completes, it is removed from this list.</p>
-	        <select id="nowPlaying" multiple="multiple" disabled="disabled" class="select">
-	            <option value="-1">-- No Audio Playing --</option>
-	        </select>
-
-	        <br/>
-	        <br/>
-	        <table border="0" width="400" cellpadding="5" cellspacing="5">  <!-- OJR it would be nice if this lined up with the library table.  Note adding <br/> does not line it up -->
-	            <tr>
-	                <td><label for="volume">Instance Volume</label></td>
-	                <td><div id="volume" class="volumeSlider"></div></td>
-	                <td><label for="volume" id="volumeValue">100</label></td>
-	            </tr>
-	            <tr>
-	                <td><label for="pan">Pan</label></td>
-	                <td><div class="panSlider" id="pan"></div></td>
-	                <td><label for="pan" id="panValue">0</label></td>
-	            </tr>
-	            <tr>
-                    <td><label for="pos">Position</label></td>
-                    <td><div class="posSlider" id="pos"></div></td>
-                    <td><label for="pos" id="posValue">0</label></td>
-	            </tr>
-	        </table>
-	        <input id="pauseBtn" name="pause" type="button" value="Pause" />
-	        <input id="stopBtn" name="stop" type="button" value="Stop" />
-            <input id="muteBtn" name="mute" type="button" value="Mute" />
-	    </form>
-
-	</div>
-
-    <div id="error">
-        <h1>Sorry!</h1>
-        <p>SoundJS is not currently supported in your browser.</p>
-        <p>Please <a href="http://github.com/CreateJS/SoundJS/issues" target="_blank">log a bug</a>
-            with the device and browser you are using.  Thank you.</p>
-    </div>
-
-    <script type="text/javascript" src="../src/easeljs/events/EventDispatcher.js"></script>
-    <script type="text/javascript" src="../src/soundjs/Sound.js"></script>
-    <script type="text/javascript" src="../src/soundjs/WebAudioPlugin.js"></script>
-    <script type="text/javascript" src="../src/soundjs/HTMLAudioPlugin.js"></script>
-    <script type="text/javascript" src="../src/swfobject.js"></script>
-    <script type="text/javascript" src="../src/soundjs/FlashPlugin.js"></script>
-
-    <!-- We also provide hosted minified versions of all CreateJS libraries.
-        http://code.createjs.com -->
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-
-    <script>
-    // Read the URL Params. We need to do this to determine the plugin mode.
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script>
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    // 读取 URL 参数，该参数用于决定播放插件类型。
     var params = {};
     var pieces = window.location.search.slice(1).split("&");
     for (var i=0, l=pieces.length; i<l; i++) {
@@ -169,7 +62,7 @@
         params[parts[0]] = parts[1];
     }
 
-    var instanceHash = {};  //store instances as they are created
+    var instanceHash = {};  //保存创建的实例
 
     var audioInterval = null;
     var intervalTime = 100;
@@ -179,13 +72,10 @@
             document.getElementById("header").style.display = "none";
         }
 
-        createjs.FlashPlugin.BASE_PATH = "../src/soundjs/" // Initialize the base path from this document to the Flash Plugin
-        if (params.type == "flash") {
-            createjs.Sound.registerPlugins([createjs.FlashPlugin]);
-        } else if (params.type == "html5") {
+        if (params.type == "html5") {
             createjs.Sound.registerPlugins([createjs.HTMLAudioPlugin]);
         } else {
-            createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.HTMLAudioPlugin, createjs.FlashPlugin]);
+            createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.HTMLAudioPlugin]);
         }
 
         if (!createjs.Sound.isReady()) {
@@ -195,9 +85,8 @@
         }
 
         var pluginStatus = document.getElementById("activePlugin");
-        pluginStatus.innerHTML = "Active Plugin is " + createjs.Sound.activePlugin.toString();  // innerText does not work in FF
+        pluginStatus.innerHTML = "可用插件是： " + createjs.Sound.activePlugin.toString();  // FF 不支持 innerText 
 
-        // Library controls
         $(".offsetSlider").slider({value: 0,
             min: 0,
             max: 10,
@@ -246,11 +135,11 @@
             createjs.Sound.setVolume(value/100);
         });
 
-        // instance controls
+        // 实例控制
         $(".panSlider").slider({value: 0,
             min: -1,
             max: 1,
-            step: 0.1,  // gives us a nicer range for pan
+            step: 0.1,  // 提供一个更好的声调控制
             disabled:true,
             change:handleSliderChange
         });
@@ -289,7 +178,6 @@
             instance.setMute(muted);
             $("#muteBtn").attr("value", muted ? "Unmute" : "Mute");
         });
-        // OJR it would be nice to add an instance play button, which would require re-architecting how instances are removed
 
         $(".volumeSlider").on('slidestop',function(event){
             var instance = getInstance();
@@ -329,13 +217,13 @@
             {id:"Cabin Boy", src:assetsPath + "U-CabinBoy3.mp3", type:"sound", data:1}
         ];
 
-        createjs.Sound.addEventListener("loadComplete", createjs.proxy(addSoundToList,this)); // add an event listener for when load is completed
+        createjs.Sound.addEventListener("loadComplete", createjs.proxy(addSoundToList,this)); // 添加一个监听器，监听资源是否加载完成。
         createjs.Sound.registerManifest(manifest);
     }
 
     function addSoundToList(event) {
         var list = $("#library").get(0);
-        list.options.add(new Option((event.id || event.src) + " ("+(event.data||"unknown")+")", event.id));  //event.data should never be undefined, because it is set to the max limit by SoundJS
+        list.options.add(new Option((event.id || event.src) + " ("+(event.data||"unknown")+")", event.id));  //event.data 不能是未定义的，SoundJS 因为它被设置成 SoundJS 的最大限制。
     }
 
     function handleSliderChange(evt) {
@@ -348,7 +236,7 @@
         var list = $("#library").get(0);
         if (list.selectedIndex == -1) { return; }
 
-        // Options
+        // 选项
         var interrupt = $("#interrupt").get(0);
         var interruptValue = interrupt.options[interrupt.selectedIndex].value;
         var loop = $(".loopSlider").slider("option", "value");
@@ -369,15 +257,15 @@
         }
     }
 
-    // Create a sound, add listeners, and try playing it.
+    // 创建 sound 实例，添加监听器，并尝试播放。
     function handlePlaySuccess(event) {
         instance = event.target;
         instanceHash[instance.uniqueId] = instance;
-        instance.removeEventListener("succeeded", handlePlaySuccess, instance);  // because we only want this to fire the first time we start playing
+        instance.removeEventListener("succeeded", handlePlaySuccess, instance);  // 一旦播放成功，触发该事件。
 
         var nowPlaying = $("#nowPlaying").get(0);
 
-        // Put in the nowPlaying list. (Remember to remove first temp item)
+        // 添加到正在播放列表。
         if (nowPlaying.options[0].value == "-1") {
             nowPlaying.remove(0);
             nowPlaying.disabled = false;
@@ -396,17 +284,17 @@
         nowPlaying.options.add(new Option(instance.src + "("+instance.uniqueId + ")", instance.uniqueId));
     }
 
-    // Sound finished. Remove it from the list.
+    // 音频播放完成。从列表删除。
     function handleSoundComplete(event) {
         removeSound(event.target);
     }
 
-    // Playback failed (usually interrupt failed)
+    // 播放失败（通常是中断错误）
     function handlePlayFailed(event) {
         removeSound(event.target);
     }
 
-    // Remove the sound from the list.
+    // 将音频从列表移除。
     function removeSound(instance) {
         var currentInstance = getInstance();
         if (currentInstance && currentInstance.uniqueId == instance.uniqueId) {
@@ -434,7 +322,7 @@
 
     }
 
-    // Get the currently selected sound from nowPlaying
+    // 从正在播放列表中获取当前选中的音频。
     function getInstance() {
         var list = $("#nowPlaying").get(0);
         if (list.selectedIndex == -1) { return null;}
@@ -446,7 +334,7 @@
         return instance;
     }
 
-    // A library item was selected
+    // 一个库选项被选中。
     function selectItem(event) {
         var list = $("#library").get(0);
         if (list.selectedIndex != -1) {
@@ -456,7 +344,7 @@
         }
     }
 
-    // A playing instance was selected
+    // 被选中的播放实例。
     function selectInstance(event) {
         clearInterval(audioInterval);
         var list = $("#nowPlaying").get(0);
@@ -488,7 +376,7 @@
         $("#posValue").text(instance.getPosition()/instance.getDuration()*100|0);
     }
 
-    // Toggle the enabled property of a named set of components in a specific form
+    // 切换表单中的可用组件名称。
     function enableSet(name, enabled) {
         switch (name) {
             case "sound":
@@ -500,7 +388,7 @@
         }
     }
 
-    // Toggle the enabled property of a number of named elements in a form
+    // 切换表单中的可用元素数量。
     function enableItems(formName, value, items) {
         var form = $("#" + formName);
         var element = form.get(0);
@@ -518,7 +406,103 @@
         }
     }
 
-    </script>
+    init();
+});
 
+</script>
+</head>
+
+<body>
+    <header id="header" class="SoundJS">
+        <h1><span class="text-product">Sound<strong>JS</strong></span> Sound 测试套件</h1>
+        <p>该测试例子加载并播放多段定义好的音频，在播放过程中可以对音频进行控制。</p>
+    </header>
+    <div class="content" id="content">
+        <div>
+            <a href="?type=normal">Web Audio, HTML Audio</a> | <a href="?type=html5">HTML Audio</a>
+        </div>
+
+        <div class="plugin">
+            <p id="activePlugin">可用插件是：</p>
+        </div>
+
+        <form id="playControls">
+            <p>选择要播放的音频 <br/>每段音频都显示了同时能播放多少个实例。</p>
+            <select id="library" multiple="multiple" class="select"></select><br />
+
+            <input type="button" id="playSoundBtn" value="Play" />
+
+            <label for="interrupt">Interrupt</label>
+            <select id="interrupt">
+                <option selected="selected" value="any">
+                    Any</option>
+                <option value="none">None</option>
+                <option value="early">Early</option>
+                <option value="late">Late</option>
+            </select>
+
+            <br />
+            <br />
+
+            <table border="0" width="400" cellpadding="5" cellspacing="5">
+                <tr>
+                    <td><label for="loop">Loop</label></td>
+                    <td><div class="loopSlider" id="loop"></div></td>
+                    <td><label for="loop" id="loopValue">0</label></td>
+                </tr>
+                <tr>
+                    <td> <label for="delay">Delay</label></td>
+                    <td><div class="delaySlider" id="delay"></div></td>
+                    <td><label for="delay" id="delayValue">0 seconds</label></td>
+                </tr>
+                <tr>
+                    <td><label for="offset">Offset</label></td>
+                    <td><div class="offsetSlider" id="offset"></div></td>
+                    <td><label for="offset" id="offsetValue">0 seconds</label></td>
+                </tr>
+                <tr rowCount="2">
+                    <td><label for="masterVolume" class="nodisable">Master Volume</label></td>
+                    <td> <div class="masterVolumeSlider" id="masterVolume"></div></td>
+                    <td><label for="masterVolume" id="masterVolumeValue">100</label></td>
+                </tr>
+            </table>
+            <input id="stopAllSoundsBtn" name="stopAll" type="button" value="Stop All Sounds" />
+            <input id="muteAllSoundsBtn" name="muteAll" type="button" value="Mute All Sounds" />
+        </form>
+
+        <form id="instanceControls">
+            <p>选择停止播放一段正在播放的音频，设置声音平衡，播放进度。<br/>当音频播放完成，音频将在该列表移除。</p>
+            <select id="nowPlaying" multiple="multiple" disabled="disabled" class="select">
+                <option value="-1">-- 没有正在播放的音频 --</option>
+            </select>
+
+            <br/>
+            <br/>
+            <table border="0" width="400" cellpadding="5" cellspacing="5">
+                <tr>
+                    <td><label for="volume">Instance Volume</label></td>
+                    <td><div id="volume" class="volumeSlider"></div></td>
+                    <td><label for="volume" id="volumeValue">100</label></td>
+                </tr>
+                <tr>
+                    <td><label for="pan">Pan</label></td>
+                    <td><div class="panSlider" id="pan"></div></td>
+                    <td><label for="pan" id="panValue">0</label></td>
+                </tr>
+                <tr>
+                    <td><label for="pos">Position</label></td>
+                    <td><div class="posSlider" id="pos"></div></td>
+                    <td><label for="pos" id="posValue">0</label></td>
+                </tr>
+            </table>
+            <input id="pauseBtn" name="pause" type="button" value="Pause" />
+            <input id="stopBtn" name="stop" type="button" value="Stop" />
+            <input id="muteBtn" name="mute" type="button" value="Mute" />
+        </form>
+    </div>
+    <div id="error">
+        <h1>对不起！</h1>
+        <p>当前浏览器不支持 SoundJS</p>
+    </div>
 </body>
 </html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——>SoundJS：音频播放</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link rel="stylesheet" type="text/css" href="assets/demoStyles.css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var src;            // 准备播放的音频资源。
+    var soundInstance;  // 当创建或播放音频时，SoundJS 返回的音频实例。
+    var displayStatus;  // 一个用于显示播放信息的 HTML 元素。
+
+    function init() {
+        // 这里做了两件事，初始化了默认插件，一旦失败将显示错误信息。
+        if (!createjs.Sound.initializeDefaultPlugins()) {
+            document.getElementById("error").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            return;
+        }
+
+        // 检测是否在移动设备中运行，移动设备中只支持在用户事件中播放音频。
+        if (createjs.Sound.BrowserDetect.isIOS || createjs.Sound.BrowserDetect.isAndroid) {
+            document.getElementById("mobile").style.display = "block";
+            document.getElementById("content").style.display = "none";
+            return;
+        }
+
+        // 记录 DOM 元素，避免每次查找。
+        displayStatus = document.getElementById("status");
+
+        // 创建一个加载项。
+        var assetsPath = "assets/";
+        src = assetsPath+"18-machinae_supremacy-lord_krutors_dominion.mp3|"+assetsPath+"18-machinae_supremacy-lord_krutors_dominion.ogg";
+        // 注意 “|” 分隔符是用于区分多个音频资源路径。
+
+        createjs.Sound.addEventListener("loadComplete", createjs.proxy(playSound,this)); // 添加一个监听器，监听资源是否加载完成。
+        createjs.Sound.registerSound(src);  // 注册音频。
+
+        displayStatus.innerText = "加载中...";  // 让用户了解加载情况。
+    }
+
+    function playSound(evt) {
+        if (evt.src == src) {
+            soundInstance = createjs.Sound.play(src);  // 开始播放加载完成的音频，并保存音频实例。
+            displayStatus.innerText = "资源路径：" + evt.src;  // 显示正在播放的音频路径。
+        }
+    }
+
+    init();
+});
+</script>
+</head>
+
+<body>
+    <center>
+    	<header id="header" class="SoundJS">
+    	    <h1><span class="text-product">Sound<strong>JS</strong></span> 音频播放</h1>
+            <p>该例子注册一个音频然后用 SoundJS 播放</p>
+    	</header>
+    	<div class="content jp-content" id="content">
+    		<h1 id="status">开始</h1>
+    	</div>
+    	<div id="error">
+    		<h1>对不起！</h1>
+            <p>当前浏览器不支持 SoundJS</p>
+    	</div>
+        <div id="mobile">
+            <h1>对不起！</h1>
+            <p>移动设备只支持在用户事件内部播放音频，并不支持该例子。</p>
+        </div>
+    </center>
+
+    <section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：定义变量。</div><br />
+                <textarea class="tutorialCode" name="code">
+var src;            // 准备播放的音频资源。
+var soundInstance;  // 当创建或播放音频时，SoundJS 返回的音频实例。
+var displayStatus;  // 一个用于显示播放信息的 HTML 元素。</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：初始化插件，初始化失败则返回。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 这里做了两件事，初始化了默认插件，一旦失败将显示错误信息。
+if (!createjs.Sound.initializeDefaultPlugins()) {
+    document.getElementById("error").style.display = "block";
+    document.getElementById("content").style.display = "none";
+    return;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：定位音频资源。</div><br />
+                <textarea class="tutorialCode" name="code">
+var assetsPath = "assets/";
+src = assetsPath+"18-machinae_supremacy-lord_krutors_dominion.mp3|"+assetsPath+"18-machinae_supremacy-lord_krutors_dominion.ogg";</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：注册音频。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Sound.registerSound(src); </textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：监听音频加载情况，一旦加载完成，马上播放。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Sound.addEventListener("loadComplete", createjs.proxy(playSound,this)); 
+function playSound(evt) {
+    if (evt.src == src) {
+        soundInstance = createjs.Sound.play(src);  // 开始播放加载完成的音频，并保存音频实例。
+    }
+}</textarea>
+        </div>  
+    </section>
+    
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

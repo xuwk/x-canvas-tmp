@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——EaselJS: 文本链接示例</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    // 定一个新的TextLink类，继承自Text，用来处理点击区域和实现鼠标经过的颜色改变的
+	var TextLink = function(text, font, color, hoverColor) {
+		this.initialize(text, font, color, hoverColor);
+	}
+	TextLink.prototype = new createjs.Text(); // 继承Text
+	
+	// 保存Text的初始化方法，这样我们就可以自行调用了
+	TextLink.prototype.Text_initialize = TextLink.prototype.initialize;
+	
+	// 覆盖Text的初始化方法
+	TextLink.prototype.initialize = function(text, font, color, hoverColor) {
+		this.Text_initialize(text, font, color); 
+		this.hoverColor = hoverColor;
+		this.hover = false;
+		this.hitArea = new createjs.Shape();
+		this.textBaseline = "top";
+	}
+	
+	// 对draw使用相同的方式
+	TextLink.prototype.Text_draw = TextLink.prototype.draw;
+	TextLink.prototype.draw = function(ctx, ignoreCache) {
+	    // 保存默认的颜色，在适当的时候把它改为鼠标经过的颜色
+		var color = this.color;
+		if (this.hover) { this.color = this.hoverColor; }
+		
+		// 调用Text的绘图方法来做实际的绘画工作
+		this.Text_draw(ctx, ignoreCache);
+		
+		// 恢复默认颜色
+		this.color = color;
+		
+		// 更新点击区域，使它覆盖整个文本区域，而不仅仅是文字
+		this.hitArea.graphics.clear().beginFill("#FFF").drawRect(0,0,this.lineWidth||this.getMeasuredWidth(), this.getMeasuredHeight());
+	}
+	
+	var canvas;
+	var stage;
+
+	function init() {
+		//获取canvas并创建场景
+		canvas = document.getElementById("testCanvas");
+		stage = new createjs.Stage(canvas);
+		stage.enableMouseOver(20);
+
+		// 创建一些文字链接
+		var links = ["yellow", "blue", "green", "red", "purple", "orange"];
+		for (var i=0; i<links.length; i++) {
+			var link = new TextLink(links[i]+" link!", "36px Arial", links[i], "#FFF");
+			link.x = 100;
+			link.y = 50+i*50;
+			link.addEventListener("click", handleClick);
+			// 鼠标经过/离开事件
+			link.addEventListener("mouseover", function(e) {e.target.hover = true;});
+			link.addEventListener("mouseout", function(e) {e.target.hover = false;});
+            link.cursor = "pointer";
+			stage.addChild(link);
+		}
+
+        // 我们需要在更新canvas前做一些事情，否则我们会用Ticker.addEventListener("tick", stage)来代替
+		createjs.Ticker.addEventListener("tick", tick);
+	}
+
+    function tick() {
+        stage.update();
+    }
+	
+	function handleClick(evt) {
+		alert("你点击了： "+evt.target.text);
+	}
+	
+    init();
+});
+</script>
+</head>
+	
+<body>
+	<center>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> 文本链接示例</h1>
+		    <p>这个样例展示了如何模拟一个文字链接，并且使用hitArea来模拟鼠标经过。</p>
+		</header>
+		<div class="canvasHolder">
+			<canvas id="testCanvas" width="960" height="400"></canvas>
+		</div>
+	</center>
+
+	<section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：在 canvas 上创建一个 stage 对象，并启用 MouseOver 事件。</div><br />
+                <textarea class="tutorialCode" name="code">
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);
+stage.enableMouseOver(20);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：定义 TextLink 类，该类继承自 Text 类。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 定一个新的TextLink类，继承自Text，用来处理点击区域和实现鼠标经过的颜色改变的
+var TextLink = function(text, font, color, hoverColor) {
+	this.initialize(text, font, color, hoverColor);
+}
+TextLink.prototype = new createjs.Text(); // 继承Text</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：定义 TextLink 类的初始化方法。该方法在调用 Text 类的 initialize 的同时，初始化了 TextLink 的相关属性。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 保存Text的初始化方法，这样我们就可以自行调用了
+TextLink.prototype.Text_initialize = TextLink.prototype.initialize;
+// 覆盖Text的初始化方法
+TextLink.prototype.initialize = function(text, font, color, hoverColor) {
+	this.Text_initialize(text, font, color); 
+	this.hoverColor = hoverColor;
+	this.hover = false;
+	this.hitArea = new createjs.Shape();
+	this.textBaseline = "top";
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：与步骤三相同，定义 TextLink 的 draw 方法，该方法在调用 Text 类的 draw 的同时添加了自己的方法，该方法将在每个 tick 调用。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 对draw使用相同的方式
+TextLink.prototype.Text_draw = TextLink.prototype.draw;
+TextLink.prototype.draw = function(ctx, ignoreCache) {
+    // 保存默认的颜色，在适当的时候把它改为鼠标经过的颜色
+	var color = this.color;
+	if (this.hover) { this.color = this.hoverColor; }
+	
+	// 调用Text的绘图方法来做实际的绘画工作
+	this.Text_draw(ctx, ignoreCache);
+	
+	// 恢复默认颜色
+	this.color = color;
+	
+	// 更新点击区域，使它覆盖整个文本区域，而不仅仅是文字
+	this.hitArea.graphics.clear().beginFill("#FFF").drawRect(0,0,this.lineWidth||this.getMeasuredWidth(), this.getMeasuredHeight());
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：创建一些文字链接。</div><br />
+                <textarea class="tutorialCode" name="code">
+var links = ["yellow", "blue", "green", "red", "purple", "orange"];
+for (var i=0; i < links.length; i++) {
+	var link = new TextLink(links[i]+" link!", "36px Arial", links[i], "#FFF");
+	link.x = 100;
+	link.y = 50+i*50;
+	link.addEventListener("click", handleClick);
+	// 鼠标经过/离开事件
+	link.addEventListener("mouseover", function(e) {e.target.hover = true;});
+	link.addEventListener("mouseout", function(e) {e.target.hover = false;});
+    link.cursor = "pointer";
+	stage.addChild(link);
+}
+
+function handleClick(evt) {
+	alert("你点击了： "+evt.target.text);
+}</textarea>
+        </div>
+        
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤六：编写并绑定 tick 方法，在每个 tick 更新 Stage 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Ticker.addEventListener("tick", tick);
+
+function tick() {
+    stage.update();
+}</textarea>
+        </div>
+    </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

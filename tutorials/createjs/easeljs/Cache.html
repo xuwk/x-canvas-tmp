@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——EaselJS：缓存和 snapToPixel 的使用</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+<style>
+    .controls {
+        padding: 10px;
+    }
+</style>
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+    var canvas;
+    var stage;
+    var shape;
+    var circleRadius=30;
+    var rings = 30;
+
+    function init() {
+        // 创建一个 Stage 对象并指向 Canvas。
+        canvas = document.getElementById("testCanvas");
+        stage = new createjs.Stage(canvas);
+
+        // 创造了大量复杂的矢量图形，并设置随机位置和速度。
+        var colors = ["#828b20", "#b0ac31", "#cbc53d", "#fad779", "#f9e4ad", "#faf2db", "#563512", "#9b4a0b", "#d36600", "#fe8a00", "#f9a71f"];
+
+        for (var i=0; i<200; i++) {
+            shape = new createjs.Shape();
+            for (var j=rings; j>0; j--) {
+                shape.graphics.beginFill(colors[Math.random()*colors.length |0]).drawCircle(0,0,circleRadius*j/rings);
+            }
+            shape.x = Math.random()*canvas.width;
+            shape.y = Math.random()*canvas.height;
+            shape.velX = Math.random()*10-5;
+            shape.velY = Math.random()*10-5;
+
+            // 设置所有 Shape 对象的 snapToPixel 属性为 true，所有 Shape 对象该属性默认都为 false。
+            // 当 stage.snapToPixelEnabled 为 true 时 snapToPixel 属性才有效。
+            shape.snapToPixel = true;
+            stage.addChild(shape);
+        }
+
+        // 添加一个 Text 对象用于显示当前帧数。
+        fpsLabel = new createjs.Text("-- fps","bold 18px Arial","#FFF");
+        stage.addChild(fpsLabel);
+        fpsLabel.x = 10;
+        fpsLabel.y = 20;
+
+        // 开始执行 tick 并将其指向 window，这样可以在更新 Stage 之前进行一系列相关操作。
+        createjs.Ticker.addEventListener("tick", tick);
+        createjs.Ticker.setFPS(50);
+    }
+
+    function tick() {
+        var w = canvas.width;
+        var h = canvas.height;
+        var l = stage.getNumChildren()-1;
+
+        // 迭代所有子对象，以及根据它们的 velocity 属性移动它们。
+        for (var i=1; i<l; i++) {
+            var shape = stage.getChildAt(i);
+            shape.x = (shape.x+shape.velX+w)%w;
+            shape.y = (shape.y+shape.velY+h)%h;
+        }
+
+        fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS())+" fps";
+
+        // 更新 Stage。
+        stage.update();
+    }
+
+    toggleCache = function(value) {
+        // 除了帧数标签以外，迭代所有的子对象，并且设置对应的缓存。
+        var l = stage.getNumChildren()-1;
+        for (var i=0; i<l; i++) {
+            var shape = stage.getChildAt(i);
+            if (value) {
+                shape.cache(-circleRadius, -circleRadius, circleRadius*2, circleRadius*2);
+            } else {
+                shape.uncache();
+            }
+        }
+    }
+
+    init();
+});
+</script>
+</head>
+    
+<body>
+    <center>
+        <header id="header" class="EaselJS">
+            <h1><span class="text-product">Easel<strong>JS</strong></span> 缓存和 snapToPixel 的使用</h1>
+            <p>该例子演示了<strong>DisplayObject.cache()</strong> 和 <strong>snapToPixel</strong>的效果。缓存可以对性能提供极大的优势，因为缓存起像复杂的矢量图形这类子对象，便不必在每个 tick 都重新描绘，从而提高渲染速度，优化性能。但因为 snapToPixel 属性在不同浏览器之前支持程度不同，因此不同的浏览器对缓存的支持程度也不同，但总体上来时，有缓存的性能必然比没缓存的性能要好。</p>
+        </header>
+        <div class="controls">
+            <input type="checkbox" onClick="toggleCache(this.checked);" id="toggleCache"/><label for="toggleCache">启用缓存</label>
+        </div>
+        <canvas id="testCanvas" width="960" height="350"></canvas>
+    </center>
+    <section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一: 定义变量，以及在 canvas 上创建一个 Stage 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas;
+var stage;
+var starfield
+var moon;
+var sky;
+
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：创造了大量复杂的矢量图形，并设置随机位置和速度，再添加到 Stage 中。</div><br/>
+                <textarea class="tutorialCode" name="code">
+var colors = ["#828b20", "#b0ac31", "#cbc53d", "#fad779", "#f9e4ad", "#faf2db", "#563512", "#9b4a0b", "#d36600", "#fe8a00", "#f9a71f"];
+
+for (var i=0; i < 200; i++) {
+    shape = new createjs.Shape();
+    for (var j=rings; j>0; j--) {
+        shape.graphics.beginFill(colors[Math.random()*colors.length |0]).drawCircle(0,0,circleRadius*j/rings);
+    }
+    shape.x = Math.random()*canvas.width;
+    shape.y = Math.random()*canvas.height;
+    shape.velX = Math.random()*10-5;
+    shape.velY = Math.random()*10-5;
+
+    // 设置所有 Shape 对象的 snapToPixel 属性为 true，所有 Shape 对象该属性默认都为 false。
+    // 当 stage.snapToPixelEnabled 为 true 时 snapToPixel 属性才有效。
+    shape.snapToPixel = true;
+    stage.addChild(shape);
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：利用 cache 为每个矢量图形设置缓存，利用 uncache 为每个矢量图形解除缓存。</div><br/>
+                <textarea class="tutorialCode" name="code">
+for (var i=0; i < l; i++) {
+    var shape = stage.getChildAt(i);
+    if (value) {
+        shape.cache(-circleRadius, -circleRadius, circleRadius*2, circleRadius*2);
+    } else {
+        shape.uncache();
+    }
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四：绑定并编写 tick 方法。使每个矢量图形对象能自由运动。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Ticker.addEventListener("tick", tick);
+createjs.Ticker.setFPS(50);
+
+function tick() {
+    var w = canvas.width;
+    var h = canvas.height;
+    var l = stage.getNumChildren()-1;
+
+    // 迭代所有子对象，以及根据它们的 velocity 属性移动它们。
+    for (var i=1; i < l; i++) {
+        var shape = stage.getChildAt(i);
+        shape.x = (shape.x+shape.velX+w)%w;
+        shape.y = (shape.y+shape.velY+h)%h;
+    }
+
+    fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS())+" fps";
+
+    // 更新 Stage。
+    stage.update();
+}</textarea>
+        </div>
+    </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+    
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

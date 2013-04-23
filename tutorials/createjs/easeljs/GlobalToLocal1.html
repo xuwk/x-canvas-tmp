@@ -1,0 +1,292 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——EaselJS：全局坐标转换为本地坐标</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var canvas;
+	var stage;
+
+	var _mouseIsDown;
+	var _mouseX;
+	var _mouseY;
+
+	var spin1;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
+	var spin2;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
+
+	var shape;		// 绘制图形
+	var color;		// 绘制颜色
+	var lastPt;		// 最后描绘的点
+	var text;
+	var graphics;
+	var count = 0;
+
+	function init() {
+		// 创建一个基于当前canvas的场景
+		canvas = document.getElementById("testCanvas");
+		stage = new createjs.Stage(canvas);
+
+		// 对场景添加鼠标动作监听器
+		// 向比起来，把鼠标事件添加到canvas标签上，会造成跨域问题，反而不好
+
+        stage.enableDOMEvents(true);
+        stage.addEventListener("stagemousemove", mouseMove);
+        stage.addEventListener("stagemousedown", mouseDown);
+        stage.addEventListener("stagemouseup", mouseUp);
+
+		text = new createjs.Text("点击开始绘制", "36px Arial", "#777777");
+		text.x = 360; text.y = 200;
+		stage.addChild(text);
+
+		// 绘制矢量数据的对象
+		shape = new createjs.Shape();
+		shape.x = 41;		//在父容器上的位置
+		graphics = shape.graphics;
+
+		// 中间的记录仪：
+		spin2 = new createjs.Container();
+		spin2.addChild(shape);
+		spin2.x = 303;		//在父容器上的位置
+
+		// 外部的记录仪：
+		spin1 = new createjs.Container();
+		spin1.addChild(spin2);
+
+		// 把它们居中：
+		spin1.x = canvas.width/2;
+		spin1.y = canvas.height/2;
+		stage.addChild(spin1);
+
+        // 开始定时执行，并且把方法注入window对象里面，这样可以在更新场景前做一些其他的事情
+		createjs.Ticker.setFPS(30);
+		createjs.Ticker.addEventListener("tick", tick);
+	}
+
+	function tick() {
+		// 旋转:
+		spin1.rotation += 10;
+		spin2.rotation += -7;
+		shape.rotation += 3;
+
+		if(_mouseIsDown) {
+			var color = createjs.Graphics.getHSL(
+				Math.cos((count++)*0.01) * 180,
+				100,
+				50,
+				1.0);
+
+			// 设置绘图参数
+			graphics.setStrokeStyle(Math.random()*20+2,"round").beginStroke(color);
+
+			// 在上一次最后一个点上画线
+			graphics.moveTo(lastPt.x,lastPt.y);
+
+			// 在当前图形的本地相对位置上计算新的坐标
+			lastPt = shape.globalToLocal(_mouseX,_mouseY);
+
+			// 画线，闭合
+			graphics.lineTo(lastPt.x,lastPt.y);
+		}
+
+		// 更新场景
+		stage.update();
+	}
+
+	//开始作图
+	function mouseDown(e) {
+		//if(!e){ e = window.event; }
+		stage.removeChild(text);
+		_mouseIsDown = true;
+
+		// 在新的绘图动作上设置第一个点，并随机选择一种颜色
+		lastPt = shape.globalToLocal(e.nativeEvent.pageX-canvas.offsetLeft,e.nativeEvent.pageY-canvas.offsetTop);
+		//color = "#"+(Math.random()*0xFFFFFF|0).toString(16);
+
+
+		// 清空缓存，这样的话可以确保每次执行都能正确的描绘出矢量数据
+		shape.uncache();
+	}
+
+	//停止作图
+	function mouseUp() {
+		_mouseIsDown = false;
+
+        // 把矢量数据缓存到另一个canvas上，这样我们就不必每次都逐步描绘出来
+		shape.cache(-800,-800,1600,1600);
+	}
+
+	//更新鼠标位置
+	function mouseMove(e) {
+		//if(!e){ e = window.event; }
+		_mouseX = e.nativeEvent.pageX-canvas.offsetLeft;
+		_mouseY = e.nativeEvent.pageY-canvas.offsetTop;
+	}
+	
+    init();
+});
+</script>
+</head>
+
+<body>
+	<center>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> 全局坐标转换为本地坐标</h1>
+		    <p><strong>CoordTransform.globalToLocal()</strong> 和 <strong>DisplayObject.cache()</strong>的使用示例。
+		    按压鼠标开始画图。如果你画了大量的线段，动画就会随着矢量数据的增多而渲染得越来越慢，当你释放鼠标时，由于矢量数据已经缓存在另一个canvas上，动画又会顺畅起来，当你再次按压鼠标，它会关闭缓存，随之又会开始缓慢。
+		    </p>
+		</header>
+	    <div class="canvasHolder">
+			<canvas id="testCanvas" width="960" height="400"></canvas>
+		</div>
+	</center>
+
+	<section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一：定义变量。以及在 canvas 上创建一个 Stage 对象。</div><br />
+                <textarea class="tutorialCode" name="code">
+var canvas;
+var stage;
+
+var _mouseIsDown;
+var _mouseX;
+var _mouseY;
+
+var spin1;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
+var spin2;		// 与一个不可见的容器绑定，用来做行为记录仪的效果
+
+var shape;		// 绘制图形
+var color;		// 绘制颜色
+var lastPt;		// 最后描绘的点
+var text;
+var graphics;
+var count = 0;
+
+// 创建一个基于当前canvas的场景
+canvas = document.getElementById("testCanvas");
+stage = new createjs.Stage(canvas);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二：初始化 3 个变量。shape：用于绘制矢量数据；spin2：用于记录中间行为数据；spin1：用于记录外部行为数据。</div><br />
+                <textarea class="tutorialCode" name="code">
+// 绘制矢量数据的对象
+shape = new createjs.Shape();
+shape.x = 41; //在父容器上的位置
+graphics = shape.graphics;
+
+// 中间的记录仪：
+spin2 = new createjs.Container();
+spin2.addChild(shape);
+spin2.x = 303; //在父容器上的位置
+
+// 外部的记录仪：
+spin1 = new createjs.Container();
+spin1.addChild(spin2);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三：当在 Stage 上按下鼠标时，开始作图。并利用 globalToLocal 将全局坐标转化为步骤二创建的 shape 对象坐标。</div><br />
+                <textarea class="tutorialCode" name="code">
+stage.addEventListener("stagemousedown", mouseDown);
+
+function mouseDown(e) {
+	stage.removeChild(text);
+	_mouseIsDown = true;
+
+	// 在新的绘图动作上设置第一个点，并随机选择一种颜色
+	lastPt = shape.globalToLocal(e.nativeEvent.pageX-canvas.offsetLeft,e.nativeEvent.pageY-canvas.offsetTop);
+
+	// 清空缓存，这样的话可以确保每次执行都能正确的描绘出矢量数据
+	shape.uncache();
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤五：当在 Stage 上移动鼠标时，更新鼠标位置。</div><br />
+                <textarea class="tutorialCode" name="code">
+stage.addEventListener("stagemousemove", mouseMove);
+
+function mouseMove(e) {
+	_mouseX = e.nativeEvent.pageX-canvas.offsetLeft;
+	_mouseY = e.nativeEvent.pageY-canvas.offsetTop;
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤六：当在 Stage 上松开鼠标时，停止作图。</div><br />
+                <textarea class="tutorialCode" name="code">
+stage.addEventListener("stagemouseup", mouseUp);
+
+function mouseUp() {
+	_mouseIsDown = false;
+
+    // 把矢量数据缓存到另一个canvas上，这样我们就不必每次都逐步描绘出来
+	shape.cache(-800,-800,1600,1600);
+}</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤七：绑定并编写 tick 方法，在每一帧都根据鼠标位置渲染矢量图。利用 globalToLocal(_mouseX,_mouseY) 转换全局坐标到本地。</div><br />
+                <textarea class="tutorialCode" name="code">
+createjs.Ticker.setFPS(30);
+createjs.Ticker.addEventListener("tick", tick);
+
+function tick() {
+
+spin1.rotation += 10;
+spin2.rotation += -7;
+shape.rotation += 3;
+
+if(_mouseIsDown) {
+	var color = createjs.Graphics.getHSL(
+		Math.cos((count++)*0.01) * 180,
+		100,
+		50,
+		1.0);
+
+	// 设置绘图参数
+	graphics.setStrokeStyle(Math.random()*20+2,"round").beginStroke(color);
+
+	// 在上一次最后一个点上画线
+	graphics.moveTo(lastPt.x,lastPt.y);
+
+	// 在当前图形的本地相对位置上计算新的坐标
+	lastPt = shape.globalToLocal(_mouseX,_mouseY);
+
+	// 画线，闭合
+	graphics.lineTo(lastPt.x,lastPt.y);
+}
+
+stage.update();
+}</textarea>
+        </div>
+    </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>XCanvas教程系列——CreateJS 教程——EaselJS：提取指定帧</title>
+<meta name="description" content="xcanvas,x-canvas,更快捷地开发html5游戏,html5游戏开发框架,html5游戏开发源代码,html5游戏开发电子书,最酷的html5开发框架,最方便的html5开发框架">
+<meta name="keywords" content="xcanvas,x-canvas,xcanvas相关教程,createjs中文教程,createjs入门教程">
+
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="../../style.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="../../codemirror/ambiance.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../../codemirror/codemirror.js"></script>
+<script type="text/javascript" src="../../codemirror/javascript.js"></script>
+
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
+	var imgSeq; // 图片精灵。
+
+	function init() {
+		// 等待图片加载。
+		imgSeq = new Image();
+		imgSeq.onload = handleImageLoad;
+		imgSeq.src = "assets/testSeq.png";
+	}
+
+	function handleImageLoad() {
+	    // 利用加载的图片数据创建精灵，并且定义动画序列。
+	    // 举例，{walkUpRight:[0,19]} 定义了一个名为 “walkUpRight” 的动画，该动画包含了 0 到 19 帧。
+		var data = {
+			images: [imgSeq],
+			frames: {width:64,height:68},
+			animations: {walkUpRight:[0,19], walkDownRight:[20,40], walkRight:[41,59]}
+		};
+
+		// 利用 data 创建精灵。
+		var spriteSheet = new createjs.SpriteSheet(data);
+
+		// 提取 walkRight 序列的第一帧，作为一张新的图像。
+		// 可以交替地使用帧号。 
+		img = createjs.SpriteSheetUtils.extractFrame(spriteSheet, "walkRight");
+
+	    // 注：可以将该图像作为 Bitmap 对象，但在更多情况下，使用 BitmapAnimation 会更好。
+	    // var bmp = new createjs.Bitmap(img);
+
+		// 创建一个新图像添加到 document 的底部。
+		document.getElementById("content").appendChild(img);
+	}
+
+    init();
+});
+</script>
+</head>
+
+<body>
+	<center>
+		<header id="header" class="EaselJS">
+		    <h1><span class="text-product">Easel<strong>JS</strong></span> 提取指定帧</h1>
+		    <p>演示了利用 <strong>SpriteSheetUtils.extractFrame()</strong>方法从已经加载好的精灵表数据中获取单独的一帧作为图片对象。</p>
+		</header>
+		<div id="content">
+			原始精灵表：<br/>
+			<img src="assets/testSeq.png"><br/><br/><br/>
+			获取的一帧：<br/>
+		</div>
+	</center>
+
+	<section id="header" class="EaselJS">
+        <center>
+            <div class="tutorialMainTitle">主要步骤 及 核心代码</div><br/><br/>
+        </center>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤一: 定义变量。</div><br />
+                <textarea class="tutorialCode" name="code">
+var imgSeq; // 图片精灵。</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤二: 加载图片。</div><br />
+                <textarea class="tutorialCode" name="code">
+imgSeq = new Image();
+imgSeq.onload = handleImageLoad;
+imgSeq.src = "assets/testSeq.png";</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤三: 根据图片资源创建精灵表。</div><br />
+                <textarea class="tutorialCode" name="code">
+var data = {
+	images: [imgSeq],
+	frames: {width:64,height:68},
+	animations: {walkUpRight:[0,19], walkDownRight:[20,40], walkRight:[41,59]}
+};
+
+var spriteSheet = new createjs.SpriteSheet(data);</textarea>
+        </div>
+
+        <div class="tutorialBody">
+            <div class="tutorialTitle">步骤四: 利用 createjs.SpriteSheetUtils.extractFrame 方法，从精灵表中提取一帧并保存为图片。</div><br />
+                <textarea class="tutorialCode" name="code">
+img = createjs.SpriteSheetUtils.extractFrame(spriteSheet, "walkRight");</textarea>
+        </div>
+    </section>
+
+    <p style="text-align: center"> 
+        <a title="XCanvas首页" href="http://xc.uc.cn">官网首页</a> &nbsp;
+        <a title="XCanvas论坛" href="http://xc.uc.cn/bbs/">论坛首页</a>
+    </p>
+
+<script type="text/javascript" src="../../codemirror/index.js"></script>
+</body>
+</html>

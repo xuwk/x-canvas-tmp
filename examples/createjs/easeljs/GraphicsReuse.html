@@ -1,25 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>EaselJS: Reusing Graphics</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>EaselJS: 图形的重用</title>
 
-	<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+<link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
 
-	<script type="text/javascript" src="../src/easeljs/utils/UID.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Matrix2D.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/EventDispatcher.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/DisplayObject.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Container.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Stage.js"></script>
-	<script type="text/javascript" src="../src/easeljs/events/MouseEvent.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Shape.js"></script>
-	<script type="text/javascript" src="../src/easeljs/display/Graphics.js"></script>
-	<script type="text/javascript" src="../src/easeljs/geom/Point.js"></script>
-
-	<!-- We also provide hosted minified versions of all CreateJS libraries.
-	  http://code.createjs.com -->
-
-	<script type="text/javascript">
+<script type="text/javascript" src="../../../src/xc.js"></script>
+<script type="text/javascript">
+xc.depends([
+    "../../../src/core",
+    "../../../src/lib/createjs"
+], function() {
 	var canvas;
 	var stage;
 	var headRadius;
@@ -37,13 +29,14 @@
 
 	    layoutSmiley();
 
-	    stage.onMouseDown = handlePress;
+	    stage.addEventListener("stagemousedown", handlePress);
 	    stage.update();
 
 	}
 
 	function layoutSmiley() {
-	    drawSmiley(createjs.Graphics.getRGB(Math.random()*255|0,Math.random()*255|0,Math.random()*255|0), createjs.Graphics.getRGB(Math.random()*255|0,Math.random()*255|0,Math.random()*255|0));
+	    drawSmiley(createjs.Graphics.getRGB(Math.random()*255|0, Math.random()*255|0, Math.random()*255|0), 
+	              createjs.Graphics.getRGB(Math.random()*255|0, Math.random()*255|0, Math.random()*255|0));
 	    for(var i=0;i<100;i++) {
 	        var shape = new createjs.Shape(g);
 	        shape.scaleX = shape.scaleY = Math.random() * 0.05 + 0.15;
@@ -75,7 +68,7 @@
 	    var pt9 = new Point(100, 178);
 	    var pt10 = new Point(115, 181);
 
-	    //Left Eye
+	    //左眼
 	    var pt11 = new Point(169, 119);
 	    var pt12 = new Point(198, 115);
 	    var pt13 = new Point(175, 153);
@@ -86,7 +79,7 @@
 	    var pt13a = new Point(183, 173);
 	    var pt14a = new Point(205, 169);
 
-	    //Right Eye
+	    //右眼
 	    var pt15 = new Point(251, 109);
 	    var pt16 = new Point(279, 115);
 	    var pt17 = new Point(244, 148);
@@ -96,14 +89,14 @@
 	    var pt17a = new Point(249, 166);
 	    var pt18a = new Point(263, 168);
 
-	    //Head
+	    //头
 	    g.setStrokeStyle(20);
 	    g.beginStroke(lineColor);
 	    g.beginFill(fillColor);
 	    g.drawCircle(225, 223, 200);
 	    g.endFill();
 
-	    //Left Eye
+	    //左眼
 	    g.setStrokeStyle(1, 'round', 'round');
 	    g.beginStroke(lineColor);
 	    g.beginFill(lineColor);
@@ -114,7 +107,7 @@
 	    g.bezierCurveTo(pt12a.x, pt12a.y, pt11a.x, pt11a.y, 169, 119);
 	    g.endFill();
 
-	    //Right Eye
+	    //右眼
 	    g.setStrokeStyle(1, 'round', 'round');
 	    g.beginFill(lineColor);
 	    g.beginStroke(lineColor);
@@ -125,7 +118,7 @@
 	    g.bezierCurveTo(pt16a.x, pt16a.y, pt15a.x, pt15a.y, 251, 109);
 	    g.endFill();
 
-	    //Mouth
+	    //口
 	    g.setStrokeStyle(1, 'round', 'round');
 	    g.beginStroke(lineColor);
 	    g.beginFill(lineColor);
@@ -142,19 +135,15 @@
 	    g.lineTo(100, 210);
 	    g.endFill();
 	}
-
-	</script>
-
+	init();
+});
+</script>
 </head>
-<body onload="init()">
-
+<body>
 	<header id="header" class="EaselJS">
-	    <h1><span class="text-product">Easel<strong>JS</strong></span> Graphics Re-use</h1>
-	    <p>This example shows how a single <strong>Graphics</strong> object can be reused between multiple <strong>Shape</strong> instances.
-		    Click to redraw.</p>
+	    <h1><span class="text-product">Easel<strong>JS</strong></span> 图形的重用</h1>
+	    <p>这个示例展示了如何让一个<strong>Graphics</strong>对象在多个<strong>Shape</strong>实例中重用。点击重画。</p>
 	</header>
-
 	<canvas id="myCanvas" width="960" height="400"></canvas>
-
 </body>
 </html>
